@@ -67,10 +67,10 @@ export function useCalendarWeather(
 
         const mapped: CalendarEventWithWeather[] = events
           .filter((event) => event.title && event.title.trim().length > 0)
-          .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+          .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
           .slice(0, 6)
           .map((event) => {
-            const eventDate = event.startDate;
+            const eventDate = new Date(event.startDate);
             const dayIndex = daily.findIndex((day) => {
               const dayDate = new Date(`${day.date}T00:00:00`);
               return (
