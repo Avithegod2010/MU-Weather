@@ -64,6 +64,9 @@ export interface AqiInfo {
   usAqi: number | null;
   pm2_5: number | null;
   pm10: number | null;
+  ozone: number | null;
+  no2: number | null;
+  so2: number | null;
   pollen: PollenInfo | null;
 }
 
@@ -151,6 +154,9 @@ export interface AirQualityResponse {
     us_aqi: number | null;
     pm2_5: number | null;
     pm10: number | null;
+    ozone: number | null;
+    nitrogen_dioxide: number | null;
+    sulphur_dioxide: number | null;
     alder: number | null;
     birch: number | null;
     grass: number | null;

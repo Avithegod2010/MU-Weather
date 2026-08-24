@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import Svg, { Polyline } from 'react-native-svg';
+import * as Notifications from 'expo-notifications';
 import {
   Sun,
   Sparkles,
@@ -15,9 +17,11 @@ import {
   Info,
   CloudSun,
   Radar,
+  Bell,
 } from '../utils/uiIcons';
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
+import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
 import type { AppSettings } from '../hooks/useSettings';
 import type { ProviderCheck } from '../api/providers';
 import type { AppTheme } from '../theme/palettes';
@@ -32,6 +36,14 @@ interface SettingsSheetProps {
   providerCheck: ProviderCheck;
   primaryTemp: number | null;
   lastUpdated: number | null;
+  accuracyHistory: AccuracyEntry[];
+}
+
+async function ensureNotificationPermission(): Promise<boolean> {
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status === 'granted') return true;
+  const { status: requested } = await Notifications.requestPermissionsAsync();
+  return requested === 'granted';
 }
 
 type SheetView = 'main' | 'sources';
@@ -114,9 +126,15 @@ export function SettingsSheet({
   providerCheck,
   primaryTemp,
   lastUpdated,
+  accuracyHistory,
 }: SettingsSheetProps) {
   const inputColor = theme.isLight ? '#1C2431' : '#FFFFFF';
   const [view, setView] = useState<SheetView>('main');
+
+  const avgDelta =
+    accuracyHistory.length > 0
+      ? accuracyHistory.reduce((sum, entry) => sum + entry.d, 0) / accuracyHistory.length
+      : null;
 
   const delta =
     providerCheck.status === 'ok' && providerCheck.temperature !== null && primaryTemp !== null
@@ -233,6 +251,80 @@ export function SettingsSheet({
               ]}
               value={settings.styleMode}
               onChange={(value) => onUpdate({ styleMode: value as AppSettings['styleMode'] })}
+            />
+          </View>
+
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>NOTIFICATIONS</Text>
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Bell size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Daily digest</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Tomorrow's forecast every morning
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.digestEnabled : false}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                  void ensureNotificationPermission().then((granted) => {
+                    onUpdate({ digestEnabled: granted });
+                  });
+                } else {
+                  haptics.light();
+                  void cancelDigest();
+                  onUpdate({ digestEnabled: false });
+                }
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.digestEnabled ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+          {settings.digestEnabled ? (
+            <View style={styles.segmentRow}>
+              <Segmented
+                theme={theme}
+                options={[
+                  { value: '7', label: '7 AM' },
+                  { value: '8', label: '8 AM' },
+                  { value: '9', label: '9 AM' },
+                ]}
+                value={String(settings.digestHour)}
+                onChange={(value) => onUpdate({ digestHour: Number(value) })}
+              />
+            </View>
+          ) : null}
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sun size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Golden hour alert</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Notify when golden light is 60 minutes away
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.goldenHourEnabled : false}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                  void ensureNotificationPermission().then((granted) => {
+                    onUpdate({ goldenHourEnabled: granted });
+                  });
+                } else {
+                  haptics.light();
+                  onUpdate({ goldenHourEnabled: false });
+                }
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.goldenHourEnabled ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
             />
           </View>
 
@@ -402,6 +494,29 @@ export function SettingsSheet({
                   {Math.round(primaryTemp ?? 0)}°
                 </Text>
               ) : null}
+              {accuracyHistory.length >= 2 ? (
+                <View style={styles.sparkRow}>
+                  <Svg width={120} height={30} viewBox="0 0 120 30">
+                    <Polyline
+                      points={accuracyHistory
+                        .slice(-12)
+                        .map((entry, index, array) => {
+                          const x = (index / Math.max(array.length - 1, 1)) * 116 + 2;
+                          const y = 27 - (Math.min(entry.d, 3) / 3) * 24;
+                          return `${x.toFixed(1)},${y.toFixed(1)}`;
+                        })
+                        .join(' ')}
+                      stroke={theme.accent}
+                      strokeWidth={2}
+                      fill="none"
+                      strokeLinecap="round"
+                    />
+                  </Svg>
+                  <Text style={[styles.avgText, { color: theme.textTertiary }]}>
+                    avg drift {avgDelta?.toFixed(1)}° over {accuracyHistory.length} checks
+                  </Text>
+                </View>
+              ) : null}
             </View>
             {providerCheck.status === 'checking' ? (
               <StatusChip theme={theme} label="SYNCING" tone="warn" />
@@ -549,6 +664,16 @@ const styles = StyleSheet.create({
     fontSize: 11.5,
     fontWeight: '600',
     marginTop: 2,
+  },
+  sparkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+  avgText: {
+    fontSize: 11,
+    flex: 1,
   },
   badge: {
     borderRadius: 999,

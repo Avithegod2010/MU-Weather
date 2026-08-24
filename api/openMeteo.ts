@@ -163,7 +163,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
   const aqiParams = new URLSearchParams({
     latitude: location.latitude.toFixed(4),
     longitude: location.longitude.toFixed(4),
-    current: 'us_aqi,pm2_5,pm10,alder,birch,grass,mugwort,olive,ragweed',
+    current: 'us_aqi,pm2_5,pm10,ozone,nitrogen_dioxide,sulphur_dioxide,alder,birch,grass,mugwort,olive,ragweed',
     timezone: 'auto',
   }).toString();
 
@@ -195,6 +195,9 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
       usAqi: ac.us_aqi,
       pm2_5: ac.pm2_5,
       pm10: ac.pm10,
+      ozone: ac.ozone,
+      no2: ac.nitrogen_dioxide,
+      so2: ac.sulphur_dioxide,
       pollen: pollenAvailable ? pollen : null,
     };
   }

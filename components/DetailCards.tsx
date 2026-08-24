@@ -15,6 +15,7 @@ import {
   Eye,
   Umbrella,
   CalendarDays,
+  Flower2,
 } from '../utils/uiIcons';
 import { Card } from './Card';
 import { WindCompass } from './WindCompass';
@@ -30,14 +31,26 @@ import {
   formatVisibility,
   formatTime12,
 } from '../utils/format';
+import { pollenLevel } from '../utils/aqi';
 import {
   findGoldenBlueHours,
   daylightDeltaMinutes,
   moonTimes,
   formatDateClock,
 } from '../utils/sunCalc';
+import { StormDistanceCard } from './StormDistanceCard';
 import type { YearAgoState } from '../hooks/useYearAgo';
+import type { PollenInfo } from '../api/types';
 import type { AqiInfo, CurrentConditions, DayPoint, GeoLocation } from '../api/types';
+
+const POLLEN_TYPES: Array<{ key: keyof PollenInfo; label: string }> = [
+  { key: 'grass', label: 'Grass' },
+  { key: 'birch', label: 'Birch' },
+  { key: 'alder', label: 'Alder' },
+  { key: 'mugwort', label: 'Mugwort' },
+  { key: 'olive', label: 'Olive' },
+  { key: 'ragweed', label: 'Ragweed' },
+];
 
 interface DetailCardsProps {
   theme: AppTheme;
@@ -100,7 +113,15 @@ export function DetailCards({
       </Card>
 
       <Card revealDelay={60} theme={theme} title="Air Quality" icon={Gauge} style={styles.half}>
-        <AqiGauge theme={theme} usAqi={aqi?.usAqi ?? null} pm2_5={aqi?.pm2_5 ?? null} />
+        <AqiGauge
+          theme={theme}
+          usAqi={aqi?.usAqi ?? null}
+          pm2_5={aqi?.pm2_5 ?? null}
+          pm10={aqi?.pm10 ?? null}
+          ozone={aqi?.ozone ?? null}
+          no2={aqi?.no2 ?? null}
+          so2={aqi?.so2 ?? null}
+        />
       </Card>
 
       <Card revealDelay={120} theme={theme} title="UV Index" icon={Sun} style={styles.half}>
@@ -310,6 +331,42 @@ export function DetailCards({
           )}
         </View>
       </Card>
+
+      {aqi?.pollen ? (
+        <Card revealDelay={600} theme={theme} title="Pollen" icon={Flower2} style={styles.half}>
+          <View style={styles.stack}>
+            {POLLEN_TYPES.map((type) => {
+              const value = aqi.pollen?.[type.key];
+              if (value === null || value === undefined) return null;
+              const level = pollenLevel(value);
+              return (
+                <View key={type.key} style={styles.pollenRow}>
+                  <Text style={[styles.pollenName, { color: theme.textSecondary }]}>{type.label}</Text>
+                  <View style={[styles.pollenTrack, { backgroundColor: theme.trackColor }]}>
+                    <View
+                      style={[
+                        styles.pollenFill,
+                        {
+                          width: `${Math.min((value / 100) * 100, 100)}%`,
+                          backgroundColor: level.color,
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text style={[styles.pollenValue, { color: theme.textPrimary }]}>
+                    {Math.round(value)}
+                  </Text>
+                </View>
+              );
+            })}
+            <Text style={[styles.caption, { color: theme.textTertiary }]}>
+              Grains per m³ · Europe coverage
+            </Text>
+          </View>
+        </Card>
+      ) : null}
+
+      <StormDistanceCard theme={theme} />
     </View>
   );
 }
@@ -386,5 +443,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+  },
+  pollenRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  pollenName: {
+    fontSize: 12.5,
+    width: 58,
+  },
+  pollenTrack: {
+    flex: 1,
+    height: 5,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  pollenFill: {
+    height: 5,
+    borderRadius: 3,
+  },
+  pollenValue: {
+    fontSize: 12,
+    fontWeight: '600',
+    width: 26,
+    textAlign: 'right',
   },
 });

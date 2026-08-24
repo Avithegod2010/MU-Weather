@@ -7,11 +7,15 @@ interface AqiGaugeProps {
   theme: AppTheme;
   usAqi: number | null;
   pm2_5: number | null;
+  pm10: number | null;
+  ozone: number | null;
+  no2: number | null;
+  so2: number | null;
 }
 
 const SEGMENT_COLORS = ['#5BC98C', '#E8D05A', '#F0964E', '#E85F5F', '#B06FD8', '#9E4A68'];
 
-export function AqiGauge({ theme, usAqi, pm2_5 }: AqiGaugeProps) {
+export function AqiGauge({ theme, usAqi, pm2_5, pm10, ozone, no2, so2 }: AqiGaugeProps) {
   const band = usAqiBand(usAqi);
   const fraction = usAqiFraction(usAqi);
 
@@ -49,10 +53,29 @@ export function AqiGauge({ theme, usAqi, pm2_5 }: AqiGaugeProps) {
         ) : null}
       </View>
 
+      <View style={styles.pollutantRow}>
+        {[
+          { label: 'PM2.5', value: pm2_5 },
+          { label: 'PM10', value: pm10 },
+          { label: 'O₃', value: ozone },
+          { label: 'NO₂', value: no2 },
+          { label: 'SO₂', value: so2 },
+        ].map((pollutant) => (
+          <View key={pollutant.label} style={styles.pollutant}>
+            <Text style={[styles.pollutantValue, { color: theme.textPrimary }]}>
+              {pollutant.value === null || pollutant.value === undefined
+                ? '--'
+                : Math.round(pollutant.value)}
+            </Text>
+            <Text style={[styles.pollutantLabel, { color: theme.textTertiary }]}>
+              {pollutant.label}
+            </Text>
+          </View>
+        ))}
+      </View>
+
       <Text style={[styles.subtext, { color: theme.textTertiary }]}>
-        {pm2_5 !== null && pm2_5 !== undefined
-          ? `Fine particles (PM2.5) at ${pm2_5.toFixed(1)} µg/m³`
-          : 'Live air quality data'}
+        Concentrations in µg/m³ · live readings
       </Text>
     </View>
   );
@@ -111,5 +134,21 @@ const styles = StyleSheet.create({
   },
   subtext: {
     fontSize: 12,
+  },
+  pollutantRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 2,
+  },
+  pollutant: {
+    alignItems: 'center',
+    gap: 2,
+  },
+  pollutantValue: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  pollutantLabel: {
+    fontSize: 10,
   },
 });

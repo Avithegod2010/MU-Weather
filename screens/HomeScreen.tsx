@@ -91,6 +91,8 @@ import { useAlerts } from '../hooks/useAlerts';
 import { useSettings } from '../hooks/useSettings';
 import { useProviderStatus } from '../hooks/useProviderStatus';
 import { useYearAgo } from '../hooks/useYearAgo';
+import { useDigest } from '../hooks/useDigest';
+import { useGoldenHour } from '../hooks/useGoldenHour';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
 import { useFavorites } from '../hooks/useFavorites';
@@ -116,8 +118,14 @@ export function HomeScreen() {
   const { settings, updateSettings } = useSettings();
   const { theme, conditionLabel } = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   const alertState = useAlerts(weather.data);
-  const providerCheck = useProviderStatus(active);
+  const providerStatus = useProviderStatus(
+    active,
+    weather.data?.current.temperature ?? null,
+  );
+  const providerCheck = providerStatus.check;
   const yearAgo = useYearAgo(active);
+  useDigest(settings.digestEnabled, settings.digestHour, weather.data);
+  useGoldenHour(settings.goldenHourEnabled, weather.data);
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -489,6 +497,7 @@ export function HomeScreen() {
         providerCheck={providerCheck}
         primaryTemp={weather.data?.current.temperature ?? null}
         lastUpdated={weather.data?.fetchedAt ?? null}
+        accuracyHistory={providerStatus.history}
       />
 
       <AlertsScreen

@@ -43,3 +43,10 @@ export function humidityComfort(humidity: number): string {
   if (humidity < 80) return 'Somewhat humid';
   return 'Very humid';
 }
+
+export function pollenLevel(value: number): { label: string; color: string } {
+  if (value >= 75) return { label: 'Very high', color: '#B06FD8' };
+  if (value >= 30) return { label: 'High', color: '#E85F5F' };
+  if (value >= 10) return { label: 'Moderate', color: '#E8D05A' };
+  return { label: 'Low', color: '#5BC98C' };
+}

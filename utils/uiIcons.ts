@@ -39,6 +39,7 @@ export { default as Settings } from 'lucide-react-native/icons/settings';
 export { default as Sparkles } from 'lucide-react-native/icons/sparkles';
 export { default as CalendarDays } from 'lucide-react-native/icons/calendar-days';
 export { default as Share } from 'lucide-react-native/icons/share';
+export { default as Zap } from 'lucide-react-native/icons/zap';
 export { default as Clock3 } from 'lucide-react-native/icons/clock-3';
 export { default as TriangleAlert } from 'lucide-react-native/icons/triangle-alert';
 export { default as Navigation2 } from 'lucide-react-native/icons/navigation-2';

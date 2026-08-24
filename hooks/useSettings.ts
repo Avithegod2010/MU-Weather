@@ -15,6 +15,9 @@ export interface AppSettings {
   windUnit: WindUnit;
   timeFormat: TimeFormat;
   snarkMode: boolean;
+  digestEnabled: boolean;
+  digestHour: number;
+  goldenHourEnabled: boolean;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -25,6 +28,9 @@ const DEFAULT_SETTINGS: AppSettings = {
   windUnit: 'kmh',
   timeFormat: '12h',
   snarkMode: false,
+  digestEnabled: false,
+  digestHour: 8,
+  goldenHourEnabled: false,
 };
 
 function applySideEffects(settings: AppSettings): void {
