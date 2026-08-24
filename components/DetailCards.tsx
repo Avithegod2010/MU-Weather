@@ -39,6 +39,8 @@ import {
   formatDateClock,
 } from '../utils/sunCalc';
 import { StormDistanceCard } from './StormDistanceCard';
+import { BarometerCard } from './BarometerCard';
+import { FEATURES } from '../config/features';
 import type { YearAgoState } from '../hooks/useYearAgo';
 import type { PollenInfo } from '../api/types';
 import type { AqiInfo, CurrentConditions, DayPoint, GeoLocation } from '../api/types';
@@ -367,6 +369,14 @@ export function DetailCards({
       ) : null}
 
       <StormDistanceCard theme={theme} />
+
+      {FEATURES.barometer ? (
+        <BarometerCard
+          theme={theme}
+          forecastPressure={current.pressure}
+          revealDelay={660}
+        />
+      ) : null}
     </View>
   );
 }
