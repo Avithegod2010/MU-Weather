@@ -85,6 +85,7 @@ import { AlertsScreen } from './AlertsScreen';
 import { useAlerts } from '../hooks/useAlerts';
 import { useSettings } from '../hooks/useSettings';
 import { useProviderStatus } from '../hooks/useProviderStatus';
+import { useYearAgo } from '../hooks/useYearAgo';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
 import { useFavorites } from '../hooks/useFavorites';
@@ -111,6 +112,7 @@ export function HomeScreen() {
   const { theme, conditionLabel } = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   const alertState = useAlerts(weather.data);
   const providerCheck = useProviderStatus(active);
+  const yearAgo = useYearAgo(active);
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -370,6 +372,8 @@ export function HomeScreen() {
                   today={weather.data.daily[0] ?? null}
                   aqi={weather.data.aqi}
                   utcOffsetSeconds={weather.data.utcOffsetSeconds}
+                  location={active}
+                  yearAgo={yearAgo}
                 />
               </Reveal>
 

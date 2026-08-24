@@ -1,20 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
   Sun,
   Moon as MoonIcon,
-  CloudSun,
-  CloudMoon,
-  Cloud,
-  CloudFog,
-  CloudDrizzle,
-  CloudRainWind,
-  CloudRain,
-  CloudSnow,
   CloudLightning,
   CloudHail,
   Clock,
-  MapPin,
   ArrowUp,
   ArrowDown,
   Droplet,
@@ -23,34 +14,13 @@ import {
   Gauge,
   Eye,
   Umbrella,
-  WifiOff,
-  RefreshCw,
-  SearchX,
-  Search,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  Vibrate,
-  Thermometer,
-  Database,
-  Info,
-  Map,
-  Bell,
-  Settings,
-  TriangleAlert,
-  Navigation2,
-  Radar,
-  Flower2,
-  TrendingDown,
-  Navigation,
-  Sunrise,
-  Sunset,
+  CalendarDays,
 } from '../utils/uiIcons';
 import { Card } from './Card';
 import { WindCompass } from './WindCompass';
 import { AqiGauge } from './AqiGauge';
 import { SunArc } from './SunArc';
+import { getWeatherIcon } from '../utils/icons';
 import type { AppTheme } from '../theme/palettes';
 import { uvBand, humidityComfort } from '../utils/aqi';
 import { moonPhase } from '../utils/moon';
@@ -58,8 +28,16 @@ import {
   dewPointComfort,
   formatPressureTrend,
   formatVisibility,
+  formatTime12,
 } from '../utils/format';
-import type { AqiInfo, CurrentConditions, DayPoint } from '../api/types';
+import {
+  findGoldenBlueHours,
+  daylightDeltaMinutes,
+  moonTimes,
+  formatDateClock,
+} from '../utils/sunCalc';
+import type { YearAgoState } from '../hooks/useYearAgo';
+import type { AqiInfo, CurrentConditions, DayPoint, GeoLocation } from '../api/types';
 
 interface DetailCardsProps {
   theme: AppTheme;
@@ -67,14 +45,48 @@ interface DetailCardsProps {
   today: DayPoint | null;
   aqi: AqiInfo | null;
   utcOffsetSeconds: number;
+  location: GeoLocation;
+  yearAgo: YearAgoState;
 }
 
-export function DetailCards({ theme, current, today, aqi, utcOffsetSeconds }: DetailCardsProps) {
+export function DetailCards({
+  theme,
+  current,
+  today,
+  aqi,
+  utcOffsetSeconds,
+  location,
+  yearAgo,
+}: DetailCardsProps) {
   const uv = today?.uvIndexMax ?? null;
   const uvInfo = uvBand(uv);
   const uvFraction = uv === null ? 0 : Math.min(uv / 11, 1);
   const moon = moonPhase();
   const trend = formatPressureTrend(current.pressureTrend);
+
+  const sunExtras = useMemo(
+    () => ({
+      hours: findGoldenBlueHours(location.latitude, location.longitude),
+      delta: daylightDeltaMinutes(location.latitude, location.longitude),
+    }),
+    [location.latitude, location.longitude],
+  );
+
+  const moonTimesToday = useMemo(
+    () => moonTimes(new Date(), location.latitude, location.longitude),
+    [location.latitude, location.longitude],
+  );
+
+  const yearAgoDateLabel = yearAgo.info
+    ? new Date(`${yearAgo.info.date}T12:00:00`).toLocaleDateString([], {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : '';
+  const yearAgoDelta =
+    yearAgo.info && today ? Math.round(yearAgo.info.tMax - today.tMax) : null;
+  const YearAgoIcon = yearAgo.info ? getWeatherIcon(yearAgo.info.weatherCode, true) : null;
 
   return (
     <View style={styles.grid}>
@@ -206,6 +218,10 @@ export function DetailCards({ theme, current, today, aqi, utcOffsetSeconds }: De
           </Text>
           <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>{moon.phaseName}</Text>
           <Text style={[styles.caption, { color: theme.textTertiary }]}>
+            Rises {moonTimesToday.rise ? formatDateClock(moonTimesToday.rise) : 'tomorrow'} ·
+            Sets {moonTimesToday.set ? formatDateClock(moonTimesToday.set) : 'tomorrow'}
+          </Text>
+          <Text style={[styles.caption, { color: theme.textTertiary }]}>
             Day {Math.round(moon.ageDays)} of the 29.5-day cycle
           </Text>
         </View>
@@ -218,6 +234,81 @@ export function DetailCards({ theme, current, today, aqi, utcOffsetSeconds }: De
           sunset={today?.sunset ?? ''}
           utcOffsetSeconds={utcOffsetSeconds}
         />
+        <View style={styles.sunExtras}>
+          <View style={styles.sunExtraRow}>
+            <Text style={[styles.sunExtraLabel, { color: theme.textTertiary }]}>GOLDEN</Text>
+            <Text style={[styles.sunExtraValue, { color: theme.textSecondary }]}>
+              {sunExtras.hours.goldenMorning
+                ? `${formatDateClock(sunExtras.hours.goldenMorning.start)} – ${formatDateClock(sunExtras.hours.goldenMorning.end)}`
+                : '--'}
+              {'  ·  '}
+              {sunExtras.hours.goldenEvening
+                ? `${formatDateClock(sunExtras.hours.goldenEvening.start)} – ${formatDateClock(sunExtras.hours.goldenEvening.end)}`
+                : '--'}
+            </Text>
+          </View>
+          <View style={styles.sunExtraRow}>
+            <Text style={[styles.sunExtraLabel, { color: theme.textTertiary }]}>BLUE</Text>
+            <Text style={[styles.sunExtraValue, { color: theme.textSecondary }]}>
+              {sunExtras.hours.blueMorning
+                ? `${formatDateClock(sunExtras.hours.blueMorning.start)} – ${formatDateClock(sunExtras.hours.blueMorning.end)}`
+                : '--'}
+              {'  ·  '}
+              {sunExtras.hours.blueEvening
+                ? `${formatDateClock(sunExtras.hours.blueEvening.start)} – ${formatDateClock(sunExtras.hours.blueEvening.end)}`
+                : '--'}
+            </Text>
+          </View>
+          {sunExtras.delta !== null ? (
+            <Text style={[styles.daylightDelta, { color: theme.textTertiary }]}>
+              {sunExtras.delta >= 0
+                ? `+${sunExtras.delta}`
+                : `${sunExtras.delta}`}{' '}
+              minutes of daylight vs yesterday
+            </Text>
+          ) : null}
+        </View>
+      </Card>
+
+      <Card revealDelay={540} theme={theme} title="A Year Ago" icon={CalendarDays} style={styles.half}>
+        <View style={styles.stack}>
+          {yearAgo.status === 'ok' && yearAgo.info && YearAgoIcon ? (
+            <>
+              <View style={styles.yearAgoRow}>
+                <YearAgoIcon size={26} color={theme.textPrimary} strokeWidth={1.7} />
+                <Text style={[styles.bigValue, { color: theme.textPrimary, fontSize: 30 }]}>
+                  {Math.round(yearAgo.info.tMax)}°
+                </Text>
+              </View>
+              <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>
+                {yearAgoDateLabel} · low {Math.round(yearAgo.info.tMin)}°
+              </Text>
+              {yearAgoDelta !== null ? (
+                <Text
+                  style={[
+                    styles.caption,
+                    { color: yearAgoDelta > 1 ? '#F0964E' : yearAgoDelta < -1 ? '#7CC4F0' : theme.textTertiary },
+                  ]}
+                >
+                  {yearAgoDelta > 0
+                    ? `${yearAgoDelta}° warmer than today`
+                    : yearAgoDelta < 0
+                      ? `${Math.abs(yearAgoDelta)}° cooler than today`
+                      : 'Same high as today'}
+                </Text>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <Text style={[styles.bigValue, { color: theme.textTertiary }]}>--</Text>
+              <Text style={[styles.caption, { color: theme.textTertiary }]}>
+                {yearAgo.status === 'error'
+                  ? 'Historical data unavailable'
+                  : 'Loading history...'}
+              </Text>
+            </>
+          )}
+        </View>
       </Card>
     </View>
   );
@@ -265,5 +356,35 @@ const styles = StyleSheet.create({
   },
   caption: {
     fontSize: 12,
+  },
+  sunExtras: {
+    marginTop: 12,
+    gap: 7,
+  },
+  sunExtraRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  sunExtraLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    width: 52,
+  },
+  sunExtraValue: {
+    flex: 1,
+    fontSize: 12.5,
+    fontWeight: '500',
+  },
+  daylightDelta: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  yearAgoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
 });
