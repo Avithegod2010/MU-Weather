@@ -4,64 +4,28 @@ import { WebView } from 'react-native-webview';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  Sun,
-  Moon,
-  CloudSun,
-  CloudMoon,
-  Cloud,
-  CloudFog,
-  CloudDrizzle,
-  CloudRainWind,
   CloudRain,
-  CloudSnow,
-  CloudLightning,
-  CloudHail,
-  Clock,
-  MapPin,
-  ArrowUp,
-  ArrowDown,
-  Droplet,
-  Droplets,
-  Wind,
-  Gauge,
-  Eye,
-  Umbrella,
-  WifiOff,
-  RefreshCw,
-  SearchX,
-  Search,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  Vibrate,
   Thermometer,
-  Database,
-  Info,
-  Map,
-  Bell,
-  Settings,
-  TriangleAlert,
-  Navigation2,
-  Radar,
-  Flower2,
-  TrendingDown,
-  Navigation,
-  Sunrise,
-  Sunset,
+  Cloud,
+  Wind,
+  CloudLightning,
+  Gauge,
+  ChevronLeft,
 } from '../utils/uiIcons';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
 import type { AppTheme } from '../theme/palettes';
 import type { GeoLocation } from '../api/types';
 
-type MapLayer = 'precip' | 'temp' | 'clouds' | 'wind';
+type MapLayer = 'precip' | 'temp' | 'clouds' | 'wind' | 'thunder' | 'pressure';
 
 const LAYERS: Array<{ key: MapLayer; label: string; windy: string; icon: typeof Cloud }> = [
   { key: 'precip', label: 'Precip', windy: 'rain', icon: CloudRain },
   { key: 'temp', label: 'Temp', windy: 'temp', icon: Thermometer },
+  { key: 'thunder', label: 'Storms', windy: 'thunder', icon: CloudLightning },
   { key: 'clouds', label: 'Clouds', windy: 'clouds', icon: Cloud },
   { key: 'wind', label: 'Wind', windy: 'wind', icon: Wind },
+  { key: 'pressure', label: 'Press', windy: 'pressure', icon: Gauge },
 ];
 
 function buildWindyUrl(lat: number, lon: number, layer: MapLayer): string {

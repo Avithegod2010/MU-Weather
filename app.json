@@ -29,7 +29,8 @@
         {
           "locationWhenInUsePermission": "MU Weather uses your location to show local weather conditions."
         }
-      ]
+      ],
+      "expo-sharing"
     ]
   }
 }

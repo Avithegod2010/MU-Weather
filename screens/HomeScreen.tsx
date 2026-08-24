@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -7,6 +7,8 @@ import {
   Text,
   View,
 } from 'react-native';
+import { captureRef } from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
 import Animated, {
   FadeIn,
   useAnimatedScrollHandler,
@@ -22,6 +24,7 @@ import {
   MapPin,
   Bell,
   Settings as SettingsIcon,
+  Share as ShareIcon,
   TriangleAlert,
   Navigation2,
   Sun,
@@ -62,6 +65,7 @@ import {
   Sunrise,
   Sunset,
 } from '../utils/uiIcons';
+import { ShareCard } from '../components/ShareCard';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { CurrentWeather } from '../components/CurrentWeather';
 import { HourlyForecast } from '../components/HourlyForecast';
@@ -125,6 +129,31 @@ export function HomeScreen() {
     () => (weather.data ? computeHighlights(weather.data, nowcast) : []),
     [weather.data, nowcast],
   );
+  const shareCardRef = useRef<View>(null);
+  const [sharing, setSharing] = useState(false);
+
+  const shareWeather = useCallback(async () => {
+    if (!weather.data || sharing) return;
+    haptics.light();
+    setSharing(true);
+    try {
+      const uri = await captureRef(shareCardRef, {
+        format: 'png',
+        quality: 1,
+        result: 'tmpfile',
+      });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'image/png',
+          dialogTitle: 'Share the weather',
+        });
+      }
+    } catch {
+      // Capture or share failed silently - non-critical action.
+    } finally {
+      setSharing(false);
+    }
+  }, [weather.data, sharing]);
 
   useEffect(() => {
     (async () => {
@@ -378,13 +407,30 @@ export function HomeScreen() {
               </Reveal>
 
               <Reveal delay={100}>
-                <Text style={[styles.credit, { color: theme.textTertiary }]}>
-                  Data by Open-Meteo · Updated{' '}
-                  {new Date(weather.data.fetchedAt).toLocaleTimeString([], {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })}
-                </Text>
+                <View style={styles.footerRow}>
+                  <Pressable
+                    onPress={() => {
+                      void shareWeather();
+                    }}
+                    style={({ pressed }) => [
+                      styles.shareButton,
+                      { backgroundColor: theme.chipBg },
+                      pressed && { opacity: 0.7 },
+                    ]}
+                  >
+                    <ShareIcon size={16} color={theme.textPrimary} strokeWidth={2.3} />
+                    <Text style={[styles.shareButtonText, { color: theme.textPrimary }]}>
+                      {sharing ? 'Preparing...' : 'Share weather'}
+                    </Text>
+                  </Pressable>
+                  <Text style={[styles.credit, { color: theme.textTertiary }]}>
+                    Updated{' '}
+                    {new Date(weather.data.fetchedAt).toLocaleTimeString([], {
+                      hour: 'numeric',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                </View>
               </Reveal>
             </>
           ) : (
@@ -417,6 +463,15 @@ export function HomeScreen() {
           </Pressable>
         </View>
       )}
+
+      {weather.data ? (
+        <ShareCard
+          theme={theme}
+          data={weather.data}
+          conditionLabel={conditionLabel}
+          cardRef={shareCardRef}
+        />
+      ) : null}
 
       <SettingsSheet
         theme={theme}
@@ -565,6 +620,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     marginTop: 4,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+  },
+  shareButtonText: {
+    fontSize: 13.5,
+    fontWeight: '600',
   },
   noLocation: {
     flex: 1,
