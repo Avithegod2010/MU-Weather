@@ -1,0 +1,125 @@
+export function formatTemp(value: number | null | undefined): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return '--°';
+  return `${Math.round(value)}°`;
+}
+
+function parseLocalIso(iso: string): Date | null {
+  if (!iso) return null;
+  const normalized = iso.length === 16 ? `${iso}:00Z` : iso.endsWith('Z') ? iso : `${iso}Z`;
+  const parsed = new Date(normalized);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+export function localIsoToEpoch(iso: string): number {
+  const parsed = parseLocalIso(iso);
+  return parsed ? parsed.getTime() : NaN;
+}
+
+export function formatHourLabel(iso: string, isNow: boolean): string {
+  if (isNow) return 'Now';
+  const date = parseLocalIso(iso);
+  if (!date) return '--';
+  let hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  const period = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  return minutes > 0 ? `${hours}:${String(minutes).padStart(2, '0')} ${period}` : `${hours} ${period}`;
+}
+
+export function formatTime12(iso: string | null | undefined): string {
+  if (!iso) return '--:--';
+  const date = parseLocalIso(iso);
+  if (!date) return '--:--';
+  let hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  const period = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  return `${hours}:${String(minutes).padStart(2, '0')} ${period}`;
+}
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+export function formatDayLabel(iso: string, index: number): string {
+  if (index === 0) return 'Today';
+  if (index === 1) return 'Tomorrow';
+  const date = parseLocalIso(iso);
+  if (!date) return '--';
+  return DAY_NAMES[date.getUTCDay()] ?? '--';
+}
+
+export function formatDayFull(iso: string): string {
+  const date = parseLocalIso(iso);
+  if (!date) return '';
+  const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return names[date.getUTCDay()] ?? '';
+}
+
+const COMPASS_POINTS = [
+  'N', 'NNE', 'NE', 'ENE',
+  'E', 'ESE', 'SE', 'SSE',
+  'S', 'SSW', 'SW', 'WSW',
+  'W', 'WNW', 'NW', 'NNW',
+];
+
+export function compassLabel(degrees: number | null | undefined): string {
+  if (degrees === null || degrees === undefined || Number.isNaN(degrees)) return '--';
+  const normalized = ((degrees % 360) + 360) % 360;
+  const index = Math.round(normalized / 22.5) % 16;
+  return COMPASS_POINTS[index] ?? '--';
+}
+
+export function formatDuration(hours: number, minutes: number): string {
+  return `${hours}h ${String(minutes).padStart(2, '0')}m`;
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const clean = hex.replace('#', '');
+  const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+  const num = parseInt(full, 16);
+  return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+}
+
+export function lerpColor(a: string, b: string, t: number): string {
+  const clamped = Math.min(1, Math.max(0, t));
+  const [r1, g1, b1] = hexToRgb(a);
+  const [r2, g2, b2] = hexToRgb(b);
+  const r = Math.round(r1 + (r2 - r1) * clamped);
+  const g = Math.round(g1 + (g2 - g1) * clamped);
+  const bl = Math.round(b1 + (b2 - b1) * clamped);
+  return `rgb(${r}, ${g}, ${bl})`;
+}
+
+const COLD_COLOR = '#7CC4F0';
+const HOT_COLOR = '#F5A962';
+
+export function tempColor(temp: number): string {
+  const t = (temp + 10) / 48;
+  return lerpColor(COLD_COLOR, HOT_COLOR, t);
+}
+
+export function formatVisibility(meters: number | null | undefined): string {
+  if (meters === null || meters === undefined || Number.isNaN(meters)) return '-- km';
+  return `${(meters / 1000).toFixed(meters >= 10000 ? 0 : 1)} km`;
+}
+
+export function formatPressureTrend(trend: number | null | undefined): string {
+  if (trend === null || trend === undefined || Number.isNaN(trend)) return 'Steady';
+  if (trend > 0.6) return 'Rising';
+  if (trend < -0.6) return 'Falling';
+  return 'Steady';
+}
+
+export function dewPointComfort(temp: number, dewPoint: number): string {
+  const spread = temp - dewPoint;
+  if (dewPoint < 10) return 'Dry & crisp';
+  if (spread < 2) return 'Very muggy';
+  if (spread < 5) return 'Humid';
+  return 'Comfortable';
+}
+
+export function precipIntensityLabel(prob: number, mm: number): string {
+  if (prob < 15 && mm < 0.2) return 'Dry';
+  if (mm >= 7.6 || prob >= 85) return 'Heavy';
+  if (mm >= 2.5 || prob >= 45) return 'Moderate';
+  return 'Light';
+}

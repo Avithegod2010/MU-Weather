@@ -1,0 +1,538 @@
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  Sun,
+  Sparkles,
+  Clock,
+  MapPin,
+  Wind,
+  Gauge,
+  ChevronLeft,
+  ChevronRight,
+  Vibrate,
+  Thermometer,
+  Database,
+  Info,
+  CloudSun,
+  Radar,
+} from '../utils/uiIcons';
+import { Overlay } from './Overlay';
+import { haptics } from '../utils/haptics';
+import type { AppSettings } from '../hooks/useSettings';
+import type { ProviderCheck } from '../api/providers';
+import type { AppTheme } from '../theme/palettes';
+
+interface SettingsSheetProps {
+  theme: AppTheme;
+  visible: boolean;
+  onClose: () => void;
+  settings: AppSettings;
+  onUpdate: (patch: Partial<AppSettings>) => void;
+  ready: boolean;
+  providerCheck: ProviderCheck;
+  primaryTemp: number | null;
+  lastUpdated: number | null;
+}
+
+type SheetView = 'main' | 'sources';
+
+function SoonBadge({ theme }: { theme: AppTheme }) {
+  return (
+    <View style={[styles.badge, { backgroundColor: theme.chipBg }]}>
+      <Text style={[styles.badgeText, { color: theme.textTertiary }]}>SOON</Text>
+    </View>
+  );
+}
+
+interface SegmentedOption {
+  value: string;
+  label: string;
+}
+
+function Segmented({
+  theme,
+  options,
+  value,
+  onChange,
+}: {
+  theme: AppTheme;
+  options: SegmentedOption[];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const activeColor = theme.isLight ? '#FFFFFF' : '#F4F6FA';
+  const activeText = theme.isLight ? '#1C2431' : '#1C2431';
+  return (
+    <View style={[styles.segmentWrap, { backgroundColor: theme.chipBg }]}>
+      {options.map((option) => {
+        const active = option.value === value;
+        return (
+          <Pressable
+            key={option.value}
+            onPress={() => {
+              if (!active) {
+                haptics.select();
+                onChange(option.value);
+              }
+            }}
+            style={[styles.segment, active && { backgroundColor: activeColor }]}
+          >
+            <Text
+              style={[
+                styles.segmentText,
+                { color: active ? activeText : theme.textSecondary },
+                active && { fontWeight: '700' },
+              ]}
+            >
+              {option.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function StatusChip({ theme, label, tone }: { theme: AppTheme; label: string; tone: 'active' | 'good' | 'warn' | 'off' }) {
+  const color =
+    tone === 'active' ? '#5BC98C' : tone === 'good' ? '#5BC98C' : tone === 'warn' ? '#F0964E' : '#E85F5F';
+  return (
+    <View style={[styles.statusChip, { backgroundColor: theme.chipBg }]}>
+      <View style={[styles.statusDot, { backgroundColor: color }]} />
+      <Text style={[styles.statusText, { color }]}>{label}</Text>
+    </View>
+  );
+}
+
+export function SettingsSheet({
+  theme,
+  visible,
+  onClose,
+  settings,
+  onUpdate,
+  ready,
+  providerCheck,
+  primaryTemp,
+  lastUpdated,
+}: SettingsSheetProps) {
+  const inputColor = theme.isLight ? '#1C2431' : '#FFFFFF';
+  const [view, setView] = useState<SheetView>('main');
+
+  const delta =
+    providerCheck.status === 'ok' && providerCheck.temperature !== null && primaryTemp !== null
+      ? Math.abs(providerCheck.temperature - primaryTemp)
+      : null;
+
+  const updatedLabel =
+    lastUpdated === null
+      ? 'Waiting for first sync'
+      : `Last sync ${new Date(lastUpdated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+
+  return (
+    <Overlay theme={theme} visible={visible} onClose={onClose} panelStyle="bottom">
+      <View style={styles.grabberWrap}>
+        <View style={[styles.grabber, { backgroundColor: theme.textTertiary }]} />
+      </View>
+
+      {view === 'main' ? (
+        <Text style={[styles.title, { color: inputColor }]}>Settings</Text>
+      ) : (
+        <View style={styles.titleRow}>
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              setView('main');
+            }}
+            hitSlop={8}
+            style={styles.backButton}
+          >
+            <ChevronLeft size={24} color={inputColor} strokeWidth={2.4} />
+          </Pressable>
+          <Text style={[styles.title, { color: inputColor, paddingHorizontal: 0 }]}>
+            Data sources
+          </Text>
+        </View>
+      )}
+
+      {view === 'main' ? (
+        <>
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>FEEDBACK</Text>
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Vibrate size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Haptic feedback</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Vibration on taps, toggles and alerts
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.hapticsEnabled : true}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                } else {
+                  haptics.light();
+                }
+                onUpdate({ hapticsEnabled: value });
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.hapticsEnabled ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>APPEARANCE</Text>
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sun size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Theme</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Follow the system or pick a fixed look
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'system', label: 'System' },
+                { value: 'light', label: 'Light' },
+                { value: 'dark', label: 'Dark' },
+              ]}
+              value={settings.themeMode}
+              onChange={(value) => onUpdate({ themeMode: value as AppSettings['themeMode'] })}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>App style</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Material You 3 cards or frosted Liquid Glass
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'material', label: 'Material You' },
+                { value: 'glass', label: 'Liquid Glass' },
+              ]}
+              value={settings.styleMode}
+              onChange={(value) => onUpdate({ styleMode: value as AppSettings['styleMode'] })}
+            />
+          </View>
+
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>GENERAL</Text>
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Thermometer size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Temperature units</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Switch between Celsius and Fahrenheit
+              </Text>
+            </View>
+            <SoonBadge theme={theme} />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Clock size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>24-hour clock</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Use 24-hour time across the app
+              </Text>
+            </View>
+            <SoonBadge theme={theme} />
+          </View>
+
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              setView('sources');
+            }}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Database size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Data sources</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Providers powering forecasts, radar and air quality
+              </Text>
+            </View>
+            <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
+          </Pressable>
+
+          <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+            <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+              More personalization arrives in future updates.
+            </Text>
+          </View>
+        </>
+      ) : (
+        <>
+          <Text style={[styles.intro, { color: theme.textSecondary }]}>
+            MU Weather blends multiple independent providers for the best accuracy. The primary
+            forecast is continuously cross-checked against a second national weather service.
+          </Text>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <CloudSun size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Open-Meteo Forecast</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Primary · temperature, wind, rain, UV (ECMWF · GFS · ICON models)
+              </Text>
+            </View>
+            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Radar size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>MET Norway</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Independent cross-check of the displayed temperature
+              </Text>
+              {providerCheck.status === 'ok' && delta !== null ? (
+                <Text
+                  style={[
+                    styles.deltaText,
+                    { color: delta <= 1.5 ? '#5BC98C' : '#F0964E' },
+                  ]}
+                >
+                  MET {Math.round(providerCheck.temperature ?? 0)}° vs app{' '}
+                  {Math.round(primaryTemp ?? 0)}°
+                </Text>
+              ) : null}
+            </View>
+            {providerCheck.status === 'checking' ? (
+              <StatusChip theme={theme} label="SYNCING" tone="warn" />
+            ) : providerCheck.status === 'ok' ? (
+              <StatusChip theme={theme} label={delta !== null && delta <= 1.5 ? 'MATCH' : 'DRIFT'} tone={delta !== null && delta <= 1.5 ? 'good' : 'warn'} />
+            ) : providerCheck.status === 'error' ? (
+              <StatusChip theme={theme} label="OFFLINE" tone="off" />
+            ) : (
+              <StatusChip theme={theme} label="IDLE" tone="warn" />
+            )}
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Gauge size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Open-Meteo Air Quality</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                AQI · PM2.5 · PM10 · pollen (Europe)
+              </Text>
+            </View>
+            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <MapPin size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Open-Meteo Geocoding</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Global city search & coordinates
+              </Text>
+            </View>
+            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Wind size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Windy</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Live radar & interactive weather map layers
+              </Text>
+            </View>
+            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+          </View>
+
+          <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+            <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+              {updatedLabel} · Sources: open-meteo.com · met.no · windy.com
+            </Text>
+          </View>
+        </>
+      )}
+    </Overlay>
+  );
+}
+
+const styles = StyleSheet.create({
+  grabberWrap: {
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 4,
+  },
+  grabber: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.5,
+  },
+  title: {
+    fontSize: 21,
+    fontWeight: '700',
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingTop: 4,
+  },
+  backButton: {
+    padding: 8,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.6,
+    paddingHorizontal: 24,
+    paddingTop: 14,
+    paddingBottom: 8,
+  },
+  intro: {
+    fontSize: 13,
+    lineHeight: 19,
+    paddingHorizontal: 24,
+    paddingTop: 2,
+    paddingBottom: 10,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 13,
+    borderRadius: 24,
+    borderWidth: 1,
+    paddingVertical: 13,
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
+    marginBottom: 8,
+  },
+  iconBox: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rowTexts: {
+    flex: 1,
+    gap: 2,
+  },
+  rowTitle: {
+    fontSize: 15.5,
+    fontWeight: '600',
+  },
+  rowSubtitle: {
+    fontSize: 12.5,
+    lineHeight: 17,
+  },
+  deltaText: {
+    fontSize: 11.5,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  badge: {
+    borderRadius: 999,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  segmentRow: {
+    paddingHorizontal: 16,
+    marginBottom: 10,
+  },
+  segmentWrap: {
+    flexDirection: 'row',
+    borderRadius: 999,
+    padding: 4,
+    gap: 2,
+  },
+  segment: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 9,
+    borderRadius: 999,
+  },
+  segmentText: {
+    fontSize: 12.5,
+    fontWeight: '500',
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+  },
+  statusChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderRadius: 999,
+    paddingVertical: 5,
+    paddingHorizontal: 9,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+  },
+  noteCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 22,
+    borderWidth: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
+    marginTop: 6,
+    marginBottom: 24,
+  },
+  noteText: {
+    flex: 1,
+    fontSize: 12.5,
+    lineHeight: 18,
+  },
+});
