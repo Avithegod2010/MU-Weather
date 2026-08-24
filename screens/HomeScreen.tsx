@@ -67,6 +67,7 @@ import {
 } from '../utils/uiIcons';
 import { ShareCard } from '../components/ShareCard';
 import { TrendChart } from '../components/TrendChart';
+import { ActivityCard } from '../components/ActivityCard';
 import { FEATURES } from '../config/features';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
@@ -427,6 +428,12 @@ export function HomeScreen() {
               {FEATURES.trendChart ? (
                 <Reveal delay={140}>
                   <TrendChart theme={theme} hours={weather.data.hourly} />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.activityPlanner ? (
+                <Reveal delay={160}>
+                  <ActivityCard theme={theme} data={weather.data} />
                 </Reveal>
               ) : null}
 
