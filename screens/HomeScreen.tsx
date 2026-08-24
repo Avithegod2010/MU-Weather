@@ -66,6 +66,7 @@ import {
   Sunset,
 } from '../utils/uiIcons';
 import { ShareCard } from '../components/ShareCard';
+import { TrendChart } from '../components/TrendChart';
 import { FEATURES } from '../config/features';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
@@ -422,6 +423,12 @@ export function HomeScreen() {
                 <SectionTitle theme={theme}>Daily forecast</SectionTitle>
                 <DailyForecast theme={theme} days={weather.data.daily} />
               </Reveal>
+
+              {FEATURES.trendChart ? (
+                <Reveal delay={140}>
+                  <TrendChart theme={theme} hours={weather.data.hourly} />
+                </Reveal>
+              ) : null}
 
               <Reveal delay={160}>
                 <SectionTitle theme={theme}>Details</SectionTitle>

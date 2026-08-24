@@ -4,6 +4,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { Clock, Thermometer, Umbrella, Wind } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
+import { smoothPath, scaleY } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
 import { getWeatherIcon } from '../utils/icons';
 import { formatHourLabel, formatTemp, convertWind, windUnitLabel } from '../utils/format';
@@ -20,28 +21,6 @@ const COL_WIDTH = 72;
 const CURVE_HEIGHT = 72;
 const CURVE_PADDING = 16;
 
-interface CurvePoint {
-  x: number;
-  y: number;
-}
-
-function smoothPath(points: CurvePoint[]): string {
-  if (points.length < 2) return '';
-  let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[i - 1] ?? points[i];
-    const p1 = points[i];
-    const p2 = points[i + 1];
-    const p3 = points[i + 2] ?? p2;
-    const c1x = p1.x + (p2.x - p0.x) / 6;
-    const c1y = p1.y + (p2.y - p0.y) / 6;
-    const c2x = p2.x - (p3.x - p1.x) / 6;
-    const c2y = p2.y - (p3.y - p1.y) / 6;
-    d += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
-  }
-  return d;
-}
-
 export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
   const [view, setView] = useState<HourView>('temp');
   const slice = hours.slice(0, 24);
@@ -57,10 +36,7 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
     lineColor = '#6FA8DC';
     points = slice.map((hour, index) => ({
       x: index * COL_WIDTH + COL_WIDTH / 2,
-      y:
-        CURVE_PADDING +
-        (1 - Math.min(hour.precipProbability, 100) / 100) *
-          (CURVE_HEIGHT - CURVE_PADDING * 2),
+      y: scaleY(Math.min(hour.precipProbability, 100), 0, 100, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
     }));
     formatValue = (hour) => `${Math.round(hour.precipProbability)}%`;
   } else if (view === 'wind') {
@@ -71,10 +47,7 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
     ) * 1.15;
     points = slice.map((hour, index) => ({
       x: index * COL_WIDTH + COL_WIDTH / 2,
-      y:
-        CURVE_PADDING +
-        (1 - Math.min(hour.windSpeed / maxSpeed, 1)) *
-          (CURVE_HEIGHT - CURVE_PADDING * 2),
+      y: scaleY(hour.windSpeed, 0, maxSpeed, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
     }));
     formatValue = (hour) => `${Math.round(convertWind(hour.windSpeed))}`;
   } else {
@@ -82,12 +55,9 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
     const temps = slice.map((hour) => hour.temperature);
     const min = Math.min(...temps);
     const max = Math.max(...temps);
-    const range = Math.max(max - min, 1);
     points = slice.map((hour, index) => ({
       x: index * COL_WIDTH + COL_WIDTH / 2,
-      y:
-        CURVE_PADDING +
-        (1 - (hour.temperature - min) / range) * (CURVE_HEIGHT - CURVE_PADDING * 2),
+      y: scaleY(hour.temperature, min, max, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
     }));
     formatValue = (hour) => formatTemp(hour.temperature);
   }
