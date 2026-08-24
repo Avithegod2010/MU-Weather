@@ -4,7 +4,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { Clock, Thermometer, Umbrella, Wind } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
-import { smoothPath, scaleY } from '../utils/curve';
+import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
 import { getWeatherIcon } from '../utils/icons';
 import { formatHourLabel, formatTemp, convertWind, windUnitLabel } from '../utils/format';
