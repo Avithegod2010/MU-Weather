@@ -66,6 +66,7 @@ import {
   Sunset,
 } from '../utils/uiIcons';
 import { ShareCard } from '../components/ShareCard';
+import { FEATURES } from '../config/features';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { CurrentWeather } from '../components/CurrentWeather';
@@ -116,7 +117,7 @@ export function HomeScreen() {
   const favoritesState = useFavorites();
   const weather = useWeather(active);
   const { settings, updateSettings } = useSettings();
-  const { theme, conditionLabel } = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
+  const { theme, condition, conditionLabel } = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   const alertState = useAlerts(weather.data);
   const providerStatus = useProviderStatus(
     active,
@@ -142,6 +143,21 @@ export function HomeScreen() {
     () => (settings.snarkMode && weather.data ? getSnarkComment(weather.data) : null),
     [settings.snarkMode, weather.data],
   );
+  const particles = useMemo(() => {
+    if (!FEATURES.particleOverlay || !weather.data) return null;
+    const raining = ['rain', 'showers', 'drizzle', 'thunder'].includes(condition);
+    const snowing = ['snow', 'freezing'].includes(condition);
+    if (!raining && !snowing) return null;
+    const intensity = Math.min(
+      1,
+      Math.max(
+        weather.data.current.precipitation / 2,
+        (weather.data.hourly[0]?.precipProbability ?? 0) / 100,
+        0.35,
+      ),
+    );
+    return { kind: (snowing ? 'snow' : 'rain') as 'rain' | 'snow', intensity };
+  }, [weather.data, condition]);
   const shareCardRef = useRef<View>(null);
   const [sharing, setSharing] = useState(false);
 
@@ -217,7 +233,7 @@ export function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      <AnimatedBackground gradient={theme.gradient} />
+      <AnimatedBackground gradient={theme.gradient} particles={particles} />
       <StatusBar style={theme.isLight ? 'dark' : 'light'} />
 
       {active ? (

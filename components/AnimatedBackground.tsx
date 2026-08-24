@@ -8,9 +8,11 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import { WeatherParticles, type ParticleKind } from './WeatherParticles';
 
 interface AnimatedBackgroundProps {
   gradient: readonly [string, string, string];
+  particles?: { kind: ParticleKind; intensity: number } | null;
 }
 
 type GradientTuple = [string, string, string];
@@ -19,7 +21,7 @@ function sameColors(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((color, index) => color === b[index]);
 }
 
-export function AnimatedBackground({ gradient }: AnimatedBackgroundProps) {
+export function AnimatedBackground({ gradient, particles = null }: AnimatedBackgroundProps) {
   const [layerA, setLayerA] = useState<GradientTuple>([...gradient] as GradientTuple);
   const [layerB, setLayerB] = useState<GradientTuple | null>(null);
   const frontIsA = useRef(true);
@@ -93,6 +95,7 @@ export function AnimatedBackground({ gradient }: AnimatedBackgroundProps) {
           />
         </Animated.View>
       ) : null}
+      {particles ? <WeatherParticles kind={particles.kind} intensity={particles.intensity} /> : null}
       <Animated.View style={[styles.orb, styles.orbOne, orbOneStyle]} />
       <Animated.View style={[styles.orb, styles.orbTwo, orbTwoStyle]} />
     </View>

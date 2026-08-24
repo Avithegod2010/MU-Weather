@@ -15,6 +15,16 @@
 export const FEATURES = {
   /** Device barometer card - live phone-measured pressure vs forecast */
   barometer: true,
+  /** Animated rain/snow particles drifting over the gradient background */
+  particleOverlay: true,
+  /** 48-hour multi-line trend chart (temp / dew point / wind) */
+  trendChart: true,
+  /** Activity planner scores (running, cycling, laundry, stargazing, photo) */
+  activityPlanner: true,
+  /** Calendar integration - weather for your upcoming events */
+  calendarWeather: true,
+  /** Marine forecast card - waves + sea temp (coastal locations only) */
+  marineForecast: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;
