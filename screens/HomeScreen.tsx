@@ -68,6 +68,8 @@ import {
 import { ShareCard } from '../components/ShareCard';
 import { TrendChart } from '../components/TrendChart';
 import { ActivityCard } from '../components/ActivityCard';
+import { CalendarCard } from '../components/CalendarCard';
+import { useCalendarWeather } from '../hooks/useCalendarWeather';
 import { FEATURES } from '../config/features';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
@@ -115,6 +117,7 @@ export function HomeScreen() {
   const [mapOpen, setMapOpen] = useState(false);
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [calendarEnabled, setCalendarEnabled] = useState(false);
 
   const favoritesState = useFavorites();
   const weather = useWeather(active);
@@ -129,6 +132,10 @@ export function HomeScreen() {
   const yearAgo = useYearAgo(active);
   useDigest(settings.digestEnabled, settings.digestHour, weather.data);
   useGoldenHour(settings.goldenHourEnabled, weather.data);
+  const calendarWeather = useCalendarWeather(
+    FEATURES.calendarWeather && calendarEnabled,
+    weather.data?.daily ?? [],
+  );
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -434,6 +441,16 @@ export function HomeScreen() {
               {FEATURES.activityPlanner ? (
                 <Reveal delay={160}>
                   <ActivityCard theme={theme} data={weather.data} />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.calendarWeather ? (
+                <Reveal delay={180}>
+                  <CalendarCard
+                    theme={theme}
+                    state={calendarWeather}
+                    onEnable={() => setCalendarEnabled(true)}
+                  />
                 </Reveal>
               ) : null}
 
