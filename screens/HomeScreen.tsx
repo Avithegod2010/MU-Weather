@@ -70,6 +70,8 @@ import { TrendChart } from '../components/TrendChart';
 import { ActivityCard } from '../components/ActivityCard';
 import { CalendarCard } from '../components/CalendarCard';
 import { useCalendarWeather } from '../hooks/useCalendarWeather';
+import { useMarine } from '../hooks/useMarine';
+import { MarineCard } from '../components/MarineCard';
 import { FEATURES } from '../config/features';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
@@ -136,6 +138,7 @@ export function HomeScreen() {
     FEATURES.calendarWeather && calendarEnabled,
     weather.data?.daily ?? [],
   );
+  const marine = useMarine(FEATURES.marineForecast ? active : null);
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -451,6 +454,12 @@ export function HomeScreen() {
                     state={calendarWeather}
                     onEnable={() => setCalendarEnabled(true)}
                   />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.marineForecast ? (
+                <Reveal delay={200}>
+                  <MarineCard theme={theme} state={marine} />
                 </Reveal>
               ) : null}
 

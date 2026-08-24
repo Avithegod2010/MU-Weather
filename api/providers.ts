@@ -10,6 +10,44 @@ export interface HistoricalInfo {
   weatherCode: number;
 }
 
+export interface MarineInfo {
+  waveHeight: number | null;
+  waveDirection: number | null;
+  wavePeriod: number | null;
+  seaSurfaceTemperature: number | null;
+}
+
+export async function fetchMarine(lat: number, lon: number): Promise<MarineInfo> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    current: 'wave_height,wave_direction,wave_period,sea_surface_temperature',
+    timezone: 'auto',
+  }).toString();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(`https://marine-api.open-meteo.com/v1/marine?${params}`, {
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`Marine responded ${response.status}`);
+    const json = await response.json();
+    const current = json?.current;
+    if (!current) throw new Error('No marine data');
+    const waveHeight = current.wave_height ?? null;
+    if (waveHeight === null || waveHeight === undefined) throw new Error('Inland location');
+    return {
+      waveHeight,
+      waveDirection: current.wave_direction ?? null,
+      wavePeriod: current.wave_period ?? null,
+      seaSurfaceTemperature: current.sea_surface_temperature ?? null,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function fetchYearAgo(lat: number, lon: number): Promise<HistoricalInfo> {
   const d = new Date();
   d.setFullYear(d.getFullYear() - 1);
