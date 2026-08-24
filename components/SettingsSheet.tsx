@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import {
   Sun,
   Sparkles,
@@ -155,7 +155,12 @@ export function SettingsSheet({
       )}
 
       {view === 'main' ? (
-        <>
+        <ScrollView
+          style={styles.scrollArea}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled
+        >
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>FEEDBACK</Text>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
@@ -237,12 +242,45 @@ export function SettingsSheet({
               <Thermometer size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Temperature units</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Temperature</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Switch between Celsius and Fahrenheit
+                Displayed everywhere in the app
               </Text>
             </View>
-            <SoonBadge theme={theme} />
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'celsius', label: '°C' },
+                { value: 'fahrenheit', label: '°F' },
+              ]}
+              value={settings.tempUnit}
+              onChange={(value) => onUpdate({ tempUnit: value as AppSettings['tempUnit'] })}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Wind size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Wind speed</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Compass, hourly view and alerts
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'kmh', label: 'km/h' },
+                { value: 'mph', label: 'mph' },
+              ]}
+              value={settings.windUnit}
+              onChange={(value) => onUpdate({ windUnit: value as AppSettings['windUnit'] })}
+            />
           </View>
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -250,12 +288,48 @@ export function SettingsSheet({
               <Clock size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>24-hour clock</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Clock</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Use 24-hour time across the app
+                Hourly labels and sun times
               </Text>
             </View>
-            <SoonBadge theme={theme} />
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: '12h', label: '12h' },
+                { value: '24h', label: '24h' },
+              ]}
+              value={settings.timeFormat}
+              onChange={(value) => onUpdate({ timeFormat: value as AppSettings['timeFormat'] })}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Snark mode</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Sarcastic commentary under the temperature
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.snarkMode : false}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                } else {
+                  haptics.light();
+                }
+                onUpdate({ snarkMode: value });
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.snarkMode ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
           </View>
 
           <Pressable
@@ -287,7 +361,7 @@ export function SettingsSheet({
               More personalization arrives in future updates.
             </Text>
           </View>
-        </>
+        </ScrollView>
       ) : (
         <>
           <Text style={[styles.intro, { color: theme.textSecondary }]}>
@@ -402,6 +476,12 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     opacity: 0.5,
+  },
+  scrollArea: {
+    flexGrow: 0,
+  },
+  scrollContent: {
+    paddingBottom: 8,
   },
   title: {
     fontSize: 21,

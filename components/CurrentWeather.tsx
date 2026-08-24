@@ -66,9 +66,10 @@ interface CurrentWeatherProps {
   current: CurrentConditions;
   today: DayPoint | null;
   conditionLabel: string;
+  commentary?: string | null;
 }
 
-export function CurrentWeather({ theme, location, current, today, conditionLabel }: CurrentWeatherProps) {
+export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary }: CurrentWeatherProps) {
   const Icon = getWeatherIcon(current.weatherCode, current.isDay);
 
   const floatY = useSharedValue(0);
@@ -105,6 +106,10 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
       <Text style={[styles.feelsLike, { color: theme.textSecondary }]}>
         Feels like {formatTemp(current.apparentTemperature)}
       </Text>
+
+      {commentary ? (
+        <Text style={[styles.commentary, { color: theme.textTertiary }]}>{commentary}</Text>
+      ) : null}
 
       {today ? (
         <View style={[styles.highLowChip, { backgroundColor: theme.chipBg }]}>
@@ -155,6 +160,14 @@ const styles = StyleSheet.create({
   },
   feelsLike: {
     fontSize: 14.5,
+  },
+  commentary: {
+    fontSize: 13.5,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 4,
+    marginHorizontal: 24,
+    lineHeight: 19,
   },
   highLowChip: {
     flexDirection: 'row',

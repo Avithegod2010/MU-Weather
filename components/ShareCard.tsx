@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin } from '../utils/uiIcons';
 import { getWeatherIcon } from '../utils/icons';
-import { formatTemp, formatHourLabel, compassLabel } from '../utils/format';
+import { formatTemp, formatHourLabel, compassLabel, windUnitLabel } from '../utils/format';
 import { moonPhase } from '../utils/moon';
 import type { AppTheme } from '../theme/palettes';
 import type { WeatherBundle } from '../api/types';
@@ -52,7 +52,7 @@ export function ShareCard({ theme, data, conditionLabel, cardRef }: ShareCardPro
         <View style={styles.statsRow}>
           <View style={styles.stat}>
             <Text style={styles.statValue}>{Math.round(data.current.windSpeed)}</Text>
-            <Text style={styles.statLabel}>km/h {compassLabel(data.current.windDirection)}</Text>
+            <Text style={styles.statLabel}>{windUnitLabel()} {compassLabel(data.current.windDirection)}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.stat}>

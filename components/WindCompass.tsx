@@ -6,7 +6,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { compassLabel } from '../utils/format';
+import { compassLabel, convertWind, windUnitLabel } from '../utils/format';
 import type { AppTheme } from '../theme/palettes';
 
 interface WindCompassProps {
@@ -55,12 +55,12 @@ export function WindCompass({ theme, speed, gusts, direction }: WindCompassProps
           </Svg>
         </Animated.View>
       </View>
-      <Text style={[styles.speed, { color: theme.textPrimary }]}>{Math.round(speed)}</Text>
+      <Text style={[styles.speed, { color: theme.textPrimary }]}>{Math.round(convertWind(speed))}</Text>
       <Text style={[styles.unit, { color: theme.textSecondary }]}>
-        km/h · {compassLabel(direction)}
+        {windUnitLabel()} · {compassLabel(direction)}
       </Text>
       <Text style={[styles.gusts, { color: theme.textTertiary }]}>
-        Gusts up to {Math.round(gusts)} km/h
+        Gusts up to {Math.round(convertWind(gusts))} {windUnitLabel()}
       </Text>
     </View>
   );

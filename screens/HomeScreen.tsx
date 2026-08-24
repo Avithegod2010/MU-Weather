@@ -66,6 +66,7 @@ import {
   Sunset,
 } from '../utils/uiIcons';
 import { ShareCard } from '../components/ShareCard';
+import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { CurrentWeather } from '../components/CurrentWeather';
 import { HourlyForecast } from '../components/HourlyForecast';
@@ -128,6 +129,10 @@ export function HomeScreen() {
   const highlights = useMemo(
     () => (weather.data ? computeHighlights(weather.data, nowcast) : []),
     [weather.data, nowcast],
+  );
+  const commentary = useMemo(
+    () => (settings.snarkMode && weather.data ? getSnarkComment(weather.data) : null),
+    [settings.snarkMode, weather.data],
   );
   const shareCardRef = useRef<View>(null);
   const [sharing, setSharing] = useState(false);
@@ -363,6 +368,7 @@ export function HomeScreen() {
                   current={weather.data.current}
                   today={weather.data.daily[0] ?? null}
                   conditionLabel={conditionLabel}
+                  commentary={commentary}
                 />
               </Reveal>
 

@@ -1,4 +1,4 @@
-import { formatTemp } from './format';
+import { formatTemp, convertWind, windUnitLabel } from './format';
 import { describeWmo } from './wmo';
 import { computeNowcast } from './nowcast';
 import type { Nowcast } from './nowcast';
@@ -66,7 +66,7 @@ export function computeHighlights(data: WeatherBundle, nowcast: Nowcast): Highli
   }
 
   if (data.current.windGusts >= 40) {
-    highlights.push({ icon: 'wind', text: `Gusty conditions — gusts reaching ${Math.round(data.current.windGusts)} km/h` });
+    highlights.push({ icon: 'wind', text: `Gusty conditions — gusts reaching ${Math.round(convertWind(data.current.windGusts))} ${windUnitLabel()}` });
   }
 
   if (today && today.uvIndexMax >= 6) {

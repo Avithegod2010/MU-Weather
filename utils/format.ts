@@ -1,6 +1,35 @@
+export type TempUnit = 'celsius' | 'fahrenheit';
+export type WindUnit = 'kmh' | 'mph';
+export type TimeFormat = '12h' | '24h';
+
+interface UnitState {
+  temp: TempUnit;
+  wind: WindUnit;
+  time: TimeFormat;
+}
+
+let unitState: UnitState = { temp: 'celsius', wind: 'kmh', time: '12h' };
+
+export function setUnits(next: Partial<UnitState>): void {
+  unitState = { ...unitState, ...next };
+}
+
+export function getUnits(): UnitState {
+  return unitState;
+}
+
 export function formatTemp(value: number | null | undefined): string {
   if (value === null || value === undefined || Number.isNaN(value)) return '--°';
-  return `${Math.round(value)}°`;
+  const celsius = unitState.temp === 'celsius' ? value : value * (9 / 5) + 32;
+  return `${Math.round(celsius)}°`;
+}
+
+export function convertWind(value: number): number {
+  return unitState.wind === 'mph' ? value * 0.621371 : value;
+}
+
+export function windUnitLabel(): string {
+  return unitState.wind === 'mph' ? 'mph' : 'km/h';
 }
 
 function parseLocalIso(iso: string): Date | null {
@@ -15,26 +44,27 @@ export function localIsoToEpoch(iso: string): number {
   return parsed ? parsed.getTime() : NaN;
 }
 
+function formatClockParts(hours: number, minutes: number): string {
+  if (unitState.time === '24h') {
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  }
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const h12 = hours % 12 || 12;
+  return minutes > 0 ? `${h12}:${String(minutes).padStart(2, '0')} ${period}` : `${h12} ${period}`;
+}
+
 export function formatHourLabel(iso: string, isNow: boolean): string {
   if (isNow) return 'Now';
   const date = parseLocalIso(iso);
   if (!date) return '--';
-  let hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  const period = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12;
-  return minutes > 0 ? `${hours}:${String(minutes).padStart(2, '0')} ${period}` : `${hours} ${period}`;
+  return formatClockParts(date.getUTCHours(), date.getUTCMinutes());
 }
 
 export function formatTime12(iso: string | null | undefined): string {
   if (!iso) return '--:--';
   const date = parseLocalIso(iso);
   if (!date) return '--:--';
-  let hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  const period = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12;
-  return `${hours}:${String(minutes).padStart(2, '0')} ${period}`;
+  return formatClockParts(date.getUTCHours(), date.getUTCMinutes());
 }
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

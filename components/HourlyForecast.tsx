@@ -6,7 +6,7 @@ import { Card } from './Card';
 import { haptics } from '../utils/haptics';
 import type { AppTheme } from '../theme/palettes';
 import { getWeatherIcon } from '../utils/icons';
-import { formatHourLabel, formatTemp } from '../utils/format';
+import { formatHourLabel, formatTemp, convertWind, windUnitLabel } from '../utils/format';
 import type { HourPoint } from '../api/types';
 
 interface HourlyForecastProps {
@@ -76,7 +76,7 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
         (1 - Math.min(hour.windSpeed / maxSpeed, 1)) *
           (CURVE_HEIGHT - CURVE_PADDING * 2),
     }));
-    formatValue = (hour) => `${Math.round(hour.windSpeed)}`;
+    formatValue = (hour) => `${Math.round(convertWind(hour.windSpeed))}`;
   } else {
     lineColor = theme.isLight ? 'rgba(28,36,49,0.32)' : 'rgba(255,255,255,0.42)';
     const temps = slice.map((hour) => hour.temperature);
@@ -214,7 +214,7 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
           ? 'Temperature · next 24 hours'
           : view === 'rain'
             ? 'Chance of precipitation · next 24 hours'
-            : 'Sustained wind speed in km/h · next 24 hours'}
+            : `Sustained wind speed in ${windUnitLabel()} · next 24 hours`}
       </Text>
     </Card>
   );

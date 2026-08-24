@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setHapticsEnabled } from '../utils/haptics';
+import { setUnits } from '../utils/format';
+import type { TempUnit, WindUnit, TimeFormat } from '../utils/format';
 import type { StyleMode, ThemeMode } from '../theme/palettes';
 
 const SETTINGS_KEY = '@mu_weather/settings_v1';
@@ -9,13 +11,30 @@ export interface AppSettings {
   hapticsEnabled: boolean;
   themeMode: ThemeMode;
   styleMode: StyleMode;
+  tempUnit: TempUnit;
+  windUnit: WindUnit;
+  timeFormat: TimeFormat;
+  snarkMode: boolean;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   hapticsEnabled: true,
   themeMode: 'system',
   styleMode: 'material',
+  tempUnit: 'celsius',
+  windUnit: 'kmh',
+  timeFormat: '12h',
+  snarkMode: false,
 };
+
+function applySideEffects(settings: AppSettings): void {
+  setHapticsEnabled(settings.hapticsEnabled);
+  setUnits({
+    temp: settings.tempUnit,
+    wind: settings.windUnit,
+    time: settings.timeFormat,
+  });
+}
 
 export function useSettings() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
@@ -31,7 +50,7 @@ export function useSettings() {
           if (parsed && typeof parsed === 'object') {
             const merged = { ...DEFAULT_SETTINGS, ...parsed };
             setSettings(merged);
-            setHapticsEnabled(merged.hapticsEnabled);
+            applySideEffects(merged);
           }
         }
       } catch {
@@ -49,11 +68,9 @@ export function useSettings() {
     setSettings((previous) => {
       const next = { ...previous, ...patch };
       void AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(next)).catch(() => {});
+      applySideEffects(next);
       return next;
     });
-    if (patch.hapticsEnabled !== undefined) {
-      setHapticsEnabled(patch.hapticsEnabled);
-    }
   }, []);
 
   return { settings, updateSettings, ready };

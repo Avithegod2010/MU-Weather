@@ -1,5 +1,5 @@
 import { describeWmo } from './wmo';
-import { formatHourLabel } from './format';
+import { formatHourLabel, convertWind, windUnitLabel } from './format';
 import type { AqiInfo, CurrentConditions, DayPoint, HourPoint } from '../api/types';
 
 export type AlertKey =
@@ -159,7 +159,7 @@ export function evaluateAlerts(
     triggered.push({
       key: 'wind',
       title: 'Strong wind warning',
-      message: `Winds up to ${Math.round(Math.max(current.windGusts, current.windSpeed))} km/h. Secure loose objects outdoors.`,
+      message: `Winds up to ${Math.round(convertWind(Math.max(current.windGusts, current.windSpeed)))} ${windUnitLabel()}. Secure loose objects outdoors.`,
       severity: current.windGusts >= 65 ? 'severe' : 'warning',
     });
   }
