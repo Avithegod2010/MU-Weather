@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from '../utils/notifications';
 import type { WeatherBundle } from '../api/types';
 import {
   DEFAULT_ALERT_SETTINGS,

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { F } from '../theme/typography';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from '../utils/notifications';
 import {
   Sun,
   Sparkles,

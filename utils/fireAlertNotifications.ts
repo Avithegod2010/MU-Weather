@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from './notifications';
 import { evaluateAlerts } from './alertRules';
 import type { AlertSettings, TriggeredAlert } from './alertRules';
 import type { WeatherBundle } from '../api/types';

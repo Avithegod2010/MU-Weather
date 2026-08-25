@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from '../utils/notifications';
 import { describeWmo } from '../utils/wmo';
 import { uvBand } from '../utils/aqi';
 import type { WeatherBundle } from '../api/types';

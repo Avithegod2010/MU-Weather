@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from '../utils/notifications';
 import { findGoldenBlueHours } from '../utils/sunCalc';
 import { wasNotifiedToday, markNotifiedToday } from './useDigest';
 import type { WeatherBundle } from '../api/types';
