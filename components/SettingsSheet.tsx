@@ -19,6 +19,7 @@ import {
   CloudSun,
   Radar,
   Bell,
+  RefreshCw,
 } from '../utils/uiIcons';
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
@@ -248,6 +249,32 @@ export function SettingsSheet({
           </View>
 
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>NOTIFICATIONS</Text>
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <RefreshCw size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Background alerts</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Check alerts even when the app is closed
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.backgroundAlerts : true}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                } else {
+                  haptics.light();
+                }
+                onUpdate({ backgroundAlerts: value });
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.backgroundAlerts ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Bell size={20} color={theme.textPrimary} strokeWidth={2} />

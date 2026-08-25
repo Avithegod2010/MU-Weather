@@ -10,6 +10,7 @@ import {
   Outfit_700Bold,
 } from './utils/fonts';
 import { HomeScreen } from './screens/HomeScreen';
+import './tasks/backgroundAlertTask';
 
 export default function App() {
   const [fontsLoaded] = useFonts({

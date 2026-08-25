@@ -126,7 +126,7 @@ export function HomeScreen() {
   const weather = useWeather(active);
   const { settings, updateSettings } = useSettings();
   const { theme, condition, conditionLabel } = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
-  const alertState = useAlerts(weather.data);
+  const alertState = useAlerts(weather.data, FEATURES.backgroundAlerts && settings.backgroundAlerts);
   const providerStatus = useProviderStatus(
     active,
     weather.data?.current.temperature ?? null,

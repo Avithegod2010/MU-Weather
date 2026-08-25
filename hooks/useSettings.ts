@@ -18,6 +18,7 @@ export interface AppSettings {
   digestEnabled: boolean;
   digestHour: number;
   goldenHourEnabled: boolean;
+  backgroundAlerts: boolean;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -31,6 +32,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   digestEnabled: false,
   digestHour: 8,
   goldenHourEnabled: false,
+  backgroundAlerts: true,
 };
 
 function applySideEffects(settings: AppSettings): void {

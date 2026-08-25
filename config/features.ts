@@ -25,6 +25,8 @@ export const FEATURES = {
   calendarWeather: true,
   /** Marine forecast card - waves + sea temp (coastal locations only) */
   marineForecast: true,
+  /** Background alert monitoring - periodic checks with app closed */
+  backgroundAlerts: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

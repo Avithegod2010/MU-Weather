@@ -37,7 +37,8 @@
           "calendarPermission": "MU Weather shows the forecast for your upcoming events.",
           "calendarWritePermission": "MU Weather shows the forecast for your upcoming events."
         }
-      ]
+      ],
+      "expo-background-task"
     ]
   }
 }
