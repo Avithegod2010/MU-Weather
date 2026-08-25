@@ -63,6 +63,7 @@ interface FavoritesSheetProps {
   favorites: GeoLocation[];
   onRemove: (id: string) => void;
   ready: boolean;
+  onCompare: () => void;
 }
 
 export function FavoritesSheet({
@@ -73,6 +74,7 @@ export function FavoritesSheet({
   favorites,
   onRemove,
   ready,
+  onCompare,
 }: FavoritesSheetProps) {
   const inputColor = theme.isLight ? '#1C2431' : '#FFFFFF';
 
@@ -81,7 +83,26 @@ export function FavoritesSheet({
       <View style={styles.grabberWrap}>
         <View style={[styles.grabber, { backgroundColor: theme.textTertiary }]} />
       </View>
-      <Text style={[styles.title, { color: inputColor }]}>Saved cities</Text>
+      <View style={styles.titleRow}>
+        <Text style={[styles.title, { color: inputColor, flex: 1 }]}>Saved cities</Text>
+        {ready && favorites.length >= 2 ? (
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              onCompare();
+            }}
+            style={({ pressed }) => [
+              styles.compareButton,
+              { backgroundColor: theme.chipBg },
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <Text style={[styles.compareButtonText, { color: theme.textPrimary }]}>
+              Compare
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
 
       {!ready ? null : favorites.length === 0 ? (
         <ErrorState
@@ -157,6 +178,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 8,
     paddingBottom: 12,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 16,
+  },
+  compareButton: {
+    borderRadius: 999,
+    paddingVertical: 9,
+    paddingHorizontal: 16,
+  },
+  compareButtonText: {
+    fontSize: 13.5,
+    fontFamily: F.semibold,
   },
   listContent: {
     paddingBottom: 36,

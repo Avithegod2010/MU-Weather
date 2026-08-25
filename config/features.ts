@@ -27,6 +27,8 @@ export const FEATURES = {
   marineForecast: true,
   /** Background alert monitoring - periodic checks with app closed */
   backgroundAlerts: true,
+  /** City comparison screen - favorites side by side */
+  cityComparison: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

@@ -94,6 +94,8 @@ import { FavoritesSheet } from '../components/FavoritesSheet';
 import { SectionTitle } from '../components/SectionTitle';
 import { Card } from '../components/Card';
 import { MapScreen } from './MapScreen';
+import { CompareScreen } from './CompareScreen';
+import { useCityComparison } from '../hooks/useCityComparison';
 import { AlertsScreen } from './AlertsScreen';
 import { useAlerts } from '../hooks/useAlerts';
 import { useSettings } from '../hooks/useSettings';
@@ -121,6 +123,7 @@ export function HomeScreen() {
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [calendarEnabled, setCalendarEnabled] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
 
   const favoritesState = useFavorites();
   const weather = useWeather(active);
@@ -140,6 +143,10 @@ export function HomeScreen() {
     weather.data?.daily ?? [],
   );
   const marine = useMarine(FEATURES.marineForecast ? active : null);
+  const comparison = useCityComparison(
+    FEATURES.cityComparison ? favoritesState.favorites : [],
+    compareOpen,
+  );
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -593,6 +600,18 @@ export function HomeScreen() {
         favorites={favoritesState.favorites}
         onRemove={favoritesState.removeFavorite}
         ready={favoritesState.ready}
+        onCompare={() => {
+          setFavoritesOpen(false);
+          setCompareOpen(true);
+        }}
+      />
+
+      <CompareScreen
+        theme={theme}
+        visible={compareOpen}
+        onClose={() => setCompareOpen(false)}
+        entries={comparison.results}
+        status={comparison.status}
       />
     </View>
   );
