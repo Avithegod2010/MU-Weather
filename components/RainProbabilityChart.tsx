@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { AppTheme } from '../theme/palettes';
 import type { HourPoint } from '../api/types';
 import { formatHourLabel } from '../utils/format';
+import { F } from '../theme/typography';
 
 interface RainProbabilityChartProps {
   theme: AppTheme;
@@ -105,7 +106,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: -50,
     fontSize: 11.5,
-    width: 44,
+    width: 44,    fontFamily: F.regular,
+
     textAlign: 'right',
   },
   barsRow: {
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
   peakText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: F.bold,
   },
   peakSpacer: {
     height: 26,
@@ -150,10 +152,11 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontSize: 11.5,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   caption: {
     fontSize: 11.5,
-    marginTop: 8,
+    marginTop: 8,    fontFamily: F.regular,
+
   },
 });

@@ -30,7 +30,14 @@
           "locationWhenInUsePermission": "MU Weather uses your location to show local weather conditions."
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "MU Weather shows the forecast for your upcoming events.",
+          "calendarWritePermission": "MU Weather shows the forecast for your upcoming events."
+        }
+      ]
     ]
   }
 }

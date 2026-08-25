@@ -71,17 +71,18 @@ export function useAlerts(data: WeatherBundle | null) {
   }, []);
 
   const toggleAlert = useCallback(async (key: AlertKey) => {
-    setSettings((previous) => {
-      const next = { ...previous, [key]: !previous[key] };
-      void AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(next)).catch(() => {});
-      return next;
-    });
+    setSettings((previous) => ({ ...previous, [key]: !previous[key] }));
     const { status } = await Notifications.getPermissionsAsync();
     if (status !== 'granted') {
       await ensureChannel();
       await Notifications.requestPermissionsAsync();
     }
   }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    void AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)).catch(() => {});
+  }, [settings, ready]);
 
   useEffect(() => {
     if (!data || !ready) {

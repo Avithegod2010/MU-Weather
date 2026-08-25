@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { Gauge } from '../utils/uiIcons';
 import { Card } from './Card';
@@ -72,16 +73,16 @@ const styles = StyleSheet.create({
   },
   bigValue: {
     fontSize: 40,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     includeFontPadding: false,
   },
   unitText: {
     fontSize: 17,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   bandLabel: {
     fontSize: 13.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     marginTop: -4,
   },
   caption: {

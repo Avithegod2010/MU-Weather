@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CalendarDays, ChevronRight } from '../utils/uiIcons';
 import { getWeatherIcon } from '../utils/icons';
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 13.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   row: {
     flexDirection: 'row',
@@ -122,13 +123,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   subtitle: {
     fontSize: 12,
   },
   temps: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
 });

@@ -6,6 +6,7 @@ import { haptics } from '../utils/haptics';
 import type { AppTheme } from '../theme/palettes';
 import { getWeatherIcon } from '../utils/icons';
 import { formatDayLabel, formatTemp, tempColor } from '../utils/format';
+import { F } from '../theme/typography';
 import type { DayPoint } from '../api/types';
 
 interface DailyForecastProps {
@@ -43,7 +44,7 @@ export function DailyForecast({ theme, days }: DailyForecastProps) {
               },
             ]}
           >
-            <Text style={[styles.dayLabel, { color: theme.textPrimary }, index === 0 && { fontWeight: '700' }]}>
+            <Text style={[styles.dayLabel, { color: theme.textPrimary }, index === 0 && { fontFamily: F.bold }]}>
               {formatDayLabel(day.date, index)}
             </Text>
             <Icon size={22} color={theme.textPrimary} strokeWidth={1.7} />
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
   },
   dayLabel: {
     fontSize: 15,
-    fontWeight: '500',
+    fontFamily: F.medium,
     width: 82,
   },
   precipRow: {
@@ -129,14 +130,15 @@ const styles = StyleSheet.create({
   },
   precipText: {
     fontSize: 11.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   precipPlaceholder: {
     width: 44,
   },
   tempMin: {
     fontSize: 15,
-    width: 38,
+    width: 38,    fontFamily: F.regular,
+
     textAlign: 'right',
   },
   barTrack: {
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
   },
   tempMax: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     width: 38,
     textAlign: 'right',
   },
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
   },
   expandText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   chevronUp: {
     transform: [{ rotate: '180deg' }],

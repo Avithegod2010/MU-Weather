@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { F } from '../theme/typography';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
 import * as Notifications from 'expo-notifications';
@@ -48,14 +49,6 @@ async function ensureNotificationPermission(): Promise<boolean> {
 
 type SheetView = 'main' | 'sources';
 
-function SoonBadge({ theme }: { theme: AppTheme }) {
-  return (
-    <View style={[styles.badge, { backgroundColor: theme.chipBg }]}>
-      <Text style={[styles.badgeText, { color: theme.textTertiary }]}>SOON</Text>
-    </View>
-  );
-}
-
 interface SegmentedOption {
   value: string;
   label: string;
@@ -93,7 +86,7 @@ function Segmented({
               style={[
                 styles.segmentText,
                 { color: active ? activeText : theme.textSecondary },
-                active && { fontWeight: '700' },
+                active && { fontFamily: F.bold },
               ]}
             >
               {option.label}
@@ -600,7 +593,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 21,
-    fontWeight: '700',
+    fontFamily: F.bold,
     paddingHorizontal: 24,
     paddingTop: 8,
     paddingBottom: 4,
@@ -617,7 +610,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 1.6,
     paddingHorizontal: 24,
     paddingTop: 14,
@@ -654,7 +647,7 @@ const styles = StyleSheet.create({
   },
   rowTitle: {
     fontSize: 15.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   rowSubtitle: {
     fontSize: 12.5,
@@ -662,7 +655,7 @@ const styles = StyleSheet.create({
   },
   deltaText: {
     fontSize: 11.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     marginTop: 2,
   },
   sparkRow: {
@@ -698,11 +691,11 @@ const styles = StyleSheet.create({
   },
   segmentText: {
     fontSize: 12.5,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   badgeText: {
     fontSize: 10,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 1.2,
   },
   statusChip: {
@@ -720,7 +713,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 10,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 0.8,
   },
   noteCard: {

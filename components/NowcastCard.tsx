@@ -6,6 +6,7 @@ import type { AppTheme } from '../theme/palettes';
 import type { Nowcast } from '../utils/nowcast';
 import type { MinutelyPoint } from '../api/types';
 import { formatHourLabel } from '../utils/format';
+import { F } from '../theme/typography';
 
 interface NowcastCardProps {
   theme: AppTheme;
@@ -50,7 +51,7 @@ export function NowcastCard({ theme, minutely, nowcast }: NowcastCardProps) {
 const styles = StyleSheet.create({
   headline: {
     fontSize: 16.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     marginBottom: 14,
   },
   barsRow: {
@@ -71,10 +72,11 @@ const styles = StyleSheet.create({
   },
   timeLabel: {
     fontSize: 10.5,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   caption: {
     fontSize: 11.5,
-    marginTop: 10,
+    marginTop: 10,    fontFamily: F.regular,
+
   },
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { AppTheme } from '../theme/palettes';
+import { F } from '../theme/typography';
 
 interface SectionTitleProps {
   theme: AppTheme;
@@ -16,7 +17,7 @@ export function SectionTitle({ theme, children }: SectionTitleProps) {
 const styles = StyleSheet.create({
   title: {
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 1.6,
     textTransform: 'uppercase',
     marginBottom: 10,

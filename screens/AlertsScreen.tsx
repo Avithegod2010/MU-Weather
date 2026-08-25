@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { F } from '../theme/typography';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: -0.5,
   },
   backButton: {
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
   },
   rowTitle: {
     fontSize: 15.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   rowSubtitle: {
     fontSize: 12.5,

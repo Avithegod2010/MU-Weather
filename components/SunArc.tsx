@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import {
@@ -159,12 +160,12 @@ const styles = StyleSheet.create({
   },
   timeLabelText: {
     fontSize: 10,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 1.2,
   },
   timeValue: {
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   daylight: {
     fontSize: 12.5,

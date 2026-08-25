@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { usAqiBand, usAqiFraction } from '../utils/aqi';
 import type { AppTheme } from '../theme/palettes';
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 40,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     includeFontPadding: false,
   },
   bandChip: {
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   },
   bandText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   segmentTrack: {
     flexDirection: 'row',
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   },
   pollutantValue: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   pollutantLabel: {
     fontSize: 10,

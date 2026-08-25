@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import Animated, {
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   cardinal: {
     position: 'absolute',
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: F.bold,
   },
   north: { top: -2, left: 0, right: 0, textAlign: 'center' },
   south: { bottom: -2, left: 0, right: 0, textAlign: 'center' },
@@ -94,12 +95,12 @@ const styles = StyleSheet.create({
   },
   speed: {
     fontSize: 34,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     includeFontPadding: false,
   },
   unit: {
     fontSize: 13.5,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   gusts: {
     fontSize: 12,

@@ -8,6 +8,7 @@ import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
 import { getWeatherIcon } from '../utils/icons';
 import { formatHourLabel, formatTemp, convertWind, windUnitLabel } from '../utils/format';
+import { F } from '../theme/typography';
 import type { HourPoint } from '../api/types';
 
 interface HourlyForecastProps {
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   curveWrap: {
     overflow: 'hidden',
@@ -213,11 +214,12 @@ const styles = StyleSheet.create({
   },
   temp: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   caption: {
     fontSize: 11.5,
-    marginTop: 10,
+    marginTop: 10,    fontFamily: F.regular,
+
   },
   toggleWrap: {
     flexDirection: 'row',

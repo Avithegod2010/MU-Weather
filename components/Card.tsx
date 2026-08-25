@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-na
 import { BlurView } from 'expo-blur';
 import type { LucideIcon } from 'lucide-react-native';
 import type { AppTheme } from '../theme/palettes';
+import { F } from '../theme/typography';
 import { Reveal } from './Reveal';
 
 interface CardProps {
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     letterSpacing: 1.4,
     textTransform: 'uppercase',
   },

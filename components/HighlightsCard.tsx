@@ -16,6 +16,7 @@ import type { LucideIcon } from 'lucide-react-native';
 import { Card } from './Card';
 import type { AppTheme } from '../theme/palettes';
 import type { Highlight, HighlightIcon } from '../utils/highlights';
+import { F } from '../theme/typography';
 
 interface HighlightsCardProps {
   theme: AppTheme;
@@ -76,6 +77,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13.5,
     lineHeight: 19,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
 });

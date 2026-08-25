@@ -54,9 +54,7 @@ export function useSettings() {
         if (!cancelled && raw) {
           const parsed = JSON.parse(raw);
           if (parsed && typeof parsed === 'object') {
-            const merged = { ...DEFAULT_SETTINGS, ...parsed };
-            setSettings(merged);
-            applySideEffects(merged);
+            setSettings({ ...DEFAULT_SETTINGS, ...parsed });
           }
         }
       } catch {
@@ -71,13 +69,14 @@ export function useSettings() {
   }, []);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
-    setSettings((previous) => {
-      const next = { ...previous, ...patch };
-      void AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(next)).catch(() => {});
-      applySideEffects(next);
-      return next;
-    });
+    setSettings((previous) => ({ ...previous, ...patch }));
   }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    applySideEffects(settings);
+    void AsyncStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)).catch(() => {});
+  }, [settings, ready]);
 
   return { settings, updateSettings, ready };
 }

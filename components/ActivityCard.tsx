@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { Footprints, Bike, Shirt, Moon, Camera } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
@@ -89,11 +90,11 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   verdict: {
     fontSize: 12.5,
-    fontWeight: '700',
+    fontFamily: F.bold,
   },
   track: {
     height: 5,

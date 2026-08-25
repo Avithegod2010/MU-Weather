@@ -58,6 +58,7 @@ import {
 import type { AppTheme } from '../theme/palettes';
 import { getWeatherIcon } from '../utils/icons';
 import { formatTemp } from '../utils/format';
+import { F } from '../theme/typography';
 import type { CurrentConditions, DayPoint, GeoLocation } from '../api/types';
 
 interface CurrentWeatherProps {
@@ -117,7 +118,7 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
           <Text style={[styles.highLowText, { color: theme.textPrimary }]}>
             {formatTemp(today.tMax)}
           </Text>
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: theme.trackColor }]} />
           <ArrowDown size={13} color={theme.textSecondary} strokeWidth={2.6} />
           <Text style={[styles.highLowText, { color: theme.textSecondary }]}>
             {formatTemp(today.tMin)}
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     letterSpacing: 0.2,
   },
   iconWrap: {
@@ -150,19 +151,21 @@ const styles = StyleSheet.create({
   },
   temperature: {
     fontSize: 96,
-    fontWeight: '300',
+    fontFamily: F.light,
     letterSpacing: -3,
     includeFontPadding: false,
   },
   conditionText: {
     fontSize: 19,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   feelsLike: {
     fontSize: 14.5,
+    fontFamily: F.regular,
   },
   commentary: {
     fontSize: 13.5,
+    fontFamily: F.regular,
     fontStyle: 'italic',
     textAlign: 'center',
     marginTop: 4,
@@ -180,12 +183,11 @@ const styles = StyleSheet.create({
   },
   highLowText: {
     fontSize: 14.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   divider: {
     width: 1,
     height: 14,
     marginHorizontal: 5,
-    backgroundColor: 'rgba(255,255,255,0.25)',
   },
 });

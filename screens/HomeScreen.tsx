@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { F } from '../theme/typography';
 import {
   ActivityIndicator,
   Pressable,
@@ -629,7 +630,7 @@ const styles = StyleSheet.create({
   locationButtonText: {
     flex: 1,
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   headerActions: {
     flexDirection: 'row',
@@ -659,7 +660,7 @@ const styles = StyleSheet.create({
   noticeText: {
     flex: 1,
     fontSize: 13,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   alertsStack: {
     gap: 8,
@@ -680,7 +681,7 @@ const styles = StyleSheet.create({
   alertTitle: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: F.bold,
   },
   alertMessage: {
     color: 'rgba(255,255,255,0.85)',
@@ -708,7 +709,7 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 13.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   noLocation: {
     flex: 1,
@@ -726,6 +727,6 @@ const styles = StyleSheet.create({
   },
   pickButtonText: {
     fontSize: 15.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
 });

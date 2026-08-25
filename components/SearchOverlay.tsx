@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import {
   ActivityIndicator,
   FlatList,
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
   },
   rowTitle: {
     fontSize: 15.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   rowSubtitle: {
     fontSize: 13,
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 11,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 1.6,
     paddingHorizontal: 14,
     marginBottom: 6,

@@ -48,6 +48,7 @@ import {
   Sunset,
 } from '../utils/uiIcons';
 import type { AppTheme } from '../theme/palettes';
+import { F } from '../theme/typography';
 
 interface ErrorStateProps {
   theme: AppTheme;
@@ -113,11 +114,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     textAlign: 'center',
   },
   message: {
     fontSize: 14.5,
+    fontFamily: F.regular,
     lineHeight: 21,
     textAlign: 'center',
   },
@@ -132,6 +134,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
 });

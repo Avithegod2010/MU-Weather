@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import {
   Sun,
@@ -400,16 +401,16 @@ const styles = StyleSheet.create({
   },
   bigValue: {
     fontSize: 40,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     includeFontPadding: false,
   },
   unitText: {
     fontSize: 17,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   bandLabel: {
     fontSize: 13.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     marginTop: -4,
   },
   uvTrack: {
@@ -435,14 +436,14 @@ const styles = StyleSheet.create({
   },
   sunExtraLabel: {
     fontSize: 10,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 1.2,
     width: 52,
   },
   sunExtraValue: {
     flex: 1,
     fontSize: 12.5,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   daylightDelta: {
     fontSize: 12,
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
   },
   pollenValue: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     width: 26,
     textAlign: 'right',
   },

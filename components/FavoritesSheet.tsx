@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   Sun,
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 21,
-    fontWeight: '700',
+    fontFamily: F.bold,
     paddingHorizontal: 24,
     paddingTop: 8,
     paddingBottom: 12,
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
   },
   rowTitle: {
     fontSize: 15.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   rowSubtitle: {
     fontSize: 13,

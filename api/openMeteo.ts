@@ -39,7 +39,7 @@ async function fetchJson<T>(url: string, timeoutMs = 15000): Promise<T> {
     const isAbort = error instanceof Error && error.name === 'AbortError';
     throw new ApiError(
       isAbort ? 'The request timed out.' : 'No internet connection.',
-      isAbort ? 'network' : 'network',
+      'network',
     );
   }
   clearTimeout(timer);

@@ -5,6 +5,7 @@ import { TrendingUp } from '../utils/uiIcons';
 import { Card } from './Card';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import { formatHourLabel, formatTemp, convertWind, windUnitLabel } from '../utils/format';
+import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
 import type { HourPoint } from '../api/types';
 
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 11.5,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   timeRow: {
     height: 18,
@@ -122,10 +123,11 @@ const styles = StyleSheet.create({
   timeLabel: {
     position: 'absolute',
     fontSize: 10.5,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   caption: {
     fontSize: 11.5,
-    marginTop: 8,
+    marginTop: 8,    fontFamily: F.regular,
+
   },
 });

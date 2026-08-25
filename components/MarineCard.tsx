@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { Sailboat } from '../utils/uiIcons';
 import { Card } from './Card';
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 21,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     includeFontPadding: false,
   },
   statLabel: {

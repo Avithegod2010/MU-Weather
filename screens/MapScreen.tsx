@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { F } from '../theme/typography';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -196,12 +197,12 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: 2.2,
   },
   cityName: {
     fontSize: 34,
-    fontWeight: '700',
+    fontFamily: F.bold,
     letterSpacing: -0.5,
   },
   backButton: {
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
   },
   chipLabel: {
     fontSize: 12.5,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   mapWrap: {
     flex: 1,

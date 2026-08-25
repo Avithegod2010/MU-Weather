@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { F } from '../theme/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Zap } from '../utils/uiIcons';
 import { Card } from './Card';
@@ -126,12 +127,12 @@ const styles = StyleSheet.create({
   },
   distance: {
     fontSize: 40,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     includeFontPadding: false,
   },
   listening: {
     fontSize: 34,
-    fontWeight: '600',
+    fontFamily: F.semibold,
     includeFontPadding: false,
     fontVariant: ['tabular-nums'],
   },
@@ -152,6 +153,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 13.5,
-    fontWeight: '700',
+    fontFamily: F.bold,
   },
 });

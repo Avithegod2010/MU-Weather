@@ -1,4 +1,5 @@
 import React from 'react';
+import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin } from '../utils/uiIcons';
@@ -112,19 +113,19 @@ const styles = StyleSheet.create({
   city: {
     color: '#FFFFFF',
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   temperature: {
     color: '#FFFFFF',
     fontSize: 84,
-    fontWeight: '300',
+    fontFamily: F.light,
     letterSpacing: -2,
     includeFontPadding: false,
   },
   condition: {
     color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: '500',
+    fontFamily: F.medium,
   },
   feels: {
     color: 'rgba(255,255,255,0.75)',
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
   highLowText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   statsRow: {
     flexDirection: 'row',
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
   statValue: {
     color: '#FFFFFF',
     fontSize: 20,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   statLabel: {
     color: 'rgba(255,255,255,0.7)',
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
   hourTemp: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: F.semibold,
   },
   credit: {
     color: 'rgba(255,255,255,0.55)',
