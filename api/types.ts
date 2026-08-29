@@ -28,6 +28,7 @@ export interface CurrentConditions {
 export interface HourPoint {
   time: string;
   temperature: number;
+  apparent: number;
   weatherCode: number;
   precipProbability: number;
   precipitation: number;
@@ -127,6 +128,7 @@ export interface ForecastResponse {
   hourly: {
     time: string[];
     temperature_2m: number[];
+    apparent_temperature: Array<number | null>;
     weather_code: number[];
     precipitation: Array<number | null>;
     precipitation_probability: Array<number | null>;

@@ -76,6 +76,7 @@ function mapHourPoint(
   return {
     time: hourly.time[index],
     temperature: hourly.temperature_2m[index] ?? 0,
+    apparent: hourly.apparent_temperature?.[index] ?? hourly.temperature_2m[index] ?? 0,
     weatherCode: hourly.weather_code[index] ?? 3,
     precipProbability: hourly.precipitation_probability?.[index] ?? 0,
     precipitation: hourly.precipitation?.[index] ?? 0,
@@ -196,7 +197,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
       'temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,' +
       'weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
     hourly:
-      'temperature_2m,weather_code,precipitation_probability,precipitation,is_day,' +
+      'temperature_2m,apparent_temperature,weather_code,precipitation_probability,precipitation,is_day,' +
       'dew_point_2m,visibility,pressure_msl,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,relative_humidity_2m',
     minutely_15: 'precipitation',
     daily:

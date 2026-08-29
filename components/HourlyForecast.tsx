@@ -116,6 +116,10 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
     : null;
   const stats: Array<{ label: string; value: string }> = [];
   if (selectedHour) {
+    stats.push({
+      label: t('feels_like'),
+      value: formatTemp(selectedHour.apparent ?? selectedHour.temperature),
+    });
     stats.push({ label: t('rain_chance'), value: `${Math.round(selectedHour.precipProbability)}%` });
     stats.push({ label: t('card_precipitation'), value: formatPrecip(selectedHour.precipitation) });
     stats.push({
