@@ -1,14 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, fetchWeather } from '../api/openMeteo';
 import type { GeoLocation, WeatherBundle } from '../api/types';
+import { loadLastWeather, saveLastWeather } from '../utils/storage';
 
 export type WeatherStatus = 'idle' | 'loading' | 'refreshing' | 'success' | 'error';
+
+/** The cache holds the last fetched city only; never show it for another one. */
+function isSameLocation(a: GeoLocation, b: GeoLocation): boolean {
+  return a.latitude === b.latitude && a.longitude === b.longitude;
+}
 
 export function useWeather(location: GeoLocation | null) {
   const [data, setData] = useState<WeatherBundle | null>(null);
   const [status, setStatus] = useState<WeatherStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const requestId = useRef(0);
+  /** True once a live fetch has landed for the current location round. */
+  const freshRef = useRef(false);
 
   const load = useCallback(
     async (target: GeoLocation | null, isRefresh: boolean) => {
@@ -22,8 +30,11 @@ export function useWeather(location: GeoLocation | null) {
       try {
         const bundle = await fetchWeather(target);
         if (requestId.current !== id) return;
+        freshRef.current = true;
         setData(bundle);
         setStatus('success');
+        // Non-critical: persist for the next cold start.
+        void saveLastWeather(bundle);
       } catch (error) {
         if (requestId.current !== id) return;
         if (error instanceof ApiError && error.kind === 'network') {
@@ -40,8 +51,23 @@ export function useWeather(location: GeoLocation | null) {
   );
 
   useEffect(() => {
+    let cancelled = false;
+    // Hydrate from the cached bundle for this location before the fetch
+    // resolves, so the UI renders instantly with the last known conditions.
+    // Cache failure or a slow response must never break the live flow.
+    void (async () => {
+      const cached = await loadLastWeather();
+      if (cancelled || freshRef.current) return;
+      if (cached && location && isSameLocation(cached.location, location)) {
+        setData(cached);
+      }
+    })();
+    freshRef.current = false;
     setData(null);
     void load(location, false);
+    return () => {
+      cancelled = true;
+    };
   }, [location, load]);
 
   const refresh = useCallback(() => {
