@@ -1,3 +1,5 @@
+import { lerpColor } from '../utils/format';
+
 export type WeatherCondition =
   | 'clear'
   | 'partlyCloudy'
@@ -114,6 +116,10 @@ function baseTheme(palette: Palette): Omit<AppTheme, 'styleMode' | 'blurIntensit
   };
 }
 
+/**
+ * Material You: solid, opaque surfaces tinted from the live weather palette
+ * (Gradient-Weather style slabs). Liquid Glass: translucent blurred panels.
+ */
 export function buildTheme(
   palette: Palette,
   styleMode: StyleMode = 'material',
@@ -130,5 +136,22 @@ export function buildTheme(
       blurTint: base.isLight ? 'light' : 'dark',
     };
   }
-  return { ...base, styleMode: 'material', blurIntensity: 0, blurTint: base.isLight ? 'light' : 'dark' };
+
+  const mid = palette.gradient[1];
+  const card = palette.light
+    ? lerpColor(mid, '#FFFFFF', 0.62)
+    : lerpColor(mid, '#FFFFFF', 0.13);
+  const chip = palette.light
+    ? lerpColor(card, '#1C2431', 0.05)
+    : lerpColor(card, '#FFFFFF', 0.11);
+
+  return {
+    ...base,
+    styleMode: 'material',
+    cardBg: card,
+    cardBorder: palette.light ? 'rgba(28,36,49,0.05)' : 'rgba(255,255,255,0.06)',
+    chipBg: chip,
+    blurIntensity: 0,
+    blurTint: base.isLight ? 'light' : 'dark',
+  };
 }

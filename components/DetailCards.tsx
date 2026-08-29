@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React, { useMemo } from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
@@ -22,10 +23,11 @@ import { Card } from './Card';
 import { WindCompass } from './WindCompass';
 import { AqiGauge } from './AqiGauge';
 import { SunArc } from './SunArc';
+import { MoonPhaseVisual, RainGauge } from './MiniGauges';
 import { getWeatherIcon } from '../utils/icons';
 import type { AppTheme } from '../theme/palettes';
 import { uvBand, humidityComfort } from '../utils/aqi';
-import { moonPhase } from '../utils/moon';
+import { moonPhase, nextMoonMilestone } from '../utils/moon';
 import {
   dewPointComfort,
   formatPressureTrend,
@@ -41,6 +43,7 @@ import {
 } from '../utils/sunCalc';
 import { StormDistanceCard } from './StormDistanceCard';
 import { BarometerCard } from './BarometerCard';
+import { HealthCard } from './HealthCard';
 import { FEATURES } from '../config/features';
 import type { YearAgoState } from '../hooks/useYearAgo';
 import type { PollenInfo } from '../api/types';
@@ -56,6 +59,7 @@ const POLLEN_TYPES: Array<{ key: keyof PollenInfo; label: string }> = [
 ];
 
 interface DetailCardsProps {
+  onOpenTopic?: (topic: string) => void;
   theme: AppTheme;
   current: CurrentConditions;
   today: DayPoint | null;
@@ -63,9 +67,11 @@ interface DetailCardsProps {
   utcOffsetSeconds: number;
   location: GeoLocation;
   yearAgo: YearAgoState;
+  hiddenTiles?: readonly string[];
 }
 
 export function DetailCards({
+  onOpenTopic,
   theme,
   current,
   today,
@@ -73,11 +79,14 @@ export function DetailCards({
   utcOffsetSeconds,
   location,
   yearAgo,
+  hiddenTiles,
 }: DetailCardsProps) {
+  const show = (key: string) => !hiddenTiles || !hiddenTiles.includes(key);
   const uv = today?.uvIndexMax ?? null;
   const uvInfo = uvBand(uv);
   const uvFraction = uv === null ? 0 : Math.min(uv / 11, 1);
   const moon = moonPhase();
+  const milestone = nextMoonMilestone(moon.ageDays);
   const trend = formatPressureTrend(current.pressureTrend);
 
   const sunExtras = useMemo(
@@ -106,16 +115,16 @@ export function DetailCards({
 
   return (
     <View style={styles.grid}>
-      <Card revealDelay={0} theme={theme} title="Wind" icon={Wind} style={styles.half}>
+      {show('wind') && (<Card revealDelay={0} theme={theme} title={t('card_wind')} icon={Wind} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('wind') : undefined}>
         <WindCompass
           theme={theme}
           speed={current.windSpeed}
           gusts={current.windGusts}
           direction={current.windDirection}
         />
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={60} theme={theme} title="Air Quality" icon={Gauge} style={styles.half}>
+      {show('aqi') && (<Card revealDelay={60} theme={theme} title={t('card_aqi')} icon={Gauge} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('aqi') : undefined}>
         <AqiGauge
           theme={theme}
           usAqi={aqi?.usAqi ?? null}
@@ -125,15 +134,15 @@ export function DetailCards({
           no2={aqi?.no2 ?? null}
           so2={aqi?.so2 ?? null}
         />
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={120} theme={theme} title="UV Index" icon={Sun} style={styles.half}>
+      {show('uv') && (<Card revealDelay={120} theme={theme} title={t('card_uv')} icon={Sun} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('uv') : undefined}>
         <View style={styles.stack}>
           <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
             {uv === null ? '--' : Math.round(uv)}
           </Text>
           <Text style={[styles.bandLabel, { color: uvInfo ? uvInfo.color : theme.textTertiary }]}>
-            {uvInfo ? uvInfo.label : 'Unavailable'}
+            {uvInfo ? uvInfo.label : t('unavailable')}
           </Text>
           <View style={[styles.uvTrack, { backgroundColor: theme.trackColor }]}>
             <View
@@ -147,12 +156,12 @@ export function DetailCards({
             />
           </View>
           <Text style={[styles.caption, { color: theme.textTertiary }]}>
-            Max for today · {uv !== null && uv >= 6 ? 'Sunscreen advised' : 'Low concern'}
+            {t('max_today')} · {uv !== null && uv >= 6 ? 'Sunscreen advised' : 'Low concern'}
           </Text>
         </View>
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={180} theme={theme} title="Humidity" icon={Droplets} style={styles.half}>
+      {show('humidity') && (<Card revealDelay={180} theme={theme} title={t('card_humidity')} icon={Droplets} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('humidity') : undefined}>
         <View style={styles.stack}>
           <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
             {Math.round(current.humidity)}%
@@ -179,31 +188,31 @@ export function DetailCards({
               : 'n/a'}
           </Text>
         </View>
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={240} theme={theme} title="Visibility" icon={Eye} style={styles.half}>
+      {show('visibility') && (<Card revealDelay={240} theme={theme} title={t('card_visibility')} icon={Eye} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('visibility') : undefined}>
         <View style={styles.stack}>
           <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
             {formatVisibility(current.visibility)}
           </Text>
           <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>
             {current.visibility === null
-              ? 'No data'
+              ? t('no_data')
               : current.visibility >= 20000
-                ? 'Crystal clear'
+                ? t('vis_crystal')
                 : current.visibility >= 10000
-                  ? 'Clear'
+                ? t('vis_clear')
                   : current.visibility >= 4000
-                    ? 'Moderate haze'
-                    : 'Poor · fog likely'}
+                ? t('vis_haze')
+                    : t('vis_poor')}
           </Text>
           <Text style={[styles.caption, { color: theme.textTertiary }]}>
             Horizontal sight distance
           </Text>
         </View>
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={300} theme={theme} title="Pressure" icon={Gauge} style={styles.half}>
+      {show('pressure') && (<Card revealDelay={300} theme={theme} title={t('card_pressure')} icon={Gauge} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('pressure') : undefined}>
         <View style={styles.stack}>
           <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
             {Math.round(current.pressure)}
@@ -218,9 +227,9 @@ export function DetailCards({
                 : 'Sea-level adjusted · 3h change'}
           </Text>
         </View>
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={360} theme={theme} title="Precipitation" icon={Umbrella} style={styles.half}>
+      {show('precipitation') && (<Card revealDelay={360} theme={theme} title={t('card_precipitation')} icon={Umbrella} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('precipitation') : undefined}>
         <View style={styles.stack}>
           <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
             {current.precipitation.toFixed(1)}
@@ -233,25 +242,60 @@ export function DetailCards({
             {today ? `${Math.round(today.precipProbabilityMax)}% chance of rain today` : 'Live accumulation'}
           </Text>
         </View>
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={420} theme={theme} title="Moon" icon={MoonIcon} style={styles.half}>
-        <View style={styles.stack}>
-          <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
-            {moon.illumination}%
-          </Text>
-          <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>{moon.phaseName}</Text>
-          <Text style={[styles.caption, { color: theme.textTertiary }]}>
-            Rises {moonTimesToday.rise ? formatDateClock(moonTimesToday.rise) : 'tomorrow'} ·
-            Sets {moonTimesToday.set ? formatDateClock(moonTimesToday.set) : 'tomorrow'}
-          </Text>
-          <Text style={[styles.caption, { color: theme.textTertiary }]}>
-            Day {Math.round(moon.ageDays)} of the 29.5-day cycle
-          </Text>
+      {show('rainToday') && (<Card revealDelay={390} theme={theme} title={t('card_rain_today')} icon={Umbrella} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('precipitation') : undefined}>
+        <View style={styles.visualRow}>
+          <View style={styles.stack}>
+            <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
+              {(today?.precipSum ?? 0).toFixed(1)}
+              <Text style={[styles.unitText, { color: theme.textSecondary }]}> mm</Text>
+            </Text>
+            <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>
+              {t('total_rain_today')}
+            </Text>
+            <Text style={[styles.caption, { color: theme.textTertiary }]}>
+              {today && today.precipSum >= 10
+                ? 'A very wet day'
+                : today && today.precipSum >= 2
+                  ? 'Keep an umbrella handy'
+                  : 'Little to no rain expected'}
+            </Text>
+          </View>
+          <RainGauge fraction={(today?.precipSum ?? 0) / 10} />
         </View>
-      </Card>
+      </Card>)}
 
-      <Card revealDelay={480} theme={theme} title="Sunrise & Sunset" style={styles.full}>
+      {show('moon') && (<Card revealDelay={420} theme={theme} title={t('card_moon')} icon={MoonIcon} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('moon') : undefined}>
+        <View style={styles.visualRow}>
+          <View style={styles.stack}>
+            <Text style={[styles.moonPhaseText, { color: theme.textPrimary }]}>
+              {moon.phaseName}
+            </Text>
+            <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>
+              {milestone.kind === 'full'
+                ? t('full_moon_in_days').replace('{n}', String(milestone.days))
+                : t('new_moon_in_days').replace('{n}', String(milestone.days))}
+            </Text>
+            <Text style={[styles.caption, { color: theme.textTertiary }]}>
+              {moon.illumination}% illuminated · Day {Math.round(moon.ageDays)} of 29.5
+            </Text>
+          </View>
+          <MoonPhaseVisual fraction={moon.illumination / 100} waxing={moon.ageDays < 14.77} />
+        </View>
+      </Card>)}
+
+      {show('health') && (
+        <HealthCard
+          theme={theme}
+          current={current}
+          usAqi={aqi?.usAqi ?? null}
+          style={styles.half}
+          revealDelay={450}
+        />
+      )}
+
+      <Card revealDelay={480} theme={theme} title={t('card_sun')} style={styles.full}>
         <SunArc
           theme={theme}
           sunrise={today?.sunrise ?? ''}
@@ -294,7 +338,7 @@ export function DetailCards({
         </View>
       </Card>
 
-      <Card revealDelay={540} theme={theme} title="A Year Ago" icon={CalendarDays} style={styles.half}>
+      <Card revealDelay={540} theme={theme} title={t('card_yearago')} icon={CalendarDays} style={styles.half}>
         <View style={styles.stack}>
           {yearAgo.status === 'ok' && yearAgo.info && YearAgoIcon ? (
             <>
@@ -336,7 +380,7 @@ export function DetailCards({
       </Card>
 
       {aqi?.pollen ? (
-        <Card revealDelay={600} theme={theme} title="Pollen" icon={Flower2} style={styles.half}>
+        <Card revealDelay={600} theme={theme} title={t('card_pollen')} icon={Flower2} style={styles.half}>
           <View style={styles.stack}>
             {POLLEN_TYPES.map((type) => {
               const value = aqi.pollen?.[type.key];
@@ -398,6 +442,18 @@ const styles = StyleSheet.create({
   },
   stack: {
     gap: 9,
+  },
+  visualRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  moonPhaseText: {
+    fontSize: 30,
+    fontFamily: F.semibold,
+    includeFontPadding: false,
+    flexShrink: 1,
   },
   bigValue: {
     fontSize: 40,

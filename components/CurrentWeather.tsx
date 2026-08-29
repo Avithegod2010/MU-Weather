@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
@@ -105,7 +106,7 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
 
       <Text style={[styles.conditionText, { color: theme.textPrimary }]}>{conditionLabel}</Text>
       <Text style={[styles.feelsLike, { color: theme.textSecondary }]}>
-        Feels like {formatTemp(current.apparentTemperature)}
+        {t('feels_like')} {formatTemp(current.apparentTemperature)}
       </Text>
 
       {commentary ? (

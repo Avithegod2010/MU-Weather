@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -75,7 +76,7 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
   return (
     <Card
       theme={theme}
-      title="Hourly Forecast"
+      title={t('card_hourly')}
       icon={Clock}
       headerRight={
         <View style={[styles.toggleWrap, { backgroundColor: theme.chipBg }]}>

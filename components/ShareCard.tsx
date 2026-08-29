@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
@@ -39,7 +40,7 @@ export function ShareCard({ theme, data, conditionLabel, cardRef }: ShareCardPro
         <Text style={styles.temperature}>{formatTemp(data.current.temperature)}</Text>
         <Text style={styles.condition}>{conditionLabel}</Text>
         <Text style={styles.feels}>
-          Feels like {formatTemp(data.current.apparentTemperature)}
+          {t('feels_like')} {formatTemp(data.current.apparentTemperature)}
         </Text>
 
         {today ? (

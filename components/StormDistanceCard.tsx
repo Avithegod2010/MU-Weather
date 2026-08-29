@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { F } from '../theme/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -56,7 +57,7 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
   const distanceKm = seconds / 3;
 
   return (
-    <Card theme={theme} title="Storm Distance" icon={Zap} style={styles.card} revealDelay={600}>
+    <Card theme={theme} title={t('card_storm')} icon={Zap} style={styles.card} revealDelay={600}>
       {phase === 'result' ? (
         <>
           <Text style={[styles.distance, { color: theme.textPrimary }]}>

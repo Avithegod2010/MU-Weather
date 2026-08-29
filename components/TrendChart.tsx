@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -51,7 +52,7 @@ export function TrendChart({ theme, hours }: TrendChartProps) {
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
   return (
-    <Card theme={theme} title="48-Hour Trend" icon={TrendingUp}>
+    <Card theme={theme} title={t('card_trend')} icon={TrendingUp}>
       <View style={styles.legendRow}>
         {[
           { color: TEMP_COLOR, label: 'Temperature' },

@@ -29,6 +29,8 @@ export const FEATURES = {
   backgroundAlerts: true,
   /** City comparison screen - favorites side by side */
   cityComparison: true,
+  /** Deep dive detail screen on tapping any detail tile */
+  tileDetails: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

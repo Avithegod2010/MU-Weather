@@ -12,12 +12,14 @@ import type { DayPoint } from '../api/types';
 interface DailyForecastProps {
   theme: AppTheme;
   days: DayPoint[];
+  /** Optional tap handler - rows become pressable and open the day deep-dive. */
+  onPressDay?: (day: DayPoint, index: number) => void;
 }
 
 const PREVIEW_COUNT = 7;
 const PRECIP_COLOR = '#A5DBF9';
 
-export function DailyForecast({ theme, days }: DailyForecastProps) {
+export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
   const [expanded, setExpanded] = useState(false);
   if (!days.length) return null;
 
@@ -33,17 +35,15 @@ export function DailyForecast({ theme, days }: DailyForecastProps) {
         const Icon = getWeatherIcon(day.weatherCode, true);
         const leftPct = ((day.tMin - weekMin) / range) * 100;
         const widthPct = Math.max(((day.tMax - day.tMin) / range) * 100, 8);
-        return (
-          <View
-            key={day.date}
-            style={[
-              styles.row,
-              index > 0 && {
-                borderTopWidth: StyleSheet.hairlineWidth,
-                borderTopColor: theme.trackColor,
-              },
-            ]}
-          >
+        const rowStyle = [
+          styles.row,
+          index > 0 && {
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: theme.trackColor,
+          },
+        ];
+        const content = (
+          <>
             <Text style={[styles.dayLabel, { color: theme.textPrimary }, index === 0 && { fontFamily: F.bold }]}>
               {formatDayLabel(day.date, index)}
             </Text>
@@ -75,7 +75,26 @@ export function DailyForecast({ theme, days }: DailyForecastProps) {
             <Text style={[styles.tempMax, { color: theme.textPrimary }]}>
               {formatTemp(day.tMax)}
             </Text>
-          </View>
+          </>
+        );
+        if (!onPressDay) {
+          return (
+            <View key={day.date} style={rowStyle}>
+              {content}
+            </View>
+          );
+        }
+        return (
+          <Pressable
+            key={day.date}
+            onPress={() => {
+              haptics.select();
+              onPressDay(day, index);
+            }}
+            style={({ pressed }) => [...rowStyle, pressed && { opacity: 0.6 }]}
+          >
+            {content}
+          </Pressable>
         );
       })}
 

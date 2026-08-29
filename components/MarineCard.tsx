@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
@@ -19,7 +20,7 @@ export function MarineCard({ theme, state }: MarineCardProps) {
   }
 
   return (
-    <Card revealDelay={720} theme={theme} title="Marine" icon={Sailboat} style={styles.card}>
+    <Card revealDelay={720} theme={theme} title={t('card_marine')} icon={Sailboat} style={styles.card}>
       <View style={styles.statsRow}>
         <View style={styles.stat}>
           <Text style={[styles.statValue, { color: theme.textPrimary }]}>

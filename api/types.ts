@@ -38,6 +38,9 @@ export interface HourPoint {
   windSpeed: number;
   windGusts: number;
   windDirection: number;
+  uvIndex: number | null;
+  humidity: number | null;
+  pressure: number | null;
 }
 
 export interface DayPoint {
@@ -49,6 +52,8 @@ export interface DayPoint {
   sunset: string;
   uvIndexMax: number;
   precipProbabilityMax: number;
+  precipSum: number;
+  windMax: number;
 }
 
 export interface PollenInfo {
@@ -80,6 +85,8 @@ export interface WeatherBundle {
   utcOffsetSeconds: number;
   current: CurrentConditions;
   hourly: HourPoint[];
+  /** Every hourly point of the forecast period (~16 days x 24h) for day deep-dives. */
+  hourlyAll: HourPoint[];
   minutely: MinutelyPoint[];
   daily: DayPoint[];
   aqi: AqiInfo | null;
@@ -118,6 +125,8 @@ export interface ForecastResponse {
     wind_speed_10m: Array<number | null>;
     wind_gusts_10m: Array<number | null>;
     wind_direction_10m: Array<number | null>;
+    uv_index: Array<number | null>;
+    relative_humidity_2m: Array<number | null>;
   };
   minutely_15?: {
     time: string[];
@@ -132,6 +141,8 @@ export interface ForecastResponse {
     sunset: string[];
     uv_index_max: Array<number | null>;
     precipitation_probability_max: Array<number | null>;
+    precipitation_sum: Array<number | null>;
+    wind_speed_10m_max: Array<number | null>;
   };
 }
 

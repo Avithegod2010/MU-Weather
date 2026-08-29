@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
@@ -39,7 +40,7 @@ export function HighlightsCard({ theme, highlights }: HighlightsCardProps) {
   if (!highlights.length) return null;
 
   return (
-    <Card theme={theme} title="Highlights" icon={Sparkles}>
+    <Card theme={theme} title={t('card_highlights')} icon={Sparkles}>
       <View style={styles.stack}>
         {highlights.map((highlight, index) => {
           const Icon = ICONS[highlight.icon];

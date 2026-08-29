@@ -58,30 +58,54 @@ function toEpoch(iso: string): number {
   return new Date(normalized).getTime();
 }
 
-function buildHourly(response: ForecastResponse): HourPoint[] {
+function findHourlyStartIndex(response: ForecastResponse): number {
   const { hourly } = response;
-  if (!hourly?.time?.length) return [];
+  if (!hourly?.time?.length) return -1;
   const localNowMs = Date.now() + response.utc_offset_seconds * 1000;
   let startIndex = hourly.time.findIndex((t) => toEpoch(t) > localNowMs - 3600_000);
   if (startIndex < 0) startIndex = Math.max(0, hourly.time.length - 24);
-  const slice = hourly.time.slice(startIndex, startIndex + 24);
-  return slice.map((time, offset) => {
-    const index = startIndex + offset;
-    return {
-      time,
-      temperature: hourly.temperature_2m[index] ?? 0,
-      weatherCode: hourly.weather_code[index] ?? 3,
-      precipProbability: hourly.precipitation_probability?.[index] ?? 0,
-      precipitation: hourly.precipitation?.[index] ?? 0,
-      isDay: (hourly.is_day?.[index] ?? 1) === 1,
-      isNow: offset === 0,
-      dewPoint: hourly.dew_point_2m?.[index] ?? null,
-      visibility: hourly.visibility?.[index] ?? null,
-      windSpeed: hourly.wind_speed_10m?.[index] ?? 0,
-      windGusts: hourly.wind_gusts_10m?.[index] ?? 0,
-      windDirection: hourly.wind_direction_10m?.[index] ?? 0,
-    };
-  });
+  return startIndex;
+}
+
+function mapHourPoint(
+  hourly: ForecastResponse['hourly'],
+  index: number,
+  isNow: boolean,
+): HourPoint {
+  return {
+    time: hourly.time[index],
+    temperature: hourly.temperature_2m[index] ?? 0,
+    weatherCode: hourly.weather_code[index] ?? 3,
+    precipProbability: hourly.precipitation_probability?.[index] ?? 0,
+    precipitation: hourly.precipitation?.[index] ?? 0,
+    isDay: (hourly.is_day?.[index] ?? 1) === 1,
+    isNow,
+    dewPoint: hourly.dew_point_2m?.[index] ?? null,
+    visibility: hourly.visibility?.[index] ?? null,
+    uvIndex: hourly.uv_index?.[index] ?? null,
+    humidity: hourly.relative_humidity_2m?.[index] ?? null,
+    pressure: hourly.pressure_msl?.[index] ?? null,
+    windSpeed: hourly.wind_speed_10m?.[index] ?? 0,
+    windGusts: hourly.wind_gusts_10m?.[index] ?? 0,
+    windDirection: hourly.wind_direction_10m?.[index] ?? 0,
+  };
+}
+
+function buildHourly(response: ForecastResponse): HourPoint[] {
+  const startIndex = findHourlyStartIndex(response);
+  if (startIndex < 0) return [];
+  const { hourly } = response;
+  return hourly.time
+    .slice(startIndex, startIndex + 24)
+    .map((_, offset) => mapHourPoint(hourly, startIndex + offset, offset === 0));
+}
+
+/** Maps ALL hourly points of the forecast period (used by the day deep-dive). */
+function buildHourlyAll(response: ForecastResponse): HourPoint[] {
+  const { hourly } = response;
+  if (!hourly?.time?.length) return [];
+  const startIndex = findHourlyStartIndex(response);
+  return hourly.time.map((_, index) => mapHourPoint(hourly, index, index === startIndex));
 }
 
 function buildMinutely(response: ForecastResponse): MinutelyPoint[] {
@@ -118,6 +142,8 @@ function buildDaily(response: ForecastResponse): DayPoint[] {
     sunset: daily.sunset[index] ?? '',
     uvIndexMax: daily.uv_index_max?.[index] ?? 0,
     precipProbabilityMax: daily.precipitation_probability_max?.[index] ?? 0,
+    precipSum: daily.precipitation_sum?.[index] ?? 0,
+    windMax: daily.wind_speed_10m_max?.[index] ?? 0,
   }));
 }
 
@@ -152,10 +178,10 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
       'weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
     hourly:
       'temperature_2m,weather_code,precipitation_probability,precipitation,is_day,' +
-      'dew_point_2m,visibility,pressure_msl,wind_speed_10m,wind_gusts_10m,wind_direction_10m',
+      'dew_point_2m,visibility,pressure_msl,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,relative_humidity_2m',
     minutely_15: 'precipitation',
     daily:
-      'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max',
+      'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max',
     timezone: 'auto',
     forecast_days: '16',
   }).toString();
@@ -223,6 +249,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
     utcOffsetSeconds: forecast.utc_offset_seconds,
     current,
     hourly,
+    hourlyAll: buildHourlyAll(forecast),
     minutely: buildMinutely(forecast),
     daily: buildDaily(forecast),
     aqi,

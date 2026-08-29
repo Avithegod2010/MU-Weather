@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { F } from '../theme/typography';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Polyline } from 'react-native-svg';
 import * as Notifications from '../utils/notifications';
 import {
@@ -17,14 +18,36 @@ import {
   Database,
   Info,
   CloudSun,
+  CloudRain,
   Radar,
   Bell,
   RefreshCw,
+  Droplets,
+  Droplet,
+  Eye,
+  Umbrella,
+  Moon as MoonIcon,
+  LayoutGrid,
+  HeartPulse,
+  Zap,
+  TrendingUp,
+  Footprints,
+  Sailboat,
+  CalendarDays,
+  Palette,
+  Check,
+  Languages,
 } from '../utils/uiIcons';
+import type { LucideIcon } from 'lucide-react-native';
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
 import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
 import type { AppSettings } from '../hooks/useSettings';
+import { DETAIL_ANIM_OPTIONS } from '../utils/detailAnimations';
+import { TILE_GROUPS } from '../config/tiles';
+import { BACKGROUND_OPTIONS } from '../config/backgrounds';
+import { COLOR_THEMES } from '../config/colorThemes';
+import { LANGUAGES, t } from '../utils/i18n';
 import type { ProviderCheck } from '../api/providers';
 import type { AppTheme } from '../theme/palettes';
 
@@ -48,7 +71,28 @@ async function ensureNotificationPermission(): Promise<boolean> {
   return requested === 'granted';
 }
 
-type SheetView = 'main' | 'sources';
+type SheetView = 'main' | 'sources' | 'tiles' | 'language';
+
+const TILE_ICONS: Record<string, LucideIcon> = {
+  highlights: Zap,
+  nowcast: Radar,
+  rainChart: Droplet,
+  hourly: Clock,
+  daily: CalendarDays,
+  trend: TrendingUp,
+  activity: Footprints,
+  calendar: CloudSun,
+  marine: Sailboat,
+  wind: Wind,
+  aqi: Gauge,
+  uv: Sun,
+  humidity: Droplets,
+  visibility: Eye,
+  pressure: Gauge,
+  precipitation: Umbrella,
+  moon: MoonIcon,
+  health: HeartPulse,
+};
 
 interface SegmentedOption {
   value: string;
@@ -148,6 +192,104 @@ export function SettingsSheet({
 
       {view === 'main' ? (
         <Text style={[styles.title, { color: inputColor }]}>Settings</Text>
+      ) : view === 'language' ? (
+        <>
+          {LANGUAGES.map((language) => {
+            const active = settings.language === language.key;
+            return (
+              <Pressable
+                key={language.key}
+                onPress={() => {
+                  haptics.select();
+                  onUpdate({ language: language.key });
+                }}
+                style={({ pressed }) => [
+                  styles.row,
+                  { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+                  pressed && { opacity: 0.75 },
+                ]}
+              >
+                <View style={styles.rowTexts}>
+                  <Text
+                    style={[
+                      styles.rowTitle,
+                      { color: inputColor },
+                      active && { fontFamily: F.bold },
+                    ]}
+                  >
+                    {language.name} ({language.native})
+                  </Text>
+                </View>
+                {active ? (
+                  <Check size={20} color={theme.accent} strokeWidth={2.6} />
+                ) : null}
+              </Pressable>
+            );
+          })}
+          <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+            <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+              Weather content is translated. More languages arrive in future updates.
+            </Text>
+          </View>
+        </>
+      ) : view === 'tiles' ? (
+        <>
+          <Text style={[styles.intro, { color: theme.textSecondary }]}>
+            Turn off anything you don't need and it disappears from the home screen. Your choices
+            are saved on this device.
+          </Text>
+          {TILE_GROUPS.map((group) => (
+            <View key={group.title}>
+              <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
+                {group.title.toUpperCase()}
+              </Text>
+              {group.tiles.map((tile) => {
+                const TileIcon = TILE_ICONS[tile.key] ?? Sparkles;
+                const visible = !(settings.hiddenTiles ?? []).includes(tile.key);
+                return (
+                  <View
+                    key={tile.key}
+                    style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+                  >
+                    <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                      <TileIcon size={20} color={theme.textPrimary} strokeWidth={2} />
+                    </View>
+                    <View style={styles.rowTexts}>
+                      <Text style={[styles.rowTitle, { color: inputColor }]}>{tile.label}</Text>
+                    </View>
+                    <Switch
+                      value={ready ? visible : true}
+                      onValueChange={(value) => {
+                        if (value) {
+                          haptics.success();
+                        } else {
+                          haptics.light();
+                        }
+                        const next = new Set(settings.hiddenTiles ?? []);
+                        if (value) {
+                          next.delete(tile.key);
+                        } else {
+                          next.add(tile.key);
+                        }
+                        onUpdate({ hiddenTiles: Array.from(next) });
+                      }}
+                      trackColor={{ true: theme.accent, false: theme.trackColor }}
+                      thumbColor={visible ? '#FFFFFF' : theme.textTertiary}
+                      ios_backgroundColor={theme.trackColor}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          ))}
+          <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+            <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+              Current weather and severe alerts always stay on.
+            </Text>
+          </View>
+        </>
       ) : (
         <View style={styles.titleRow}>
           <Pressable
@@ -161,7 +303,11 @@ export function SettingsSheet({
             <ChevronLeft size={24} color={inputColor} strokeWidth={2.4} />
           </Pressable>
           <Text style={[styles.title, { color: inputColor, paddingHorizontal: 0 }]}>
-            Data sources
+            {view === 'sources'
+              ? 'Data sources'
+              : view === 'tiles'
+                ? 'Adjust tiles'
+                : 'Language'}
           </Text>
         </View>
       )}
@@ -201,6 +347,41 @@ export function SettingsSheet({
           </View>
 
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>APPEARANCE</Text>
+          <View style={[styles.themeGrid, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            {COLOR_THEMES.map((option) => {
+              const active = settings.colorTheme === option.key;
+              return (
+                <Pressable
+                  key={option.key}
+                  onPress={() => {
+                    if (!active) {
+                      haptics.select();
+                      onUpdate({ colorTheme: option.key });
+                    }
+                  }}
+                  style={({ pressed }) => [styles.themeGridItem, pressed && { opacity: 0.7 }]}
+                >
+                  <View
+                    style={[
+                      styles.themeSwatchRing,
+                      { borderColor: active ? theme.accent : 'transparent' },
+                    ]}
+                  >
+                    <View style={[styles.themeSwatch, { backgroundColor: option.swatch }]} />
+                  </View>
+                  <Text
+                    style={[
+                      styles.themeSwatchLabel,
+                      { color: active ? inputColor : theme.textSecondary },
+                      active && { fontFamily: F.bold },
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Sun size={20} color={theme.textPrimary} strokeWidth={2} />
@@ -247,6 +428,107 @@ export function SettingsSheet({
               onChange={(value) => onUpdate({ styleMode: value as AppSettings['styleMode'] })}
             />
           </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Palette size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Home background</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Dynamic follows the live weather with rain and snow
+              </Text>
+            </View>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.bgScroller}
+            contentContainerStyle={styles.bgSwatchRow}
+          >
+            {BACKGROUND_OPTIONS.map((option) => {
+              const active = settings.homeBackground === option.key;
+              return (
+                <Pressable
+                  key={option.key}
+                  onPress={() => {
+                    if (!active) {
+                      haptics.select();
+                      onUpdate({ homeBackground: option.key });
+                    }
+                  }}
+                  style={({ pressed }) => [styles.bgSwatchWrap, pressed && { opacity: 0.75 }]}
+                >
+                  <LinearGradient
+                    colors={option.gradient as unknown as readonly [string, string, string]}
+                    locations={[0, 0.52, 1]}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={[
+                      styles.bgSwatch,
+                      active && styles.bgSwatchActive,
+                      { borderColor: active ? inputColor : 'transparent' },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.bgSwatchLabel,
+                      { color: active ? inputColor : theme.textSecondary },
+                      active && { fontFamily: F.bold },
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Tile animation</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                How deep-dive screens open and close
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={DETAIL_ANIM_OPTIONS.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+              value={settings.detailAnimation}
+              onChange={(value) => onUpdate({ detailAnimation: value as AppSettings['detailAnimation'] })}
+            />
+          </View>
+
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              setView('tiles');
+            }}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <LayoutGrid size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Adjust tiles</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                Show or hide sections and cards on the home screen
+              </Text>
+            </View>
+            <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
+          </Pressable>
 
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>NOTIFICATIONS</Text>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -348,7 +630,58 @@ export function SettingsSheet({
             />
           </View>
 
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <CloudRain size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('rain_alert')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('rain_alert_subtitle')}
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.rainAlertEnabled : false}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                  void ensureNotificationPermission().then((granted) => {
+                    onUpdate({ rainAlertEnabled: granted });
+                  });
+                } else {
+                  haptics.light();
+                  onUpdate({ rainAlertEnabled: false });
+                }
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.rainAlertEnabled ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>GENERAL</Text>
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              setView('language');
+            }}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Languages size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>Language</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {LANGUAGES.find((l) => l.key === settings.language)?.native ?? 'English'}
+              </Text>
+            </View>
+            <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
+          </Pressable>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Thermometer size={20} color={theme.textPrimary} strokeWidth={2} />
@@ -700,9 +1033,73 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
+  themeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderRadius: 24,
+    borderWidth: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    marginHorizontal: 16,
+    marginBottom: 8,
+  },
+  themeGridItem: {
+    width: '25%',
+    alignItems: 'center',
+    gap: 7,
+    paddingVertical: 6,
+  },
+  themeSwatchRing: {
+    width: 60,
+    height: 60,
+    borderRadius: 999,
+    borderWidth: 2.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  themeSwatch: {
+    width: 46,
+    height: 46,
+    borderRadius: 999,
+  },
+  themeSwatchLabel: {
+    fontSize: 11,
+    fontFamily: F.medium,
+  },
   segmentRow: {
     paddingHorizontal: 16,
     marginBottom: 10,
+  },
+  bgScroller: {
+    flexGrow: 0,
+    marginBottom: 10,
+  },
+  bgSwatchRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  bgSwatchWrap: {
+    alignItems: 'center',
+    gap: 6,
+    width: 68,
+  },
+  bgSwatch: {
+    width: 64,
+    height: 44,
+    borderRadius: 14,
+    borderWidth: 3,
+  },
+  bgSwatchActive: {
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  bgSwatchLabel: {
+    fontSize: 11,
+    fontFamily: F.medium,
   },
   segmentWrap: {
     flexDirection: 'row',

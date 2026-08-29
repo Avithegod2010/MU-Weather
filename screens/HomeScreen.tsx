@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { F } from '../theme/typography';
 import {
@@ -73,7 +74,11 @@ import { CalendarCard } from '../components/CalendarCard';
 import { useCalendarWeather } from '../hooks/useCalendarWeather';
 import { useMarine } from '../hooks/useMarine';
 import { MarineCard } from '../components/MarineCard';
+import { TileDetailScreen, type TopicKey } from '../components/TileDetailScreen';
+import { DayDetailScreen } from '../components/DayDetailScreen';
 import { FEATURES } from '../config/features';
+import { applyHomeBackground } from '../config/backgrounds';
+import { applyColorTheme } from '../config/colorThemes';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { CurrentWeather } from '../components/CurrentWeather';
@@ -103,13 +108,14 @@ import { useProviderStatus } from '../hooks/useProviderStatus';
 import { useYearAgo } from '../hooks/useYearAgo';
 import { useDigest } from '../hooks/useDigest';
 import { useGoldenHour } from '../hooks/useGoldenHour';
+import { useRainAlert } from '../hooks/useRainAlert';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
 import { useFavorites } from '../hooks/useFavorites';
 import { useWeatherTheme } from '../hooks/useWeatherTheme';
 import { getCurrentLocation, LocationPermissionError } from '../hooks/useLocation';
 import { loadLastLocation, saveLastLocation } from '../utils/storage';
-import type { GeoLocation } from '../api/types';
+import type { DayPoint, GeoLocation } from '../api/types';
 
 export function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -124,11 +130,27 @@ export function HomeScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [calendarEnabled, setCalendarEnabled] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [detailTopic, setDetailTopic] = useState<TopicKey | null>(null);
+  const [dayDetail, setDayDetail] = useState<{ day: DayPoint; index: number } | null>(null);
 
   const favoritesState = useFavorites();
   const weather = useWeather(active);
   const { settings, updateSettings } = useSettings();
-  const { theme, condition, conditionLabel } = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
+  const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
+  const theme = useMemo(
+    () =>
+      applyColorTheme(
+        applyHomeBackground(
+          weatherThemeResult.theme,
+          settings.homeBackground,
+          settings.styleMode,
+        ),
+        settings.colorTheme,
+        settings.styleMode,
+      ),
+    [weatherThemeResult.theme, settings.homeBackground, settings.colorTheme, settings.styleMode],
+  );
+  const { condition, conditionLabel } = weatherThemeResult;
   const alertState = useAlerts(weather.data, FEATURES.backgroundAlerts && settings.backgroundAlerts);
   const providerStatus = useProviderStatus(
     active,
@@ -138,6 +160,7 @@ export function HomeScreen() {
   const yearAgo = useYearAgo(active);
   useDigest(settings.digestEnabled, settings.digestHour, weather.data);
   useGoldenHour(settings.goldenHourEnabled, weather.data);
+  useRainAlert(settings.rainAlertEnabled, weather.data);
   const calendarWeather = useCalendarWeather(
     FEATURES.calendarWeather && calendarEnabled,
     weather.data?.daily ?? [],
@@ -155,6 +178,7 @@ export function HomeScreen() {
     () => computeNowcast(weather.data?.minutely ?? []),
     [weather.data],
   );
+  const showSection = (key: string) => !(settings.hiddenTiles ?? []).includes(key);
   const highlights = useMemo(
     () => (weather.data ? computeHighlights(weather.data, nowcast) : []),
     [weather.data, nowcast],
@@ -416,46 +440,60 @@ export function HomeScreen() {
                 />
               </Reveal>
 
-              <Reveal delay={60}>
-                <HighlightsCard theme={theme} highlights={highlights} />
-              </Reveal>
+              {showSection('highlights') ? (
+                <Reveal delay={60}>
+                  <HighlightsCard theme={theme} highlights={highlights} />
+                </Reveal>
+              ) : null}
 
-              <Reveal delay={80}>
-                <NowcastCard
-                  theme={theme}
-                  minutely={weather.data.minutely}
-                  nowcast={nowcast}
-                />
-              </Reveal>
+              {showSection('nowcast') ? (
+                <Reveal delay={80}>
+                  <NowcastCard
+                    theme={theme}
+                    minutely={weather.data.minutely}
+                    nowcast={nowcast}
+                  />
+                </Reveal>
+              ) : null}
 
-              <Reveal delay={100}>
-                <Card theme={theme} title="Rain Probability">
-                  <RainProbabilityChart theme={theme} hours={weather.data.hourly} />
-                </Card>
-              </Reveal>
+              {showSection('rainChart') ? (
+                <Reveal delay={100}>
+                  <Card theme={theme} title={t('card_rain')}>
+                    <RainProbabilityChart theme={theme} hours={weather.data.hourly} />
+                  </Card>
+                </Reveal>
+              ) : null}
 
-              <Reveal delay={170}>
-                <HourlyForecast theme={theme} hours={weather.data.hourly} />
-              </Reveal>
+              {showSection('hourly') ? (
+                <Reveal delay={170}>
+                  <HourlyForecast theme={theme} hours={weather.data.hourly} />
+                </Reveal>
+              ) : null}
 
-              <Reveal delay={120}>
-                <SectionTitle theme={theme}>Daily forecast</SectionTitle>
-                <DailyForecast theme={theme} days={weather.data.daily} />
-              </Reveal>
+              {showSection('daily') ? (
+                <Reveal delay={120}>
+                  <SectionTitle theme={theme}>{t('sec_daily')}</SectionTitle>
+                  <DailyForecast
+                    theme={theme}
+                    days={weather.data.daily}
+                    onPressDay={(day, index) => setDayDetail({ day, index })}
+                  />
+                </Reveal>
+              ) : null}
 
-              {FEATURES.trendChart ? (
+              {FEATURES.trendChart && showSection('trend') ? (
                 <Reveal delay={140}>
                   <TrendChart theme={theme} hours={weather.data.hourly} />
                 </Reveal>
               ) : null}
 
-              {FEATURES.activityPlanner ? (
+              {FEATURES.activityPlanner && showSection('activity') ? (
                 <Reveal delay={160}>
                   <ActivityCard theme={theme} data={weather.data} />
                 </Reveal>
               ) : null}
 
-              {FEATURES.calendarWeather ? (
+              {FEATURES.calendarWeather && showSection('calendar') ? (
                 <Reveal delay={180}>
                   <CalendarCard
                     theme={theme}
@@ -465,14 +503,14 @@ export function HomeScreen() {
                 </Reveal>
               ) : null}
 
-              {FEATURES.marineForecast ? (
+              {FEATURES.marineForecast && showSection('marine') ? (
                 <Reveal delay={200}>
                   <MarineCard theme={theme} state={marine} />
                 </Reveal>
               ) : null}
 
               <Reveal delay={160}>
-                <SectionTitle theme={theme}>Details</SectionTitle>
+                <SectionTitle theme={theme}>{t('sec_details')}</SectionTitle>
                 <DetailCards
                   theme={theme}
                   current={weather.data.current}
@@ -481,6 +519,15 @@ export function HomeScreen() {
                   utcOffsetSeconds={weather.data.utcOffsetSeconds}
                   location={active}
                   yearAgo={yearAgo}
+                  hiddenTiles={settings.hiddenTiles}
+                  onOpenTopic={
+                    FEATURES.tileDetails
+                      ? (topic) => {
+                          haptics.select();
+                          setDetailTopic(topic as TopicKey);
+                        }
+                      : undefined
+                  }
                 />
               </Reveal>
 
@@ -612,6 +659,29 @@ export function HomeScreen() {
         onClose={() => setCompareOpen(false)}
         entries={comparison.results}
         status={comparison.status}
+      />
+
+      <TileDetailScreen
+        theme={theme}
+        topic={detailTopic}
+        data={weather.data}
+        visible={detailTopic !== null && weather.data !== null}
+        animStyle={settings.detailAnimation}
+        onClose={() => setDetailTopic(null)}
+      />
+
+      <DayDetailScreen
+        theme={theme}
+        day={dayDetail?.day ?? null}
+        index={dayDetail?.index ?? 0}
+        hours={
+          dayDetail && weather.data
+            ? weather.data.hourlyAll.filter((hour) => hour.time.startsWith(dayDetail.day.date))
+            : []
+        }
+        visible={dayDetail !== null && weather.data !== null}
+        animStyle={settings.detailAnimation}
+        onClose={() => setDayDetail(null)}
       />
     </View>
   );

@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
@@ -28,7 +29,7 @@ export function ActivityCard({ theme, data }: ActivityCardProps) {
   const activities = computeActivities(data);
 
   return (
-    <Card theme={theme} title="Activity Planner">
+    <Card theme={theme} title={t('card_activity')}>
       <View style={styles.stack}>
         {activities.map((activity) => {
           const Icon = ICONS[activity.key];

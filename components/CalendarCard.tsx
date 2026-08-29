@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { F } from '../theme/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -17,7 +18,7 @@ interface CalendarCardProps {
 
 export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
   return (
-    <Card theme={theme} title="Your week" icon={CalendarDays}>
+    <Card theme={theme} title={t('card_week')} icon={CalendarDays}>
       {state.status === 'denied' || state.status === 'idle' ? (
         <View style={styles.stack}>
           <Text style={[styles.message, { color: theme.textSecondary }]}>

@@ -1,3 +1,5 @@
+import { t } from './i18n';
+
 export type TempUnit = 'celsius' | 'fahrenheit';
 export type WindUnit = 'kmh' | 'mph';
 export type TimeFormat = '12h' | '24h';
@@ -54,7 +56,7 @@ function formatClockParts(hours: number, minutes: number): string {
 }
 
 export function formatHourLabel(iso: string, isNow: boolean): string {
-  if (isNow) return 'Now';
+  if (isNow) return t('now');
   const date = parseLocalIso(iso);
   if (!date) return '--';
   return formatClockParts(date.getUTCHours(), date.getUTCMinutes());
@@ -67,21 +69,18 @@ export function formatTime12(iso: string | null | undefined): string {
   return formatClockParts(date.getUTCHours(), date.getUTCMinutes());
 }
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 export function formatDayLabel(iso: string, index: number): string {
-  if (index === 0) return 'Today';
-  if (index === 1) return 'Tomorrow';
+  if (index === 0) return t('today');
+  if (index === 1) return t('tomorrow');
   const date = parseLocalIso(iso);
   if (!date) return '--';
-  return DAY_NAMES[date.getUTCDay()] ?? '--';
+  return t(`day_${date.getUTCDay()}`);
 }
 
 export function formatDayFull(iso: string): string {
   const date = parseLocalIso(iso);
   if (!date) return '';
-  const names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  return names[date.getUTCDay()] ?? '';
+  return t(`day_full_${date.getUTCDay()}`);
 }
 
 const COMPASS_POINTS = [
@@ -133,23 +132,23 @@ export function formatVisibility(meters: number | null | undefined): string {
 }
 
 export function formatPressureTrend(trend: number | null | undefined): string {
-  if (trend === null || trend === undefined || Number.isNaN(trend)) return 'Steady';
-  if (trend > 0.6) return 'Rising';
-  if (trend < -0.6) return 'Falling';
-  return 'Steady';
+  if (trend === null || trend === undefined || Number.isNaN(trend)) return t('trend_steady');
+  if (trend > 0.6) return t('trend_rising');
+  if (trend < -0.6) return t('trend_falling');
+  return t('trend_steady');
 }
 
 export function dewPointComfort(temp: number, dewPoint: number): string {
   const spread = temp - dewPoint;
-  if (dewPoint < 10) return 'Dry & crisp';
-  if (spread < 2) return 'Very muggy';
-  if (spread < 5) return 'Humid';
-  return 'Comfortable';
+  if (dewPoint < 10) return t('dew_dry_crisp');
+  if (spread < 2) return t('dew_very_muggy');
+  if (spread < 5) return t('dew_humid');
+  return t('dew_comfortable');
 }
 
 export function precipIntensityLabel(prob: number, mm: number): string {
-  if (prob < 15 && mm < 0.2) return 'Dry';
-  if (mm >= 7.6 || prob >= 85) return 'Heavy';
-  if (mm >= 2.5 || prob >= 45) return 'Moderate';
-  return 'Light';
+  if (prob < 15 && mm < 0.2) return t('pi_dry');
+  if (mm >= 7.6 || prob >= 85) return t('pi_heavy');
+  if (mm >= 2.5 || prob >= 45) return t('pi_moderate');
+  return t('pi_light');
 }

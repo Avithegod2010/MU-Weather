@@ -1,44 +1,45 @@
 import type { WeatherCondition } from '../theme/palettes';
+import { t } from './i18n';
 
 export interface WmoInfo {
   label: string;
   condition: WeatherCondition;
 }
 
-const WMO_MAP: Record<number, WmoInfo> = {
-  0: { label: 'Clear Sky', condition: 'clear' },
-  1: { label: 'Mainly Clear', condition: 'clear' },
-  2: { label: 'Partly Cloudy', condition: 'partlyCloudy' },
-  3: { label: 'Overcast', condition: 'cloudy' },
-  45: { label: 'Foggy', condition: 'fog' },
-  48: { label: 'Rime Fog', condition: 'fog' },
-  51: { label: 'Light Drizzle', condition: 'drizzle' },
-  53: { label: 'Drizzle', condition: 'drizzle' },
-  55: { label: 'Heavy Drizzle', condition: 'drizzle' },
-  56: { label: 'Freezing Drizzle', condition: 'freezing' },
-  57: { label: 'Freezing Drizzle', condition: 'freezing' },
-  61: { label: 'Light Rain', condition: 'rain' },
-  63: { label: 'Rain', condition: 'rain' },
-  65: { label: 'Heavy Rain', condition: 'rain' },
-  66: { label: 'Freezing Rain', condition: 'freezing' },
-  67: { label: 'Freezing Rain', condition: 'freezing' },
-  71: { label: 'Light Snow', condition: 'snow' },
-  73: { label: 'Snowfall', condition: 'snow' },
-  75: { label: 'Heavy Snow', condition: 'snow' },
-  77: { label: 'Snow Grains', condition: 'snow' },
-  80: { label: 'Light Showers', condition: 'showers' },
-  81: { label: 'Rain Showers', condition: 'showers' },
-  82: { label: 'Violent Showers', condition: 'showers' },
-  85: { label: 'Snow Showers', condition: 'snow' },
-  86: { label: 'Heavy Snow Showers', condition: 'snow' },
-  95: { label: 'Thunderstorm', condition: 'thunder' },
-  96: { label: 'Storms with Hail', condition: 'thunder' },
-  99: { label: 'Severe Storms', condition: 'thunder' },
+const WMO_CONDITIONS: Record<number, WeatherCondition> = {
+  0: 'clear',
+  1: 'clear',
+  2: 'partlyCloudy',
+  3: 'cloudy',
+  45: 'fog',
+  48: 'fog',
+  51: 'drizzle',
+  53: 'drizzle',
+  55: 'drizzle',
+  56: 'freezing',
+  57: 'freezing',
+  61: 'rain',
+  63: 'rain',
+  65: 'rain',
+  66: 'freezing',
+  67: 'freezing',
+  71: 'snow',
+  73: 'snow',
+  75: 'snow',
+  77: 'snow',
+  80: 'showers',
+  81: 'showers',
+  82: 'showers',
+  85: 'snow',
+  86: 'snow',
+  95: 'thunder',
+  96: 'thunder',
+  99: 'thunder',
 };
 
 export function describeWmo(code: number | null | undefined): WmoInfo {
-  if (code === null || code === undefined || WMO_MAP[code] === undefined) {
-    return { label: 'Unknown', condition: 'cloudy' };
+  if (code === null || code === undefined || WMO_CONDITIONS[code] === undefined) {
+    return { label: t('wmo_unknown'), condition: 'cloudy' };
   }
-  return WMO_MAP[code];
+  return { label: t(`wmo_${code}`), condition: WMO_CONDITIONS[code] };
 }

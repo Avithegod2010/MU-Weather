@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Umbrella } from '../utils/uiIcons';
@@ -20,7 +21,7 @@ export function NowcastCard({ theme, minutely, nowcast }: NowcastCardProps) {
   if (!minutely.length) return null;
 
   return (
-    <Card theme={theme} title="Next 3 hours" icon={Umbrella}>
+    <Card theme={theme} title={t('card_nowcast')} icon={Umbrella}>
       <Text style={[styles.headline, { color: theme.textPrimary }]}>{nowcast.headline}</Text>
       <View style={styles.barsRow}>
         {minutely.map((point, index) => {

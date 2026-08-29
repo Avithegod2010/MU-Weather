@@ -1,3 +1,4 @@
+import { t } from '../utils/i18n';
 import React from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
@@ -31,7 +32,7 @@ export function BarometerCard({ theme, forecastPressure, revealDelay = 660 }: Ba
   const delta = pressure !== null ? pressure - forecastPressure : null;
 
   return (
-    <Card revealDelay={revealDelay} theme={theme} title="Barometer" icon={Gauge} style={styles.card}>
+    <Card revealDelay={revealDelay} theme={theme} title={t('card_barometer')} icon={Gauge} style={styles.card}>
       <View style={styles.stack}>
         {available && pressure !== null ? (
           <>

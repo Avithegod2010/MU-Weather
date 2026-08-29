@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
 import type { LucideIcon } from 'lucide-react-native';
 import type { AppTheme } from '../theme/palettes';
@@ -13,10 +13,11 @@ interface CardProps {
   style?: StyleProp<ViewStyle>;
   revealDelay?: number;
   headerRight?: React.ReactNode;
+  onPress?: () => void;
   children: React.ReactNode;
 }
 
-export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight, children }: CardProps) {
+export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight, onPress, children }: CardProps) {
   const isGlass = theme.styleMode === 'glass';
 
   const inner = (
@@ -43,24 +44,43 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
           {Icon ? <Icon size={14} color={theme.textSecondary} strokeWidth={2.4} /> : null}
           <Text style={[styles.headerText, { color: theme.textSecondary }]}>{title}</Text>
           {headerRight ? <View style={styles.headerRight}>{headerRight}</View> : null}
+          {onPress ? <ChevronGlyph color={theme.textTertiary} /> : null}
         </View>
       ) : null}
       {children}
     </View>
   );
 
+  const interactive = onPress ? (
+    <Pressable
+      onPress={onPress}
+      android_ripple={{ color: 'rgba(255,255,255,0.12)', borderless: false, radius: 400 }}
+      style={({ pressed }) => [styles.pressWrap, pressed && { opacity: 0.85 }]}
+    >
+      {inner}
+    </Pressable>
+  ) : (
+    inner
+  );
+
   if (revealDelay === undefined) {
     return (
       <View style={style}>
-        {inner}
+        {interactive}
       </View>
     );
   }
 
   return (
     <Reveal delay={revealDelay} style={style}>
-      {inner}
+      {interactive}
     </Reveal>
+  );
+}
+
+function ChevronGlyph({ color }: { color: string }) {
+  return (
+    <Text style={[styles.chevron, { color }]}>›</Text>
   );
 }
 
@@ -74,6 +94,9 @@ const styles = StyleSheet.create({
   fill: {
     flexGrow: 1,
   },
+  pressWrap: {
+    flexGrow: 1,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -83,6 +106,11 @@ const styles = StyleSheet.create({
   headerRight: {
     flex: 1,
     alignItems: 'flex-end',
+  },
+  chevron: {
+    fontSize: 16,
+    lineHeight: 18,
+    marginLeft: 2,
   },
   headerText: {
     fontSize: 12,
