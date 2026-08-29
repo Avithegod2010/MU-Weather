@@ -51,7 +51,7 @@ export const hu: Strings = {
   total_rain_today: 'Mai összes eső',
   full_moon_in_days: 'Telihold {n} nap múlva',
   new_moon_in_days: 'Újhold {n} nap múlva',
-  feels_like: 'Érzet', dew_point: 'Harmatpont', gusts: 'Széllökések', max_today: 'Mai max',
+  feels_like: 'Érzet', rain_chance: 'Eső valószínűsége', dew_point: 'Harmatpont', gusts: 'Széllökések', max_today: 'Mai max',
   band_low: 'Alacsony', band_moderate: 'Mérsékelt', band_high: 'Magas', band_veryhigh: 'Nagyon magas', band_extreme: 'Szélsőséges',
   aqi_good: 'Jó', aqi_moderate: 'Mérsékelt', aqi_unhealthy_sg: 'Káros (SG)', aqi_unhealthy: 'Káros', aqi_very_unhealthy: 'Nagyon káros', aqi_hazardous: 'Veszélyes',
   advice_aqi_good: 'A levegő ideális a szabadtéri tevékenységekhez.',

@@ -51,7 +51,7 @@ export const nl: Strings = {
   total_rain_today: 'Totale regen vandaag',
   full_moon_in_days: 'Volle maan over {n} dagen',
   new_moon_in_days: 'Nieuwe maan over {n} dagen',
-  feels_like: 'Voelt als', dew_point: 'Dauwpunt', gusts: 'Windstoten', max_today: 'Max vandaag',
+  feels_like: 'Voelt als', rain_chance: 'Regenkans', dew_point: 'Dauwpunt', gusts: 'Windstoten', max_today: 'Max vandaag',
   band_low: 'Laag', band_moderate: 'Matig', band_high: 'Hoog', band_veryhigh: 'Zeer hoog', band_extreme: 'Extreem',
   aqi_good: 'Goed', aqi_moderate: 'Matig', aqi_unhealthy_sg: 'Ongezond (SG)', aqi_unhealthy: 'Ongezond', aqi_very_unhealthy: 'Zeer ongezond', aqi_hazardous: 'Gevaarlijk',
   advice_aqi_good: 'Lucht is ideaal voor buitensport.',

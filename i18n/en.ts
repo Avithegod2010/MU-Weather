@@ -88,6 +88,7 @@ export const en = {
   full_moon_in_days: 'Full Moon in {n} days',
   new_moon_in_days: 'New Moon in {n} days',
   feels_like: 'Feels like',
+  rain_chance: 'Rain chance',
   dew_point: 'Dew point',
   gusts: 'Gusts',
   max_today: 'Max for today',

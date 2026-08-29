@@ -51,7 +51,7 @@ export const hi: Strings = {
   total_rain_today: 'आज की कुल बारिश',
   full_moon_in_days: '{n} दिन में पूर्णिमा',
   new_moon_in_days: '{n} दिन में अमावस्या',
-  feels_like: 'महसूस', dew_point: 'ओसांक', gusts: 'झोंके', max_today: 'आज का अधिकतम',
+  feels_like: 'महसूस', rain_chance: 'बारिश की संभावना', dew_point: 'ओसांक', gusts: 'झोंके', max_today: 'आज का अधिकतम',
   band_low: 'कम', band_moderate: 'मध्यम', band_high: 'उच्च', band_veryhigh: 'बहुत उच्च', band_extreme: 'चरम',
   aqi_good: 'अच्छी', aqi_moderate: 'मध्यम', aqi_unhealthy_sg: 'अस्वस्थ (संवेदनशील)', aqi_unhealthy: 'अस्वस्थ', aqi_very_unhealthy: 'बहुत अस्वस्थ', aqi_hazardous: 'खतरनाक',
   advice_aqi_good: 'बाहरी गतिविधियों के लिए वायु आदर्श है।',

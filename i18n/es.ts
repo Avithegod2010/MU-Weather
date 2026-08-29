@@ -51,7 +51,7 @@ export const es: Strings = {
   total_rain_today: 'Lluvia total de hoy',
   full_moon_in_days: 'Luna llena en {n} días',
   new_moon_in_days: 'Luna nueva en {n} días',
-  feels_like: 'Sensación', dew_point: 'Punto de rocío', gusts: 'Ráfagas', max_today: 'Máximo de hoy',
+  feels_like: 'Sensación', rain_chance: 'Probabilidad de lluvia', dew_point: 'Punto de rocío', gusts: 'Ráfagas', max_today: 'Máximo de hoy',
   band_low: 'Bajo', band_moderate: 'Moderado', band_high: 'Alto', band_veryhigh: 'Muy alto', band_extreme: 'Extremo',
   aqi_good: 'Buena', aqi_moderate: 'Moderada', aqi_unhealthy_sg: 'Insalubre (SG)', aqi_unhealthy: 'Insalubre', aqi_very_unhealthy: 'Muy insalubre', aqi_hazardous: 'Peligrosa',
   advice_aqi_good: 'El aire es ideal para actividades al aire libre.',

@@ -51,7 +51,7 @@ export const el: Strings = {
   total_rain_today: 'Συνολική βροχή σήμερα',
   full_moon_in_days: 'Πανσέληνος σε {n} ημέρες',
   new_moon_in_days: 'Νέα Σελήνη σε {n} ημέρες',
-  feels_like: 'Αίσθηση', dew_point: 'Σημείο δρόσου', gusts: 'Ριπές', max_today: 'Μέγιστο σήμερα',
+  feels_like: 'Αίσθηση', rain_chance: 'Πιθανότητα βροχής', dew_point: 'Σημείο δρόσου', gusts: 'Ριπές', max_today: 'Μέγιστο σήμερα',
   band_low: 'Χαμηλό', band_moderate: 'Μέτριο', band_high: 'Υψηλό', band_veryhigh: 'Πολύ υψηλό', band_extreme: 'Ακραίο',
   aqi_good: 'Καλή', aqi_moderate: 'Μέτρια', aqi_unhealthy_sg: 'Ανθυγιεινή (SG)', aqi_unhealthy: 'Ανθυγιεινή', aqi_very_unhealthy: 'Πολύ ανθυγιεινή', aqi_hazardous: 'Επικίνδυνη',
   advice_aqi_good: 'Ο αέρας είναι ιδανικός για υπαίθριες δραστηριότητες.',

@@ -51,7 +51,7 @@ export const bn: Strings = {
   total_rain_today: 'আজকের মোট বৃষ্টি',
   full_moon_in_days: '{n} দিনে পূর্ণিমা',
   new_moon_in_days: '{n} দিনে অমাবস্যা',
-  feels_like: 'অনুভূত', dew_point: 'শিশিরাঙ্ক', gusts: 'দমকা', max_today: 'আজের সর্বোচ্চ',
+  feels_like: 'অনুভূত', rain_chance: 'বৃষ্টির সম্ভাবনা', dew_point: 'শিশিরাঙ্ক', gusts: 'দমকা', max_today: 'আজের সর্বোচ্চ',
   band_low: 'কম', band_moderate: 'মধ্যম', band_high: 'উচ্চ', band_veryhigh: 'খুব উচ্চ', band_extreme: 'চরম',
   aqi_good: 'ভালো', aqi_moderate: 'মধ্যম', aqi_unhealthy_sg: 'অস্বাস্থ্যকর (সংবেদনশীল)', aqi_unhealthy: 'অস্বাস্থ্যকর', aqi_very_unhealthy: 'খুব অস্বাস্থ্যকর', aqi_hazardous: 'বিপজ্জনক',
   advice_aqi_good: 'বাইরের কার্যকলাপের জন্য বাতাস চমৎকার।',

@@ -74,6 +74,16 @@ export function headerEntering(style: DetailAnimStyle) {
   return FadeInDown.duration(160);
 }
 
+/** Inline expansion inside a card (e.g. tapped hour panel) - near-instant fade. */
+export function inlineEntering() {
+  return getReduceMotion() ? reducedEntering : FadeIn.duration(170);
+}
+
+/** Inline collapse - near-instant fade. */
+export function inlineExiting() {
+  return getReduceMotion() ? reducedExiting : FadeOut.duration(120);
+}
+
 /** Gentle zoom: grows from 94% instead of snapping from 0. */
 function gentleZoomIn() {
   'worklet';

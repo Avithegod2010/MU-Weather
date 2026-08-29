@@ -51,7 +51,7 @@ export const id: Strings = {
   total_rain_today: 'Total hujan hari ini',
   full_moon_in_days: 'Purnama dalam {n} hari',
   new_moon_in_days: 'Bulan baru dalam {n} hari',
-  feels_like: 'Terasa', dew_point: 'Titik Embun', gusts: 'Hemburan', max_today: 'Maks hari ini',
+  feels_like: 'Terasa', rain_chance: 'Kemungkinan hujan', dew_point: 'Titik Embun', gusts: 'Hemburan', max_today: 'Maks hari ini',
   band_low: 'Rendah', band_moderate: 'Sedang', band_high: 'Tinggi', band_veryhigh: 'Sangat Tinggi', band_extreme: 'Ekstrem',
   aqi_good: 'Baik', aqi_moderate: 'Sedang', aqi_unhealthy_sg: 'Tidak Sehat (SG)', aqi_unhealthy: 'Tidak Sehat', aqi_very_unhealthy: 'Sangat Tidak Sehat', aqi_hazardous: 'Berbahaya',
   advice_aqi_good: 'Udara ideal untuk aktivitas luar ruangan.',

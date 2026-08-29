@@ -60,5 +60,6 @@ export { default as Palette } from 'lucide-react-native/icons/palette';
 export { default as Check } from 'lucide-react-native/icons/check';
 export { default as Languages } from 'lucide-react-native/icons/languages';
 export { default as HeartPulse } from 'lucide-react-native/icons/heart-pulse';
+export { default as X } from 'lucide-react-native/icons/x';
 
 export type { LucideIcon } from 'lucide-react-native';
