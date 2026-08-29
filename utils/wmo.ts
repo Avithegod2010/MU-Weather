@@ -1,5 +1,5 @@
 import type { WeatherCondition } from '../theme/palettes';
-import { t } from './i18n';
+import { t, tWmo } from './i18n';
 
 export interface WmoInfo {
   label: string;
@@ -41,5 +41,5 @@ export function describeWmo(code: number | null | undefined): WmoInfo {
   if (code === null || code === undefined || WMO_CONDITIONS[code] === undefined) {
     return { label: t('wmo_unknown'), condition: 'cloudy' };
   }
-  return { label: t(`wmo_${code}`), condition: WMO_CONDITIONS[code] };
+  return { label: tWmo(code), condition: WMO_CONDITIONS[code] };
 }

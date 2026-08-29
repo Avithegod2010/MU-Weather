@@ -1,9 +1,11 @@
+import type { HealthAdviceKey } from './i18n';
+
 export type HealthLevel = 'low' | 'moderate' | 'high';
 
 export interface HealthRisk {
   level: HealthLevel;
   /** i18n key of the advice line the card shows under the level chip. */
-  adviceKey: string;
+  adviceKey: HealthAdviceKey;
 }
 
 /**

@@ -10,6 +10,7 @@ import {
   migraineRisk,
   respiratoryRisk,
   type HealthLevel,
+  type HealthRisk,
 } from '../utils/health';
 import type { CurrentConditions } from '../api/types';
 
@@ -43,10 +44,10 @@ export function HealthCard({ theme, current, usAqi, style, revealDelay }: Health
     high: t('band_high'),
   };
 
-  const rows: Array<{ label: string; level: HealthLevel; adviceKey: string }> = [
-    { label: t('health_migraine'), level: migraine.level, adviceKey: migraine.adviceKey },
-    { label: t('health_respiratory'), level: respiratory.level, adviceKey: respiratory.adviceKey },
-    { label: t('health_flu'), level: flu.level, adviceKey: flu.adviceKey },
+  const rows: Array<{ label: string; risk: HealthRisk }> = [
+    { label: t('health_migraine'), risk: migraine },
+    { label: t('health_respiratory'), risk: respiratory },
+    { label: t('health_flu'), risk: flu },
   ];
 
   return (
@@ -59,7 +60,7 @@ export function HealthCard({ theme, current, usAqi, style, revealDelay }: Health
     >
       <View style={styles.stack}>
         {rows.map((row) => {
-          const color = LEVEL_COLORS[row.level];
+          const color = LEVEL_COLORS[row.risk.level];
           return (
             <View key={row.label} style={styles.row}>
               <View style={styles.rowHead}>
@@ -68,11 +69,11 @@ export function HealthCard({ theme, current, usAqi, style, revealDelay }: Health
                 </Text>
                 <View style={[styles.chip, { backgroundColor: theme.chipBg }]}>
                   <View style={[styles.chipDot, { backgroundColor: color }]} />
-                  <Text style={[styles.chipText, { color }]}>{levelLabels[row.level]}</Text>
+                  <Text style={[styles.chipText, { color }]}>{levelLabels[row.risk.level]}</Text>
                 </View>
               </View>
               <Text style={[styles.advice, { color: theme.textTertiary }]}>
-                {t(row.adviceKey)}
+                {t(row.risk.adviceKey)}
               </Text>
             </View>
           );

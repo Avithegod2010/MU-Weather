@@ -34,6 +34,17 @@ export const LANGUAGES: LanguageOption[] = [
   { key: 'es', name: 'Spanish', native: 'Español' },
 ];
 
+/** Every valid catalog key, derived from the English dictionary. */
+export type StringKey = keyof typeof en;
+/** Real `wmo_*` keys, e.g. `wmo_63`. */
+export type WmoKey = Extract<StringKey, `wmo_${number}`>;
+/** Real `day_*` weekday keys, e.g. `day_3`. */
+export type DayKey = Extract<StringKey, `day_${number}`>;
+/** Real `day_full_*` weekday keys, e.g. `day_full_3`. */
+export type DayFullKey = Extract<StringKey, `day_full_${number}`>;
+/** Real `health_advice_*` keys. */
+export type HealthAdviceKey = Extract<StringKey, `health_advice_${string}`>;
+
 type Dict = Partial<typeof en>;
 
 const DICTS: Record<LanguageKey, Dict> = { en, hi, bn, es, fr, de, nl, el, hu, id, it };
@@ -50,10 +61,33 @@ export function getLanguage(): LanguageKey {
   return currentLang;
 }
 
-/** Translate a catalog key. Falls back to English, then the key itself. */
-export function t(key: string): string {
-  const dict = current as Record<string, string | undefined>;
-  const value = dict[key];
+/**
+ * Shared fallback chain: requested language → English → the key itself.
+ * Takes a plain string so the runtime-built helpers below can use it;
+ * static call sites go through the type-safe `t()`.
+ */
+function lookup(key: string): string {
+  const value = (current as Record<string, string | undefined>)[key];
   if (value !== undefined) return value;
   return (en as unknown as Record<string, string>)[key] ?? key;
+}
+
+/** Translate a catalog key. A missing key fails at compile time. */
+export function t(key: StringKey): string {
+  return lookup(key);
+}
+
+/** Translate a WMO condition code. Same fallback chain as `t()`. */
+export function tWmo(code: number): string {
+  return lookup(`wmo_${code}` as WmoKey);
+}
+
+/** Translate a weekday index (0 = Sunday). Same fallback chain as `t()`. */
+export function tDay(weekday: number): string {
+  return lookup(`day_${weekday}` as DayKey);
+}
+
+/** Translate a full weekday name (0 = Sunday). Same fallback chain as `t()`. */
+export function tDayFull(weekday: number): string {
+  return lookup(`day_full_${weekday}` as DayFullKey);
 }

@@ -1,4 +1,4 @@
-import { t } from './i18n';
+import { t, tDay, tDayFull } from './i18n';
 
 export type TempUnit = 'celsius' | 'fahrenheit';
 export type WindUnit = 'kmh' | 'mph';
@@ -74,13 +74,13 @@ export function formatDayLabel(iso: string, index: number): string {
   if (index === 1) return t('tomorrow');
   const date = parseLocalIso(iso);
   if (!date) return '--';
-  return t(`day_${date.getUTCDay()}`);
+  return tDay(date.getUTCDay());
 }
 
 export function formatDayFull(iso: string): string {
   const date = parseLocalIso(iso);
   if (!date) return '';
-  return t(`day_full_${date.getUTCDay()}`);
+  return tDayFull(date.getUTCDay());
 }
 
 const COMPASS_POINTS = [
