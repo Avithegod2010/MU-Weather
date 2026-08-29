@@ -1,12 +1,15 @@
 import React from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
-import { usAqiBand, usAqiFraction } from '../utils/aqi';
+import { europeanAqiBand, europeanAqiFraction, usAqiBand, usAqiFraction } from '../utils/aqi';
+import type { AqiScale } from '../utils/aqi';
 import type { AppTheme } from '../theme/palettes';
 
 interface AqiGaugeProps {
   theme: AppTheme;
+  scale?: AqiScale;
   usAqi: number | null;
+  euAqi?: number | null;
   pm2_5: number | null;
   pm10: number | null;
   ozone: number | null;
@@ -16,15 +19,19 @@ interface AqiGaugeProps {
 
 const SEGMENT_COLORS = ['#5BC98C', '#E8D05A', '#F0964E', '#E85F5F', '#B06FD8', '#9E4A68'];
 
-export function AqiGauge({ theme, usAqi, pm2_5, pm10, ozone, no2, so2 }: AqiGaugeProps) {
-  const band = usAqiBand(usAqi);
-  const fraction = usAqiFraction(usAqi);
+export function AqiGauge({ theme, scale = 'us', usAqi, euAqi, pm2_5, pm10, ozone, no2, so2 }: AqiGaugeProps) {
+  // European scale falls back to the US number + bands when EU data is missing.
+  const euValue = scale === 'european' ? euAqi ?? null : null;
+  const useEu = euValue !== null;
+  const value = useEu ? euValue : usAqi;
+  const band = useEu ? europeanAqiBand(euValue) : usAqiBand(usAqi);
+  const fraction = useEu ? europeanAqiFraction(euValue) : usAqiFraction(usAqi);
 
   return (
     <View style={styles.container}>
       <View style={styles.valueRow}>
         <Text style={[styles.value, { color: theme.textPrimary }]}>
-          {usAqi === null || usAqi === undefined ? '--' : Math.round(usAqi)}
+          {value === null || value === undefined ? '--' : Math.round(value)}
         </Text>
         {band ? (
           <View style={styles.bandChip}>

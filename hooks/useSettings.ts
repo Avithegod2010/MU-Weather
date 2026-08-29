@@ -3,6 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setHapticsEnabled } from '../utils/haptics';
 import { setUnits } from '../utils/format';
 import type { TempUnit, WindUnit, TimeFormat, PrecipUnit } from '../utils/format';
+import { setAqiScale } from '../utils/aqi';
+import type { AqiScale } from '../utils/aqi';
 import type { DetailAnimStyle } from '../utils/detailAnimations';
 import type { HomeBackgroundKey } from '../config/backgrounds';
 import type { ColorThemeKey } from '../config/colorThemes';
@@ -20,6 +22,8 @@ export interface AppSettings {
   tempUnit: TempUnit;
   windUnit: WindUnit;
   precipUnit: PrecipUnit;
+  /** Air-quality index scale - US EPA or European EEA */
+  aqiScale: AqiScale;
   timeFormat: TimeFormat;
   snarkMode: boolean;
   digestEnabled: boolean;
@@ -45,6 +49,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   tempUnit: 'celsius',
   windUnit: 'kmh',
   precipUnit: 'mm',
+  aqiScale: 'us',
   timeFormat: '12h',
   snarkMode: false,
   digestEnabled: false,
@@ -67,6 +72,7 @@ function applySideEffects(settings: AppSettings): void {
     precip: settings.precipUnit,
     time: settings.timeFormat,
   });
+  setAqiScale(settings.aqiScale);
 }
 
 export function useSettings() {

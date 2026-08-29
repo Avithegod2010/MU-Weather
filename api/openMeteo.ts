@@ -1,5 +1,6 @@
 import type {
   AirQualityResponse,
+  AqiHourPoint,
   AqiInfo,
   CurrentConditions,
   DayPoint,
@@ -147,6 +148,24 @@ function buildDaily(response: ForecastResponse): DayPoint[] {
   }));
 }
 
+/** Hourly US/EU AQI + particulate forecast for the next 24h (bounded, JSON-safe). */
+function buildAqiHourly(response: AirQualityResponse): AqiHourPoint[] {
+  const hourly = response.hourly;
+  if (!hourly?.time?.length) return [];
+  const count = Math.min(hourly.time.length, 24);
+  const points: AqiHourPoint[] = [];
+  for (let index = 0; index < count; index++) {
+    points.push({
+      time: hourly.time[index],
+      usAqi: hourly.us_aqi?.[index] ?? null,
+      euAqi: hourly.european_aqi?.[index] ?? null,
+      pm25: hourly.pm2_5?.[index] ?? null,
+      pm10: hourly.pm10?.[index] ?? null,
+    });
+  }
+  return points;
+}
+
 type BaseCurrentConditions = Omit<
   CurrentConditions,
   'dewPoint' | 'visibility' | 'pressureTrend'
@@ -189,7 +208,9 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
   const aqiParams = new URLSearchParams({
     latitude: location.latitude.toFixed(4),
     longitude: location.longitude.toFixed(4),
-    current: 'us_aqi,pm2_5,pm10,ozone,nitrogen_dioxide,sulphur_dioxide,alder,birch,grass,mugwort,olive,ragweed',
+    current: 'us_aqi,european_aqi,pm2_5,pm10,ozone,nitrogen_dioxide,sulphur_dioxide,alder,birch,grass,mugwort,olive,ragweed',
+    hourly: 'us_aqi,european_aqi,pm2_5,pm10',
+    forecast_hours: '24',
     timezone: 'auto',
   }).toString();
 
@@ -205,9 +226,10 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
   }
 
   const forecast = forecastResult.value;
+  const aqiResponse = aqiResult.status === 'fulfilled' ? aqiResult.value : null;
   let aqi: AqiInfo | null = null;
-  if (aqiResult.status === 'fulfilled' && aqiResult.value?.current) {
-    const ac = aqiResult.value.current;
+  if (aqiResponse?.current) {
+    const ac = aqiResponse.current;
     const pollen: PollenInfo = {
       alder: ac.alder,
       birch: ac.birch,
@@ -219,6 +241,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
     const pollenAvailable = Object.values(pollen).some((value) => value !== null && value !== undefined);
     aqi = {
       usAqi: ac.us_aqi,
+      euAqi: ac.european_aqi,
       pm2_5: ac.pm2_5,
       pm10: ac.pm10,
       ozone: ac.ozone,
@@ -253,6 +276,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
     minutely: buildMinutely(forecast),
     daily: buildDaily(forecast),
     aqi,
+    aqiHourly: aqiResponse ? buildAqiHourly(aqiResponse) : [],
     fetchedAt: Date.now(),
   };
 }

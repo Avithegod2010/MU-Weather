@@ -67,12 +67,22 @@ export interface PollenInfo {
 
 export interface AqiInfo {
   usAqi: number | null;
+  euAqi: number | null;
   pm2_5: number | null;
   pm10: number | null;
   ozone: number | null;
   no2: number | null;
   so2: number | null;
   pollen: PollenInfo | null;
+}
+
+/** One hourly point of the air-quality forecast (~24 points, JSON-safe). */
+export interface AqiHourPoint {
+  time: string;
+  usAqi: number | null;
+  euAqi: number | null;
+  pm25: number | null;
+  pm10: number | null;
 }
 
 export interface MinutelyPoint {
@@ -90,6 +100,8 @@ export interface WeatherBundle {
   minutely: MinutelyPoint[];
   daily: DayPoint[];
   aqi: AqiInfo | null;
+  /** Hourly US/EU AQI + particulate forecast for the next 24h (empty when the air-quality API fails). */
+  aqiHourly: AqiHourPoint[];
   fetchedAt: number;
 }
 
@@ -163,6 +175,7 @@ export interface GeocodingResponse {
 export interface AirQualityResponse {
   current: {
     us_aqi: number | null;
+    european_aqi: number | null;
     pm2_5: number | null;
     pm10: number | null;
     ozone: number | null;
@@ -174,5 +187,12 @@ export interface AirQualityResponse {
     mugwort: number | null;
     olive: number | null;
     ragweed: number | null;
+  };
+  hourly?: {
+    time: string[];
+    us_aqi: Array<number | null>;
+    european_aqi: Array<number | null>;
+    pm2_5: Array<number | null>;
+    pm10: Array<number | null>;
   };
 }

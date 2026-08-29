@@ -516,6 +516,7 @@ export function HomeScreen() {
                   current={weather.data.current}
                   today={weather.data.daily[0] ?? null}
                   aqi={weather.data.aqi}
+                  aqiScale={settings.aqiScale}
                   utcOffsetSeconds={weather.data.utcOffsetSeconds}
                   location={active}
                   yearAgo={yearAgo}
@@ -667,6 +668,8 @@ export function HomeScreen() {
         data={weather.data}
         visible={detailTopic !== null && weather.data !== null}
         animStyle={settings.detailAnimation}
+        aqiScale={settings.aqiScale}
+        onAqiScaleChange={(scale) => updateSettings({ aqiScale: scale })}
         onClose={() => setDetailTopic(null)}
       />
 

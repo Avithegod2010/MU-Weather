@@ -11,6 +11,20 @@ interface BandedEntry {
   band: Band;
 }
 
+/** Which air-quality index the UI displays - US EPA or European EEA. */
+export type AqiScale = 'us' | 'european';
+
+/** Module-global like units in utils/format.ts so non-hook consumers can read it. */
+let aqiScaleState: AqiScale = 'us';
+
+export function setAqiScale(scale: AqiScale): void {
+  aqiScaleState = scale;
+}
+
+export function getAqiScale(): AqiScale {
+  return aqiScaleState;
+}
+
 /** Built per call so a runtime language switch is picked up. */
 function usAqiBands(): BandedEntry[] {
   return [
@@ -32,6 +46,44 @@ export function usAqiBand(aqi: number | null | undefined): Band | null {
 export function usAqiFraction(aqi: number | null | undefined): number {
   if (aqi === null || aqi === undefined || Number.isNaN(aqi)) return 0;
   return Math.min(1, Math.max(0, aqi / 300));
+}
+
+/**
+ * European EEA bands: 0-20 good, 20-40 fair, 40-60 moderate, 60-80 poor,
+ * 80-100 very poor, >100 extremely poor. Same palette as the US bands so the
+ * shared six-segment gauge track works for both scales.
+ */
+function europeanAqiBands(): BandedEntry[] {
+  return [
+    { bound: 20, band: { label: t('aqi_good'), color: '#5BC98C', advice: t('advice_aqi_good') } },
+    { bound: 40, band: { label: t('aqi_eu_fair'), color: '#E8D05A', advice: t('advice_aqi_moderate') } },
+    { bound: 60, band: { label: t('aqi_moderate'), color: '#F0964E', advice: t('advice_aqi_unhealthy_sg') } },
+    { bound: 80, band: { label: t('aqi_eu_poor'), color: '#E85F5F', advice: t('advice_aqi_unhealthy') } },
+    { bound: 100, band: { label: t('aqi_eu_vpoor'), color: '#B06FD8', advice: t('advice_aqi_very_unhealthy') } },
+    { bound: Infinity, band: { label: t('aqi_eu_epoor'), color: '#9E4A68', advice: t('advice_aqi_hazardous') } },
+  ];
+}
+
+export function europeanAqiBand(aqi: number | null | undefined): Band | null {
+  if (aqi === null || aqi === undefined || Number.isNaN(aqi)) return null;
+  const found = europeanAqiBands().find((entry) => aqi <= entry.bound);
+  return found ? found.band : null;
+}
+
+/** 120 maps the five EU boundaries (20..100) onto the six equal gauge segments. */
+export function europeanAqiFraction(aqi: number | null | undefined): number {
+  if (aqi === null || aqi === undefined || Number.isNaN(aqi)) return 0;
+  return Math.min(1, Math.max(0, aqi / 120));
+}
+
+/** Band for the display scale. Pair with the SAME scale's value (see callers). */
+export function aqiBandForScale(scale: AqiScale, aqi: number | null | undefined): Band | null {
+  return scale === 'european' ? europeanAqiBand(aqi) : usAqiBand(aqi);
+}
+
+/** Gauge fraction for the display scale. */
+export function aqiFractionForScale(scale: AqiScale, aqi: number | null | undefined): number {
+  return scale === 'european' ? europeanAqiFraction(aqi) : usAqiFraction(aqi);
 }
 
 function uvBands(): BandedEntry[] {

@@ -37,6 +37,7 @@ import {
   precipUnitLabel,
 } from '../utils/format';
 import { pollenLevel } from '../utils/aqi';
+import type { AqiScale } from '../utils/aqi';
 import {
   findGoldenBlueHours,
   daylightDeltaMinutes,
@@ -66,6 +67,7 @@ interface DetailCardsProps {
   current: CurrentConditions;
   today: DayPoint | null;
   aqi: AqiInfo | null;
+  aqiScale?: AqiScale;
   utcOffsetSeconds: number;
   location: GeoLocation;
   yearAgo: YearAgoState;
@@ -78,6 +80,7 @@ export function DetailCards({
   current,
   today,
   aqi,
+  aqiScale,
   utcOffsetSeconds,
   location,
   yearAgo,
@@ -129,7 +132,9 @@ export function DetailCards({
       {show('aqi') && (<Card revealDelay={60} theme={theme} title={t('card_aqi')} icon={Gauge} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('aqi') : undefined}>
         <AqiGauge
           theme={theme}
+          scale={aqiScale ?? 'us'}
           usAqi={aqi?.usAqi ?? null}
+          euAqi={aqi?.euAqi ?? null}
           pm2_5={aqi?.pm2_5 ?? null}
           pm10={aqi?.pm10 ?? null}
           ozone={aqi?.ozone ?? null}

@@ -32,7 +32,8 @@ import {
 } from '../utils/format';
 import { moonPhase } from '../utils/moon';
 import { moonTimes } from '../utils/sunCalc';
-import { usAqiBand, humidityComfort } from '../utils/aqi';
+import { europeanAqiBand, usAqiBand, humidityComfort } from '../utils/aqi';
+import type { AqiScale } from '../utils/aqi';
 import type { AppTheme } from '../theme/palettes';
 import { F } from '../theme/typography';
 import {
@@ -53,6 +54,9 @@ interface TileDetailScreenProps {
   data: WeatherBundle | null;
   visible: boolean;
   animStyle?: DetailAnimStyle;
+  /** Air-quality index scale for the aqi topic (persisted in settings). */
+  aqiScale?: AqiScale;
+  onAqiScaleChange?: (scale: AqiScale) => void;
   onClose: () => void;
 }
 
@@ -253,6 +257,8 @@ export function TileDetailScreen({
   data,
   visible,
   animStyle = 'fade',
+  aqiScale,
+  onAqiScaleChange,
   onClose,
 }: TileDetailScreenProps) {
   const insets = useSafeAreaInsets();
@@ -290,6 +296,9 @@ export function TileDetailScreen({
   }
   let hero: HeroState = { value: '--', label: '' };
   let chart: React.ReactNode = null;
+  let chartTitle = t('d_next24');
+  let pollutantChart: React.ReactNode = null;
+  let scaleToggle: React.ReactNode = null;
   let dewChart: React.ReactNode = null;
   let factRows: Array<{ label: string; value: string }> = [];
   let bars: Array<{ label: string; value: string; fraction: number; color: string }> | null = null;
@@ -478,13 +487,78 @@ export function TileDetailScreen({
     about =
       'The percentage is the chance of measurable rain at that exact hour. Millimetres show how much would accumulate: light rain is under 2.5 mm per hour, heavy rain is over 7.6 mm per hour.';
   } else if (view.topic === 'aqi') {
-    const band = usAqiBand(view.data.aqi?.usAqi);
+    const aqiHourly = view.data.aqiHourly ?? [];
+    const aqiMap = new Map(aqiHourly.map((point) => [point.time, point]));
     const aqi = view.data.aqi;
+    // European scale falls back to US cleanly when the location has no EU data.
+    const hasEuHourly = aqiHourly.some((point) => point.euAqi !== null);
+    const euAvailable = (aqi?.euAqi ?? null) !== null || hasEuHourly;
+    const scale: AqiScale = aqiScale === 'european' && !euAvailable ? 'us' : aqiScale ?? 'us';
+    const euCurrent = scale === 'european' ? aqi?.euAqi ?? null : null;
+    const useEuValue = euCurrent !== null;
+    const heroAqi = useEuValue ? euCurrent : aqi?.usAqi ?? null;
+    const band = useEuValue ? europeanAqiBand(heroAqi) : usAqiBand(heroAqi);
     hero = {
-      value: aqi?.usAqi != null ? String(Math.round(aqi.usAqi)) : '--',
+      value: heroAqi !== null ? String(Math.round(heroAqi)) : '--',
       label: band ? band.label : t('no_data'),
       accent: band?.color,
     };
+    scaleToggle = (
+      <View style={[styles.scaleToggleRow, { backgroundColor: theme.chipBg }]}>
+        {(['us', 'european'] as const).map((key) => {
+          const active = scale === key;
+          return (
+            <Pressable
+              key={key}
+              onPress={() => {
+                if (!active) {
+                  haptics.select();
+                  onAqiScaleChange?.(key);
+                }
+              }}
+              style={[styles.scaleOption, active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' }]}
+            >
+              <Text
+                style={[
+                  styles.scaleOptionText,
+                  { color: active ? theme.textPrimary : theme.textTertiary },
+                ]}
+              >
+                {key === 'us' ? 'US' : 'EU'}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    );
+    chartTitle = t('d_aqi24');
+    chart = (
+      <DetailChart
+        theme={theme}
+        hours={hours}
+        seriesList={[
+          {
+            pick: (hour) => {
+              const point = aqiMap.get(hour.time);
+              if (!point) return null;
+              return scale === 'european' ? point.euAqi : point.usAqi;
+            },
+            color: '#5BC98C',
+          },
+        ]}
+      />
+    );
+    pollutantChart = (
+      <DetailChart
+        theme={theme}
+        hours={hours}
+        seriesList={[
+          { pick: (hour) => aqiMap.get(hour.time)?.pm25 ?? null, color: '#E85F5F' },
+          { pick: (hour) => aqiMap.get(hour.time)?.pm10 ?? null, color: '#F0964E' },
+        ]}
+        legendLabels={['PM2.5', 'PM10']}
+      />
+    );
     bars = aqi
       ? [
           { label: 'PM2.5', value: fmtVal(aqi.pm2_5), fraction: (aqi.pm2_5 ?? 0) / 75, color: '#E85F5F' },
@@ -496,7 +570,7 @@ export function TileDetailScreen({
       : null;
     factRows = [{ label: t('f_advice'), value: band ? band.advice : '--' }];
     about =
-      'The US Air Quality Index blends five pollutants into one score. Bars show each pollutant against its unhealthy threshold (µg/m³). Above 100 sensitive groups should reduce outdoor exertion; above 200 everyone should limit time outside.';
+      'The US Air Quality Index blends five pollutants into one score; the European index uses a 0-100+ scale from the same pollutants. Bars show each pollutant against its unhealthy threshold (µg/m³). Above 100 US AQI (60 EU) sensitive groups should reduce outdoor exertion; above 200 US AQI (80 EU) everyone should limit time outside.';
   } else if (view.topic === 'moon') {
     const moon = moonPhase();
     const times = moonTimes(new Date(), view.data.location.latitude, view.data.location.longitude);
@@ -514,7 +588,9 @@ export function TileDetailScreen({
   }
 
   let order = 0;
+  const toggleOrder = scaleToggle ? order++ : -1;
   const chartOrder = chart ? order++ : -1;
+  const pollutantOrder = pollutantChart ? order++ : -1;
   const dewOrder = dewChart ? order++ : -1;
   const barsOrder = bars ? order++ : -1;
   const progressOrder = progress ? order++ : -1;
@@ -562,9 +638,21 @@ export function TileDetailScreen({
           </View>
         </Animated.View>
 
+        {scaleToggle ? (
+          <SectionCard theme={theme} animStyle={animStyle} order={toggleOrder}>
+            {scaleToggle}
+          </SectionCard>
+        ) : null}
+
         {chart ? (
-          <SectionCard theme={theme} animStyle={animStyle} title={t('d_next24')} order={chartOrder}>
+          <SectionCard theme={theme} animStyle={animStyle} title={chartTitle} order={chartOrder}>
             {chart}
+          </SectionCard>
+        ) : null}
+
+        {pollutantChart ? (
+          <SectionCard theme={theme} animStyle={animStyle} title={t('d_pollutants24')} order={pollutantOrder}>
+            {pollutantChart}
           </SectionCard>
         ) : null}
 
@@ -792,6 +880,24 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 11.5,
     fontFamily: F.regular,
+  },
+  scaleToggleRow: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    borderRadius: 999,
+    padding: 3,
+    gap: 2,
+  },
+  scaleOption: {
+    paddingHorizontal: 18,
+    paddingVertical: 7,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scaleOptionText: {
+    fontSize: 12.5,
+    fontFamily: F.semibold,
   },
   barWrap: {
     gap: 6,
