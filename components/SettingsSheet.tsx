@@ -90,6 +90,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   visibility: Eye,
   pressure: Gauge,
   precipitation: Umbrella,
+  rainToday: Droplets,
   moon: MoonIcon,
   health: HeartPulse,
 };
