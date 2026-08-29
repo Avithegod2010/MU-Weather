@@ -1,5 +1,11 @@
 import React, { createContext, useContext } from 'react';
-import { StyleSheet, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  useWindowDimensions,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import Animated, {
   Easing,
   useAnimatedReaction,
@@ -9,6 +15,7 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
+import { useReducedMotion } from '../utils/reduceMotion';
 
 const ScrollYContext = createContext<SharedValue<number> | null>(null);
 
@@ -30,6 +37,7 @@ interface RevealProps {
 }
 
 export function Reveal({ children, delay = 0, distance = 30, style }: RevealProps) {
+  const reducedMotion = useReducedMotion();
   const scrollY = useContext(ScrollYContext);
   const tileY = useSharedValue(Number.MAX_SAFE_INTEGER);
   const progress = useSharedValue(0);
@@ -41,6 +49,7 @@ export function Reveal({ children, delay = 0, distance = 30, style }: RevealProp
       return scrollY.value + viewport * 0.88 >= tileY.value;
     },
     (visible, wasVisible) => {
+      if (reducedMotion) return;
       if (visible && !wasVisible && progress.value === 0) {
         progress.value = withDelay(
           delay,
@@ -48,13 +57,18 @@ export function Reveal({ children, delay = 0, distance = 30, style }: RevealProp
         );
       }
     },
-    [viewport, delay, scrollY],
+    [viewport, delay, scrollY, reducedMotion],
   );
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: progress.value,
     transform: [{ translateY: (1 - progress.value) * distance }],
   }));
+
+  // Reduced motion: children appear instantly, no stagger.
+  if (reducedMotion) {
+    return <View style={style}>{children}</View>;
+  }
 
   return (
     <Animated.View

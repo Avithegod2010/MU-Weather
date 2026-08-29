@@ -8,6 +8,7 @@ import {
   SlideOutRight,
   withTiming,
 } from 'react-native-reanimated';
+import { getReduceMotion } from './reduceMotion';
 
 export type DetailAnimStyle = 'fade' | 'slideUp' | 'zoom' | 'push';
 
@@ -18,8 +19,13 @@ export const DETAIL_ANIM_OPTIONS: Array<{ value: DetailAnimStyle; label: string 
   { value: 'push', label: 'Push' },
 ];
 
+/** Near-instant fallback used whenever the OS asks for reduced motion. */
+const reducedEntering = FadeIn.duration(1);
+const reducedExiting = FadeOut.duration(1);
+
 /** Whole-screen entrance - short, calm, zero bounce for every style. */
 export function detailEntering(style: DetailAnimStyle) {
+  if (getReduceMotion()) return reducedEntering;
   switch (style) {
     case 'slideUp':
       return SlideInDown.duration(240);
@@ -35,6 +41,7 @@ export function detailEntering(style: DetailAnimStyle) {
 
 /** Whole-screen exit - quick and quiet. */
 export function detailExiting(style: DetailAnimStyle) {
+  if (getReduceMotion()) return reducedExiting;
   switch (style) {
     case 'slideUp':
       return SlideOutDown.duration(220);
@@ -50,6 +57,7 @@ export function detailExiting(style: DetailAnimStyle) {
 
 /** Staggered entrance for content cards - barely-there cascade, max 90ms spread. */
 export function sectionEntering(style: DetailAnimStyle, order: number) {
+  if (getReduceMotion()) return reducedEntering;
   const delay = Math.min(order * 30, 90);
   if (style === 'fade') {
     return FadeIn.delay(delay).duration(170);
@@ -59,6 +67,7 @@ export function sectionEntering(style: DetailAnimStyle, order: number) {
 
 /** Header entrance. */
 export function headerEntering(style: DetailAnimStyle) {
+  if (getReduceMotion()) return reducedEntering;
   if (style === 'fade') {
     return FadeIn.duration(150);
   }
