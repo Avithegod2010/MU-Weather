@@ -3,14 +3,19 @@ import { t, tDay, tDayFull } from './i18n';
 export type TempUnit = 'celsius' | 'fahrenheit';
 export type WindUnit = 'kmh' | 'mph';
 export type TimeFormat = '12h' | '24h';
+export type PrecipUnit = 'mm' | 'inches';
 
 interface UnitState {
   temp: TempUnit;
   wind: WindUnit;
   time: TimeFormat;
+  precip: PrecipUnit;
 }
 
-let unitState: UnitState = { temp: 'celsius', wind: 'kmh', time: '12h' };
+/** 1 inch = 25.4 mm exactly. */
+const MM_PER_INCH = 25.4;
+
+let unitState: UnitState = { temp: 'celsius', wind: 'kmh', time: '12h', precip: 'mm' };
 
 export function setUnits(next: Partial<UnitState>): void {
   unitState = { ...unitState, ...next };
@@ -32,6 +37,28 @@ export function convertWind(value: number): number {
 
 export function windUnitLabel(): string {
   return unitState.wind === 'mph' ? 'mph' : 'km/h';
+}
+
+export function convertPrecip(mmValue: number): number {
+  return unitState.precip === 'inches' ? mmValue / MM_PER_INCH : mmValue;
+}
+
+export function precipUnitLabel(): string {
+  return unitState.precip === 'inches' ? 'in' : 'mm';
+}
+
+/** Number part of a precipitation amount, for layouts that style the unit separately. */
+export function formatPrecipValue(mmValue: number | null | undefined): string {
+  if (mmValue === null || mmValue === undefined || Number.isNaN(mmValue)) return '--';
+  return convertPrecip(mmValue).toFixed(unitState.precip === 'inches' ? 2 : 1);
+}
+
+/** Full precipitation amount with unit, e.g. "4.2 mm" or "0.17 in". */
+export function formatPrecip(mmValue: number | null | undefined): string {
+  if (mmValue === null || mmValue === undefined || Number.isNaN(mmValue)) {
+    return `-- ${precipUnitLabel()}`;
+  }
+  return `${formatPrecipValue(mmValue)} ${precipUnitLabel()}`;
 }
 
 function parseLocalIso(iso: string): Date | null {

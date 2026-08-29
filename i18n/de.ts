@@ -82,6 +82,7 @@ export const de: Strings = {
   // Day detail, rain alert, health
   card_health: 'Gesundheit', d_temp24: 'TEMPERATUR · DIESER TAG',
   sunrise: 'Sonnenaufgang', sunset: 'Sonnenuntergang', uv_max: 'UV max', precip_total: 'Niederschlag gesamt', precip_prob_max: 'Max. Regenwahrscheinlichkeit', rain_hours: 'Regenstunden', max_wind: 'Max. Wind',
+  precip_unit: 'Niederschlag', precip_unit_subtitle: 'Regenmengen in mm oder Zoll',
   rain_alert: 'Regenwarnung', rain_alert_subtitle: 'Benachrichtigt, wenn Regen in 60 Minuten beginnt', notif_rain_title: 'Regen beginnt bald', notif_rain_body: 'Regen in etwa {n} Minuten erwartet. Regenschirm mitnehmen.',
   health_migraine: 'Migränerisiko', health_respiratory: 'Atemwege', health_flu: 'Gripperisiko',
   health_advice_migraine: 'Druckschwankungen können Kopfschmerzen auslösen.', health_advice_respiratory: 'Luftfeuchtigkeit und Luftqualität beeinflussen die Atmung.', health_advice_flu: 'Kalte, trockene Luft begünstigt die Verbreitung von Viren.',

@@ -31,8 +31,10 @@ import { moonPhase, nextMoonMilestone } from '../utils/moon';
 import {
   dewPointComfort,
   formatPressureTrend,
+  formatPrecipValue,
   formatVisibility,
   formatTime12,
+  precipUnitLabel,
 } from '../utils/format';
 import { pollenLevel } from '../utils/aqi';
 import {
@@ -232,8 +234,8 @@ export function DetailCards({
       {show('precipitation') && (<Card revealDelay={360} theme={theme} title={t('card_precipitation')} icon={Umbrella} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('precipitation') : undefined}>
         <View style={styles.stack}>
           <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
-            {current.precipitation.toFixed(1)}
-            <Text style={[styles.unitText, { color: theme.textSecondary }]}> mm</Text>
+            {formatPrecipValue(current.precipitation)}
+            <Text style={[styles.unitText, { color: theme.textSecondary }]}> {precipUnitLabel()}</Text>
           </Text>
           <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>
             {current.precipitation > 0 ? 'Falling right now' : 'None right now'}
@@ -248,8 +250,8 @@ export function DetailCards({
         <View style={styles.visualRow}>
           <View style={styles.stack}>
             <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
-              {(today?.precipSum ?? 0).toFixed(1)}
-              <Text style={[styles.unitText, { color: theme.textSecondary }]}> mm</Text>
+              {formatPrecipValue(today?.precipSum ?? 0)}
+              <Text style={[styles.unitText, { color: theme.textSecondary }]}> {precipUnitLabel()}</Text>
             </Text>
             <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>
               {t('total_rain_today')}
@@ -262,6 +264,7 @@ export function DetailCards({
                   : 'Little to no rain expected'}
             </Text>
           </View>
+          {/* Gauge scale stays in mm (fills at 10 mm) in every unit. */}
           <RainGauge fraction={(today?.precipSum ?? 0) / 10} />
         </View>
       </Card>)}

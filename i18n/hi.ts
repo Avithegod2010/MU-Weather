@@ -82,6 +82,7 @@ export const hi: Strings = {
   // Day detail, rain alert, health
   card_health: 'स्वास्थ्य', d_temp24: 'तापमान · इस दिन',
   sunrise: 'सूर्योदय', sunset: 'सूर्यास्त', uv_max: 'अधिकतम UV', precip_total: 'कुल वर्षा', precip_prob_max: 'अधिकतम वर्षा संभावना', rain_hours: 'वर्षा के घंटे', max_wind: 'अधिकतम हवा',
+  precip_unit: 'वर्षा', precip_unit_subtitle: 'वर्षा की मात्रा मिमी या इंच में दिखाई जाती है',
   rain_alert: 'वर्षा अलर्ट', rain_alert_subtitle: '60 मिनट में वर्षा शुरू होने पर सूचित करें', notif_rain_title: 'वर्षा शुरू होने वाली है', notif_rain_body: 'लगभग {n} मिनट में वर्षा की संभावना। छाता साथ रखें।',
   health_migraine: 'माइग्रेन जोखिम', health_respiratory: 'श्वसन', health_flu: 'फ्लू जोखिम',
   health_advice_migraine: 'दबाव में बदलाव सिरदर्द करा सकता है।', health_advice_respiratory: 'नमी और वायु गुणवत्ता सांसों को प्रभावित करती है।', health_advice_flu: 'ठंडी, शुष्क हवा वायरस फैलाने में मदद करती है।',

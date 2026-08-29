@@ -82,6 +82,7 @@ export const fr: Strings = {
   // Day detail, rain alert, health
   card_health: 'Santé', d_temp24: 'TEMPÉRATURE · CE JOUR',
   sunrise: 'Lever du soleil', sunset: 'Coucher du soleil', uv_max: 'UV max', precip_total: 'Précipitations totales', precip_prob_max: 'Pluie prob. max', rain_hours: 'Heures de pluie', max_wind: 'Vent max',
+  precip_unit: 'Précipitations', precip_unit_subtitle: 'Pluie affichée en mm ou pouces',
   rain_alert: 'Alerte pluie', rain_alert_subtitle: 'Prévient quand la pluie arrive dans 60 minutes', notif_rain_title: 'La pluie arrive bientôt', notif_rain_body: 'Pluie attendue dans environ {n} minutes. Prenez un parapluie.',
   health_migraine: 'Risque de migraine', health_respiratory: 'Respiratoire', health_flu: 'Risque de grippe',
   health_advice_migraine: 'Les variations de pression peuvent déclencher des maux de tête.', health_advice_respiratory: 'L’humidité et la qualité de l’air affectent la respiration.', health_advice_flu: 'L’air froid et sec aide les virus à se propager.',

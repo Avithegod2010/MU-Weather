@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setHapticsEnabled } from '../utils/haptics';
 import { setUnits } from '../utils/format';
-import type { TempUnit, WindUnit, TimeFormat } from '../utils/format';
+import type { TempUnit, WindUnit, TimeFormat, PrecipUnit } from '../utils/format';
 import type { DetailAnimStyle } from '../utils/detailAnimations';
 import type { HomeBackgroundKey } from '../config/backgrounds';
 import type { ColorThemeKey } from '../config/colorThemes';
@@ -19,6 +19,7 @@ export interface AppSettings {
   styleMode: StyleMode;
   tempUnit: TempUnit;
   windUnit: WindUnit;
+  precipUnit: PrecipUnit;
   timeFormat: TimeFormat;
   snarkMode: boolean;
   digestEnabled: boolean;
@@ -43,6 +44,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   styleMode: 'material',
   tempUnit: 'celsius',
   windUnit: 'kmh',
+  precipUnit: 'mm',
   timeFormat: '12h',
   snarkMode: false,
   digestEnabled: false,
@@ -62,6 +64,7 @@ function applySideEffects(settings: AppSettings): void {
   setUnits({
     temp: settings.tempUnit,
     wind: settings.windUnit,
+    precip: settings.precipUnit,
     time: settings.timeFormat,
   });
 }

@@ -82,6 +82,7 @@ export const nl: Strings = {
   // Day detail, rain alert, health
   card_health: 'Gezondheid', d_temp24: 'TEMPERATUUR · DEZE DAG',
   sunrise: 'Zonsopgang', sunset: 'Zonsondergang', uv_max: 'UV max', precip_total: 'Totale neerslag', precip_prob_max: 'Max. regenkans', rain_hours: 'Regenuren', max_wind: 'Max. wind',
+  precip_unit: 'Neerslag', precip_unit_subtitle: 'Regen in mm of inches weergegeven',
   rain_alert: 'Regenmelding', rain_alert_subtitle: 'Waarschuwt wanneer het binnen 60 minuten gaat regenen', notif_rain_title: 'Het gaat zo regenen', notif_rain_body: 'Regen verwacht over ongeveer {n} minuten. Neem een paraplu mee.',
   health_migraine: 'Migraine-risico', health_respiratory: 'Ademhaling', health_flu: 'Griep-risico',
   health_advice_migraine: 'Drukschommelingen kunnen hoofdpijn veroorzaken.', health_advice_respiratory: 'Vochtigheid en luchtkwaliteit beïnvloeden de ademhaling.', health_advice_flu: 'Koude, droge lucht helpt virussen zich te verspreiden.',

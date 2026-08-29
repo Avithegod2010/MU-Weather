@@ -22,10 +22,13 @@ import {
   compassLabel,
   convertWind,
   formatHourLabel,
+  formatPrecip,
+  formatPrecipValue,
   formatVisibility,
   windUnitLabel,
   dewPointComfort,
   formatPressureTrend,
+  precipUnitLabel,
 } from '../utils/format';
 import { moonPhase } from '../utils/moon';
 import { moonTimes } from '../utils/sunCalc';
@@ -452,8 +455,8 @@ export function TileDetailScreen({
     const maxProb = Math.max(...next24.map((hour) => hour.precipProbability), 0);
     const totalMm = next24.reduce((sum, hour) => sum + hour.precipitation, 0);
     hero = {
-      value: current.precipitation.toFixed(1),
-      unit: 'mm',
+      value: formatPrecipValue(current.precipitation),
+      unit: precipUnitLabel(),
       label: current.precipitation > 0 ? t('falling_now') : t('not_raining'),
       accent: '#5B8FD9',
     };
@@ -468,7 +471,7 @@ export function TileDetailScreen({
     );
     factRows = [
       { label: t('f_peak_12h'), value: `${Math.round(maxProb)}% chance` },
-      { label: t('f_expected_24'), value: `${totalMm.toFixed(1)} mm total` },
+      { label: t('f_expected_24'), value: `${formatPrecip(totalMm)} total` },
       { label: t('f_wettest_hour'), value: peakHourLabel(hours, (hour) => hour.precipProbability) },
       { label: t('f_today_chance'), value: today ? `${Math.round(today.precipProbabilityMax)}%` : '--' },
     ];

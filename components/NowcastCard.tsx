@@ -6,7 +6,7 @@ import { Card } from './Card';
 import type { AppTheme } from '../theme/palettes';
 import type { Nowcast } from '../utils/nowcast';
 import type { MinutelyPoint } from '../api/types';
-import { formatHourLabel } from '../utils/format';
+import { formatHourLabel, precipUnitLabel } from '../utils/format';
 import { F } from '../theme/typography';
 
 interface NowcastCardProps {
@@ -43,7 +43,7 @@ export function NowcastCard({ theme, minutely, nowcast }: NowcastCardProps) {
         })}
       </View>
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
-        15-minute precipitation nowcast · mm per interval
+        15-minute precipitation nowcast · {precipUnitLabel()} per interval
       </Text>
     </Card>
   );

@@ -730,6 +730,29 @@ export function SettingsSheet({
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Umbrella size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('precip_unit')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('precip_unit_subtitle')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'mm', label: 'mm' },
+                { value: 'inches', label: 'in' },
+              ]}
+              value={settings.precipUnit}
+              onChange={(value) => onUpdate({ precipUnit: value as AppSettings['precipUnit'] })}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Clock size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>

@@ -82,6 +82,7 @@ export const bn: Strings = {
   // Day detail, rain alert, health
   card_health: 'স্বাস্থ্য', d_temp24: 'তাপমাত্রা · এই দিনে',
   sunrise: 'সূর্যোদয়', sunset: 'সূর্যাস্ত', uv_max: 'সর্বোচ্চ UV', precip_total: 'মোট বৃষ্টিপাত', precip_prob_max: 'সর্বোচ্চ বৃষ্টির সম্ভাবনা', rain_hours: 'বৃষ্টির ঘণ্টা', max_wind: 'সর্বোচ্চ বাতাস',
+  precip_unit: 'বৃষ্টিপাত', precip_unit_subtitle: 'বৃষ্টির পরিমাণ মিমি বা ইঞ্চিতে দেখানো হয়',
   rain_alert: 'বৃষ্টির সতর্কতা', rain_alert_subtitle: '৬০ মিনিটের মধ্যে বৃষ্টি শুরু হলে জানানো হবে', notif_rain_title: 'শীঘ্রই বৃষ্টি শুরু হবে', notif_rain_body: 'প্রায় {n} মিনিটে বৃষ্টির সম্ভাবনা। ছাতা সঙ্গে রাখুন।',
   health_migraine: 'মাইগ্রেন ঝুঁকি', health_respiratory: 'শ্বাসতন্ত্র', health_flu: 'ফ্লু ঝুঁকি',
   health_advice_migraine: 'চাপের ওঠানামা মাথাব্যথা করাতে পারে।', health_advice_respiratory: 'আর্দ্রতা ও বায়ুর গুণমান শ্বাসকে প্রভাবিত করে।', health_advice_flu: 'ঠান্ডা, শুষ্ক বাতাস ভাইরাস ছড়াতে সাহায্য করে।',

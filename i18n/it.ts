@@ -82,6 +82,7 @@ export const it: Strings = {
   // Day detail, rain alert, health
   card_health: 'Salute', d_temp24: 'TEMPERATURA · GIORNATA',
   sunrise: 'Alba', sunset: 'Tramonto', uv_max: 'UV max', precip_total: 'Precipitazioni totali', precip_prob_max: 'Prob. pioggia max', rain_hours: 'Ore di pioggia', max_wind: 'Vento max',
+  precip_unit: 'Precipitazioni', precip_unit_subtitle: 'Pioggia mostrata in mm o pollici',
   rain_alert: 'Avviso pioggia', rain_alert_subtitle: 'Avvisa quando la pioggia inizia entro 60 minuti', notif_rain_title: 'La pioggia sta per iniziare', notif_rain_body: 'Pioggia prevista tra circa {n} minuti. Porta l’ombrello.',
   health_migraine: 'Rischio emicrania', health_respiratory: 'Respiratorio', health_flu: 'Rischio influenza',
   health_advice_migraine: 'I cambi di pressione possono causare mal di testa.', health_advice_respiratory: 'Umidità e qualità dell’aria influenzano la respirazione.', health_advice_flu: 'L’aria fredda e secca favorisce la diffusione dei virus.',

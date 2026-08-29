@@ -82,6 +82,7 @@ export const id: Strings = {
   // Day detail, rain alert, health
   card_health: 'Kesehatan', d_temp24: 'SUHU · HARI INI',
   sunrise: 'Matahari terbit', sunset: 'Matahari terbenam', uv_max: 'UV maks', precip_total: 'Total presipitasi', precip_prob_max: 'Peluang hujan maks', rain_hours: 'Jam hujan', max_wind: 'Angin maks',
+  precip_unit: 'Presipitasi', precip_unit_subtitle: 'Jumlah hujan ditampilkan dalam mm atau inci',
   rain_alert: 'Peringatan hujan', rain_alert_subtitle: 'Beri tahu saat hujan mulai dalam 60 menit', notif_rain_title: 'Hujan segera dimulai', notif_rain_body: 'Hujan diperkirakan sekitar {n} menit lagi. Bawa payung.',
   health_migraine: 'Risiko migrain', health_respiratory: 'Pernapasan', health_flu: 'Risiko flu',
   health_advice_migraine: 'Perubahan tekanan bisa memicu sakit kepala.', health_advice_respiratory: 'Kelembapan dan kualitas udara memengaruhi pernapasan.', health_advice_flu: 'Udara dingin dan kering membantu virus menyebar.',

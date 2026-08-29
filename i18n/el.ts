@@ -82,6 +82,7 @@ export const el: Strings = {
   // Day detail, rain alert, health
   card_health: 'Υγεία', d_temp24: 'ΘΕΡΜΟΚΡΑΣΙΑ · ΗΜΕΡΑ',
   sunrise: 'Ανατολή ηλίου', sunset: 'Δύση ηλίου', uv_max: 'Μέγ. UV', precip_total: 'Συνολικός υετός', precip_prob_max: 'Μέγ. πιθανότητα βροχής', rain_hours: 'Ώρες βροχής', max_wind: 'Μέγ. άνεμος',
+  precip_unit: 'Υετός', precip_unit_subtitle: 'Η βροχή εμφανίζεται σε mm ή ίντσες',
   rain_alert: 'Ειδοποίηση βροχής', rain_alert_subtitle: 'Ειδοποιεί όταν η βροχή ξεκινά εντός 60 λεπτών', notif_rain_title: 'Η βροχή ξεκινά σύντομα', notif_rain_body: 'Βροχή αναμένεται σε περίπου {n} λεπτά. Πάρτε ομπρέλα.',
   health_migraine: 'Κίνδυνος ημικρανίας', health_respiratory: 'Αναπνευστικό', health_flu: 'Κίνδυνος γρίπης',
   health_advice_migraine: 'Οι μεταβολές πίεσης μπορεί να προκαλέσουν πονοκέφαλο.', health_advice_respiratory: 'Η υγρασία και η ποιότητα αέρα επηρεάζουν την αναπνοή.', health_advice_flu: 'Ο κρύος, ξηρός αέρας βοηθά στη διασπορά των ιών.',

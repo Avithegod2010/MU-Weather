@@ -206,6 +206,10 @@ export const en = {
   rain_hours: 'Rain hours',
   max_wind: 'Max wind',
 
+  // Units
+  precip_unit: 'Precipitation',
+  precip_unit_subtitle: 'Rain amounts shown in mm or inches',
+
   // Rain alert notification
   rain_alert: 'Rain alert',
   rain_alert_subtitle: 'Notify when rain starts within 60 minutes',

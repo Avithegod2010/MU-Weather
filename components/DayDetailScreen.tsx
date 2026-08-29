@@ -10,6 +10,7 @@ import { DetailChart } from './TileDetailScreen';
 import {
   convertWind,
   formatDayFull,
+  formatPrecip,
   formatTemp,
   formatTime12,
   windUnitLabel,
@@ -118,7 +119,7 @@ export function DayDetailScreen({
       label: t('uv_max'),
       value: `${Math.round(dayData.uvIndexMax)}${uvInfo ? ` · ${uvInfo.label}` : ''}`,
     },
-    { label: t('precip_total'), value: `${dayData.precipSum.toFixed(1)} mm` },
+    { label: t('precip_total'), value: formatPrecip(dayData.precipSum) },
     { label: t('precip_prob_max'), value: `${Math.round(dayData.precipProbabilityMax)}%` },
     { label: t('rain_hours'), value: `${rainHours} h` },
     {
