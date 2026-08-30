@@ -77,7 +77,7 @@ export const bn: Strings = {
   f_dew_point: 'শিশিরাঙ্ক', f_comfort: 'আরামের মাত্রা', f_best_24: 'সেরা · ২৪ঘ', f_worst_24: 'সবচেয়ে খারাপ · ২৪ঘ', f_fog_threshold: 'কুয়াশার সীমা',
   f_change_3h: '৩ঘ পরিবর্তন', f_high_24: 'সর্বোচ্চ · ২৪ঘ', f_low_24: 'সর্বনিম্ন · ২৪ঘ', f_meaning: 'অর্থ',
   f_peak_12h: 'পরবর্তী ১২ঘ সর্বোচ্চ', f_expected_24: 'প্রত্যাশিত · ২৪ঘ', f_wettest_hour: 'সবচেয়ে ভেজা ঘণ্টা', f_today_chance: 'আজের সম্ভাবনা',
-  f_advice: 'परामर्श', f_moonrise: 'চন্দ্রোদয়', f_moonset: 'চন্দ্রাস্ত', f_cycle_day: 'চক্র দিবস', f_illumination: 'আলোকিত অংশ',
+  f_advice: 'পরামর্শ', f_moonrise: 'চন্দ্রোদয়', f_moonset: 'চন্দ্রাস্ত', f_cycle_day: 'চক্র দিবস', f_illumination: 'আলোকিত অংশ',
 
   // Day detail, rain alert, health
   card_health: 'স্বাস্থ্য', d_temp24: 'তাপমাত্রা · এই দিনে',
