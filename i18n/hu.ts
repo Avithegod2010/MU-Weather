@@ -87,4 +87,8 @@ export const hu: Strings = {
   health_migraine: 'Migrénkockázat', health_respiratory: 'Légutak', health_flu: 'Influenza-kockázat',
   health_advice_migraine: 'A nyomásváltozások fejfájást okozhatnak.', health_advice_respiratory: 'A páratartalom és a levegő minősége befolyásolja a légzést.', health_advice_flu: 'A hideg, száraz levegő segíti a vírusok terjedését.',
   card_past_week: 'Elmúlt 7 nap', week_rain_total: 'Heti csapadék', delta_vs_forecast: 'Valós vs. előrejelzés', past_week_note: 'Az eltérések a rögzített előrejelzésekkel jelennek meg — mától.',
+  card_trip: 'Utazástervező', trip_no_favorites: 'Először ments el egy kedvenc várost, hogy utat tervezhess.', trip_open_favorites: 'Mentett városok megnyitása',
+  trip_start: 'Indulás dátuma', trip_length: 'Utazás hossza', trip_days: '{n} nap', trip_show: 'Előrejelzés megjelenítése',
+  trip_rainiest: 'Legesősebb', trip_warmest: 'Legmelegebb', trip_verdict_rain: 'Készülj esőre — {total} napból {n} vizesnek tűnik.', trip_verdict_dry: 'Többnyire száraz — csomagolj könnyedén és élvezd.',
+  trip_retry: 'Próbáld újra',
 };

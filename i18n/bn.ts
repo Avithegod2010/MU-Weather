@@ -87,4 +87,8 @@ export const bn: Strings = {
   health_migraine: 'মাইগ্রেন ঝুঁকি', health_respiratory: 'শ্বাসতন্ত্র', health_flu: 'ফ্লু ঝুঁকি',
   health_advice_migraine: 'চাপের ওঠানামা মাথাব্যথা করাতে পারে।', health_advice_respiratory: 'আর্দ্রতা ও বায়ুর গুণমান শ্বাসকে প্রভাবিত করে।', health_advice_flu: 'ঠান্ডা, শুষ্ক বাতাস ভাইরাস ছড়াতে সাহায্য করে।',
   card_past_week: 'গত ৭ দিন', week_rain_total: 'এই সপ্তাহের বৃষ্টি', delta_vs_forecast: 'পূর্বাভাস বনাম প্রকৃত', past_week_note: 'পূর্বাভাস সংরক্ষণ শুরু হলে ডেল্টা চিপ দেখা যাবে — আজ থেকে।',
+  card_trip: 'ট্রিপ প্ল্যানার', trip_no_favorites: 'প্রথমে একটি শহর প্রিয় হিসেবে সংরক্ষণ করুন, তারপর সেখানেই ভ্রমণের পরিকল্পনা করুন।', trip_open_favorites: 'সংরক্ষিত শহর খুলুন',
+  trip_start: 'শুরুর তারিখ', trip_length: 'ভ্রমণের দৈর্ঘ্য', trip_days: '{n} দিন', trip_show: 'পূর্বাভাস দেখান',
+  trip_rainiest: 'সবচেয়ে আর্দ্র', trip_warmest: 'সবচেয়ে উষ্ণ', trip_verdict_rain: 'বৃষ্টির প্রস্তুতি নিন — {total}-এর মধ্যে {n} দিন ভেজা মনে হচ্ছে।', trip_verdict_dry: 'বেশিরভাগই শুষ্ক — হালকা প্যাক করুন, উপভোগ করুন।',
+  trip_retry: 'আবার চেষ্টা করুন',
 };

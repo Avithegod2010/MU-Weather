@@ -71,6 +71,7 @@ import { ShareCard } from '../components/ShareCard';
 import { TrendChart } from '../components/TrendChart';
 import { PastWeekCard } from '../components/PastWeekCard';
 import { ActivityCard } from '../components/ActivityCard';
+import { TripPlannerCard } from '../components/TripPlannerCard';
 import { CalendarCard } from '../components/CalendarCard';
 import { useCalendarWeather } from '../hooks/useCalendarWeather';
 import { useMarine } from '../hooks/useMarine';
@@ -499,6 +500,16 @@ export function HomeScreen() {
               {FEATURES.activityPlanner && showSection('activity') ? (
                 <Reveal delay={160}>
                   <ActivityCard theme={theme} data={weather.data} />
+                </Reveal>
+              ) : null}
+
+              {showSection('tripPlanner') ? (
+                <Reveal delay={165}>
+                  <TripPlannerCard
+                    theme={theme}
+                    favorites={favoritesState.favorites}
+                    onOpenFavorites={() => setFavoritesOpen(true)}
+                  />
                 </Reveal>
               ) : null}
 

@@ -38,6 +38,7 @@ import {
   Check,
   Languages,
   History,
+  Luggage,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import { Overlay } from './Overlay';
@@ -95,6 +96,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   moon: MoonIcon,
   health: HeartPulse,
   pastWeek: History,
+  tripPlanner: Luggage,
 };
 
 interface SegmentedOption {

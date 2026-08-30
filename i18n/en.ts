@@ -234,6 +234,20 @@ export const en = {
   week_rain_total: 'Rain this week',
   delta_vs_forecast: 'Actual vs forecast',
   past_week_note: 'Delta chips appear as forecasts are logged — starting today.',
+
+  // Trip planner
+  card_trip: 'Trip planner',
+  trip_no_favorites: 'Save a favorite city first, then plan a trip to it.',
+  trip_open_favorites: 'Open saved cities',
+  trip_start: 'Start date',
+  trip_length: 'Trip length',
+  trip_days: '{n} days',
+  trip_show: 'Show forecast',
+  trip_rainiest: 'Rainiest',
+  trip_warmest: 'Warmest',
+  trip_verdict_rain: 'Pack for rain — {n} of {total} days look wet.',
+  trip_verdict_dry: 'Mostly dry — pack light and enjoy.',
+  trip_retry: 'Try again',
 };
 
 export type Strings = typeof en;

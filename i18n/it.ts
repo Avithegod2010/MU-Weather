@@ -87,4 +87,8 @@ export const it: Strings = {
   health_migraine: 'Rischio emicrania', health_respiratory: 'Respiratorio', health_flu: 'Rischio influenza',
   health_advice_migraine: 'I cambi di pressione possono causare mal di testa.', health_advice_respiratory: 'Umidità e qualità dell’aria influenzano la respirazione.', health_advice_flu: 'L’aria fredda e secca favorisce la diffusione dei virus.',
   card_past_week: 'Ultimi 7 giorni', week_rain_total: 'Pioggia della settimana', delta_vs_forecast: 'Reale vs previsione', past_week_note: 'Le differenze compaiono man mano che le previsioni vengono registrate — da oggi.',
+  card_trip: 'Pianificatore di viaggio', trip_no_favorites: 'Salva prima una città preferita per pianificare un viaggio.', trip_open_favorites: 'Apri le città salvate',
+  trip_start: 'Data di inizio', trip_length: 'Durata del viaggio', trip_days: '{n} giorni', trip_show: 'Mostra previsioni',
+  trip_rainiest: 'Il più piovoso', trip_warmest: 'Il più caldo', trip_verdict_rain: 'Preparati alla pioggia — {n} giorni su {total} sembrano bagnati.', trip_verdict_dry: 'Per lo più secco — viaggia leggero e goditelo.',
+  trip_retry: 'Riprova',
 };

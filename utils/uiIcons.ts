@@ -62,5 +62,6 @@ export { default as Languages } from 'lucide-react-native/icons/languages';
 export { default as HeartPulse } from 'lucide-react-native/icons/heart-pulse';
 export { default as X } from 'lucide-react-native/icons/x';
 export { default as History } from 'lucide-react-native/icons/history';
+export { default as Luggage } from 'lucide-react-native/icons/luggage';
 
 export type { LucideIcon } from 'lucide-react-native';
