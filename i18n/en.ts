@@ -419,6 +419,16 @@ export const en = {
   fav_compare: 'Compare',
   search_saved: 'SAVED CITIES',
   cmp_live: '{n} live',
+
+  // Deep-dive about paragraphs
+  about_wind: 'The solid line shows hourly average wind speed; the amber line shows gusts - short bursts that can run 30-40% stronger. Direction tells you where the wind is coming FROM. Force 6+ makes umbrellas useless and cycling hard.',
+  about_uv: 'The UV index measures sun-damage risk to skin and eyes: 0-2 low, 3-5 moderate, 6-7 high, 8-10 very high, 11+ extreme. SPF 30+ blocks about 97% of UVB rays - reapply every two hours, and remember UV passes through clouds.',
+  about_humidity: 'Relative humidity is how saturated the air is with water vapour: above 65% feels muggy, below 30% feels dry. The green chart tracks the dew point - the temperature where condensation begins. The closer it sits to the air temperature, the heavier the air feels.',
+  about_visibility: 'Visibility is how far you can clearly see. Haze, fog, rain and high humidity all reduce it. Under 1 km officially counts as fog; over 20 km is the crystal-clear air you get after rain or in the mountains.',
+  about_pressure: 'Air pressure adjusted to sea level. Falling pressure usually means a low-pressure system (clouds, rain, storms) is approaching; rising pressure signals clearing and calmer weather. Storms often follow sharp drops.',
+  about_precip: 'The percentage is the chance of measurable rain at that exact hour. Millimetres show how much would accumulate: light rain is under 2.5 mm per hour, heavy rain is over 7.6 mm per hour.',
+  about_aqi: 'The US Air Quality Index blends five pollutants into one score; the European index uses a 0-100+ scale from the same pollutants. Bars show each pollutant against its unhealthy threshold (µg/m³). Above 100 US AQI (60 EU) sensitive groups should reduce outdoor exertion; above 200 US AQI (80 EU) everyone should limit time outside.',
+  about_moon: 'The Moon cycles through its phases every 29.5 days - the progress bar shows where we are in the current cycle. Illumination is the lit fraction visible from Earth. Full moons rise around sunset; new moons rise with the sun.',
 };
 
 export type Strings = typeof en;

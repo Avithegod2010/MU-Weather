@@ -334,8 +334,7 @@ export function TileDetailScreen({
       { label: t('f_direction'), value: `${compassLabel(current.windDirection)} (${Math.round(current.windDirection)}°)` },
       { label: t('f_beaufort'), value: beaufortLabel(current.windSpeed) },
     ];
-    about =
-      'The solid line shows hourly average wind speed; the amber line shows gusts - short bursts that can run 30-40% stronger. Direction tells you where the wind is coming FROM. Force 6+ makes umbrellas useless and cycling hard.';
+    about = t('about_wind');
   } else if (view.topic === 'uv') {
     const uvNow = hours[0]?.uvIndex ?? null;
     const band = uvBandFor(uvNow);
@@ -362,8 +361,7 @@ export function TileDetailScreen({
       { label: t('f_sunscreen_hours'), value: `${strongHours} h at UV 3+` },
       { label: t('f_burn_risk'), value: uvAdvice(uvNow) },
     ];
-    about =
-      'The UV index measures sun-damage risk to skin and eyes: 0-2 low, 3-5 moderate, 6-7 high, 8-10 very high, 11+ extreme. SPF 30+ blocks about 97% of UVB rays - reapply every two hours, and remember UV passes through clouds.';
+    about = t('about_uv');
   } else if (view.topic === 'humidity') {
     hero = {
       value: `${Math.round(current.humidity)}`,
@@ -397,13 +395,12 @@ export function TileDetailScreen({
       },
       { label: t('f_comfort'), value: comfortLabel(current.humidity) },
     ];
-    about =
-      'Relative humidity is how saturated the air is with water vapour: above 65% feels muggy, below 30% feels dry. The green chart tracks the dew point - the temperature where condensation begins. The closer it sits to the air temperature, the heavier the air feels.';
+    about = t('about_humidity');
   } else if (view.topic === 'visibility') {
     const range = next24Range(hours, (hour) => hour.visibility);
     const band =
       current.visibility === null
-        ? 'No data'
+        ? t('no_data')
         : current.visibility >= 20000
           ? t('vis_crystal')
           : current.visibility >= 10000
@@ -424,8 +421,7 @@ export function TileDetailScreen({
       { label: t('f_worst_24'), value: range.min !== null ? formatVisibility(range.min) : '--' },
       { label: t('f_fog_threshold'), value: 'under 1 km' },
     ];
-    about =
-      'Visibility is how far you can clearly see. Haze, fog, rain and high humidity all reduce it. Under 1 km officially counts as fog; over 20 km is the crystal-clear air you get after rain or in the mountains.';
+    about = t('about_visibility');
   } else if (view.topic === 'pressure') {
     const range = next24Range(hours, (hour) => hour.pressure);
     const trend = formatPressureTrend(current.pressureTrend);
@@ -457,8 +453,7 @@ export function TileDetailScreen({
               : t('trend_steady'),
       },
     ];
-    about =
-      'Air pressure adjusted to sea level. Falling pressure usually means a low-pressure system (clouds, rain, storms) is approaching; rising pressure signals clearing and calmer weather. Storms often follow sharp drops.';
+    about = t('about_pressure');
   } else if (view.topic === 'precipitation') {
     const next24 = hours.slice(0, 24);
     const maxProb = Math.max(...next24.map((hour) => hour.precipProbability), 0);
@@ -484,8 +479,7 @@ export function TileDetailScreen({
       { label: t('f_wettest_hour'), value: peakHourLabel(hours, (hour) => hour.precipProbability) },
       { label: t('f_today_chance'), value: today ? `${Math.round(today.precipProbabilityMax)}%` : '--' },
     ];
-    about =
-      'The percentage is the chance of measurable rain at that exact hour. Millimetres show how much would accumulate: light rain is under 2.5 mm per hour, heavy rain is over 7.6 mm per hour.';
+    about = t('about_precip');
   } else if (view.topic === 'aqi') {
     const aqiHourly = view.data.aqiHourly ?? [];
     const aqiMap = new Map(aqiHourly.map((point) => [point.time, point]));
@@ -569,8 +563,7 @@ export function TileDetailScreen({
         ]
       : null;
     factRows = [{ label: t('f_advice'), value: band ? band.advice : '--' }];
-    about =
-      'The US Air Quality Index blends five pollutants into one score; the European index uses a 0-100+ scale from the same pollutants. Bars show each pollutant against its unhealthy threshold (µg/m³). Above 100 US AQI (60 EU) sensitive groups should reduce outdoor exertion; above 200 US AQI (80 EU) everyone should limit time outside.';
+    about = t('about_aqi');
   } else if (view.topic === 'moon') {
     const moon = moonPhase();
     const times = moonTimes(new Date(), view.data.location.latitude, view.data.location.longitude);
@@ -578,13 +571,12 @@ export function TileDetailScreen({
     hero = { value: `${moon.illumination}%`, label: moon.phaseName, accent: '#C9C4E8' };
     progress = { fraction: cycleFraction, color: '#C9C4E8' };
     factRows = [
-      { label: t('f_moonrise'), value: times.rise ? clock(times.rise) : 'tomorrow' },
-      { label: t('f_moonset'), value: times.set ? clock(times.set) : 'tomorrow' },
+      { label: t('f_moonrise'), value: times.rise ? clock(times.rise) : t('tomorrow') },
+      { label: t('f_moonset'), value: times.set ? clock(times.set) : t('tomorrow') },
       { label: t('f_cycle_day'), value: `${moon.ageDays.toFixed(1)} of 29.5` },
       { label: t('f_illumination'), value: `${moon.illumination}% lit` },
     ];
-    about =
-      'The Moon cycles through its phases every 29.5 days - the progress bar shows where we are in the current cycle. Illumination is the lit fraction visible from Earth. Full moons rise around sunset; new moons rise with the sun.';
+    about = t('about_moon');
   }
 
   let order = 0;
