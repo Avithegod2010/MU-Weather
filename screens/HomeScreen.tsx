@@ -386,9 +386,9 @@ export function HomeScreen() {
           {weather.status === 'error' && !weather.data ? (
             <ErrorState
               theme={theme}
-              title="Weather unavailable"
-              message={weather.errorMessage ?? 'Something went wrong.'}
-              actionLabel="Try again"
+              title={t('err_weather')}
+              message={weather.errorMessage ?? t('err_generic')}
+              actionLabel={t('err_retry')}
               onAction={weather.refresh}
             />
           ) : weather.data ? (
@@ -588,10 +588,10 @@ export function HomeScreen() {
         <View style={[styles.noLocation, { paddingTop: insets.top + 24 }]}>
           <ErrorState
             theme={theme}
-            title="Welcome to MU Weather"
+            title={t('err_welcome')}
             message={
               locationError ??
-              'Search for a city to see its live gradient forecast.'
+              t('err_welcome_msg')
             }
             variant="empty"
           />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import {
@@ -84,7 +85,7 @@ export function FavoritesSheet({
         <View style={[styles.grabber, { backgroundColor: theme.textTertiary }]} />
       </View>
       <View style={styles.titleRow}>
-        <Text style={[styles.title, { color: inputColor, flex: 1 }]}>Saved cities</Text>
+        <Text style={[styles.title, { color: inputColor, flex: 1 }]}>{t('fav_title')}</Text>
         {ready && favorites.length >= 2 ? (
           <Pressable
             onPress={() => {
@@ -98,7 +99,7 @@ export function FavoritesSheet({
             ]}
           >
             <Text style={[styles.compareButtonText, { color: theme.textPrimary }]}>
-              Compare
+              {t('fav_compare')}
             </Text>
           </Pressable>
         ) : null}
@@ -107,8 +108,8 @@ export function FavoritesSheet({
       {!ready ? null : favorites.length === 0 ? (
         <ErrorState
           theme={theme}
-          title="No saved cities yet"
-          message="Search for a city and tap the star to keep it here for quick access."
+          title={t('fav_none')}
+          message={t('fav_none_msg')}
           variant="empty"
         />
       ) : (

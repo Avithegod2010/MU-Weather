@@ -311,7 +311,7 @@ export function DetailCards({
         />
         <View style={styles.sunExtras}>
           <View style={styles.sunExtraRow}>
-            <Text style={[styles.sunExtraLabel, { color: theme.textTertiary }]}>GOLDEN</Text>
+            <Text style={[styles.sunExtraLabel, { color: theme.textTertiary }]}>{t('sun_golden')}</Text>
             <Text style={[styles.sunExtraValue, { color: theme.textSecondary }]}>
               {sunExtras.hours.goldenMorning
                 ? `${formatDateClock(sunExtras.hours.goldenMorning.start)} – ${formatDateClock(sunExtras.hours.goldenMorning.end)}`
@@ -323,7 +323,7 @@ export function DetailCards({
             </Text>
           </View>
           <View style={styles.sunExtraRow}>
-            <Text style={[styles.sunExtraLabel, { color: theme.textTertiary }]}>BLUE</Text>
+            <Text style={[styles.sunExtraLabel, { color: theme.textTertiary }]}>{t('sun_blue')}</Text>
             <Text style={[styles.sunExtraValue, { color: theme.textSecondary }]}>
               {sunExtras.hours.blueMorning
                 ? `${formatDateClock(sunExtras.hours.blueMorning.start)} – ${formatDateClock(sunExtras.hours.blueMorning.end)}`
@@ -379,7 +379,7 @@ export function DetailCards({
               <Text style={[styles.caption, { color: theme.textTertiary }]}>
                 {yearAgo.status === 'error'
                   ? 'Historical data unavailable'
-                  : 'Loading history...'}
+                  : t('detail_loading')}
               </Text>
             </>
           )}

@@ -1,5 +1,6 @@
 import { describeWmo } from './wmo';
 import { formatHourLabel, convertWind, windUnitLabel } from './format';
+import type { StringKey } from './i18n';
 import type { AqiInfo, CurrentConditions, DayPoint, HourPoint } from '../api/types';
 
 export type AlertKey =
@@ -14,19 +15,19 @@ export type AlertKey =
 
 export interface AlertDefinition {
   key: AlertKey;
-  title: string;
-  subtitle: string;
+  title: StringKey;
+  subtitle: StringKey;
 }
 
 export const ALERT_DEFINITIONS: AlertDefinition[] = [
-  { key: 'rain', title: 'Rain Alert', subtitle: 'Warn me when significant rain is forecast in the next 12 hours' },
-  { key: 'thunder', title: 'Thunderstorm Alert', subtitle: 'Warn me when thunderstorms appear in the forecast' },
-  { key: 'frost', title: 'Frost Alert', subtitle: 'Alert when overnight temperatures drop to 0°C or below' },
-  { key: 'uv', title: 'UV Alert', subtitle: 'Alert when the UV index reaches very high levels' },
-  { key: 'pollen', title: 'Pollen Alert', subtitle: 'Alert when pollen levels are elevated (Europe only)' },
-  { key: 'aqi', title: 'Air Quality Alert', subtitle: 'Alert when air quality becomes unhealthy' },
-  { key: 'pressure', title: 'Pressure Alert', subtitle: 'Alert when barometric pressure drops rapidly' },
-  { key: 'wind', title: 'Wind Alert', subtitle: 'Alert when strong winds or gusts are expected' },
+  { key: 'rain', title: 'alert_rain_title', subtitle: 'alert_rain_sub' },
+  { key: 'thunder', title: 'alert_thunder_title', subtitle: 'alert_thunder_sub' },
+  { key: 'frost', title: 'alert_frost_title', subtitle: 'alert_frost_sub' },
+  { key: 'uv', title: 'alert_uv_title', subtitle: 'alert_uv_sub' },
+  { key: 'pollen', title: 'alert_pollen_title', subtitle: 'alert_pollen_sub' },
+  { key: 'aqi', title: 'alert_aqi_title', subtitle: 'alert_aqi_sub' },
+  { key: 'pressure', title: 'alert_pressure_title', subtitle: 'alert_pressure_sub' },
+  { key: 'wind', title: 'alert_wind_title', subtitle: 'alert_wind_sub' },
 ];
 
 export type AlertSeverity = 'info' | 'warning' | 'severe';

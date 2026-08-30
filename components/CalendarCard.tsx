@@ -35,12 +35,12 @@ export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
               pressed && { opacity: 0.7 },
             ]}
           >
-            <Text style={[styles.buttonText, { color: theme.textPrimary }]}>Allow calendar</Text>
+            <Text style={[styles.buttonText, { color: theme.textPrimary }]}>{t('cal_allow')}</Text>
             <ChevronRight size={15} color={theme.textPrimary} strokeWidth={2.4} />
           </Pressable>
         </View>
       ) : state.status === 'checking' ? (
-        <Text style={[styles.message, { color: theme.textTertiary }]}>Reading calendar...</Text>
+        <Text style={[styles.message, { color: theme.textTertiary }]}>{t('cal_reading')}</Text>
       ) : state.status === 'empty' ? (
         <Text style={[styles.message, { color: theme.textTertiary }]}>
           No events in the next 7 days.
@@ -60,7 +60,7 @@ export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
                   </Text>
                   <Text style={[styles.subtitle, { color: theme.textTertiary }]}>
                     {event.dayLabel}
-                    {event.allDay ? ' · all day' : ` · ${formatTimeShort(event.start)}`}
+                    {event.allDay ? ` · ${t('cal_allday')}` : ` · ${formatTimeShort(event.start)}`}
                   </Text>
                 </View>
                 {event.tMax !== null ? (

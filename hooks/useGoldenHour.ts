@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import * as Notifications from '../utils/notifications';
+import { t } from '../utils/i18n';
 import { findGoldenBlueHours } from '../utils/sunCalc';
 import { wasNotifiedToday, markNotifiedToday } from './useDigest';
 import type { WeatherBundle } from '../api/types';
@@ -38,8 +39,8 @@ export function useGoldenHour(enabled: boolean, data: WeatherBundle | null): voi
       try {
         await Notifications.scheduleNotificationAsync({
           content: {
-            title: 'Golden hour soon',
-            body: `Golden light starts in about ${minutes} min — perfect for photos.`,
+            title: t('notif_golden_title'),
+            body: t('notif_golden_body').replace('{n}', String(minutes)),
             sound: false,
           },
           trigger: null,

@@ -326,10 +326,10 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
 
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
         {view === 'temp'
-          ? 'Temperature · next 24 hours'
+          ? t('hourly_cap_temp')
           : view === 'rain'
-            ? 'Chance of precipitation · next 24 hours'
-            : `Sustained wind speed in ${windUnitLabel()} · next 24 hours`}
+            ? t('hourly_cap_rain')
+            : t('hourly_cap_wind').replace('{unit}', windUnitLabel())}
       </Text>
     </Card>
   );

@@ -78,7 +78,7 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
               pressed && { opacity: 0.7 },
             ]}
           >
-            <Text style={[styles.buttonText, { color: theme.textPrimary }]}>Measure again</Text>
+            <Text style={[styles.buttonText, { color: theme.textPrimary }]}>{t('storm_measure')}</Text>
           </Pressable>
         </>
       ) : phase === 'counting' ? (
@@ -87,7 +87,7 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
             {Math.floor(seconds)}s
           </Text>
           <Text style={[styles.caption, { color: theme.textSecondary }]}>
-            Counting... tap the moment you hear thunder
+            {t('storm_counting')}
           </Text>
           <Pressable
             onPress={registerThunder}
@@ -97,13 +97,13 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
               pressed && { opacity: 0.7 },
             ]}
           >
-            <Text style={[styles.buttonText, { color: '#1C2431' }]}>Heard thunder</Text>
+            <Text style={[styles.buttonText, { color: '#1C2431' }]}>{t('storm_thunder')}</Text>
           </Pressable>
         </>
       ) : (
         <>
           <Text style={[styles.hint, { color: theme.textSecondary }]}>
-            See lightning? Tap flash, then tap when thunder arrives.
+            {t('storm_hint')}
           </Text>
           <Pressable
             onPress={startTimer}
@@ -113,7 +113,7 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
               pressed && { opacity: 0.7 },
             ]}
           >
-            <Text style={[styles.buttonText, { color: theme.textPrimary }]}>I saw a flash</Text>
+            <Text style={[styles.buttonText, { color: theme.textPrimary }]}>{t('storm_flash')}</Text>
           </Pressable>
         </>
       )}

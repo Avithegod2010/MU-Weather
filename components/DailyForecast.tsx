@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { t } from '../utils/i18n';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, ChevronDown } from '../utils/uiIcons';
@@ -110,7 +111,9 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
           ]}
         >
           <Text style={[styles.expandText, { color: theme.textPrimary }]}>
-            {expanded ? 'Show less' : `Show all ${days.length} days`}
+            {expanded
+              ? t('df_show_less')
+              : t('df_show_all').replace('{n}', String(days.length))}
           </Text>
           <ChevronDown
             size={15}

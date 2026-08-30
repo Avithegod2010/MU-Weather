@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -82,7 +83,7 @@ export function MapScreen({ theme, location, visible, onClose }: MapScreenProps)
         <View style={styles.headerTexts}>
           <View style={styles.eyebrowRow}>
             <View style={[styles.liveDot, { backgroundColor: theme.accent }]} />
-            <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>LIVE RADAR</Text>
+            <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>{t('map_eyebrow')}</Text>
           </View>
           <Text style={[styles.cityName, { color: theme.textPrimary }]} numberOfLines={1}>
             {location.name}

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -104,7 +105,7 @@ export function AlertsScreen({
       <AnimatedBackground gradient={theme.gradient} />
 
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.textPrimary }]}>Alerts</Text>
+        <Text style={[styles.title, { color: theme.textPrimary }]}>{t('alerts_title')}</Text>
         <Pressable
           onPress={onClose}
           style={({ pressed }) => [
@@ -122,8 +123,7 @@ export function AlertsScreen({
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.intro, { color: theme.textSecondary }]}>
-          Pick what you want to be warned about. Alerts appear as banners in the app and as
-          system notifications whenever weather data refreshes.
+          {t('alerts_intro')}
         </Text>
 
         {ALERT_DEFINITIONS.map((definition) => {
@@ -151,10 +151,10 @@ export function AlertsScreen({
               </View>
               <View style={styles.rowTexts}>
                 <Text style={[styles.rowTitle, { color: theme.textPrimary }]}>
-                  {definition.title}
+                  {t(definition.title)}
                 </Text>
                 <Text style={[styles.rowSubtitle, { color: theme.textSecondary }]}>
-                  {definition.subtitle}
+                  {t(definition.subtitle)}
                 </Text>
               </View>
               <Switch

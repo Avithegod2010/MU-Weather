@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -118,7 +119,9 @@ export function SunArc({ theme, sunrise, sunset, utcOffsetSeconds }: SunArcProps
         <View style={styles.timeBlock}>
           <View style={styles.timeLabelRow}>
             <Sunrise size={14} color={theme.textSecondary} strokeWidth={2.2} />
-            <Text style={[styles.timeLabelText, { color: theme.textTertiary }]}>SUNRISE</Text>
+            <Text style={[styles.timeLabelText, { color: theme.textTertiary }]}>
+              {t('sunrise').toUpperCase()}
+            </Text>
           </View>
           <Text style={[styles.timeValue, { color: theme.textPrimary }]}>
             {formatTime12(sunrise)}
@@ -127,7 +130,9 @@ export function SunArc({ theme, sunrise, sunset, utcOffsetSeconds }: SunArcProps
         <View style={[styles.timeBlock, styles.rightBlock]}>
           <View style={styles.timeLabelRow}>
             <Sunset size={14} color={theme.textSecondary} strokeWidth={2.2} />
-            <Text style={[styles.timeLabelText, { color: theme.textTertiary }]}>SUNSET</Text>
+            <Text style={[styles.timeLabelText, { color: theme.textTertiary }]}>
+              {t('sunset').toUpperCase()}
+            </Text>
           </View>
           <Text style={[styles.timeValue, { color: theme.textPrimary }]}>
             {formatTime12(sunset)}

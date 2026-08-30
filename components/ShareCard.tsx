@@ -63,12 +63,12 @@ export function ShareCard({ theme, data, conditionLabel, cardRef }: ShareCardPro
           <View style={styles.statDivider} />
           <View style={styles.stat}>
             <Text style={styles.statValue}>{Math.round(data.current.humidity)}%</Text>
-            <Text style={styles.statLabel}>Humidity</Text>
+            <Text style={styles.statLabel}>{t('card_humidity')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.stat}>
             <Text style={styles.statValue}>{moon.illumination}%</Text>
-            <Text style={styles.statLabel}>Moon</Text>
+            <Text style={styles.statLabel}>{t('card_moon')}</Text>
           </View>
         </View>
 

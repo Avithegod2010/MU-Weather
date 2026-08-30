@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from '../utils/notifications';
+import { t } from '../utils/i18n';
 import { describeWmo } from '../utils/wmo';
 import { uvBand } from '../utils/aqi';
 import type { WeatherBundle } from '../api/types';
@@ -50,7 +51,7 @@ export function useDigest(
         await Notifications.scheduleNotificationAsync({
           identifier: DIGEST_IDENTIFIER,
           content: {
-            title: 'Tomorrow at a glance',
+            title: t('notif_digest_title'),
             body,
             sound: false,
           },

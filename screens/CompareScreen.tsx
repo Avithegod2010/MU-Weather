@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '../utils/i18n';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,19 +36,19 @@ export function CompareScreen({ theme, visible, onClose, entries, status }: Comp
 
   const metrics: Metric[] = [
     {
-      label: 'Temp',
+      label: t('cmp_temp'),
       value: (entry) => (entry.data ? formatTemp(entry.data.current.temperature) : '--'),
       rank: (entry) => (entry.data ? entry.data.current.temperature : null),
       better: 'low',
     },
     {
-      label: 'Feels',
+      label: t('cmp_feels'),
       value: (entry) => (entry.data ? formatTemp(entry.data.current.apparentTemperature) : '--'),
       rank: (entry) => (entry.data ? entry.data.current.apparentTemperature : null),
       better: 'low',
     },
     {
-      label: 'Rain',
+      label: t('cmp_rain'),
       value: (entry) => {
         if (!entry.data) return '--';
         const max = Math.max(...entry.data.hourly.slice(0, 12).map((h) => h.precipProbability), 0);
@@ -60,14 +61,14 @@ export function CompareScreen({ theme, visible, onClose, entries, status }: Comp
       better: 'low',
     },
     {
-      label: 'Wind',
+      label: t('cmp_wind'),
       value: (entry) =>
         entry.data ? `${Math.round(convertWind(entry.data.current.windSpeed))}` : '--',
       rank: (entry) => (entry.data ? entry.data.current.windSpeed : null),
       better: 'low',
     },
     {
-      label: 'AQI',
+      label: t('cmp_aqi'),
       value: (entry) => {
         const aqi = entry.data?.aqi?.usAqi;
         return aqi === null || aqi === undefined ? '--' : String(Math.round(aqi));
@@ -101,10 +102,12 @@ export function CompareScreen({ theme, visible, onClose, entries, status }: Comp
 
       <View style={styles.header}>
         <View style={styles.headerTexts}>
-          <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>SIDE BY SIDE</Text>
-          <Text style={[styles.title, { color: theme.textPrimary }]}>Compare cities</Text>
+          <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>{t('cmp_eyebrow')}</Text>
+          <Text style={[styles.title, { color: theme.textPrimary }]}>{t('cmp_title')}</Text>
         </View>
-        <Text style={[styles.count, { color: theme.textTertiary }]}>{valid.length} live</Text>
+        <Text style={[styles.count, { color: theme.textTertiary }]}>
+          {t('cmp_live').replace('{n}', String(valid.length))}
+        </Text>
       </View>
 
       {status === 'loading' ? (

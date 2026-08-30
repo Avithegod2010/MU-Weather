@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import {
   ActivityIndicator,
@@ -154,7 +155,7 @@ export function SearchOverlay({
             <TextInput
               value={query}
               onChangeText={setQuery}
-              placeholder="Search any city worldwide..."
+              placeholder={t('search_placeholder')}
               placeholderTextColor={theme.textTertiary}
               style={[styles.input, { color: inputColor }]}
               autoFocus={visible}
@@ -169,15 +170,15 @@ export function SearchOverlay({
         {error ? (
           <ErrorState
             theme={theme}
-            title="Search unavailable"
+            title={t('search_unavailable')}
             message={error}
             variant="empty"
           />
         ) : emptyQuery && !favorites.length ? (
           <ErrorState
             theme={theme}
-            title="Find your city"
-            message="Type at least two letters to search among millions of cities worldwide."
+            title={t('search_find')}
+            message={t('search_find_msg')}
             variant="empty"
           />
         ) : (
@@ -190,7 +191,7 @@ export function SearchOverlay({
               emptyQuery ? (
                 <View style={styles.favoritesSection}>
                   <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
-                    SAVED CITIES
+                    {t('search_saved')}
                   </Text>
                   {favorites.map((fav) => (
                     <View key={fav.id}>{renderRow(fav, false)}</View>
@@ -199,8 +200,8 @@ export function SearchOverlay({
               ) : searching ? null : (
                 <ErrorState
                   theme={theme}
-                  title="No cities found"
-                  message={`Nothing matched "${query.trim()}". Try a different spelling.`}
+                  title={t('search_none')}
+                  message={t('search_none_msg').replace('{q}', query.trim())}
                   variant="empty"
                 />
               )

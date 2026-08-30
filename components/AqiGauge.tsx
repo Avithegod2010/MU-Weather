@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { europeanAqiBand, europeanAqiFraction, usAqiBand, usAqiFraction } from '../utils/aqi';
@@ -39,7 +40,7 @@ export function AqiGauge({ theme, scale = 'us', usAqi, euAqi, pm2_5, pm10, ozone
             <Text style={[styles.bandText, { color: theme.textSecondary }]}>{band.label}</Text>
           </View>
         ) : (
-          <Text style={[styles.bandText, { color: theme.textTertiary }]}>Unavailable</Text>
+          <Text style={[styles.bandText, { color: theme.textTertiary }]}>{t('unavailable')}</Text>
         )}
       </View>
 
