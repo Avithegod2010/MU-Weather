@@ -91,4 +91,8 @@ export const nl: Strings = {
   trip_start: 'Startdatum', trip_length: 'Reisduur', trip_days: '{n} dagen', trip_show: 'Prognose tonen',
   trip_rainiest: 'Regenachtigst', trip_warmest: 'Warmst', trip_verdict_rain: 'Pak regenkleding in — {n} van {total} dagen lijken nat.', trip_verdict_dry: 'Meestal droog — pak licht in en geniet.',
   trip_retry: 'Opnieuw proberen',
+  backup_section: 'Back-up & herstel', backup_export: 'Instellingen exporteren', backup_export_subtitle: 'Bewaar alle instellingen in een JSON-bestand',
+  backup_import: 'Instellingen importeren', backup_import_subtitle: 'Herstel instellingen vanuit een back-upbestand',
+  backup_done: 'Instellingen hersteld', backup_exported: 'Back-upbestand gemaakt', backup_error: 'Exporteren mislukt — probeer opnieuw', backup_invalid: 'Dat bestand is geen geldige instellingen-back-up',
+  backup_confirm_title: 'Instellingen importeren?', backup_confirm_body: 'Je huidige instellingen worden vervangen door die uit het bestand.', backup_cancel: 'Annuleren', backup_apply: 'Importeren',
 };

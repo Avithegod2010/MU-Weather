@@ -91,4 +91,8 @@ export const id: Strings = {
   trip_start: 'Tanggal mulai', trip_length: 'Durasi perjalanan', trip_days: '{n} hari', trip_show: 'Tampilkan prakiraan',
   trip_rainiest: 'Paling hujan', trip_warmest: 'Paling hangat', trip_verdict_rain: 'Siapkan perlengkapan hujan — {n} dari {total} hari tampak basah.', trip_verdict_dry: 'Sebagian besar kering — bawa barang sedikit dan nikmati.',
   trip_retry: 'Coba lagi',
+  backup_section: 'Cadangkan & pulihkan', backup_export: 'Ekspor pengaturan', backup_export_subtitle: 'Simpan semua pengaturan ke berkas JSON',
+  backup_import: 'Impor pengaturan', backup_import_subtitle: 'Pulihkan pengaturan dari berkas cadangan',
+  backup_done: 'Pengaturan dipulihkan', backup_exported: 'Berkas cadangan dibuat', backup_error: 'Ekspor gagal — coba lagi', backup_invalid: 'Berkas itu bukan cadangan pengaturan yang valid',
+  backup_confirm_title: 'Impor pengaturan?', backup_confirm_body: 'Pengaturan saat ini akan diganti dengan yang ada di berkas.', backup_cancel: 'Batal', backup_apply: 'Impor',
 };

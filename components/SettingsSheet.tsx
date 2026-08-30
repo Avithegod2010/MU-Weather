@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { F } from '../theme/typography';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Sharing from 'expo-sharing';
 import Svg, { Polyline } from 'react-native-svg';
 import * as Notifications from '../utils/notifications';
 import {
@@ -39,6 +40,8 @@ import {
   Languages,
   History,
   Luggage,
+  Download,
+  Upload,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import { Overlay } from './Overlay';
@@ -50,6 +53,7 @@ import { TILE_GROUPS } from '../config/tiles';
 import { BACKGROUND_OPTIONS } from '../config/backgrounds';
 import { COLOR_THEMES } from '../config/colorThemes';
 import { LANGUAGES, t } from '../utils/i18n';
+import { exportSettings, importSettings } from '../utils/backup';
 import type { ProviderCheck } from '../api/providers';
 import type { AppTheme } from '../theme/palettes';
 
@@ -173,6 +177,44 @@ export function SettingsSheet({
 }: SettingsSheetProps) {
   const inputColor = theme.isLight ? '#1C2431' : '#FFFFFF';
   const [view, setView] = useState<SheetView>('main');
+  const [backupMsg, setBackupMsg] = useState<string | null>(null);
+
+  const showBackupMsg = (message: string) => {
+    setBackupMsg(message);
+    setTimeout(() => setBackupMsg(null), 4000);
+  };
+  const onExportBackup = async () => {
+    haptics.select();
+    try {
+      const uri = await exportSettings(settings);
+      await Sharing.shareAsync(uri, { mimeType: 'application/json' });
+      showBackupMsg(t('backup_exported'));
+    } catch {
+      showBackupMsg(t('backup_error'));
+    }
+  };
+  const onImportBackup = () => {
+    haptics.select();
+    Alert.alert(t('backup_confirm_title'), t('backup_confirm_body'), [
+      { text: t('backup_cancel'), style: 'cancel' },
+      {
+        text: t('backup_apply'),
+        onPress: () => {
+          void (async () => {
+            const result = await importSettings();
+            if (result.outcome === 'canceled') return;
+            if (result.outcome === 'invalid') {
+              showBackupMsg(t('backup_invalid'));
+              return;
+            }
+            onUpdate(result.settings);
+            haptics.success();
+            showBackupMsg(t('backup_done'));
+          })();
+        },
+      },
+    ]);
+  };
 
   const avgDelta =
     accuracyHistory.length > 0
@@ -828,6 +870,56 @@ export function SettingsSheet({
             <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
           </Pressable>
 
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
+            {t('backup_section')}
+          </Text>
+          <Pressable
+            onPress={onExportBackup}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Download size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('backup_export')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('backup_export_subtitle')}
+              </Text>
+            </View>
+          </Pressable>
+          <Pressable
+            onPress={onImportBackup}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Upload size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('backup_import')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('backup_import_subtitle')}
+              </Text>
+            </View>
+          </Pressable>
+          {backupMsg ? (
+            <Text
+              style={[
+                styles.backupMsg,
+                { color: theme.textTertiary },
+              ]}
+            >
+              {backupMsg}
+            </Text>
+          ) : null}
+
           <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
             <Text style={[styles.noteText, { color: theme.textSecondary }]}>
@@ -995,6 +1087,12 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 8,
+  },
+  backupMsg: {
+    fontSize: 11.5,
+    fontFamily: F.regular,
+    marginTop: 8,
+    marginLeft: 24,
   },
   sectionLabel: {
     fontSize: 11,

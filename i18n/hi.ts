@@ -91,4 +91,8 @@ export const hi: Strings = {
   trip_start: 'प्रारंभ तिथि', trip_length: 'यात्रा की अवधि', trip_days: '{n} दिन', trip_show: 'पूर्वानुमान दिखाएँ',
   trip_rainiest: 'सबसे नम', trip_warmest: 'सबसे गर्म', trip_verdict_rain: 'बारिश की तैयारी करें — {total} में से {n} दिन गीले दिख रहे हैं।', trip_verdict_dry: 'ज़्यादातर शुष्क — हल्का पैक करें और आनंद लें।',
   trip_retry: 'फिर से कोशिश करें',
+  backup_section: 'बैकअप और रीस्टोर', backup_export: 'सेटिंग्स निर्यात करें', backup_export_subtitle: 'सभी सेटिंग्स एक JSON फ़ाइल में सेव करें',
+  backup_import: 'सेटिंग्स इंपोर्ट करें', backup_import_subtitle: 'बैकअप फ़ाइल से सेटिंग्स पुनर्स्थापित करें',
+  backup_done: 'सेटिंग्स पुनर्स्थापित हुईं', backup_exported: 'बैकअप फ़ाइल बन गई', backup_error: 'निर्यात विफल — फिर से कोशिश करें', backup_invalid: 'यह फ़ाइल मान्य सेटिंग्स बैकअप नहीं है',
+  backup_confirm_title: 'सेटिंग्स इंपोर्ट करें?', backup_confirm_body: 'आपकी वर्तमान सेटिंग्स बैकअप फ़ाइल वाली सेटिंग्स से बदल दी जाएँगी।', backup_cancel: 'रद्द करें', backup_apply: 'इंपोर्ट करें',
 };

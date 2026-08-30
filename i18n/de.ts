@@ -91,4 +91,8 @@ export const de: Strings = {
   trip_start: 'Startdatum', trip_length: 'Reisedauer', trip_days: '{n} Tage', trip_show: 'Vorhersage zeigen',
   trip_rainiest: 'Am regnerischsten', trip_warmest: 'Am wärmsten', trip_verdict_rain: 'Auf Regen einstellen — {n} von {total} Tagen sehen nass aus.', trip_verdict_dry: 'Überwiegend trocken — leicht packen und genießen.',
   trip_retry: 'Erneut versuchen',
+  backup_section: 'Backup & Wiederherstellung', backup_export: 'Einstellungen exportieren', backup_export_subtitle: 'Alle Einstellungen in eine JSON-Datei sichern',
+  backup_import: 'Einstellungen importieren', backup_import_subtitle: 'Einstellungen aus einer Backup-Datei wiederherstellen',
+  backup_done: 'Einstellungen wiederhergestellt', backup_exported: 'Backup-Datei erstellt', backup_error: 'Export fehlgeschlagen — erneut versuchen', backup_invalid: 'Diese Datei ist kein gültiges Einstellungs-Backup',
+  backup_confirm_title: 'Einstellungen importieren?', backup_confirm_body: 'Deine aktuellen Einstellungen werden durch die aus der Datei ersetzt.', backup_cancel: 'Abbrechen', backup_apply: 'Importieren',
 };

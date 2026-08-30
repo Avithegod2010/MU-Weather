@@ -91,4 +91,8 @@ export const el: Strings = {
   trip_start: 'Ημερομηνία έναρξης', trip_length: 'Διάρκεια ταξιδιού', trip_days: '{n} ημέρες', trip_show: 'Εμφάνιση πρόγνωσης',
   trip_rainiest: 'Η πιο βροχερή', trip_warmest: 'Η πιο θερμή', trip_verdict_rain: 'Προετοιμαστείτε για βροχή — {n} από {total} ημέρες φαίνονται βροχερές.', trip_verdict_dry: 'Κυρίως ξηρό — ταξιδέψτε ελαφρύ και απολαύστε.',
   trip_retry: 'Δοκιμάστε ξανά',
+  backup_section: 'Αντίγραφο ασφαλείας', backup_export: 'Εξαγωγή ρυθμίσεων', backup_export_subtitle: 'Αποθηκεύστε όλες τις ρυθμίσεις σε αρχείο JSON',
+  backup_import: 'Εισαγωγή ρυθμίσεων', backup_import_subtitle: 'Επαναφορά ρυθμίσεων από αρχείο αντιγράφου',
+  backup_done: 'Οι ρυθμίσεις επαναφέρθηκαν', backup_exported: 'Δημιουργήθηκε αντίγραφο', backup_error: 'Η εξαγωγή απέτυχε — δοκιμάστε ξανά', backup_invalid: 'Το αρχείο δεν είναι έγκυρο αντίγραφο ρυθμίσεων',
+  backup_confirm_title: 'Εισαγωγή ρυθμίσεων;', backup_confirm_body: 'Οι τρέχουσες ρυθμίσεις θα αντικατασταθούν από αυτές του αρχείου.', backup_cancel: 'Άκυρο', backup_apply: 'Εισαγωγή',
 };

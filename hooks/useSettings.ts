@@ -41,7 +41,7 @@ export interface AppSettings {
   hiddenTiles: string[];
 }
 
-const DEFAULT_SETTINGS: AppSettings = {
+export const DEFAULT_SETTINGS: AppSettings = {
   hapticsEnabled: true,
   language: 'en',
   themeMode: 'system',

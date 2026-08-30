@@ -235,6 +235,21 @@ export const en = {
   delta_vs_forecast: 'Actual vs forecast',
   past_week_note: 'Delta chips appear as forecasts are logged — starting today.',
 
+  // Backup & restore
+  backup_section: 'Backup & restore',
+  backup_export: 'Export settings',
+  backup_export_subtitle: 'Save all settings to a shareable JSON file',
+  backup_import: 'Import settings',
+  backup_import_subtitle: 'Restore settings from a backup file',
+  backup_done: 'Settings restored',
+  backup_exported: 'Backup file created',
+  backup_error: 'Export failed — try again',
+  backup_invalid: "That file isn't a valid settings backup",
+  backup_confirm_title: 'Import settings?',
+  backup_confirm_body: 'Your current settings will be replaced by the ones in the backup file.',
+  backup_cancel: 'Cancel',
+  backup_apply: 'Import',
+
   // Trip planner
   card_trip: 'Trip planner',
   trip_no_favorites: 'Save a favorite city first, then plan a trip to it.',

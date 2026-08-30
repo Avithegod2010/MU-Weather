@@ -91,4 +91,8 @@ export const bn: Strings = {
   trip_start: 'শুরুর তারিখ', trip_length: 'ভ্রমণের দৈর্ঘ্য', trip_days: '{n} দিন', trip_show: 'পূর্বাভাস দেখান',
   trip_rainiest: 'সবচেয়ে আর্দ্র', trip_warmest: 'সবচেয়ে উষ্ণ', trip_verdict_rain: 'বৃষ্টির প্রস্তুতি নিন — {total}-এর মধ্যে {n} দিন ভেজা মনে হচ্ছে।', trip_verdict_dry: 'বেশিরভাগই শুষ্ক — হালকা প্যাক করুন, উপভোগ করুন।',
   trip_retry: 'আবার চেষ্টা করুন',
+  backup_section: 'ব্যাকআপ ও পুনরুদ্ধার', backup_export: 'সেটিংস এক্সপোর্ট', backup_export_subtitle: 'সব সেটিংস একটি JSON ফাইলে সংরক্ষণ করুন',
+  backup_import: 'সেটিংস ইমপোর্ট', backup_import_subtitle: 'ব্যাকআপ ফাইল থেকে সেটিংস ফিরিয়ে আনুন',
+  backup_done: 'সেটিংস ফিরিয়ে আনা হয়েছে', backup_exported: 'ব্যাকআপ ফাইল তৈরি হয়েছে', backup_error: 'এক্সপোর্ট ব্যর্থ — আবার চেষ্টা করুন', backup_invalid: 'এই ফাইলটি বৈধ সেটিংস ব্যাকআপ নয়',
+  backup_confirm_title: 'সেটিংস ইমপোর্ট করবেন?', backup_confirm_body: 'আপনার বর্তমান সেটিংস ব্যাকআপ ফাইলের সেটিংস দিয়ে প্রতিস্থাপিত হবে।', backup_cancel: 'বাতিল', backup_apply: 'ইমপোর্ট',
 };

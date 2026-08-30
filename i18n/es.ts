@@ -91,4 +91,8 @@ export const es: Strings = {
   trip_start: 'Fecha de inicio', trip_length: 'Duración del viaje', trip_days: '{n} días', trip_show: 'Mostrar pronóstico',
   trip_rainiest: 'Más lluvioso', trip_warmest: 'Más cálido', trip_verdict_rain: 'Empaca para lluvia — {n} de {total} días se ven húmedos.', trip_verdict_dry: 'Mayormente seco — empaca ligero y disfruta.',
   trip_retry: 'Reintentar',
+  backup_section: 'Copia de seguridad', backup_export: 'Exportar ajustes', backup_export_subtitle: 'Guarda todos los ajustes en un archivo JSON',
+  backup_import: 'Importar ajustes', backup_import_subtitle: 'Restaura ajustes desde un archivo de copia',
+  backup_done: 'Ajustes restaurados', backup_exported: 'Copia creada', backup_error: 'Error al exportar — inténtalo de nuevo', backup_invalid: 'Ese archivo no es una copia de ajustes válida',
+  backup_confirm_title: '¿Importar ajustes?', backup_confirm_body: 'Tus ajustes actuales se sustituirán por los del archivo.', backup_cancel: 'Cancelar', backup_apply: 'Importar',
 };
