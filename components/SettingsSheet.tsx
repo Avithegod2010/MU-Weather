@@ -37,6 +37,7 @@ import {
   Palette,
   Check,
   Languages,
+  History,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import { Overlay } from './Overlay';
@@ -93,6 +94,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   rainToday: Droplets,
   moon: MoonIcon,
   health: HeartPulse,
+  pastWeek: History,
 };
 
 interface SegmentedOption {

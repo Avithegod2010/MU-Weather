@@ -86,4 +86,5 @@ export const bn: Strings = {
   rain_alert: 'বৃষ্টির সতর্কতা', rain_alert_subtitle: '৬০ মিনিটের মধ্যে বৃষ্টি শুরু হলে জানানো হবে', notif_rain_title: 'শীঘ্রই বৃষ্টি শুরু হবে', notif_rain_body: 'প্রায় {n} মিনিটে বৃষ্টির সম্ভাবনা। ছাতা সঙ্গে রাখুন।',
   health_migraine: 'মাইগ্রেন ঝুঁকি', health_respiratory: 'শ্বাসতন্ত্র', health_flu: 'ফ্লু ঝুঁকি',
   health_advice_migraine: 'চাপের ওঠানামা মাথাব্যথা করাতে পারে।', health_advice_respiratory: 'আর্দ্রতা ও বায়ুর গুণমান শ্বাসকে প্রভাবিত করে।', health_advice_flu: 'ঠান্ডা, শুষ্ক বাতাস ভাইরাস ছড়াতে সাহায্য করে।',
+  card_past_week: 'গত ৭ দিন', week_rain_total: 'এই সপ্তাহের বৃষ্টি', delta_vs_forecast: 'পূর্বাভাস বনাম প্রকৃত', past_week_note: 'পূর্বাভাস সংরক্ষণ শুরু হলে ডেল্টা চিপ দেখা যাবে — আজ থেকে।',
 };

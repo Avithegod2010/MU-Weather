@@ -48,6 +48,7 @@ export const TILE_GROUPS: TileGroup[] = [
       { key: 'hourly', label: 'Hourly forecast' },
       { key: 'daily', label: 'Daily forecast' },
       { key: 'trend', label: '48-hour trends' },
+      { key: 'pastWeek', label: 'Past week' },
       { key: 'activity', label: 'Activity planner' },
       { key: 'calendar', label: 'Calendar weather' },
       { key: 'marine', label: 'Marine forecast' },

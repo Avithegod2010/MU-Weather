@@ -86,4 +86,5 @@ export const hu: Strings = {
   rain_alert: 'Esőértesítés', rain_alert_subtitle: 'Értesít, ha 60 percen belül esni kezd az eső', notif_rain_title: 'Hamarosan esik az eső', notif_rain_body: 'Eső várható kb. {n} perc múlva. Vigyél esernyőt.',
   health_migraine: 'Migrénkockázat', health_respiratory: 'Légutak', health_flu: 'Influenza-kockázat',
   health_advice_migraine: 'A nyomásváltozások fejfájást okozhatnak.', health_advice_respiratory: 'A páratartalom és a levegő minősége befolyásolja a légzést.', health_advice_flu: 'A hideg, száraz levegő segíti a vírusok terjedését.',
+  card_past_week: 'Elmúlt 7 nap', week_rain_total: 'Heti csapadék', delta_vs_forecast: 'Valós vs. előrejelzés', past_week_note: 'Az eltérések a rögzített előrejelzésekkel jelennek meg — mától.',
 };

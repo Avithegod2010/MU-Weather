@@ -86,4 +86,5 @@ export const hi: Strings = {
   rain_alert: 'वर्षा अलर्ट', rain_alert_subtitle: '60 मिनट में वर्षा शुरू होने पर सूचित करें', notif_rain_title: 'वर्षा शुरू होने वाली है', notif_rain_body: 'लगभग {n} मिनट में वर्षा की संभावना। छाता साथ रखें।',
   health_migraine: 'माइग्रेन जोखिम', health_respiratory: 'श्वसन', health_flu: 'फ्लू जोखिम',
   health_advice_migraine: 'दबाव में बदलाव सिरदर्द करा सकता है।', health_advice_respiratory: 'नमी और वायु गुणवत्ता सांसों को प्रभावित करती है।', health_advice_flu: 'ठंडी, शुष्क हवा वायरस फैलाने में मदद करती है।',
+  card_past_week: 'पिछले 7 दिन', week_rain_total: 'इस हफ़्ते की बारिश', delta_vs_forecast: 'अनुमान बनाम वास्तविक', past_week_note: 'अनुमान दर्ज होने पर अंतर चिप दिखेंगे — आज से शुरू।',
 };

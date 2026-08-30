@@ -86,4 +86,5 @@ export const de: Strings = {
   rain_alert: 'Regenwarnung', rain_alert_subtitle: 'Benachrichtigt, wenn Regen in 60 Minuten beginnt', notif_rain_title: 'Regen beginnt bald', notif_rain_body: 'Regen in etwa {n} Minuten erwartet. Regenschirm mitnehmen.',
   health_migraine: 'Migränerisiko', health_respiratory: 'Atemwege', health_flu: 'Gripperisiko',
   health_advice_migraine: 'Druckschwankungen können Kopfschmerzen auslösen.', health_advice_respiratory: 'Luftfeuchtigkeit und Luftqualität beeinflussen die Atmung.', health_advice_flu: 'Kalte, trockene Luft begünstigt die Verbreitung von Viren.',
+  card_past_week: 'Letzte 7 Tage', week_rain_total: 'Regen dieser Woche', delta_vs_forecast: 'Tatsächlich vs. Prognose', past_week_note: 'Abweichungen erscheinen, sobald Prognosen gespeichert sind — ab heute.',
 };

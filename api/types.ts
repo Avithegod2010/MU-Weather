@@ -106,6 +106,15 @@ export interface WeatherBundle {
   fetchedAt: number;
 }
 
+/** One day of observed weather from the Archive API (JSON-safe). */
+export interface PastDayActual {
+  date: string;
+  tMax: number;
+  tMin: number;
+  precipSum: number;
+  weatherCode: number;
+}
+
 export interface ForecastResponse {
   latitude: number;
   longitude: number;

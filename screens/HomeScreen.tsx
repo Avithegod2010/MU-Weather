@@ -69,6 +69,7 @@ import {
 } from '../utils/uiIcons';
 import { ShareCard } from '../components/ShareCard';
 import { TrendChart } from '../components/TrendChart';
+import { PastWeekCard } from '../components/PastWeekCard';
 import { ActivityCard } from '../components/ActivityCard';
 import { CalendarCard } from '../components/CalendarCard';
 import { useCalendarWeather } from '../hooks/useCalendarWeather';
@@ -109,6 +110,7 @@ import { useYearAgo } from '../hooks/useYearAgo';
 import { useDigest } from '../hooks/useDigest';
 import { useGoldenHour } from '../hooks/useGoldenHour';
 import { useRainAlert } from '../hooks/useRainAlert';
+import { usePastDays } from '../hooks/usePastDays';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
 import { useFavorites } from '../hooks/useFavorites';
@@ -135,6 +137,7 @@ export function HomeScreen() {
 
   const favoritesState = useFavorites();
   const weather = useWeather(active);
+  const pastDays = usePastDays(active);
   const { settings, updateSettings } = useSettings();
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   const theme = useMemo(
@@ -484,6 +487,12 @@ export function HomeScreen() {
               {FEATURES.trendChart && showSection('trend') ? (
                 <Reveal delay={140}>
                   <TrendChart theme={theme} hours={weather.data.hourly} />
+                </Reveal>
+              ) : null}
+
+              {showSection('pastWeek') ? (
+                <Reveal delay={150}>
+                  <PastWeekCard theme={theme} days={pastDays.days} />
                 </Reveal>
               ) : null}
 

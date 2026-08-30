@@ -86,4 +86,5 @@ export const it: Strings = {
   rain_alert: 'Avviso pioggia', rain_alert_subtitle: 'Avvisa quando la pioggia inizia entro 60 minuti', notif_rain_title: 'La pioggia sta per iniziare', notif_rain_body: 'Pioggia prevista tra circa {n} minuti. Porta l’ombrello.',
   health_migraine: 'Rischio emicrania', health_respiratory: 'Respiratorio', health_flu: 'Rischio influenza',
   health_advice_migraine: 'I cambi di pressione possono causare mal di testa.', health_advice_respiratory: 'Umidità e qualità dell’aria influenzano la respirazione.', health_advice_flu: 'L’aria fredda e secca favorisce la diffusione dei virus.',
+  card_past_week: 'Ultimi 7 giorni', week_rain_total: 'Pioggia della settimana', delta_vs_forecast: 'Reale vs previsione', past_week_note: 'Le differenze compaiono man mano che le previsioni vengono registrate — da oggi.',
 };

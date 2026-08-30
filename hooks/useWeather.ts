@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, fetchWeather } from '../api/openMeteo';
 import type { GeoLocation, WeatherBundle } from '../api/types';
 import { loadLastWeather, saveLastWeather } from '../utils/storage';
+import { logForecast } from '../utils/forecastLog';
 
 export type WeatherStatus = 'idle' | 'loading' | 'refreshing' | 'success' | 'error';
 
@@ -33,8 +34,10 @@ export function useWeather(location: GeoLocation | null) {
         freshRef.current = true;
         setData(bundle);
         setStatus('success');
-        // Non-critical: persist for the next cold start.
+        // Non-critical: persist for the next cold start, and record the
+        // daily predictions for the future forecast-vs-actual comparison.
         void saveLastWeather(bundle);
+        void logForecast(bundle);
       } catch (error) {
         if (requestId.current !== id) return;
         if (error instanceof ApiError && error.kind === 'network') {

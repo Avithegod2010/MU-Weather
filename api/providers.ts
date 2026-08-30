@@ -1,3 +1,5 @@
+import type { PastDayActual } from './types';
+
 export interface ProviderCheck {
   status: 'idle' | 'checking' | 'ok' | 'error';
   temperature: number | null;
@@ -84,6 +86,90 @@ export async function fetchYearAgo(lat: number, lon: number): Promise<Historical
     };
   } finally {
     clearTimeout(timer);
+  }
+}
+
+interface ArchiveDailyPayload {
+  time?: string[];
+  temperature_2m_max?: Array<number | null>;
+  temperature_2m_min?: Array<number | null>;
+  precipitation_sum?: Array<number | null>;
+  weather_code?: Array<number | null>;
+}
+
+function isoDaysAgo(offset: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - offset);
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
+/** One Archive API request for [start, end]; throws when the service or the window is unusable. */
+async function requestArchiveWindow(
+  lat: number,
+  lon: number,
+  start: string,
+  end: string,
+): Promise<PastDayActual[]> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    start_date: start,
+    end_date: end,
+    daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code',
+    timezone: 'auto',
+  }).toString();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`, {
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`Archive responded ${response.status}`);
+    const json = await response.json();
+    const daily: ArchiveDailyPayload | undefined = json?.daily;
+    if (!daily?.time?.length) throw new Error('No archive data');
+    const days: PastDayActual[] = [];
+    for (let i = 0; i < daily.time.length; i++) {
+      const tMax = daily.temperature_2m_max?.[i];
+      const tMin = daily.temperature_2m_min?.[i];
+      // Skip lagging days with incomplete rows instead of inventing values.
+      if (typeof tMax !== 'number' || typeof tMin !== 'number') continue;
+      days.push({
+        date: daily.time[i] as string,
+        tMax,
+        tMin,
+        precipSum: daily.precipitation_sum?.[i] ?? 0,
+        weatherCode: daily.weather_code?.[i] ?? 3,
+      });
+    }
+    return days;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Actual observed weather for the past `days` days (default 7) from the
+ * Open-Meteo Archive API: today-(days+1) .. today-1. The archive era
+ * sometimes lags just behind the live era, so a failed or empty recent
+ * window retries once with end_date stepped back to today-6 and returns
+ * whatever complete days come back. Never throws: failures degrade to [].
+ */
+export async function fetchPastDays(lat: number, lon: number, days = 7): Promise<PastDayActual[]> {
+  const start = isoDaysAgo(days + 1);
+  try {
+    const recent = await requestArchiveWindow(lat, lon, start, isoDaysAgo(1));
+    if (recent.length > 0) return recent;
+  } catch {
+    // Fall through to the stepped-back retry below.
+  }
+  try {
+    return await requestArchiveWindow(lat, lon, start, isoDaysAgo(6));
+  } catch {
+    return [];
   }
 }
 

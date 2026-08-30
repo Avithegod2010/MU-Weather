@@ -230,6 +230,10 @@ export const en = {
   health_advice_migraine: 'Pressure swings can trigger headaches.',
   health_advice_respiratory: 'Humidity and air quality affect breathing.',
   health_advice_flu: 'Cold, dry air helps viruses spread.',
+  card_past_week: 'Past 7 days',
+  week_rain_total: 'Rain this week',
+  delta_vs_forecast: 'Actual vs forecast',
+  past_week_note: 'Delta chips appear as forecasts are logged — starting today.',
 };
 
 export type Strings = typeof en;

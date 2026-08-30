@@ -86,4 +86,5 @@ export const nl: Strings = {
   rain_alert: 'Regenmelding', rain_alert_subtitle: 'Waarschuwt wanneer het binnen 60 minuten gaat regenen', notif_rain_title: 'Het gaat zo regenen', notif_rain_body: 'Regen verwacht over ongeveer {n} minuten. Neem een paraplu mee.',
   health_migraine: 'Migraine-risico', health_respiratory: 'Ademhaling', health_flu: 'Griep-risico',
   health_advice_migraine: 'Drukschommelingen kunnen hoofdpijn veroorzaken.', health_advice_respiratory: 'Vochtigheid en luchtkwaliteit beïnvloeden de ademhaling.', health_advice_flu: 'Koude, droge lucht helpt virussen zich te verspreiden.',
+  card_past_week: 'Afgelopen 7 dagen', week_rain_total: 'Regen deze week', delta_vs_forecast: 'Werkelijk vs. voorspeld', past_week_note: 'Afwijkingen verschijnen zodra voorspellingen zijn opgeslagen — vanaf vandaag.',
 };

@@ -86,4 +86,5 @@ export const el: Strings = {
   rain_alert: 'Ειδοποίηση βροχής', rain_alert_subtitle: 'Ειδοποιεί όταν η βροχή ξεκινά εντός 60 λεπτών', notif_rain_title: 'Η βροχή ξεκινά σύντομα', notif_rain_body: 'Βροχή αναμένεται σε περίπου {n} λεπτά. Πάρτε ομπρέλα.',
   health_migraine: 'Κίνδυνος ημικρανίας', health_respiratory: 'Αναπνευστικό', health_flu: 'Κίνδυνος γρίπης',
   health_advice_migraine: 'Οι μεταβολές πίεσης μπορεί να προκαλέσουν πονοκέφαλο.', health_advice_respiratory: 'Η υγρασία και η ποιότητα αέρα επηρεάζουν την αναπνοή.', health_advice_flu: 'Ο κρύος, ξηρός αέρας βοηθά στη διασπορά των ιών.',
+  card_past_week: 'Τελευταίες 7 ημέρες', week_rain_total: 'Βροχή της εβδομάδας', delta_vs_forecast: 'Πραγματικό vs. πρόγνωση', past_week_note: 'Οι αποκλίσεις εμφανίζονται καθώς καταγράφονται προβλέψεις — από σήμερα.',
 };

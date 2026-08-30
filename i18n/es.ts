@@ -86,4 +86,5 @@ export const es: Strings = {
   rain_alert: 'Alerta de lluvia', rain_alert_subtitle: 'Avisa cuando empiece a llover en 60 minutos', notif_rain_title: 'La lluvia empieza pronto', notif_rain_body: 'Lluvia esperada en unos {n} minutos. Lleva paraguas.',
   health_migraine: 'Riesgo de migraña', health_respiratory: 'Respiratorio', health_flu: 'Riesgo de gripe',
   health_advice_migraine: 'Los cambios de presión pueden provocar dolores de cabeza.', health_advice_respiratory: 'La humedad y la calidad del aire afectan la respiración.', health_advice_flu: 'El aire frío y seco favorece la propagación de virus.',
+  card_past_week: 'Últimos 7 días', week_rain_total: 'Lluvia de la semana', delta_vs_forecast: 'Real vs pronóstico', past_week_note: 'Las diferencias aparecen a medida que se registran pronósticos — desde hoy.',
 };
