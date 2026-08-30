@@ -95,4 +95,5 @@ export const es: Strings = {
   backup_import: 'Importar ajustes', backup_import_subtitle: 'Restaura ajustes desde un archivo de copia',
   backup_done: 'Ajustes restaurados', backup_exported: 'Copia creada', backup_error: 'Error al exportar — inténtalo de nuevo', backup_invalid: 'Ese archivo no es una copia de ajustes válida',
   backup_confirm_title: '¿Importar ajustes?', backup_confirm_body: 'Tus ajustes actuales se sustituirán por los del archivo.', backup_cancel: 'Cancelar', backup_apply: 'Importar',
+  icon_style: 'Estilo de iconos', icon_style_subtitle: 'Cómo se ven los iconos del tiempo en la app', icon_style_outline: 'Contorno', icon_style_filled: 'Relleno', icon_style_colorful: 'Color',
 };

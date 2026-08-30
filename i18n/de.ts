@@ -95,4 +95,5 @@ export const de: Strings = {
   backup_import: 'Einstellungen importieren', backup_import_subtitle: 'Einstellungen aus einer Backup-Datei wiederherstellen',
   backup_done: 'Einstellungen wiederhergestellt', backup_exported: 'Backup-Datei erstellt', backup_error: 'Export fehlgeschlagen — erneut versuchen', backup_invalid: 'Diese Datei ist kein gültiges Einstellungs-Backup',
   backup_confirm_title: 'Einstellungen importieren?', backup_confirm_body: 'Deine aktuellen Einstellungen werden durch die aus der Datei ersetzt.', backup_cancel: 'Abbrechen', backup_apply: 'Importieren',
+  icon_style: 'Icon-Stil', icon_style_subtitle: 'So sehen Wetter-Icons in der App aus', icon_style_outline: 'Kontur', icon_style_filled: 'Gefüllt', icon_style_colorful: 'Farbig',
 };

@@ -95,4 +95,5 @@ export const nl: Strings = {
   backup_import: 'Instellingen importeren', backup_import_subtitle: 'Herstel instellingen vanuit een back-upbestand',
   backup_done: 'Instellingen hersteld', backup_exported: 'Back-upbestand gemaakt', backup_error: 'Exporteren mislukt — probeer opnieuw', backup_invalid: 'Dat bestand is geen geldige instellingen-back-up',
   backup_confirm_title: 'Instellingen importeren?', backup_confirm_body: 'Je huidige instellingen worden vervangen door die uit het bestand.', backup_cancel: 'Annuleren', backup_apply: 'Importeren',
+  icon_style: 'Iconenstijl', icon_style_subtitle: 'Hoe weer-iconen er in de app uitzien', icon_style_outline: 'Omlijnd', icon_style_filled: 'Gevuld', icon_style_colorful: 'Kleurrijk',
 };

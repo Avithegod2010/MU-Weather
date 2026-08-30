@@ -21,7 +21,7 @@ import {
 import type { LucideIcon } from 'lucide-react-native';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import { formatPrecip, formatTemp } from '../utils/format';
 import { inlineEntering, inlineExiting } from '../utils/detailAnimations';
 import { ApiError, fetchWeather } from '../api/openMeteo';
@@ -345,7 +345,6 @@ export function TripPlannerCard({ theme, favorites, onOpenFavorites }: TripPlann
               </Text>
               <View>
                 {tripDays.map((day, index) => {
-                  const Icon = getWeatherIcon(day.weatherCode, true);
                   const weekday = weekdayOf(day.date);
                   return (
                     <View
@@ -366,7 +365,7 @@ export function TripPlannerCard({ theme, favorites, onOpenFavorites }: TripPlann
                           {shortDateLabel(day.date)}
                         </Text>
                       </View>
-                      <Icon size={20} color={theme.textPrimary} strokeWidth={1.7} />
+                      <WeatherIcon code={day.weatherCode} isDay size={20} themeColor={theme.textPrimary} />
                       <Text style={[styles.tempMin, { color: theme.textSecondary }]}>
                         {formatTemp(day.tMin)}
                       </Text>

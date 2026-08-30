@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, ChevronDown } from '../utils/uiIcons';
 import { haptics } from '../utils/haptics';
 import type { AppTheme } from '../theme/palettes';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import { formatDayLabel, formatTemp, tempColor } from '../utils/format';
 import { F } from '../theme/typography';
 import type { DayPoint } from '../api/types';
@@ -32,7 +32,6 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
   return (
     <View style={styles.container}>
       {visible.map((day, index) => {
-        const Icon = getWeatherIcon(day.weatherCode, true);
         const leftPct = ((day.tMin - weekMin) / range) * 100;
         const widthPct = Math.max(((day.tMax - day.tMin) / range) * 100, 8);
         const rowStyle = [
@@ -47,7 +46,7 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
             <Text style={[styles.dayLabel, { color: theme.textPrimary }, index === 0 && { fontFamily: F.bold }]}>
               {formatDayLabel(day.date, index)}
             </Text>
-            <Icon size={22} color={theme.textPrimary} strokeWidth={1.7} />
+            <WeatherIcon code={day.weatherCode} isDay size={22} themeColor={theme.textPrimary} />
             {day.precipProbabilityMax >= 15 ? (
               <View style={styles.precipRow}>
                 <Droplet size={10} color={PRECIP_COLOR} strokeWidth={2.6} />

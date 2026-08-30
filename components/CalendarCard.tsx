@@ -3,7 +3,7 @@ import React from 'react';
 import { F } from '../theme/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CalendarDays, ChevronRight } from '../utils/uiIcons';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
 import { formatTemp } from '../utils/format';
@@ -49,11 +49,10 @@ export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
         <View style={styles.stack}>
           {state.events.map((event) => {
             const code = event.icon ? Number(event.icon) : null;
-            const Icon = code !== null ? getWeatherIcon(code, true) : null;
             return (
               <View key={event.id} style={styles.row}>
                 <View style={[styles.iconChip, { backgroundColor: theme.chipBg }]}>
-                  {Icon ? <Icon size={16} color={theme.textPrimary} strokeWidth={2} /> : null}
+                  <WeatherIcon code={code} isDay size={16} themeColor={theme.textPrimary} />
                 </View>
                 <View style={styles.rowTexts}>
                   <Text style={[styles.title, { color: theme.textPrimary }]} numberOfLines={1}>

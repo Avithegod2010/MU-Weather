@@ -95,4 +95,5 @@ export const el: Strings = {
   backup_import: 'Εισαγωγή ρυθμίσεων', backup_import_subtitle: 'Επαναφορά ρυθμίσεων από αρχείο αντιγράφου',
   backup_done: 'Οι ρυθμίσεις επαναφέρθηκαν', backup_exported: 'Δημιουργήθηκε αντίγραφο', backup_error: 'Η εξαγωγή απέτυχε — δοκιμάστε ξανά', backup_invalid: 'Το αρχείο δεν είναι έγκυρο αντίγραφο ρυθμίσεων',
   backup_confirm_title: 'Εισαγωγή ρυθμίσεων;', backup_confirm_body: 'Οι τρέχουσες ρυθμίσεις θα αντικατασταθούν από αυτές του αρχείου.', backup_cancel: 'Άκυρο', backup_apply: 'Εισαγωγή',
+  icon_style: 'Στυλ εικονιδίων', icon_style_subtitle: 'Πώς εμφανίζονται τα εικονίδια καιρού στην εφαρμογή', icon_style_outline: 'Γραμμικό', icon_style_filled: 'Γεμιστό', icon_style_colorful: 'Έγχρωμο',
 };

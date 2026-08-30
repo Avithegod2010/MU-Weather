@@ -554,6 +554,30 @@ export function SettingsSheet({
             />
           </View>
 
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Palette size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('icon_style')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('icon_style_subtitle')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'outline', label: t('icon_style_outline') },
+                { value: 'filled', label: t('icon_style_filled') },
+                { value: 'colorful', label: t('icon_style_colorful') },
+              ]}
+              value={settings.iconStyle}
+              onChange={(value) => onUpdate({ iconStyle: value as AppSettings['iconStyle'] })}
+            />
+          </View>
+
           <Pressable
             onPress={() => {
               haptics.select();

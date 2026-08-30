@@ -16,7 +16,7 @@ import {
   windUnitLabel,
 } from '../utils/format';
 import { describeWmo } from '../utils/wmo';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import { uvBand } from '../utils/aqi';
 import type { AppTheme } from '../theme/palettes';
 import { F } from '../theme/typography';
@@ -105,7 +105,6 @@ export function DayDetailScreen({
   const dayData = view.day;
   const dayHours = view.hours;
   const condition = describeWmo(dayData.weatherCode);
-  const Icon = getWeatherIcon(dayData.weatherCode, true);
   const uvInfo = uvBand(dayData.uvIndexMax);
   const rainHours = dayHours.filter((hour) => hour.precipitation > 0).length;
 
@@ -151,7 +150,7 @@ export function DayDetailScreen({
           <ChevronLeft size={24} color={theme.textPrimary} strokeWidth={2.4} />
         </Pressable>
         <View style={[styles.titleIcon, { backgroundColor: theme.chipBg }]}>
-          <Icon size={20} color={theme.textPrimary} strokeWidth={2} />
+          <WeatherIcon code={dayData.weatherCode} isDay size={20} themeColor={theme.textPrimary} />
         </View>
         <Text style={[styles.title, { color: theme.textPrimary }]}>{dayLabel}</Text>
       </Animated.View>
@@ -167,7 +166,7 @@ export function DayDetailScreen({
             {formatTemp(dayData.tMin)}
           </Text>
           <View style={styles.heroLabelRow}>
-            <Icon size={16} color={theme.textSecondary} strokeWidth={2} />
+            <WeatherIcon code={dayData.weatherCode} isDay size={16} themeColor={theme.textSecondary} />
             <Text style={[styles.heroLabel, { color: theme.textSecondary }]}>{condition.label}</Text>
           </View>
         </Animated.View>

@@ -95,4 +95,5 @@ export const hu: Strings = {
   backup_import: 'Beállítások importálása', backup_import_subtitle: 'Beállítások visszaállítása mentésfájlból',
   backup_done: 'Beállítások helyreállítva', backup_exported: 'Mentésfájl létrehozva', backup_error: 'Exportálás sikertelen — próbáld újra', backup_invalid: 'Ez a fájl nem érvényes beállításmentés',
   backup_confirm_title: 'Beállítások importálása?', backup_confirm_body: 'A jelenlegi beállítások a fájlban lévőkre cserélődnek.', backup_cancel: 'Mégse', backup_apply: 'Importálás',
+  icon_style: 'Ikonstílus', icon_style_subtitle: 'Hogyan néznek ki az időjárás-ikonok az alkalmazásban', icon_style_outline: 'Kontúr', icon_style_filled: 'Kitöltött', icon_style_colorful: 'Színes',
 };

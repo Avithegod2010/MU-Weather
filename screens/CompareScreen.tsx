@@ -4,7 +4,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from '../utils/uiIcons';
 import { F } from '../theme/typography';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from '../components/WeatherIcon';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { formatTemp, convertWind, windUnitLabel } from '../utils/format';
 import { describeWmo } from '../utils/wmo';
@@ -124,12 +124,16 @@ export function CompareScreen({ theme, visible, onClose, entries, status }: Comp
             <View style={styles.headerRow}>
               <View style={[styles.labelCell, { width: LABEL_WIDTH }]} />
               {entries.map((entry) => {
-                const Icon = entry.data
-                  ? getWeatherIcon(entry.data.current.weatherCode, entry.data.current.isDay)
-                  : null;
                 return (
                   <View key={entry.city.id} style={[styles.cityCell, { width: COL_WIDTH }]}>
-                    {Icon ? <Icon size={26} color={theme.textPrimary} strokeWidth={1.6} /> : null}
+                    {entry.data ? (
+                      <WeatherIcon
+                        code={entry.data.current.weatherCode}
+                        isDay={entry.data.current.isDay}
+                        size={26}
+                        themeColor={theme.textPrimary}
+                      />
+                    ) : null}
                     <Text style={[styles.cityName, { color: theme.textPrimary }]} numberOfLines={2}>
                       {entry.city.name}
                     </Text>

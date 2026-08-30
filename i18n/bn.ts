@@ -95,4 +95,5 @@ export const bn: Strings = {
   backup_import: 'সেটিংস ইমপোর্ট', backup_import_subtitle: 'ব্যাকআপ ফাইল থেকে সেটিংস ফিরিয়ে আনুন',
   backup_done: 'সেটিংস ফিরিয়ে আনা হয়েছে', backup_exported: 'ব্যাকআপ ফাইল তৈরি হয়েছে', backup_error: 'এক্সপোর্ট ব্যর্থ — আবার চেষ্টা করুন', backup_invalid: 'এই ফাইলটি বৈধ সেটিংস ব্যাকআপ নয়',
   backup_confirm_title: 'সেটিংস ইমপোর্ট করবেন?', backup_confirm_body: 'আপনার বর্তমান সেটিংস ব্যাকআপ ফাইলের সেটিংস দিয়ে প্রতিস্থাপিত হবে।', backup_cancel: 'বাতিল', backup_apply: 'ইমপোর্ট',
+  icon_style: 'আইকন স্টাইল', icon_style_subtitle: 'অ্যাপজুড়ে আবহাওয়ার আইকন কেমন দেখাবে', icon_style_outline: 'রেখা', icon_style_filled: 'ভরাট', icon_style_colorful: 'রঙিন',
 };

@@ -24,7 +24,7 @@ import { WindCompass } from './WindCompass';
 import { AqiGauge } from './AqiGauge';
 import { SunArc } from './SunArc';
 import { MoonPhaseVisual, RainGauge } from './MiniGauges';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import type { AppTheme } from '../theme/palettes';
 import { uvBand, humidityComfort } from '../utils/aqi';
 import { moonPhase, nextMoonMilestone } from '../utils/moon';
@@ -116,7 +116,6 @@ export function DetailCards({
     : '';
   const yearAgoDelta =
     yearAgo.info && today ? Math.round(yearAgo.info.tMax - today.tMax) : null;
-  const YearAgoIcon = yearAgo.info ? getWeatherIcon(yearAgo.info.weatherCode, true) : null;
 
   return (
     <View style={styles.grid}>
@@ -348,10 +347,10 @@ export function DetailCards({
 
       <Card revealDelay={540} theme={theme} title={t('card_yearago')} icon={CalendarDays} style={styles.half}>
         <View style={styles.stack}>
-          {yearAgo.status === 'ok' && yearAgo.info && YearAgoIcon ? (
+          {yearAgo.status === 'ok' && yearAgo.info ? (
             <>
               <View style={styles.yearAgoRow}>
-                <YearAgoIcon size={26} color={theme.textPrimary} strokeWidth={1.7} />
+                <WeatherIcon code={yearAgo.info.weatherCode} isDay size={26} themeColor={theme.textPrimary} />
                 <Text style={[styles.bigValue, { color: theme.textPrimary, fontSize: 30 }]}>
                   {Math.round(yearAgo.info.tMax)}°
                 </Text>

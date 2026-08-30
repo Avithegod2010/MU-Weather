@@ -57,7 +57,7 @@ import {
   Sunset,
 } from '../utils/uiIcons';
 import type { AppTheme } from '../theme/palettes';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import { formatTemp } from '../utils/format';
 import { F } from '../theme/typography';
 import type { CurrentConditions, DayPoint, GeoLocation } from '../api/types';
@@ -72,7 +72,6 @@ interface CurrentWeatherProps {
 }
 
 export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary }: CurrentWeatherProps) {
-  const Icon = getWeatherIcon(current.weatherCode, current.isDay);
 
   const floatY = useSharedValue(0);
   useEffect(() => {
@@ -97,7 +96,12 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
       </View>
 
       <Animated.View style={[styles.iconWrap, floatStyle]}>
-        <Icon size={84} color={theme.textPrimary} strokeWidth={1.3} />
+        <WeatherIcon
+          code={current.weatherCode}
+          isDay={current.isDay}
+          size={84}
+          themeColor={theme.textPrimary}
+        />
       </Animated.View>
 
       <Text style={[styles.temperature, { color: theme.textPrimary }]}>

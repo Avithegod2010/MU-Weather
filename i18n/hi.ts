@@ -95,4 +95,5 @@ export const hi: Strings = {
   backup_import: 'सेटिंग्स इंपोर्ट करें', backup_import_subtitle: 'बैकअप फ़ाइल से सेटिंग्स पुनर्स्थापित करें',
   backup_done: 'सेटिंग्स पुनर्स्थापित हुईं', backup_exported: 'बैकअप फ़ाइल बन गई', backup_error: 'निर्यात विफल — फिर से कोशिश करें', backup_invalid: 'यह फ़ाइल मान्य सेटिंग्स बैकअप नहीं है',
   backup_confirm_title: 'सेटिंग्स इंपोर्ट करें?', backup_confirm_body: 'आपकी वर्तमान सेटिंग्स बैकअप फ़ाइल वाली सेटिंग्स से बदल दी जाएँगी।', backup_cancel: 'रद्द करें', backup_apply: 'इंपोर्ट करें',
+  icon_style: 'आइकन शैली', icon_style_subtitle: 'ऐप भर में मौसम आइकन कैसे दिखें', icon_style_outline: 'रेखांकन', icon_style_filled: 'भरा हुआ', icon_style_colorful: 'रंगीन',
 };

@@ -44,3 +44,66 @@ export function getWeatherIcon(code: number | null | undefined, isDay: boolean):
       return Cloud;
   }
 }
+
+export type IconStyle = 'outline' | 'filled' | 'colorful';
+
+let iconStyle: IconStyle = 'outline';
+
+export function setIconStyle(style: IconStyle): void {
+  iconStyle = style;
+}
+
+export function getIconStyle(): IconStyle {
+  return iconStyle;
+}
+
+/** Semantic hues for the 'colorful' style - weather-true, theme-independent. */
+function weatherSemanticColor(code: number, isDay: boolean): string {
+  if (code === 95 || code === 96 || code === 99) return '#F0B440';
+  const { condition } = describeWmo(code);
+  switch (condition) {
+    case 'clear':
+      return isDay ? '#F5B843' : '#B7B1F0';
+    case 'partlyCloudy':
+      return isDay ? '#EFB25C' : '#A9A5E0';
+    case 'fog':
+      return '#A8ADB8';
+    case 'drizzle':
+    case 'rain':
+    case 'showers':
+      return '#6FA8E8';
+    case 'freezing':
+    case 'snow':
+      return '#8FD4F0';
+    case 'thunder':
+      return '#F0B440';
+    default:
+      return '#9DB8D9';
+  }
+}
+
+export interface ResolvedWeatherIconProps {
+  color: string;
+  fill: string;
+  strokeWidth: number;
+}
+
+/** Render props for a lucide weather icon under the active icon style. */
+export function resolveWeatherIconProps(
+  code: number | null | undefined,
+  isDay: boolean,
+  themeColor: string,
+): ResolvedWeatherIconProps {
+  switch (getIconStyle()) {
+    case 'filled':
+      return { color: themeColor, fill: themeColor, strokeWidth: 1.6 };
+    case 'colorful':
+      return {
+        color: weatherSemanticColor(code ?? 3, isDay),
+        fill: 'none',
+        strokeWidth: 2,
+      };
+    default:
+      return { color: themeColor, fill: 'none', strokeWidth: 2 };
+  }
+}

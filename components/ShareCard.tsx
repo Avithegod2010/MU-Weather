@@ -4,7 +4,7 @@ import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin } from '../utils/uiIcons';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import { formatTemp, formatHourLabel, compassLabel, windUnitLabel } from '../utils/format';
 import { moonPhase } from '../utils/moon';
 import type { AppTheme } from '../theme/palettes';
@@ -18,7 +18,6 @@ interface ShareCardProps {
 }
 
 export function ShareCard({ theme, data, conditionLabel, cardRef }: ShareCardProps) {
-  const Icon = getWeatherIcon(data.current.weatherCode, data.current.isDay);
   const today = data.daily[0];
   const moon = moonPhase();
 
@@ -36,7 +35,12 @@ export function ShareCard({ theme, data, conditionLabel, cardRef }: ShareCardPro
           <Text style={styles.city}>{data.location.name}</Text>
         </View>
 
-        <Icon size={72} color="#FFFFFF" strokeWidth={1.3} />
+        <WeatherIcon
+          code={data.current.weatherCode}
+          isDay={data.current.isDay}
+          size={72}
+          themeColor="#FFFFFF"
+        />
         <Text style={styles.temperature}>{formatTemp(data.current.temperature)}</Text>
         <Text style={styles.condition}>{conditionLabel}</Text>
         <Text style={styles.feels}>
@@ -71,11 +75,10 @@ export function ShareCard({ theme, data, conditionLabel, cardRef }: ShareCardPro
         {data.hourly.length ? (
           <View style={styles.hoursRow}>
             {data.hourly.slice(0, 5).map((hour, index) => {
-              const HourIcon = getWeatherIcon(hour.weatherCode, hour.isDay);
               return (
                 <View key={hour.time} style={styles.hourCol}>
                   <Text style={styles.hourTime}>{formatHourLabel(hour.time, index === 0)}</Text>
-                  <HourIcon size={20} color="#FFFFFF" strokeWidth={1.7} />
+                  <WeatherIcon code={hour.weatherCode} isDay={hour.isDay} size={20} themeColor="#FFFFFF" />
                   <Text style={styles.hourTemp}>{formatTemp(hour.temperature)}</Text>
                 </View>
               );

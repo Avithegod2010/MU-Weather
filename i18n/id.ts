@@ -95,4 +95,5 @@ export const id: Strings = {
   backup_import: 'Impor pengaturan', backup_import_subtitle: 'Pulihkan pengaturan dari berkas cadangan',
   backup_done: 'Pengaturan dipulihkan', backup_exported: 'Berkas cadangan dibuat', backup_error: 'Ekspor gagal — coba lagi', backup_invalid: 'Berkas itu bukan cadangan pengaturan yang valid',
   backup_confirm_title: 'Impor pengaturan?', backup_confirm_body: 'Pengaturan saat ini akan diganti dengan yang ada di berkas.', backup_cancel: 'Batal', backup_apply: 'Impor',
+  icon_style: 'Gaya ikon', icon_style_subtitle: 'Tampilan ikon cuaca di seluruh aplikasi', icon_style_outline: 'Garis', icon_style_filled: 'Isi', icon_style_colorful: 'Berwarna',
 };

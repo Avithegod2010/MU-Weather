@@ -15,7 +15,7 @@ import { Card } from './Card';
 import { haptics } from '../utils/haptics';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
-import { getWeatherIcon } from '../utils/icons';
+import { WeatherIcon } from './WeatherIcon';
 import {
   compassLabel,
   convertWind,
@@ -111,9 +111,6 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
   ];
 
   const selectedHour = selected !== null ? slice[selected] ?? null : null;
-  const SelectedIcon = selectedHour
-    ? getWeatherIcon(selectedHour.weatherCode, selectedHour.isDay)
-    : null;
   const stats: Array<{ label: string; value: string }> = [];
   if (selectedHour) {
     stats.push({
@@ -210,10 +207,9 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
 
           <View style={[styles.row, styles.iconRow]}>
             {slice.map((hour) => {
-              const Icon = getWeatherIcon(hour.weatherCode, hour.isDay);
               return (
                 <View key={`i-${hour.time}`} style={[styles.col, { width: COL_WIDTH }]}>
-                  <Icon size={23} color={theme.textPrimary} strokeWidth={1.7} />
+                  <WeatherIcon code={hour.weatherCode} isDay={hour.isDay} size={23} themeColor={theme.textPrimary} />
                 </View>
               );
             })}
@@ -287,8 +283,13 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
           ]}
         >
           <View style={styles.panelHead}>
-            {SelectedIcon ? (
-              <SelectedIcon size={19} color={theme.textPrimary} strokeWidth={2} />
+            {selectedHour ? (
+              <WeatherIcon
+                code={selectedHour.weatherCode}
+                isDay={selectedHour.isDay}
+                size={19}
+                themeColor={theme.textPrimary}
+              />
             ) : null}
             <Text style={[styles.panelTitle, { color: theme.textSecondary }]} numberOfLines={1}>
               {formatHourLabel(selectedHour.time, selectedHour.isNow)} ·{' '}

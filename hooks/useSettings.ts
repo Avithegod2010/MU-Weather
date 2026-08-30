@@ -5,6 +5,8 @@ import { setUnits } from '../utils/format';
 import type { TempUnit, WindUnit, TimeFormat, PrecipUnit } from '../utils/format';
 import { setAqiScale } from '../utils/aqi';
 import type { AqiScale } from '../utils/aqi';
+import { setIconStyle } from '../utils/icons';
+import type { IconStyle } from '../utils/icons';
 import type { DetailAnimStyle } from '../utils/detailAnimations';
 import type { HomeBackgroundKey } from '../config/backgrounds';
 import type { ColorThemeKey } from '../config/colorThemes';
@@ -24,6 +26,8 @@ export interface AppSettings {
   precipUnit: PrecipUnit;
   /** Air-quality index scale - US EPA or European EEA */
   aqiScale: AqiScale;
+  /** Weather icon look - outline strokes, filled shapes, or colorful hues */
+  iconStyle: IconStyle;
   timeFormat: TimeFormat;
   snarkMode: boolean;
   digestEnabled: boolean;
@@ -50,6 +54,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   windUnit: 'kmh',
   precipUnit: 'mm',
   aqiScale: 'us',
+  iconStyle: 'outline',
   timeFormat: '12h',
   snarkMode: false,
   digestEnabled: false,
@@ -73,6 +78,7 @@ function applySideEffects(settings: AppSettings): void {
     time: settings.timeFormat,
   });
   setAqiScale(settings.aqiScale);
+  setIconStyle(settings.iconStyle);
 }
 
 export function useSettings() {

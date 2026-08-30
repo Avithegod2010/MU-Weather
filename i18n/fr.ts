@@ -95,4 +95,5 @@ export const fr: Strings = {
   backup_import: 'Importer les réglages', backup_import_subtitle: 'Restaure les réglages depuis un fichier de sauvegarde',
   backup_done: 'Réglages restaurés', backup_exported: 'Fichier de sauvegarde créé', backup_error: 'Échec de l’export — réessayez', backup_invalid: 'Ce fichier n’est pas une sauvegarde de réglages valide',
   backup_confirm_title: 'Importer les réglages ?', backup_confirm_body: 'Vos réglages actuels seront remplacés par ceux du fichier.', backup_cancel: 'Annuler', backup_apply: 'Importer',
+  icon_style: 'Style d’icônes', icon_style_subtitle: 'L’apparence des icônes météo dans l’app', icon_style_outline: 'Contour', icon_style_filled: 'Plein', icon_style_colorful: 'Coloré',
 };

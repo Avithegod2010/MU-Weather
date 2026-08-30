@@ -250,6 +250,13 @@ export const en = {
   backup_cancel: 'Cancel',
   backup_apply: 'Import',
 
+  // Icon style
+  icon_style: 'Icon style',
+  icon_style_subtitle: 'How condition icons look across the app',
+  icon_style_outline: 'Outline',
+  icon_style_filled: 'Filled',
+  icon_style_colorful: 'Colorful',
+
   // Trip planner
   card_trip: 'Trip planner',
   trip_no_favorites: 'Save a favorite city first, then plan a trip to it.',
