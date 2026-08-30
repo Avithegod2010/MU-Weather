@@ -44,6 +44,31 @@ import {
   Upload,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
+
+/** Every adjust-tiles label, translated. */
+const TILE_LABEL_KEYS: Record<string, StringKey> = {
+  wind: 'tile_wind',
+  aqi: 'tile_aqi',
+  uv: 'tile_uv',
+  humidity: 'tile_humidity',
+  visibility: 'tile_visibility',
+  pressure: 'tile_pressure',
+  precipitation: 'tile_precipitation',
+  rainToday: 'tile_raintoday',
+  moon: 'tile_moon',
+  health: 'tile_health',
+  highlights: 'tile_highlights',
+  nowcast: 'tile_nowcast',
+  rainChart: 'tile_rainchart',
+  hourly: 'tile_hourly',
+  daily: 'tile_daily',
+  trend: 'tile_trend',
+  pastWeek: 'tile_pastweek',
+  activity: 'tile_activity',
+  tripPlanner: 'tile_trip',
+  calendar: 'tile_calendar',
+  marine: 'tile_marine',
+};
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
 import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
@@ -52,7 +77,7 @@ import { DETAIL_ANIM_OPTIONS } from '../utils/detailAnimations';
 import { TILE_GROUPS } from '../config/tiles';
 import { BACKGROUND_OPTIONS } from '../config/backgrounds';
 import { COLOR_THEMES } from '../config/colorThemes';
-import { LANGUAGES, t } from '../utils/i18n';
+import { LANGUAGES, t, type StringKey } from '../utils/i18n';
 import { exportSettings, importSettings } from '../utils/backup';
 import type { ProviderCheck } from '../api/providers';
 import type { AppTheme } from '../theme/palettes';
@@ -238,7 +263,7 @@ export function SettingsSheet({
       </View>
 
       {view === 'main' ? (
-        <Text style={[styles.title, { color: inputColor }]}>Settings</Text>
+        <Text style={[styles.title, { color: inputColor }]}>{t('s_title')}</Text>
       ) : view === 'language' ? (
         <>
           {LANGUAGES.map((language) => {
@@ -289,7 +314,7 @@ export function SettingsSheet({
           {TILE_GROUPS.map((group) => (
             <View key={group.title}>
               <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
-                {group.title.toUpperCase()}
+                {t(group.title === 'Main sections' ? 'tile_group_main' : 'tile_group_detail')}
               </Text>
               {group.tiles.map((tile) => {
                 const TileIcon = TILE_ICONS[tile.key] ?? Sparkles;
@@ -303,7 +328,9 @@ export function SettingsSheet({
                       <TileIcon size={20} color={theme.textPrimary} strokeWidth={2} />
                     </View>
                     <View style={styles.rowTexts}>
-                      <Text style={[styles.rowTitle, { color: inputColor }]}>{tile.label}</Text>
+                      <Text style={[styles.rowTitle, { color: inputColor }]}>
+                        {t(TILE_LABEL_KEYS[tile.key])}
+                      </Text>
                     </View>
                     <Switch
                       value={ready ? visible : true}
@@ -366,15 +393,15 @@ export function SettingsSheet({
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled
         >
-          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>FEEDBACK</Text>
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_feedback')}</Text>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Vibrate size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Haptic feedback</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_haptics')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Vibration on taps, toggles and alerts
+                {t('s_haptics_sub')}
               </Text>
             </View>
             <Switch
@@ -393,7 +420,7 @@ export function SettingsSheet({
             />
           </View>
 
-          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>APPEARANCE</Text>
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_appearance')}</Text>
           <View style={[styles.themeGrid, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             {COLOR_THEMES.map((option) => {
               const active = settings.colorTheme === option.key;
@@ -434,9 +461,9 @@ export function SettingsSheet({
               <Sun size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Theme</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_theme')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Follow the system or pick a fixed look
+                {t('s_theme_sub')}
               </Text>
             </View>
           </View>
@@ -458,9 +485,9 @@ export function SettingsSheet({
               <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>App style</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_appstyle')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Material You 3 cards or frosted Liquid Glass
+                {t('s_appstyle_sub')}
               </Text>
             </View>
           </View>
@@ -481,9 +508,9 @@ export function SettingsSheet({
               <Palette size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Home background</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_homebg')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Dynamic follows the live weather with rain and snow
+                {t('s_homebg_sub')}
               </Text>
             </View>
           </View>
@@ -536,9 +563,9 @@ export function SettingsSheet({
               <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Tile animation</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_tileanim')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                How deep-dive screens open and close
+                {t('s_tileanim_sub')}
               </Text>
             </View>
           </View>
@@ -593,23 +620,23 @@ export function SettingsSheet({
               <LayoutGrid size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Adjust tiles</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_adjust')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Show or hide sections and cards on the home screen
+                {t('s_adjust_sub')}
               </Text>
             </View>
             <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
           </Pressable>
 
-          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>NOTIFICATIONS</Text>
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_notifications')}</Text>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <RefreshCw size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Background alerts</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_bgalerts')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Check alerts even when the app is closed
+                {t('s_bgalerts_sub')}
               </Text>
             </View>
             <Switch
@@ -633,9 +660,9 @@ export function SettingsSheet({
               <Bell size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Daily digest</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_digest')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Tomorrow's forecast every morning
+                {t('s_digest_sub')}
               </Text>
             </View>
             <Switch
@@ -677,9 +704,9 @@ export function SettingsSheet({
               <Sun size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Golden hour alert</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_golden')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Notify when golden light is 60 minutes away
+                {t('s_golden_sub')}
               </Text>
             </View>
             <Switch
@@ -730,7 +757,7 @@ export function SettingsSheet({
             />
           </View>
 
-          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>GENERAL</Text>
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_general')}</Text>
           <Pressable
             onPress={() => {
               haptics.select();
@@ -746,7 +773,7 @@ export function SettingsSheet({
               <Languages size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Language</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_language')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
                 {LANGUAGES.find((l) => l.key === settings.language)?.native ?? 'English'}
               </Text>
@@ -758,9 +785,9 @@ export function SettingsSheet({
               <Thermometer size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Temperature</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_temp')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Displayed everywhere in the app
+                {t('s_temp_sub')}
               </Text>
             </View>
           </View>
@@ -781,9 +808,9 @@ export function SettingsSheet({
               <Wind size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Wind speed</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_wind')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Compass, hourly view and alerts
+                {t('s_wind_sub')}
               </Text>
             </View>
           </View>
@@ -827,9 +854,9 @@ export function SettingsSheet({
               <Clock size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Clock</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_clock')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Hourly labels and sun times
+                {t('s_clock_sub')}
               </Text>
             </View>
           </View>
@@ -850,9 +877,9 @@ export function SettingsSheet({
               <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Snark mode</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_snark')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Sarcastic commentary under the temperature
+                {t('s_snark_sub')}
               </Text>
             </View>
             <Switch
@@ -886,9 +913,9 @@ export function SettingsSheet({
               <Database size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Data sources</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_sources')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Providers powering forecasts, radar and air quality
+                {t('s_sources_sub')}
               </Text>
             </View>
             <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
@@ -963,12 +990,12 @@ export function SettingsSheet({
               <CloudSun size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Open-Meteo Forecast</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_forecast')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Primary · temperature, wind, rain, UV (ECMWF · GFS · ICON models)
+                {t('src_forecast_sub')}
               </Text>
             </View>
-            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
           </View>
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -976,9 +1003,9 @@ export function SettingsSheet({
               <Radar size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>MET Norway</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_metno')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Independent cross-check of the displayed temperature
+                {t('src_metno_sub')}
               </Text>
               {providerCheck.status === 'ok' && delta !== null ? (
                 <Text
@@ -1016,13 +1043,13 @@ export function SettingsSheet({
               ) : null}
             </View>
             {providerCheck.status === 'checking' ? (
-              <StatusChip theme={theme} label="SYNCING" tone="warn" />
+              <StatusChip theme={theme} label={t('chip_syncing')} tone="warn" />
             ) : providerCheck.status === 'ok' ? (
-              <StatusChip theme={theme} label={delta !== null && delta <= 1.5 ? 'MATCH' : 'DRIFT'} tone={delta !== null && delta <= 1.5 ? 'good' : 'warn'} />
+              <StatusChip theme={theme} label={delta !== null && delta <= 1.5 ? t('chip_match') : t('chip_drift')} tone={delta !== null && delta <= 1.5 ? 'good' : 'warn'} />
             ) : providerCheck.status === 'error' ? (
-              <StatusChip theme={theme} label="OFFLINE" tone="off" />
+              <StatusChip theme={theme} label={t('chip_offline')} tone="off" />
             ) : (
-              <StatusChip theme={theme} label="IDLE" tone="warn" />
+              <StatusChip theme={theme} label={t('chip_idle')} tone="warn" />
             )}
           </View>
 
@@ -1031,12 +1058,12 @@ export function SettingsSheet({
               <Gauge size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Open-Meteo Air Quality</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_aqi')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                AQI · PM2.5 · PM10 · pollen (Europe)
+                {t('src_aqi_sub')}
               </Text>
             </View>
-            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
           </View>
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -1044,12 +1071,12 @@ export function SettingsSheet({
               <MapPin size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Open-Meteo Geocoding</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_geo')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Global city search & coordinates
+                {t('src_geo_sub')}
               </Text>
             </View>
-            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
           </View>
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -1057,12 +1084,12 @@ export function SettingsSheet({
               <Wind size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>Windy</Text>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_windy')}</Text>
               <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                Live radar & interactive weather map layers
+                {t('src_windy_sub')}
               </Text>
             </View>
-            <StatusChip theme={theme} label="ACTIVE" tone="active" />
+            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
           </View>
 
           <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
