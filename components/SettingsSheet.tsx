@@ -38,7 +38,7 @@ import {
   Palette,
   Check,
   Languages,
-  History,
+  Clock3,
   Luggage,
   Download,
   Upload,
@@ -124,7 +124,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   rainToday: Droplets,
   moon: MoonIcon,
   health: HeartPulse,
-  pastWeek: History,
+  pastWeek: Clock3,
   tripPlanner: Luggage,
 };
 

@@ -2,7 +2,7 @@ import { t, tDay } from '../utils/i18n';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Droplet, History } from '../utils/uiIcons';
+import { Droplet, Clock3 as History } from '../utils/uiIcons';
 import { Card } from './Card';
 import { formatPrecip, formatPrecipValue, tempColor } from '../utils/format';
 import { loadForecastLog, type ForecastLogEntry } from '../utils/forecastLog';
