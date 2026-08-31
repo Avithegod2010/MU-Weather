@@ -47,6 +47,7 @@ export const nl: Strings = {
   card_uv: 'UV-index', card_humidity: 'Vochtigheid', card_visibility: 'Zicht',
   card_pressure: 'Luchtdruk', card_precipitation: 'Neerslag', card_moon: 'Maan',
   card_sun: 'Zonsop- & ondergang', card_yearago: 'Een jaar geleden', card_pollen: 'Pollen',
+  card_pollen_sub: 'Korrels per m³ · Europa-dekking',
     card_rain_today: 'Regen vandaag',
   total_rain_today: 'Totale regen vandaag',
   full_moon_in_days: 'Volle maan over {n} dagen',
@@ -72,12 +73,14 @@ export const nl: Strings = {
   vis_crystal: 'Kristalhelder', vis_clear: 'Helder', vis_haze: 'Lichte nevel', vis_poor: 'Slecht · mist mogelijk',
   moon_new: 'Nieuwe maan', moon_wax_crescent: 'Wassende sikkel', moon_first_quarter: 'Eerste kwartier', moon_wax_gibbous: 'Wassende maan', moon_full: 'Volle maan', moon_wane_gibbous: 'Afnemende maan', moon_last_quarter: 'Laatste kwartier', moon_wane_crescent: 'Afnemende sikkel',
   d_next24: 'KOMENDE 24 UUR', d_dew24: 'DAUWPUNT · 24 UUR', d_pollutants: 'VERONTREINIGINGEN', d_lunar: 'MAANCYCLUS', d_facts: 'BELANGRIJKE FEITEN', d_about: 'OVER', d_aqi24: 'AQI · KOMENDE 24 UUR', d_pollutants24: 'VERONTREINIGINGEN · KOMENDE 24 UUR',
+  d_pollen_species: 'POLLENSOORTEN', d_pollen_none: 'Geen pollengegevens beschikbaar voor deze locatie.',
   f_gusts_now: 'Windstoten nu', f_max_gust_24: 'Max. windstoot · 24u', f_avg_24: 'Gemiddeld · 24u', f_direction: 'Richting', f_beaufort: 'Beaufort kracht',
   f_today_max: 'Max vandaag', f_peak_around: 'Piek rond', f_sunscreen_hours: 'Zonnecrème-uren', f_burn_risk: 'Verbrandingsrisico',
   f_dew_point: 'Dauwpunt', f_comfort: 'Comfort', f_best_24: 'Beste · 24u', f_worst_24: 'Slechtste · 24u', f_fog_threshold: 'Mistgrens',
   f_change_3h: 'Verandering 3u', f_high_24: 'Hoog · 24u', f_low_24: 'Laag · 24u', f_meaning: 'Betekenis',
   f_peak_12h: 'Piek 12u', f_expected_24: 'Verwacht · 24u', f_wettest_hour: 'Natste uur', f_today_chance: 'Kans vandaag',
   f_advice: 'Advies', f_moonrise: 'Maanopgang', f_moonset: 'Maanondergang', f_cycle_day: 'Cyclusdag', f_illumination: 'Verlichting',
+  f_pollen_worst: 'Grootste boosdoener', f_pollen_active: 'Actieve soorten', f_pollen_severity: 'Ernst',
 
   // Day detail, rain alert, health
   card_health: 'Gezondheid', d_temp24: 'TEMPERATUUR · DEZE DAG',
@@ -106,6 +109,7 @@ export const nl: Strings = {
   chip_active: 'ACTIEF', chip_syncing: 'SYNCHRONISEREN', chip_offline: 'OFFLINE', chip_idle: 'INACTIEF', chip_match: 'MATCHT', chip_drift: 'WIJKT AF',
   tile_group_main: 'Hoofdsecties', tile_group_detail: 'Detailkaarten',
   tile_wind: 'Wind', tile_aqi: 'Luchtkwaliteit', tile_uv: 'UV-index', tile_humidity: 'Luchtvochtigheid', tile_visibility: 'Zicht', tile_pressure: 'Luchtdruk', tile_precipitation: 'Neerslag', tile_raintoday: 'Regen vandaag', tile_moon: 'Maan', tile_health: 'Gezondheid',
+  tile_pollen: 'Pollen',
   tile_highlights: 'Hoogtepunten', tile_nowcast: 'Nu-alternatief', tile_rainchart: 'Regenkans', tile_hourly: 'Uurprognose', tile_daily: 'Dagprognose', tile_trend: '48-uurs trend', tile_pastweek: 'Afgelopen week', tile_activity: 'Activiteitenplanner', tile_trip: 'Reisplanner', tile_calendar: 'Agenda-weer', tile_marine: 'Zee-prognose',
   err_weather: 'Weer niet beschikbaar', err_generic: 'Er ging iets mis.', err_retry: 'Opnieuw proberen', err_welcome: 'Welkom bij MU Weather', err_welcome_msg: 'Zoek een stad om de live prognose te zien.',
   search_unavailable: 'Zoeken niet beschikbaar', search_find: 'Vind je stad', search_find_msg: 'Typ minstens twee letters om tussen miljoenen steden te zoeken.', search_none: 'Geen steden gevonden', search_none_msg: 'Niets matcht "{q}". Probeer een andere spelling.', search_placeholder: 'Zoek elke stad wereldwijd...',
@@ -127,4 +131,5 @@ export const nl: Strings = {
   about_precip: 'Het percentage is de kans op meetbare regen in precies dat uur. De millimeters tonen hoeveel er zou ophopen: lichte regen is onder 2,5 mm per uur, zware regen boven 7,6 mm per uur.',
   about_aqi: 'De Amerikaanse luchtkwaliteitsindex mengt vijf verontreinigende stoffen in één score; de Europese index gebruikt dezelfde stoffen op een 0-100+-schaal. De balken zetten elke stof af tegen zijn ongezonde drempel (µg/m³). Boven 100 US-AQI (60 EU) moeten gevoelige groepen inspanning buiten verminderen; boven 200 US (80 EU) zou iedereen de tijd buiten beperken.',
   about_moon: 'De Maan doorloopt elke 29,5 dagen zijn fasen - de voortgangsbalk toont waar we in de huidige cyclus zitten. De verlichting is het vanaf de aarde zichtbare verlichte deel. Volle manen komen rond zonsondergang op; nieuwe manen met de zon.',
+  about_pollen: 'Pollenconcentraties komen uit het Europese luchtkwaliteitsmodel Copernicus CAMS en worden gemeten in korrels per kubieke meter. De dekking beperkt zich tot Europa; buiten de regio zijn geen pollengegevens beschikbaar. Niveaus: laag onder 10, matig onder 30, hoog onder 75 en zeer hoog vanaf 75 korrels per kubieke meter. Op hoge dagen: houd ramen gesloten tijdens de ochtendpiek, douch als je thuis komt en bekijk de pollenmelding in Instellingen → Meldingen.',
 };

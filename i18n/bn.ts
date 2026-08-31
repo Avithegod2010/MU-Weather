@@ -47,6 +47,7 @@ export const bn: Strings = {
   card_uv: 'ইউভি সূচক', card_humidity: 'আর্দ্রতা', card_visibility: 'দৃশ্যমানতা',
   card_pressure: 'চাপ', card_precipitation: 'বৃষ্টিপাত', card_moon: 'চাঁদ',
   card_sun: 'সূর্যোদয় ও সূর্যাস্ত', card_yearago: 'এক বছর আগে', card_pollen: 'পরাগ',
+  card_pollen_sub: 'ঘনমিটার প্রতি কণা · শুধু ইউরোপ',
     card_rain_today: 'আজকের বৃষ্টি',
   total_rain_today: 'আজকের মোট বৃষ্টি',
   full_moon_in_days: '{n} দিনে পূর্ণিমা',
@@ -72,12 +73,14 @@ export const bn: Strings = {
   vis_crystal: 'অত্যন্ত পরিষ্কার', vis_clear: 'পরিষ্কার', vis_haze: 'হালকা ধোঁয়াশা', vis_poor: 'দুর্বল · কুয়াশা সম্ভব',
   moon_new: 'অমাবস্যা', moon_wax_crescent: 'শুক্লপক্ষের বাঁকা', moon_first_quarter: 'প্রথম চতুর্থাংশ', moon_wax_gibbous: 'শুক্লপক্ষের উত্তল', moon_full: 'পূর্ণিমা', moon_wane_gibbous: 'কৃষ্ণপক্ষের উত্তল', moon_last_quarter: 'শেষ চতুর্থাংশ', moon_wane_crescent: 'কৃষ্ণপক্ষের বাঁকা',
   d_next24: 'পরবর্তী ২৪ ঘণ্টা', d_dew24: 'শিশিরাঙ্ক · পরবর্তী ২৪ ঘণ্টা', d_pollutants: 'দূষক', d_lunar: 'চন্দ্র চক্র', d_facts: 'মূল তথ্য', d_about: 'পরিচিতি', d_aqi24: 'একিউআই · পরবর্তী ২৪ ঘণ্টা', d_pollutants24: 'দূষক · পরবর্তী ২৪ ঘণ্টা',
+  d_pollen_species: 'পরাগ প্রজাতি', d_pollen_none: 'এই অবস্থানের জন্য পরাগের ডেটা নেই।',
   f_gusts_now: 'দমকা এখন', f_max_gust_24: 'সর্বোচ্চ দমকা · ২৪ঘ', f_avg_24: 'গড় · ২৪ঘ', f_direction: 'দিক', f_beaufort: 'বিউফোর্ট মাত্রা',
   f_today_max: 'আজ সর্বোচ্চ', f_peak_around: 'সর্বোচ্চ সময়', f_sunscreen_hours: 'সানস্ক্রিন ঘণ্টা', f_burn_risk: 'পোড়ার ঝুঁকি',
   f_dew_point: 'শিশিরাঙ্ক', f_comfort: 'আরামের মাত্রা', f_best_24: 'সেরা · ২৪ঘ', f_worst_24: 'সবচেয়ে খারাপ · ২৪ঘ', f_fog_threshold: 'কুয়াশার সীমা',
   f_change_3h: '৩ঘ পরিবর্তন', f_high_24: 'সর্বোচ্চ · ২৪ঘ', f_low_24: 'সর্বনিম্ন · ২৪ঘ', f_meaning: 'অর্থ',
   f_peak_12h: 'পরবর্তী ১২ঘ সর্বোচ্চ', f_expected_24: 'প্রত্যাশিত · ২৪ঘ', f_wettest_hour: 'সবচেয়ে ভেজা ঘণ্টা', f_today_chance: 'আজের সম্ভাবনা',
   f_advice: 'পরামর্শ', f_moonrise: 'চন্দ্রোদয়', f_moonset: 'চন্দ্রাস্ত', f_cycle_day: 'চক্র দিবস', f_illumination: 'আলোকিত অংশ',
+  f_pollen_worst: 'সবচেয়ে বেশি', f_pollen_active: 'সক্রিয় প্রজাতি', f_pollen_severity: 'তীব্রতা',
 
   // Day detail, rain alert, health
   card_health: 'স্বাস্থ্য', d_temp24: 'তাপমাত্রা · এই দিনে',
@@ -106,6 +109,7 @@ export const bn: Strings = {
   chip_active: 'সক্রিয়', chip_syncing: 'সিঙ্ক হচ্ছে', chip_offline: 'অফলাইন', chip_idle: 'নিষ্ক্রিয়', chip_match: 'মিল', chip_drift: 'বিচ্যুতি',
   tile_group_main: 'প্রধান সেকশন', tile_group_detail: 'ডিটেইল কার্ড',
   tile_wind: 'বাতাস', tile_aqi: 'বায়ুর গুণমান', tile_uv: 'UV সূচক', tile_humidity: 'আর্দ্রতা', tile_visibility: 'দৃশ্যমানতা', tile_pressure: 'চাপ', tile_precipitation: 'বৃষ্টিপাত', tile_raintoday: 'আজকের বৃষ্টি', tile_moon: 'চাঁদ', tile_health: 'স্বাস্থ্য',
+  tile_pollen: 'পরাগ',
   tile_highlights: 'মূল বিষয়', tile_nowcast: 'নাউকাস্ট', tile_rainchart: 'বৃষ্টির সম্ভাবনা', tile_hourly: 'ঘণ্টাভিত্তিক পূর্বাভাস', tile_daily: 'দৈনিক পূর্বাভাস', tile_trend: '৪৮-ঘণ্টার প্রবণতা', tile_pastweek: 'গত সপ্তাহ', tile_activity: 'কার্যকলাপ পরিকল্পক', tile_trip: 'ট্রিপ প্ল্যানার', tile_calendar: 'ক্যালেন্ডার আবহাওয়া', tile_marine: 'সামুদ্রিক পূর্বাভাস',
   err_weather: 'আবহাওয়া পাওয়া যাচ্ছে না', err_generic: 'কিছু একটা সমস্যা হয়েছে।', err_retry: 'আবার চেষ্টা করুন', err_welcome: 'MU Weather-এ স্বাগতম', err_welcome_msg: 'লাইভ গ্রেডিয়েন্ট পূর্বাভাস দেখতে একটি শহর খুঁজুন।',
   search_unavailable: 'অনুসন্ধান পাওয়া যাচ্ছে না', search_find: 'আপনার শহর খুঁজুন', search_find_msg: 'লক্ষ লক্ষ শহরের মধ্যে খুঁজতে অন্তত দুটি অক্ষর লিখুন।', search_none: 'কোনো শহর পাওয়া যায়নি', search_none_msg: '"{q}"-এর সাথে কিছু মেলেনি। বানান বদলে চেষ্টা করুন।', search_placeholder: 'বিশ্বজুড়ে যেকোনো শহর খুঁজুন...',
@@ -127,4 +131,5 @@ export const bn: Strings = {
   about_precip: 'শতাংশ হলো ঠিক সেই ঘণ্টায় মাপযোগ্য বৃষ্টির সম্ভাবনা। মিলিমিটার দেখায় কতটুকু জমবে: হালকা বৃষ্টি ঘণ্টায় ২.৫ মিমি-র নিচে, ভারী বৃষ্টি ৭.৬ মিমি-র বেশি।',
   about_aqi: 'মার্কিন বায়ু গুণমান সূচক পাঁচ দূষককে এক স্কোরে মেশায়; ইউরোপীয় সূচক একই দূষক থেকে ০-১০০+ স্কেল বানায়। বারগুলো প্রতিটি দূষককে তার অস্বাস্থ্যকর সীমার (µg/m³) সাথে দেখায়। ১০০ মার্কিন AQI (৬০ EU)-এর উপরে সংবেদনশীলরা বাইরের পরিশ্রম কমান; ২০০ মার্কিন AQI (৮০ EU)-এর উপরে সবাই বাইরের সময় সীমিত করুন।',
   about_moon: 'চাঁদ প্রতি ২৯.৫ দিনে কলাক্রম ঘুরে আসে — অগ্রগতি বার দেখায় আমরা বর্তমান চক্রে কোথায়। আলোকিত অংশ হলো পৃথিবী থেকে দৃশ্যমান আলোকিত ভগ্নাংশ। পূর্ণিমা সূর্যাস্তের দিকে ওঠে; অমাবস্যা সূর্যের সঙ্গে ওঠে।',
+  about_pollen: 'পরাগের গণনা আসে কোপার্নিকাস CAMS ইউরোপীয় বায়ু-গুণমান মডেল থেকে এবং ঘনমিটার প্রতি কণায় মাপা হয়। কভারেজ শুধু ইউরোপে সীমাবদ্ধ; অঞ্চলটির বাইরে পরাগের কোনো ডেটা নেই। মাত্রা: ১০-এর নিচে কম, ৩০-এর নিচে মধ্যম, ৭৫-এর নিচে উচ্চ এবং ৭৫ বা তার বেশি হলে খুব উচ্চ। উচ্চ দিনে সকালের ভরে জানালা বন্ধ রাখুন, বাড়ি ফিরে গোসল করুন এবং সেটিংস → নোটিফিকেশন-এ পরাগ সতর্কতা দেখুন।',
 };

@@ -47,6 +47,7 @@ export const de: Strings = {
   card_uv: 'UV-Index', card_humidity: 'Luftfeuchtigkeit', card_visibility: 'Sichtweite',
   card_pressure: 'Luftdruck', card_precipitation: 'Niederschlag', card_moon: 'Mond',
   card_sun: 'Sonnenauf- & -untergang', card_yearago: 'Vor einem Jahr', card_pollen: 'Pollen',
+  card_pollen_sub: 'Körner pro m³ · Europa-Abdeckung',
     card_rain_today: 'Heutiger Regen',
   total_rain_today: 'Gesamtregen heute',
   full_moon_in_days: 'Vollmond in {n} Tagen',
@@ -72,12 +73,14 @@ export const de: Strings = {
   vis_crystal: 'Kristallklar', vis_clear: 'Klar', vis_haze: 'Leichter Dunst', vis_poor: 'Schlecht · Nebel möglich',
   moon_new: 'Neumond', moon_wax_crescent: 'Zunehmende Sichel', moon_first_quarter: 'Erstes Viertel', moon_wax_gibbous: 'Zunehmender Mond', moon_full: 'Vollmond', moon_wane_gibbous: 'Abnehmender Mond', moon_last_quarter: 'Letztes Viertel', moon_wane_crescent: 'Abnehmende Sichel',
   d_next24: 'NÄCHSTE 24 STUNDEN', d_dew24: 'TAUPUNKT · 24 STUNDEN', d_pollutants: 'SCHADSTOFFE', d_lunar: 'MONDPHASEN', d_facts: 'WICHTIGE FAKTEN', d_about: 'ÜBER', d_aqi24: 'AQI · NÄCHSTE 24 STUNDEN', d_pollutants24: 'SCHADSTOFFE · NÄCHSTE 24 STUNDEN',
+  d_pollen_species: 'POLLENARTEN', d_pollen_none: 'Für diesen Ort sind keine Pollendaten verfügbar.',
   f_gusts_now: 'Böen jetzt', f_max_gust_24: 'Max. Böe · 24h', f_avg_24: 'Durchschnitt · 24h', f_direction: 'Richtung', f_beaufort: 'Beaufort-Stärke',
   f_today_max: 'Heute max', f_peak_around: 'Spitze um', f_sunscreen_hours: 'Sonnencreme-Stunden', f_burn_risk: 'Sonnenbrand-Risiko',
   f_dew_point: 'Taupunkt', f_comfort: 'Komfort', f_best_24: 'Beste · 24h', f_worst_24: 'Schlechteste · 24h', f_fog_threshold: 'Nebelgrenze',
   f_change_3h: 'Änderung 3h', f_high_24: 'Hoch · 24h', f_low_24: 'Tief · 24h', f_meaning: 'Bedeutung',
   f_peak_12h: 'Spitze 12h', f_expected_24: 'Erwartet · 24h', f_wettest_hour: 'Feuchteste Stunde', f_today_chance: 'Chance heute',
   f_advice: 'Tipp', f_moonrise: 'Mondaufgang', f_moonset: 'Monduntergang', f_cycle_day: 'Zyklustag', f_illumination: 'Beleuchtung',
+  f_pollen_worst: 'Hauptverursacher', f_pollen_active: 'Aktive Arten', f_pollen_severity: 'Belastung',
 
   // Day detail, rain alert, health
   card_health: 'Gesundheit', d_temp24: 'TEMPERATUR · DIESER TAG',
@@ -106,6 +109,7 @@ export const de: Strings = {
   chip_active: 'AKTIV', chip_syncing: 'SYNCHRONISIERT', chip_offline: 'OFFLINE', chip_idle: 'BEREIT', chip_match: 'PASST', chip_drift: 'ABWEICHUNG',
   tile_group_main: 'Hauptbereiche', tile_group_detail: 'Detailkarten',
   tile_wind: 'Wind', tile_aqi: 'Luftqualität', tile_uv: 'UV-Index', tile_humidity: 'Luftfeuchtigkeit', tile_visibility: 'Sichtweite', tile_pressure: 'Luftdruck', tile_precipitation: 'Niederschlag', tile_raintoday: 'Heutiger Regen', tile_moon: 'Mond', tile_health: 'Gesundheit',
+  tile_pollen: 'Pollen',
   tile_highlights: 'Höhepunkte', tile_nowcast: 'Jetztvorhersage', tile_rainchart: 'Regenwahrscheinlichkeit', tile_hourly: 'Stundenvorhersage', tile_daily: 'Tagesvorhersage', tile_trend: '48-Stunden-Trend', tile_pastweek: 'Letzte Woche', tile_activity: 'Aktivitätsplaner', tile_trip: 'Reiseplaner', tile_calendar: 'Kalenderwetter', tile_marine: 'Seevorhersage',
   err_weather: 'Wetter nicht verfügbar', err_generic: 'Etwas ist schiefgelaufen.', err_retry: 'Erneut versuchen', err_welcome: 'Willkommen bei MU Weather', err_welcome_msg: 'Suche eine Stadt, um ihre Live-Vorhersage zu sehen.',
   search_unavailable: 'Suche nicht verfügbar', search_find: 'Finde deine Stadt', search_find_msg: 'Tippe mindestens zwei Buchstaben, um Millionen Städte zu durchsuchen.', search_none: 'Keine Städte gefunden', search_none_msg: 'Nichts passt zu "{q}". Andere Schreibweise versuchen.', search_placeholder: 'Suche jede Stadt weltweit...',
@@ -127,4 +131,5 @@ export const de: Strings = {
   about_precip: 'Der Prozentsatz ist die Chance auf messbaren Regen zu genau dieser Stunde. Die Millimeter zeigen, wie viel sich sammeln würde: leichter Regen liegt unter 2,5 mm pro Stunde, starker Regen über 7,6 mm pro Stunde.',
   about_aqi: 'Der US-Luftqualitätsindex mischt fünf Schadstoffe zu einem Wert; der europäische Index nutzt dieselben Schadstoffe auf einer 0-100+-Skala. Die Balken zeigen jeden Schadstoff gegenüber seiner ungesunden Schwelle (µg/m³). Über 100 US-AQI (60 EU) sollten empfindliche Gruppen Anstrengung draußen reduzieren; über 200 US (80 EU) sollte jeder die Zeit draußen begrenzen.',
   about_moon: 'Der Mond durchläuft alle 29,5 Tage seine Phasen - der Fortschrittsbalken zeigt, wo wir im aktuellen Zyklus stehen. Die Beleuchtung ist der von der Erde sichtbare beleuchtete Anteil. Vollmonde gehen etwa zum Sonnenuntergang auf; Neumonde mit der Sonne.',
+  about_pollen: 'Pollenwerte stammen vom europäischen Luftqualitätsmodell Copernicus CAMS und werden in Körnern pro Kubikmeter gemessen. Die Abdeckung beschränkt sich auf Europa; außerhalb der Region gibt es keine Pollendaten. Stufen: niedrig unter 10, mäßig unter 30, hoch unter 75 und sehr hoch ab 75 Körnern pro Kubikmeter. An hohen Tagen Fenster während der Morgenspitze geschlossen halten, nach Heimkehr duschen und die Pollenwarnung unter Einstellungen → Benachrichtigungen prüfen.',
 };

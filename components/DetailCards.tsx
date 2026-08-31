@@ -386,8 +386,8 @@ export function DetailCards({
         </View>
       </Card>
 
-      {aqi?.pollen ? (
-        <Card revealDelay={600} theme={theme} title={t('card_pollen')} icon={Flower2} style={styles.half}>
+      {show('pollen') && aqi?.pollen ? (
+        <Card revealDelay={600} theme={theme} title={t('card_pollen')} icon={Flower2} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('pollen') : undefined}>
           <View style={styles.stack}>
             {POLLEN_TYPES.map((type) => {
               const value = aqi.pollen?.[type.key];
@@ -414,7 +414,7 @@ export function DetailCards({
               );
             })}
             <Text style={[styles.caption, { color: theme.textTertiary }]}>
-              Grains per m³ · Europe coverage
+              {t('card_pollen_sub')}
             </Text>
           </View>
         </Card>

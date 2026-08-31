@@ -47,6 +47,7 @@ export const it: Strings = {
   card_uv: 'Indice UV', card_humidity: 'Umidità', card_visibility: 'Visibilità',
   card_pressure: 'Pressione', card_precipitation: 'Precipitazioni', card_moon: 'Luna',
   card_sun: 'Alba & tramonto', card_yearago: 'Un anno fa', card_pollen: 'Polline',
+  card_pollen_sub: 'Grani per m³ · Copertura Europa',
     card_rain_today: 'Pioggia di oggi',
   total_rain_today: 'Pioggia totale di oggi',
   full_moon_in_days: 'Luna piena tra {n} giorni',
@@ -72,12 +73,14 @@ export const it: Strings = {
   vis_crystal: 'Cristallina', vis_clear: 'Chiara', vis_haze: 'Velo moderato', vis_poor: 'Scarsa · possibile nebbia',
   moon_new: 'Luna nuova', moon_wax_crescent: 'Crescente a falcata', moon_first_quarter: 'Primo quarto', moon_wax_gibbous: 'Gibbosa crescente', moon_full: 'Luna piena', moon_wane_gibbous: 'Gibbosa calante', moon_last_quarter: 'Ultimo quarto', moon_wane_crescent: 'Calante a falcata',
   d_next24: 'PROSSIME 24 ORE', d_dew24: 'PUNTO DI RUGIADA · 24 ORE', d_pollutants: 'INQUINANTI', d_lunar: 'CICLO LUNARE', d_facts: 'DATI CHIAVE', d_about: 'INFORMAZIONI', d_aqi24: 'AQI · PROSSIME 24 ORE', d_pollutants24: 'INQUINANTI · PROSSIME 24 ORE',
+  d_pollen_species: 'SPECIE DI POLLINE', d_pollen_none: 'Nessun dato sul polline disponibile per questa località.',
   f_gusts_now: 'Raffiche ora', f_max_gust_24: 'Raffica max · 24h', f_avg_24: 'Media · 24h', f_direction: 'Direzione', f_beaufort: 'Forza Beaufort',
   f_today_max: 'Max di oggi', f_peak_around: 'Picco verso', f_sunscreen_hours: 'Ore con crema', f_burn_risk: 'Rischio scottatura',
   f_dew_point: 'Punto di rugiada', f_comfort: 'Comfort', f_best_24: 'Migliore · 24h', f_worst_24: 'Peggiore · 24h', f_fog_threshold: 'Soglia nebbia',
   f_change_3h: 'Variazione 3h', f_high_24: 'Massima · 24h', f_low_24: 'Minima · 24h', f_meaning: 'Significato',
   f_peak_12h: 'Picco 12h', f_expected_24: 'Atteso · 24h', f_wettest_hour: 'Ora più piovosa', f_today_chance: 'Probabilità oggi',
   f_advice: 'Consiglio', f_moonrise: 'Sorgere della luna', f_moonset: 'Tramonto della luna', f_cycle_day: 'Giorno del ciclo', f_illumination: 'Illuminazione',
+  f_pollen_worst: 'Peggiore responsabile', f_pollen_active: 'Specie attive', f_pollen_severity: 'Gravità',
 
   // Day detail, rain alert, health
   card_health: 'Salute', d_temp24: 'TEMPERATURA · GIORNATA',
@@ -106,6 +109,7 @@ export const it: Strings = {
   chip_active: 'ATTIVO', chip_syncing: 'SINCRONIZZAZIONE', chip_offline: 'OFFLINE', chip_idle: 'INATTIVO', chip_match: 'CORRISPONDE', chip_drift: 'SCOSTAMENTO',
   tile_group_main: 'Sezioni principali', tile_group_detail: 'Schede dettaglio',
   tile_wind: 'Vento', tile_aqi: 'Qualità dell’aria', tile_uv: 'Indice UV', tile_humidity: 'Umidità', tile_visibility: 'Visibilità', tile_pressure: 'Pressione', tile_precipitation: 'Precipitazioni', tile_raintoday: 'Pioggia di oggi', tile_moon: 'Luna', tile_health: 'Salute',
+  tile_pollen: 'Polline',
   tile_highlights: 'In evidenza', tile_nowcast: 'Adesso', tile_rainchart: 'Probabilità di pioggia', tile_hourly: 'Previsioni orarie', tile_daily: 'Previsioni giornaliere', tile_trend: 'Tendenza 48 h', tile_pastweek: 'Settimana scorsa', tile_activity: 'Pianificatore attività', tile_trip: 'Pianificatore di viaggio', tile_calendar: 'Meteo calendario', tile_marine: 'Previsioni marine',
   err_weather: 'Meteo non disponibile', err_generic: 'Qualcosa è andato storto.', err_retry: 'Riprova', err_welcome: 'Benvenuto in MU Weather', err_welcome_msg: 'Cerca una città per vederne le previsioni in diretta.',
   search_unavailable: 'Ricerca non disponibile', search_find: 'Trova la tua città', search_find_msg: 'Digita almeno due lettere per cercare tra milioni di città.', search_none: 'Nessuna città trovata', search_none_msg: 'Nulla corrisponde a «{q}». Prova un’altra ortografia.', search_placeholder: 'Cerca qualsiasi città...',
@@ -127,4 +131,5 @@ export const it: Strings = {
   about_precip: 'La percentuale è la probabilità di pioggia misurabile proprio in quell’ora. I millimetri mostrano quanta ne si accumulerebbe: pioggia leggera sotto i 2,5 mm l’ora, pioggia forte oltre i 7,6 mm l’ora.',
   about_aqi: 'L’indice americano di qualità dell’aria fonde cinque inquinanti in un punteggio; quello europeo usa gli stessi inquinanti su scala 0-100+. Le barre mettono ogni inquinante a confronto con la sua soglia insalubre (µg/m³). Oltre 100 US AQI (60 EU) i gruppi sensibili dovrebbero ridurre lo sforzo all’aperto; oltre 200 US (80 EU) tutti.',
   about_moon: 'La Luna percorre le sue fasi ogni 29,5 giorni - la barra di avanzamento mostra dove siamo nel ciclo attuale. L’illuminazione è la frazione illuminata visibile dalla Terra. Le lune piene sorgono intorno al tramonto; le nuove col sole.',
+  about_pollen: 'I conteggi del polline provengono dal modello europeo di qualità dell’aria Copernicus CAMS e sono misurati in grani per metro cubo. La copertura è limitata all’Europa; fuori dalla regione non sono disponibili dati sul polline. Livelli: basso sotto 10, moderato sotto 30, alto sotto 75 e molto alto a 75 o più grani per metro cubo. Nei giorni alti, tieni le finestre chiuse durante la picca mattutina, fai la doccia quando rientri e controlla l’avviso polline in Impostazioni → Notifiche.',
 };

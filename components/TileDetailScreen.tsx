@@ -13,6 +13,7 @@ import {
   Eye,
   Umbrella,
   Moon as MoonIcon,
+  Flower2,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import { AnimatedBackground } from './AnimatedBackground';
@@ -32,7 +33,7 @@ import {
 } from '../utils/format';
 import { moonPhase } from '../utils/moon';
 import { moonTimes } from '../utils/sunCalc';
-import { europeanAqiBand, usAqiBand, humidityComfort } from '../utils/aqi';
+import { europeanAqiBand, usAqiBand, humidityComfort, pollenLevel } from '../utils/aqi';
 import type { AqiScale } from '../utils/aqi';
 import type { AppTheme } from '../theme/palettes';
 import { F } from '../theme/typography';
@@ -44,7 +45,7 @@ import {
   type DetailAnimStyle,
 } from '../utils/detailAnimations';
 import type { TopicKey } from '../config/tiles';
-import type { WeatherBundle, HourPoint } from '../api/types';
+import type { WeatherBundle, HourPoint, PollenInfo } from '../api/types';
 
 export type { TopicKey } from '../config/tiles';
 
@@ -69,7 +70,18 @@ const TOPIC_META: Record<TopicKey, { title: string; icon: LucideIcon }> = {
   pressure: { title: t('card_pressure'), icon: Gauge },
   precipitation: { title: t('card_precipitation'), icon: Umbrella },
   moon: { title: t('card_moon'), icon: MoonIcon },
+  pollen: { title: t('card_pollen'), icon: Flower2 },
 };
+
+/** Species display names stay plain English, matching the home pollen card. */
+const POLLEN_SPECIES: Array<{ key: keyof PollenInfo; label: string }> = [
+  { key: 'alder', label: 'Alder' },
+  { key: 'birch', label: 'Birch' },
+  { key: 'grass', label: 'Grass' },
+  { key: 'mugwort', label: 'Mugwort' },
+  { key: 'olive', label: 'Olive' },
+  { key: 'ragweed', label: 'Ragweed' },
+];
 
 const COL_WIDTH = 14;
 const CHART_HEIGHT = 130;
@@ -293,6 +305,8 @@ export function TileDetailScreen({
     unit?: string;
     label: string;
     accent?: string;
+    /** Small line under the label row (used by the pollen hero for its units note). */
+    sub?: string;
   }
   let hero: HeroState = { value: '--', label: '' };
   let chart: React.ReactNode = null;
@@ -302,6 +316,7 @@ export function TileDetailScreen({
   let dewChart: React.ReactNode = null;
   let factRows: Array<{ label: string; value: string }> = [];
   let bars: Array<{ label: string; value: string; fraction: number; color: string }> | null = null;
+  let barsTitle = t('d_pollutants');
   let progress: { fraction: number; color: string } | null = null;
   let about = '';
 
@@ -577,6 +592,48 @@ export function TileDetailScreen({
       { label: t('f_illumination'), value: `${moon.illumination}% lit` },
     ];
     about = t('about_moon');
+  } else if (view.topic === 'pollen') {
+    const pollen = view.data.aqi?.pollen ?? null;
+    const entries = POLLEN_SPECIES.map((species) => ({
+      label: species.label,
+      value: pollen ? pollen[species.key] : null,
+    }));
+    const measured = entries.filter(
+      (entry): entry is { label: string; value: number } => entry.value !== null,
+    );
+    const worst = measured.reduce<{ label: string; value: number } | null>(
+      (best, entry) => (best === null || entry.value > best.value ? entry : best),
+      null,
+    );
+    if (worst === null) {
+      hero = { value: '--', label: t('d_pollen_none') };
+    } else {
+      const worstLevel = pollenLevel(worst.value);
+      hero = {
+        value: String(Math.round(worst.value)),
+        unit: 'gr/m³',
+        label: worst.label,
+        accent: worstLevel.color,
+        sub: t('card_pollen_sub'),
+      };
+      const rank = (value: number | null) => (value === null ? -1 : value);
+      bars = [...entries]
+        .sort((a, b) => rank(b.value) - rank(a.value))
+        .map((entry) => ({
+          label: entry.label,
+          value: entry.value === null ? '--' : String(Math.round(entry.value)),
+          fraction: entry.value === null ? 0 : Math.min(1, entry.value / 100),
+          color: entry.value === null ? theme.trackColor : pollenLevel(entry.value).color,
+        }));
+      barsTitle = t('d_pollen_species');
+      const activeCount = measured.filter((entry) => entry.value >= 10).length;
+      factRows = [
+        { label: t('f_pollen_worst'), value: `${worst.label} · ${Math.round(worst.value)}` },
+        { label: t('f_pollen_active'), value: `${activeCount} of ${POLLEN_SPECIES.length}` },
+        { label: t('f_pollen_severity'), value: worstLevel.label },
+      ];
+    }
+    about = t('about_pollen');
   }
 
   let order = 0;
@@ -628,6 +685,9 @@ export function TileDetailScreen({
             {hero.accent ? <View style={[styles.accentDot, { backgroundColor: hero.accent }]} /> : null}
             <Text style={[styles.heroLabel, { color: theme.textSecondary }]}>{hero.label}</Text>
           </View>
+          {hero.sub ? (
+            <Text style={[styles.heroSub, { color: theme.textTertiary }]}>{hero.sub}</Text>
+          ) : null}
         </Animated.View>
 
         {scaleToggle ? (
@@ -655,7 +715,7 @@ export function TileDetailScreen({
         ) : null}
 
         {bars ? (
-          <SectionCard theme={theme} animStyle={animStyle} title={t('d_pollutants')} order={barsOrder}>
+          <SectionCard theme={theme} animStyle={animStyle} title={barsTitle} order={barsOrder}>
             {bars.map((bar) => (
               <BarRow
                 key={bar.label}
@@ -832,6 +892,12 @@ const styles = StyleSheet.create({
   heroLabel: {
     fontSize: 15,
     fontFamily: F.medium,
+  },
+  heroSub: {
+    fontSize: 12,
+    fontFamily: F.regular,
+    width: '100%',
+    textAlign: 'center',
   },
   sectionCard: {
     borderRadius: 28,

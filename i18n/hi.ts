@@ -47,6 +47,7 @@ export const hi: Strings = {
   card_uv: 'यूवी सूचकांक', card_humidity: 'आर्द्रता', card_visibility: 'दृश्यता',
   card_pressure: 'वायुदाब', card_precipitation: 'वर्षा', card_moon: 'चंद्रमा',
   card_sun: 'सूर्योदय व सूर्यास्त', card_yearago: 'एक साल पहले', card_pollen: 'परागकण',
+  card_pollen_sub: 'घन मीटर प्रति कण · केवल यूरोप',
     card_rain_today: 'आज की बारिश',
   total_rain_today: 'आज की कुल बारिश',
   full_moon_in_days: '{n} दिन में पूर्णिमा',
@@ -72,12 +73,14 @@ export const hi: Strings = {
   vis_crystal: 'बेहद साफ', vis_clear: 'साफ', vis_haze: 'हल्का धुंध', vis_poor: 'कमज़ोर · कोहरा संभव',
   moon_new: 'अमावस्या', moon_wax_crescent: 'बढ़ता हिलाल', moon_first_quarter: 'प्रथम चतुर्थांश', moon_wax_gibbous: 'बढ़ता गिब्बस', moon_full: 'पूर्णिमा', moon_wane_gibbous: 'घटता गिब्बस', moon_last_quarter: 'अंतिम चतुर्थांश', moon_wane_crescent: 'घटता हिलाल',
   d_next24: 'अगले 24 घंटे', d_dew24: 'ओसांक · अगले 24 घंटे', d_pollutants: 'प्रदूषक', d_lunar: 'चंद्र चक्र', d_facts: 'मुख्य तथ्य', d_about: 'परिचय', d_aqi24: 'एक्यूआई · अगले 24 घंटे', d_pollutants24: 'प्रदूषक · अगले 24 घंटे',
+  d_pollen_species: 'पराग प्रजातियाँ', d_pollen_none: 'इस स्थान के लिए पराग डेटा उपलब्ध नहीं है।',
   f_gusts_now: 'झोंके अभी', f_max_gust_24: 'अधिकतम झोंका · 24घं', f_avg_24: 'औसत · 24घं', f_direction: 'दिशा', f_beaufort: 'ब्यूफोर्ट बल',
   f_today_max: 'आज अधिकतम', f_peak_around: 'चरम समय', f_sunscreen_hours: 'सनस्क्रीन घंटे', f_burn_risk: 'झुलसने का खतरा',
   f_dew_point: 'ओसांक', f_comfort: 'आराम स्तर', f_best_24: 'सबसे अच्छा · 24घं', f_worst_24: 'सबसे कम · 24घं', f_fog_threshold: 'कोहरे की सीमा',
   f_change_3h: '3घं बदलाव', f_high_24: 'अधिकतम · 24घं', f_low_24: 'न्यूनतम · 24घं', f_meaning: 'मतलब',
   f_peak_12h: 'अगले 12घं चरम', f_expected_24: 'संभावित · 24घं', f_wettest_hour: 'सबसे गीला घंटा', f_today_chance: 'आज की संभावना',
   f_advice: 'सलाह', f_moonrise: 'चंद्रोदय', f_moonset: 'चंद्रास्त', f_cycle_day: 'चक्र दिवस', f_illumination: 'प्रकाशन',
+  f_pollen_worst: 'सबसे बड़ा कारक', f_pollen_active: 'सक्रिय प्रजातियाँ', f_pollen_severity: 'गंभीरता',
 
   // Day detail, rain alert, health
   card_health: 'स्वास्थ्य', d_temp24: 'तापमान · इस दिन',
@@ -106,6 +109,7 @@ export const hi: Strings = {
   chip_active: 'सक्रिय', chip_syncing: 'सिंक हो रहा है', chip_offline: 'ऑफ़लाइन', chip_idle: 'निष्क्रिय', chip_match: 'मेल', chip_drift: 'विचलन',
   tile_group_main: 'मुख्य सेक्शन', tile_group_detail: 'डिटेल कार्ड',
   tile_wind: 'हवा', tile_aqi: 'वायु गुणवत्ता', tile_uv: 'UV सूचकांक', tile_humidity: 'नमी', tile_visibility: 'दृश्यता', tile_pressure: 'दबाव', tile_precipitation: 'वर्षा', tile_raintoday: 'आज की बारिश', tile_moon: 'चंद्रमा', tile_health: 'स्वास्थ्य',
+  tile_pollen: 'परागकण',
   tile_highlights: 'मुख्य बिंदु', tile_nowcast: 'नाउकास्ट', tile_rainchart: 'बारिश की संभावना', tile_hourly: 'घंटेवार पूर्वानुमान', tile_daily: 'दैनिक पूर्वानुमान', tile_trend: '48-घंटे का रुझान', tile_pastweek: 'पिछला सप्ताह', tile_activity: 'गतिविधि योजनाकार', tile_trip: 'ट्रिप प्लानर', tile_calendar: 'कैलेंडर मौसम', tile_marine: 'समुद्री पूर्वानुमान',
   err_weather: 'मौसम उपलब्ध नहीं', err_generic: 'कुछ गड़बड़ हो गई।', err_retry: 'फिर कोशिश करें', err_welcome: 'MU Weather में आपका स्वागत है', err_welcome_msg: 'लाइव ग्रेडिएंट पूर्वानुमान देखने के लिए शहर खोजें।',
   search_unavailable: 'खोज उपलब्ध नहीं', search_find: 'अपना शहर खोजें', search_find_msg: 'लाखों शहरों में खोजने के लिए कम से कम दो अक्षर लिखें।', search_none: 'कोई शहर नहीं मिला', search_none_msg: '"{q}" से कुछ नहीं मिला। वर्तनी बदलकर कोशिश करें।', search_placeholder: 'दुनिया भर का कोई शहर खोजें...',
@@ -127,4 +131,5 @@ export const hi: Strings = {
   about_precip: 'प्रतिशत उस ठीक घंटे में मापने योग्य बारिश की संभावना है। मिलीमीटर बताते हैं कि कितनी बारिश जमा होगी: हल्की बारिश घंटे में 2.5 मिमी से कम, भारी बारिश 7.6 मिमी से अधिक होती है।',
   about_aqi: 'अमेरिकी वायु गुणवत्ता सूचकांक पाँच प्रदूषकों को एक अंक में मिलाता है; यूरोपीय सूचकांक उन्हीं प्रदूषकों से 0-100+ पैमाना बनाता है। पट्टियाँ हर प्रदूषक को उसकी अस्वस्थ सीमा (µg/m³) के मुकाबले दिखाती हैं। 100 अमेरिकी AQI (60 EU) से ऊपर संवेदनशील समूह बाहरी मेहनत घटाएँ; 200 अमेरिकी AQI (80 EU) से ऊपर सभी बाहर का समय सीमित रखें।',
   about_moon: 'चंद्रमा हर 29.5 दिनों में अपनी कलाओं से गुजरता है — प्रगति पट्टी दिखाती है कि हम वर्तमान चक्र में कहाँ हैं। प्रकाशन पृथ्वी से दिखने वाला प्रकाशित अंश है। पूर्णिमा सूर्यास्त के आसपास उगती है; अमावस्या सूर्य के साथ उगती है।',
+  about_pollen: 'पराग की गिनती कोपर्निकस CAMS यूरोपीय वायु-गुणवत्ता मॉडल से आती है और घन मीटर प्रति कणों में मापी जाती है। कवरेज केवल यूरोप तक सीमित है; इस क्षेत्र के बाहर कोई पराग डेटा उपलब्ध नहीं है। स्तर: 10 से कम कम, 30 से कम मध्यम, 75 से कम ऊँचा, और 75 या अधिक बहुत ऊँचा। ऊँचे दिनों में सुबह के चरम समय में खिड़कियाँ बंद रखें, घर लौटकर नहाएँ और सेटिंग्स → सूचनाएँ में पराग अलर्ट देखें।',
 };

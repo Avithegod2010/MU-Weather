@@ -47,6 +47,7 @@ export const id: Strings = {
   card_uv: 'Indeks UV', card_humidity: 'Kelembapan', card_visibility: 'Jarak Pandang',
   card_pressure: 'Tekanan', card_precipitation: 'Presipitasi', card_moon: 'Bulan',
   card_sun: 'Terbit & Terbenam', card_yearago: 'Setahun Lalu', card_pollen: 'Serbuk Sari',
+  card_pollen_sub: 'Butiran per m³ · Cakupan Eropa',
     card_rain_today: 'Hujan hari ini',
   total_rain_today: 'Total hujan hari ini',
   full_moon_in_days: 'Purnama dalam {n} hari',
@@ -72,12 +73,14 @@ export const id: Strings = {
   vis_crystal: 'Sangat Jernih', vis_clear: 'Jernih', vis_haze: 'Kabut ringan', vis_poor: 'Buruk · kabut mungkin',
   moon_new: 'Bulan Baru', moon_wax_crescent: 'Sabit Membulat', moon_first_quarter: 'Kuartal Pertama', moon_wax_gibbous: 'Membulat Awal', moon_full: 'Bulan Purnama', moon_wane_gibbous: 'Membulat Akhir', moon_last_quarter: 'Kuartal Terakhir', moon_wane_crescent: 'Sabit Menyusut',
   d_next24: '24 JAM KE DEPAN', d_dew24: 'TITIK EMBUN · 24 JAM', d_pollutants: 'POLUTAN', d_lunar: 'SIKLUS BULAN', d_facts: 'FAKTA UTAMA', d_about: 'TENTANG', d_aqi24: 'AQI · 24 JAM KE DEPAN', d_pollutants24: 'POLUTAN · 24 JAM KE DEPAN',
+  d_pollen_species: 'JENIS SERBUK SARI', d_pollen_none: 'Tidak ada data serbuk sari untuk lokasi ini.',
   f_gusts_now: 'Hemburan kini', f_max_gust_24: 'Hemburan maks · 24j', f_avg_24: 'Rata-rata · 24j', f_direction: 'Arah', f_beaufort: 'Skala Beaufort',
   f_today_max: 'Maks hari ini', f_peak_around: 'Puncak sekitar', f_sunscreen_hours: 'Jam tabir surya', f_burn_risk: 'Risiko terbakar',
   f_dew_point: 'Titik embun', f_comfort: 'Tingkat nyaman', f_best_24: 'Terbaik · 24j', f_worst_24: 'Terburuk · 24j', f_fog_threshold: 'Batas kabut',
   f_change_3h: 'Perubahan 3j', f_high_24: 'Tertinggi · 24j', f_low_24: 'Terendah · 24j', f_meaning: 'Arti',
   f_peak_12h: 'Puncak 12j', f_expected_24: 'Diperkirakan · 24j', f_wettest_hour: 'Jam terhujam', f_today_chance: 'Peluang hari ini',
   f_advice: 'Saran', f_moonrise: 'Bulan terbit', f_moonset: 'Bulan terbenam', f_cycle_day: 'Hari siklus', f_illumination: 'Penerangan',
+  f_pollen_worst: 'Penyumbang terbesar', f_pollen_active: 'Jenis aktif', f_pollen_severity: 'Tingkat keparahan',
 
   // Day detail, rain alert, health
   card_health: 'Kesehatan', d_temp24: 'SUHU · HARI INI',
@@ -106,6 +109,7 @@ export const id: Strings = {
   chip_active: 'AKTIF', chip_syncing: 'MENYINKRON', chip_offline: 'LURING', chip_idle: 'SIAGA', chip_match: 'COCOK', chip_drift: 'MENYIMPANG',
   tile_group_main: 'Bagian utama', tile_group_detail: 'Kartu detail',
   tile_wind: 'Angin', tile_aqi: 'Kualitas udara', tile_uv: 'Indeks UV', tile_humidity: 'Kelembapan', tile_visibility: 'Jarak pandang', tile_pressure: 'Tekanan', tile_precipitation: 'Presipitasi', tile_raintoday: 'Hujan hari ini', tile_moon: 'Bulan', tile_health: 'Kesehatan',
+  tile_pollen: 'Serbuk Sari',
   tile_highlights: 'Sorotan', tile_nowcast: 'Saat ini', tile_rainchart: 'Peluang hujan', tile_hourly: 'Prakiraan per jam', tile_daily: 'Prakiraan harian', tile_trend: 'Tren 48 jam', tile_pastweek: 'Pekan lalu', tile_activity: 'Perencana aktivitas', tile_trip: 'Perencana perjalanan', tile_calendar: 'Cuaca kalender', tile_marine: 'Prakiraan laut',
   err_weather: 'Cuaca tidak tersedia', err_generic: 'Ada yang salah.', err_retry: 'Coba lagi', err_welcome: 'Selamat datang di MU Weather', err_welcome_msg: 'Cari kota untuk melihat prakiraan gradien langsungnya.',
   search_unavailable: 'Pencarian tidak tersedia', search_find: 'Temukan kotamu', search_find_msg: 'Ketik minimal dua huruf untuk mencari di antara jutaan kota.', search_none: 'Tidak ada kota', search_none_msg: 'Tidak ada yang cocok dengan "{q}". Coba ejaan lain.', search_placeholder: 'Cari kota mana pun di dunia...',
@@ -127,4 +131,5 @@ export const id: Strings = {
   about_precip: 'Persentasenya adalah peluang hujan yang terukur tepat pada jam itu. Milimeter menunjukkan berapa yang akan terkumpul: hujan ringan di bawah 2,5 mm per jam, hujan lebat di atas 7,6 mm per jam.',
   about_aqi: 'Indeks kualitas udara AS menggabungkan lima polutan dalam satu angka; indeks Eropa menggunakan polutan yang sama pada skala 0-100+. Batang menunjukkan setiap polutan terhadap ambang tidak sehatnya (µg/m³). Di atas 100 US AQI (60 EU) kelompok sensitif sebaiknya mengurangi aktivitas fisik di luar; di atas 200 US (80 EU) semua orang.',
   about_moon: 'Bulan menyelesaikan fasenya setiap 29,5 hari - bilah kemajuan menunjukkan posisi kita dalam siklus saat ini. Iluminasi adalah fraksi tercahayang tampak dari Bumi. Purnama terbit sekitar matahari terbenam; bulan baru bersama matahari.',
+  about_pollen: 'Hitungan serbuk sari berasal dari model kualitas udara Eropa Copernicus CAMS dan diukur dalam butiran per meter kubik. Cakupannya terbatas pada Eropa; di luar wilayah ini tidak ada data serbuk sari. Tingkatan: rendah di bawah 10, sedang di bawah 30, tinggi di bawah 75, dan sangat tinggi pada 75 atau lebih butiran per meter kubik. Pada hari tinggi, jaga jendela tetap tertutup saat puncak pagi, mandir setelah pulang, dan cek peringatan polen di Pengaturan → Notifikasi.',
 };

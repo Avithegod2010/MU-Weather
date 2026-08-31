@@ -81,6 +81,7 @@ export const en = {
   card_sun: 'Sunrise & Sunset',
   card_yearago: 'A Year Ago',
   card_pollen: 'Pollen',
+  card_pollen_sub: 'Grains per m³ · Europe coverage',
 
   // Common labels
     card_rain_today: "Today's rain",
@@ -174,6 +175,8 @@ export const en = {
   d_facts: 'KEY FACTS',
   d_about: 'ABOUT',
   d_temp24: 'TEMPERATURE · THIS DAY',
+  d_pollen_species: 'POLLEN SPECIES',
+  d_pollen_none: 'No pollen data available for this location.',
 
   // Tile detail fact labels
   f_gusts_now: 'Gusts now',
@@ -203,6 +206,9 @@ export const en = {
   f_moonset: 'Moonset',
   f_cycle_day: 'Cycle day',
   f_illumination: 'Illumination',
+  f_pollen_worst: 'Worst offender',
+  f_pollen_active: 'Active species',
+  f_pollen_severity: 'Severity',
 
   // Day detail facts
   sunrise: 'Sunrise',
@@ -338,6 +344,7 @@ export const en = {
   tile_raintoday: "Today's Rain",
   tile_moon: 'Moon',
   tile_health: 'Health',
+  tile_pollen: 'Pollen',
   tile_highlights: 'Highlights',
   tile_nowcast: 'Nowcast',
   tile_rainchart: 'Rain probability',
@@ -429,6 +436,7 @@ export const en = {
   about_precip: 'The percentage is the chance of measurable rain at that exact hour. Millimetres show how much would accumulate: light rain is under 2.5 mm per hour, heavy rain is over 7.6 mm per hour.',
   about_aqi: 'The US Air Quality Index blends five pollutants into one score; the European index uses a 0-100+ scale from the same pollutants. Bars show each pollutant against its unhealthy threshold (µg/m³). Above 100 US AQI (60 EU) sensitive groups should reduce outdoor exertion; above 200 US AQI (80 EU) everyone should limit time outside.',
   about_moon: 'The Moon cycles through its phases every 29.5 days - the progress bar shows where we are in the current cycle. Illumination is the lit fraction visible from Earth. Full moons rise around sunset; new moons rise with the sun.',
+  about_pollen: 'Pollen counts come from the Copernicus CAMS European air-quality model and are measured in grains per cubic metre. Coverage is limited to Europe; outside the region no pollen data is available. Levels: low under 10, moderate under 30, high under 75, and very high at 75 or more grains per cubic metre. On high days, keep windows closed during the morning peak, shower after coming home, and check the pollen alert in Settings → Notifications.',
 };
 
 export type Strings = typeof en;

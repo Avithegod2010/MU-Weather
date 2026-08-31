@@ -42,6 +42,7 @@ import {
   Luggage,
   Download,
   Upload,
+  Flower2,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 
@@ -57,6 +58,7 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   rainToday: 'tile_raintoday',
   moon: 'tile_moon',
   health: 'tile_health',
+  pollen: 'tile_pollen',
   highlights: 'tile_highlights',
   nowcast: 'tile_nowcast',
   rainChart: 'tile_rainchart',
@@ -124,6 +126,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   rainToday: Droplets,
   moon: MoonIcon,
   health: HeartPulse,
+  pollen: Flower2,
   pastWeek: Clock3,
   tripPlanner: Luggage,
 };

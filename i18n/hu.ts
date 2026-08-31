@@ -47,6 +47,7 @@ export const hu: Strings = {
   card_uv: 'UV-index', card_humidity: 'Páratartalom', card_visibility: 'Látótávolság',
   card_pressure: 'Nyomás', card_precipitation: 'Csapadék', card_moon: 'Hold',
   card_sun: 'Napkelte & nyugta', card_yearago: 'Egy éve', card_pollen: 'Pollen',
+  card_pollen_sub: 'Szem köbméterenként · Európa-lefedettség',
     card_rain_today: 'Mai eső',
   total_rain_today: 'Mai összes eső',
   full_moon_in_days: 'Telihold {n} nap múlva',
@@ -72,12 +73,14 @@ export const hu: Strings = {
   vis_crystal: 'Kristálytiszta', vis_clear: 'Tiszta', vis_haze: 'Mérsékelt párás', vis_poor: 'Gyenge · köd valószínű',
   moon_new: 'Újhold', moon_wax_crescent: 'Növekvő sarló', moon_first_quarter: 'Első negyed', moon_wax_gibbous: 'Növekvő domború', moon_full: 'Telihold', moon_wane_gibbous: 'Fogyó domború', moon_last_quarter: 'Utolsó negyed', moon_wane_crescent: 'Fogyó sarló',
   d_next24: 'KÖVETKEZŐ 24 ÓRA', d_dew24: 'HARMATPONT · 24 ÓRA', d_pollutants: 'SZENNYEZŐK', d_lunar: 'HOLDCIKLUS', d_facts: 'FŐ TÉNYEK', d_about: 'NÉVJEGY', d_aqi24: 'AQI · KÖVETKEZŐ 24 ÓRA', d_pollutants24: 'SZENNYEZŐK · KÖVETKEZŐ 24 ÓRA',
+  d_pollen_species: 'POLLENNÖVÉNYEK', d_pollen_none: 'Ehhez a helyhez nincs elérhető pollenadat.',
   f_gusts_now: 'Széllökés most', f_max_gust_24: 'Max. széllökés · 24ó', f_avg_24: 'Átlag · 24ó', f_direction: 'Irány', f_beaufort: 'Beaufort erő',
   f_today_max: 'Mai max', f_peak_around: 'Csúcs kb.', f_sunscreen_hours: 'Fényvédős órák', f_burn_risk: 'Leégési kockázat',
   f_dew_point: 'Harmatpont', f_comfort: 'Komfort', f_best_24: 'Legjobb · 24ó', f_worst_24: 'Legrosszabb · 24ó', f_fog_threshold: 'Köd küszöb',
   f_change_3h: 'Változás 3ó', f_high_24: 'Max · 24ó', f_low_24: 'Min · 24ó', f_meaning: 'Jelentés',
   f_peak_12h: 'Csúcs 12ó', f_expected_24: 'Várható · 24ó', f_wettest_hour: 'Legesősebb óra', f_today_chance: 'Mai esély',
   f_advice: 'Tanács', f_moonrise: 'Holdkelte', f_moonset: 'Holdnyugta', f_cycle_day: 'Ciklusnap', f_illumination: 'Megvilágítás',
+  f_pollen_worst: 'Legfőbb bűnös', f_pollen_active: 'Aktív fajok', f_pollen_severity: 'Súlyosság',
 
   // Day detail, rain alert, health
   card_health: 'Egészség', d_temp24: 'HŐMÉRSÉKLET · EZ A NAP',
@@ -106,6 +109,7 @@ export const hu: Strings = {
   chip_active: 'AKTÍV', chip_syncing: 'SZINKRONIZÁLÁS', chip_offline: 'NINCS INTERNET', chip_idle: 'TÉTLEN', chip_match: 'EGYEZIK', chip_drift: 'ELTÉR',
   tile_group_main: 'Fő szakaszok', tile_group_detail: 'Részletkártyák',
   tile_wind: 'Szél', tile_aqi: 'Levegőminőség', tile_uv: 'UV-index', tile_humidity: 'Páratartalom', tile_visibility: 'Látótávolság', tile_pressure: 'Légnyomás', tile_precipitation: 'Csapadék', tile_raintoday: 'Mai eső', tile_moon: 'Hold', tile_health: 'Egészség',
+  tile_pollen: 'Pollen',
   tile_highlights: 'Kiemelt', tile_nowcast: 'Közvetlen', tile_rainchart: 'Eső valószínűsége', tile_hourly: 'Órás előrejelzés', tile_daily: 'Napi előrejelzés', tile_trend: '48 órás trend', tile_pastweek: 'Elmúlt hét', tile_activity: 'Tevékenységtervező', tile_trip: 'Utazástervező', tile_calendar: 'Naptári időjárás', tile_marine: 'Tengeri előrejelzés',
   err_weather: 'Az időjárás nem elérhető', err_generic: 'Valami hiba történt.', err_retry: 'Próbáld újra', err_welcome: 'Üdv a MU Weather-ben', err_welcome_msg: 'Keress egy várost az élő előrejelzéséhez.',
   search_unavailable: 'A keresés nem elérhető', search_find: 'Keresd meg a városod', search_find_msg: 'Írj legalább két betűt milliók városa közötti kereséshez.', search_none: 'Nincs találat', search_none_msg: 'Semmi sem egyezik erre: „{q}". Próbáld másképp.', search_placeholder: 'Keress bármely városra...',
@@ -127,4 +131,5 @@ export const hu: Strings = {
   about_precip: 'A százalék annak az esélye, hogy épp abban az órában mérhető eső esik. A milliméterek azt mutatják, mennyi gyűlnék össze: gyenge eső óránként 2,5 mm alatt, erős eső 7,6 mm felett.',
   about_aqi: 'Az amerikai levegőminőségi index öt szennyezőt egyetlen értékbe kever; az európai index ugyanezekből 0-100+ skálát képez. A sávok minden szennyezőt az egészségtelen határértékéhez (µg/m³) viszonyítanak. 100 US-AQI (60 EU) felett az érzékenyek csökkentsék a kültéri megerőltetést; 200 US (80 EU) felett mindenki.',
   about_moon: 'A Hold 29,5 naponta járja végig fázisait - a folyamatjelző sáv mutatja, hol tartunk a jelen ciklusban. A megvilágítás a Földről látható megvilágított hányad. A telihold naplemente körül kel; az újhold a Nappal együtt.',
+  about_pollen: 'A pollenadatok a Copernicus CAMS európai levegőminőségi modellből származnak, és szem/köbméterben mérjük őket. A lefedettség Európára korlátozódik; a régión kívül nincs pollenadat. Szintek: alacsony 10 alatt, mérsékelt 30 alatt, magas 75 alatt, és nagyon magas 75 vagy több szem köbméterenként. Magas napokon tartsd zárva az ablakokat a reggeli csúcs idején, zuhanyozz hazaérve, és nézd meg a pollenkérelmet a Beállítások → Értesítések menüben.',
 };

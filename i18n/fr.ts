@@ -47,6 +47,7 @@ export const fr: Strings = {
   card_uv: 'Indice UV', card_humidity: 'Humidité', card_visibility: 'Visibilité',
   card_pressure: 'Pression', card_precipitation: 'Précipitations', card_moon: 'Lune',
   card_sun: 'Lever & coucher', card_yearago: 'Il y a un an', card_pollen: 'Pollens',
+  card_pollen_sub: 'Grains par m³ · Couverture Europe',
     card_rain_today: 'Pluie du jour',
   total_rain_today: 'Pluie totale du jour',
   full_moon_in_days: 'Pleine lune dans {n} jours',
@@ -72,12 +73,14 @@ export const fr: Strings = {
   vis_crystal: 'Cristalline', vis_clear: 'Claire', vis_haze: 'Voile modéré', vis_poor: 'Faible · brouillard possible',
   moon_new: 'Nouvelle lune', moon_wax_crescent: 'Premier croissant', moon_first_quarter: 'Premier quartier', moon_wax_gibbous: 'Gibbeuse croissante', moon_full: 'Pleine lune', moon_wane_gibbous: 'Gibbeuse décroissante', moon_last_quarter: 'Dernier quartier', moon_wane_crescent: 'Dernier croissant',
   d_next24: 'PROCHAINES 24 HEURES', d_dew24: 'POINT DE ROSÉE · 24 H', d_pollutants: 'POLLUANTS', d_lunar: 'CYCLE LUNAIRE', d_facts: 'FAITS CLÉS', d_about: 'À PROPOS', d_aqi24: 'AQI · PROCHAINES 24 HEURES', d_pollutants24: 'POLLUANTS · PROCHAINES 24 HEURES',
+  d_pollen_species: 'ESPÈCES DE POLLENS', d_pollen_none: 'Aucune donnée de pollens disponible pour ce lieu.',
   f_gusts_now: 'Rafales actuelles', f_max_gust_24: 'Rafale max · 24 h', f_avg_24: 'Moyenne · 24 h', f_direction: 'Direction', f_beaufort: 'Force Beaufort',
   f_today_max: 'Max du jour', f_peak_around: 'Pic vers', f_sunscreen_hours: 'Heures crème solaire', f_burn_risk: 'Risque de coup de soleil',
   f_dew_point: 'Point de rosée', f_comfort: 'Confort', f_best_24: 'Meilleure · 24 h', f_worst_24: 'Pire · 24 h', f_fog_threshold: 'Seuil de brouillard',
   f_change_3h: 'Variation 3 h', f_high_24: 'Max · 24 h', f_low_24: 'Min · 24 h', f_meaning: 'Signification',
   f_peak_12h: 'Pic 12 h', f_expected_24: 'Attendu · 24 h', f_wettest_hour: 'Heure la plus pluvieuse', f_today_chance: 'Risque du jour',
   f_advice: 'Conseil', f_moonrise: 'Lever de lune', f_moonset: 'Coucher de lune', f_cycle_day: 'Jour du cycle', f_illumination: 'Illumination',
+  f_pollen_worst: 'Pire taxon', f_pollen_active: 'Espèces actives', f_pollen_severity: 'Gravité',
 
   // Day detail, rain alert, health
   card_health: 'Santé', d_temp24: 'TEMPÉRATURE · CE JOUR',
@@ -106,6 +109,7 @@ export const fr: Strings = {
   chip_active: 'ACTIF', chip_syncing: 'SYNCHRONISATION', chip_offline: 'HORS LIGNE', chip_idle: 'INACTIF', chip_match: 'CORRESPOND', chip_drift: 'ÉCART',
   tile_group_main: 'Sections principales', tile_group_detail: 'Cartes de détail',
   tile_wind: 'Vent', tile_aqi: 'Qualité de l’air', tile_uv: 'Indice UV', tile_humidity: 'Humidité', tile_visibility: 'Visibilité', tile_pressure: 'Pression', tile_precipitation: 'Précipitations', tile_raintoday: 'Pluie du jour', tile_moon: 'Lune', tile_health: 'Santé',
+  tile_pollen: 'Pollens',
   tile_highlights: 'Points clés', tile_nowcast: 'Maintenant', tile_rainchart: 'Probabilité de pluie', tile_hourly: 'Prévisions horaires', tile_daily: 'Prévisions quotidiennes', tile_trend: 'Tendance 48 h', tile_pastweek: 'Semaine passée', tile_activity: 'Planificateur d’activités', tile_trip: 'Planificateur de voyage', tile_calendar: 'Météo du calendrier', tile_marine: 'Prévisions marines',
   err_weather: 'Météo indisponible', err_generic: 'Un problème est survenu.', err_retry: 'Réessayer', err_welcome: 'Bienvenue dans MU Weather', err_welcome_msg: 'Cherchez une ville pour voir son prévisionnel en direct.',
   search_unavailable: 'Recherche indisponible', search_find: 'Trouvez votre ville', search_find_msg: 'Tapez au moins deux lettres pour chercher parmi des millions de villes.', search_none: 'Aucune ville trouvée', search_none_msg: 'Rien ne correspond à « {q} ». Essayez une autre orthographe.', search_placeholder: 'Cherchez n’importe quelle ville...',
@@ -127,4 +131,5 @@ export const fr: Strings = {
   about_precip: 'Le pourcentage est la probabilité de pluie mesurable à cette heure précise. Les millimètres montrent l’accumulation attendue : pluie faible sous 2,5 mm par heure, pluie forte au-delà de 7,6 mm par heure.',
   about_aqi: 'L’indice américain de qualité de l’air fusionne cinq polluants en un score ; l’indice européen utilise une échelle 0-100+ sur les mêmes polluants. Les barres comparent chaque polluant à son seuil insalubre (µg/m³). Au-dessus de 100 AQI US (60 EU), les personnes sensibles devraient limiter l’effort dehors ; au-dessus de 200 US (80 EU), tout le monde.',
   about_moon: 'La Lune parcourt ses phases tous les 29,5 jours - la barre de progression montre où nous en sommes du cycle. L’illumination est la fraction éclairée visible depuis la Terre. Les pleines lunes se lèvent vers le coucher du soleil ; les nouvelles avec le soleil.',
+  about_pollen: 'Les comptes polliniques proviennent du modèle européen de qualité de l’air Copernicus CAMS et sont mesurés en grains par mètre cube. La couverture est limitée à l’Europe ; hors de la région, aucune donnée n’est disponible. Niveaux : faible sous 10, modéré sous 30, élevé sous 75, et très élevé à 75 grains par mètre cube ou plus. Les jours élevés, gardez les fenêtres fermées pendant le pic matinal, douchez-vous en rentrant et consultez l’alerte pollen dans Réglages → Notifications.',
 };
