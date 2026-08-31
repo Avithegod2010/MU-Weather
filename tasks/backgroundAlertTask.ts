@@ -2,7 +2,8 @@ import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchWeather } from '../api/openMeteo';
-import { loadLastLocation } from '../utils/storage';
+import { loadLastLocation, saveLastWeather } from '../utils/storage';
+import { refreshWeatherWidgets } from '../widget/weatherWidgetTask';
 import {
   fireAlertNotifications,
   ALERTS_STORAGE_KEY,
@@ -29,6 +30,14 @@ if (!globalScope.__muBgAlertTaskDefined) {
 
       const data = await fetchWeather(location);
       await fireAlertNotifications(settings, data);
+      // Keep the home-screen widget fed even when the app is closed. The
+      // bundle is also the widget's cache source, so persist it here too.
+      try {
+        await saveLastWeather(data);
+        await refreshWeatherWidgets();
+      } catch {
+        // Widget updates are best-effort.
+      }
 
       return BackgroundTask.BackgroundTaskResult.Success;
     } catch {

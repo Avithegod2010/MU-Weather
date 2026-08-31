@@ -45,7 +45,25 @@
           "calendarWritePermission": "MU Weather shows the forecast for your upcoming events."
         }
       ],
-      "expo-background-task"
+      "expo-background-task",
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "MUWeatherWidget",
+              "label": "MU Weather",
+              "description": "Current temperature and conditions at a glance",
+              "minWidth": "180dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
+      ]
     ],
     "extra": {
       "eas": {

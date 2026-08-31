@@ -3,6 +3,7 @@ import { ApiError, fetchWeather } from '../api/openMeteo';
 import type { GeoLocation, WeatherBundle } from '../api/types';
 import { loadLastWeather, saveLastWeather } from '../utils/storage';
 import { logForecast } from '../utils/forecastLog';
+import { refreshWeatherWidgets } from '../widget/weatherWidgetTask';
 
 export type WeatherStatus = 'idle' | 'loading' | 'refreshing' | 'success' | 'error';
 
@@ -34,10 +35,11 @@ export function useWeather(location: GeoLocation | null) {
         freshRef.current = true;
         setData(bundle);
         setStatus('success');
-        // Non-critical: persist for the next cold start, and record the
-        // daily predictions for the future forecast-vs-actual comparison.
+        // Non-critical: persist for the next cold start, record the daily
+        // predictions for forecast-vs-actual, and redraw the home-screen widget.
         void saveLastWeather(bundle);
         void logForecast(bundle);
+        void refreshWeatherWidgets();
       } catch (error) {
         if (requestId.current !== id) return;
         if (error instanceof ApiError && error.kind === 'network') {
