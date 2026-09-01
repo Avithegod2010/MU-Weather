@@ -33,6 +33,8 @@ export const FEATURES = {
   tileDetails: true,
   /** "What's normal here" card - 1991-2020 climate normals for the active location */
   climate: true,
+  /** Official severe-weather warnings card - MeteoAlarm CAP feeds (EU members) */
+  meteoalarm: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

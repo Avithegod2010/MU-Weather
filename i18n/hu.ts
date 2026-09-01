@@ -144,4 +144,5 @@ export const hu: Strings = {
   tile_climate: 'Éghajlat', card_climate: 'Mi a normális itt', climate_loading: 'Éghajlati átlagok betöltése…',
   climate_this_month: 'Egy jellemző {month}', climate_delta_warmer: '{n}° melegebb, mint egy jellemző {month}', climate_delta_cooler: '{n}° hűvösebb, mint egy jellemző {month}',
   climate_delta_typical: 'Pontosan, mint egy jellemző {month}', climate_year_note: 'Legmelegebb: {hottest} · Leghidegebb: {coldest} · Legesősebb: {wettest}', climate_rain_normal: 'Normál eső: {n}',
+  tile_warnings: 'Figyelmeztetések', card_warnings: 'Hivatalos figyelmeztetések', warnings_until: '{t} időpontig', warnings_source: 'MeteoAlarm · hivatalos kormányzati figyelmeztetések',
 };

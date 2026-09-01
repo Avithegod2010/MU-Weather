@@ -144,4 +144,5 @@ export const hi: Strings = {
   tile_climate: 'जलवायु', card_climate: 'यहाँ सामान्य क्या है', climate_loading: 'जलवायु औसत लोड हो रहे हैं…',
   climate_this_month: 'एक औसत {month}', climate_delta_warmer: 'औसत {month} से {n}° अधिक गर्म', climate_delta_cooler: 'औसत {month} से {n}° अधिक ठंडा',
   climate_delta_typical: 'औसत {month} के अनुरूप', climate_year_note: 'सबसे गर्म: {hottest} · सबसे ठंडा: {coldest} · सबसे नम: {wettest}', climate_rain_normal: 'औसत वर्षा: {n}',
+  tile_warnings: 'चेतावनियाँ', card_warnings: 'आधिकारिक चेतावनियाँ', warnings_until: '{t} तक', warnings_source: 'MeteoAlarm · सरकारी आधिकारिक चेतावनियाँ',
 };

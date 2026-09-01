@@ -476,6 +476,12 @@ export const en = {
   climate_delta_typical: 'Right in line with a typical {month}',
   climate_year_note: 'Hottest: {hottest} · Coldest: {coldest} · Wettest: {wettest}',
   climate_rain_normal: 'Normal rain: {n}',
+
+  // Official severe-weather warnings (MeteoAlarm)
+  tile_warnings: 'Warnings',
+  card_warnings: 'Official warnings',
+  warnings_until: 'Until {t}',
+  warnings_source: 'MeteoAlarm · official government warnings',
 };
 
 export type Strings = typeof en;

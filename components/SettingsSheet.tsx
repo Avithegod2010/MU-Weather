@@ -45,6 +45,7 @@ import {
   Flower2,
   Rows3,
   Snowflake,
+  TriangleAlert,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 
@@ -70,6 +71,7 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   trend: 'tile_trend',
   pastWeek: 'tile_pastweek',
   climate: 'tile_climate',
+  warnings: 'tile_warnings',
   activity: 'tile_activity',
   tripPlanner: 'tile_trip',
   calendar: 'tile_calendar',
@@ -135,6 +137,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   pastWeek: Clock3,
   tripPlanner: Luggage,
   climate: Thermometer,
+  warnings: TriangleAlert,
 };
 
 interface SegmentedOption {

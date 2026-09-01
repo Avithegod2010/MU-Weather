@@ -144,4 +144,5 @@ export const id: Strings = {
   tile_climate: 'Iklim', card_climate: 'Yang normal di sini', climate_loading: 'Memuat rata-rata iklim…',
   climate_this_month: 'Sebuah {month} yang khas', climate_delta_warmer: '{n}° lebih hangat dari {month} yang khas', climate_delta_cooler: '{n}° lebih dingin dari {month} yang khas',
   climate_delta_typical: 'Tepat seperti {month} yang khas', climate_year_note: 'Terhangat: {hottest} · Terdingin: {coldest} · Terbasah: {wettest}', climate_rain_normal: 'Hujan normal: {n}',
+  tile_warnings: 'Peringatan', card_warnings: 'Peringatan resmi', warnings_until: 'Hingga {t}', warnings_source: 'MeteoAlarm · peringatan resmi pemerintah',
 };

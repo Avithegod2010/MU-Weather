@@ -144,4 +144,5 @@ export const el: Strings = {
   tile_climate: 'Κλίμα', card_climate: 'Τι είναι φυσιολογικό εδώ', climate_loading: 'Φόρτωση κλιματικών μέσων…',
   climate_this_month: 'Ένας τυπικός {month}', climate_delta_warmer: '{n}° θερμότερο από έναν τυπικό {month}', climate_delta_cooler: '{n}° ψυχρότερο από έναν τυπικό {month}',
   climate_delta_typical: 'Ακριβώς όπως ένας τυπικός {month}', climate_year_note: 'Θερμότερος: {hottest} · Ψυχρότερος: {coldest} · Βροχερότερος: {wettest}', climate_rain_normal: 'Κανονική βροχή: {n}',
+  tile_warnings: 'Προειδοποιήσεις', card_warnings: 'Επίσημες προειδοποιήσεις', warnings_until: 'Έως {t}', warnings_source: 'MeteoAlarm · επίσημες κρατικές προειδοποιήσεις',
 };

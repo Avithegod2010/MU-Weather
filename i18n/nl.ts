@@ -144,4 +144,5 @@ export const nl: Strings = {
   tile_climate: 'Klimaat', card_climate: 'Wat is hier normaal', climate_loading: 'Klimaatgemiddelden laden…',
   climate_this_month: 'Een typische {month}', climate_delta_warmer: '{n}° warmer dan een typische {month}', climate_delta_cooler: '{n}° koeler dan een typische {month}',
   climate_delta_typical: 'Precies zoals een typische {month}', climate_year_note: 'Warmst: {hottest} · Koudst: {coldest} · Natst: {wettest}', climate_rain_normal: 'Normale regen: {n}',
+  tile_warnings: 'Waarschuwingen', card_warnings: 'Officiële waarschuwingen', warnings_until: 'Tot {t}', warnings_source: 'MeteoAlarm · officiële overheidswaarschuwingen',
 };

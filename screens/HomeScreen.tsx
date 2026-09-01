@@ -114,7 +114,9 @@ import { useGoldenHour } from '../hooks/useGoldenHour';
 import { useRainAlert } from '../hooks/useRainAlert';
 import { usePastDays } from '../hooks/usePastDays';
 import { useClimateNormals } from '../hooks/useClimateNormals';
+import { useMeteoAlarm } from '../hooks/useMeteoAlarm';
 import { ClimateCard } from '../components/ClimateCard';
+import { WarningsCard } from '../components/WarningsCard';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
 import { useFavorites } from '../hooks/useFavorites';
@@ -143,6 +145,7 @@ export function HomeScreen() {
   const weather = useWeather(active);
   const pastDays = usePastDays(active);
   const climateNormals = useClimateNormals(active);
+  const meteoAlarm = useMeteoAlarm(active);
   const { settings, updateSettings } = useSettings();
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   const theme = useMemo(
@@ -523,6 +526,16 @@ export function HomeScreen() {
                     months={climateNormals.months}
                     status={climateNormals.status}
                     todayTMax={weather.data.daily[0]?.tMax ?? null}
+                  />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.meteoalarm && showSection('warnings') ? (
+                <Reveal delay={156}>
+                  <WarningsCard
+                    theme={theme}
+                    warnings={meteoAlarm.warnings}
+                    status={meteoAlarm.status}
                   />
                 </Reveal>
               ) : null}

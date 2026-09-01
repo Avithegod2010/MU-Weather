@@ -144,4 +144,5 @@ export const fr: Strings = {
   tile_climate: 'Climat', card_climate: 'Ce qui est normal ici', climate_loading: 'Chargement des normales climatiques…',
   climate_this_month: 'Un {month} typique', climate_delta_warmer: '{n}° de plus qu’un {month} typique', climate_delta_cooler: '{n}° de moins qu’un {month} typique',
   climate_delta_typical: 'Dans la norme pour un {month} typique', climate_year_note: 'Le plus chaud : {hottest} · Le plus froid : {coldest} · Le plus arrosé : {wettest}', climate_rain_normal: 'Pluie normale : {n}',
+  tile_warnings: 'Alertes', card_warnings: 'Alertes officielles', warnings_until: "Jusqu'à {t}", warnings_source: 'MeteoAlarm · alertes gouvernementales officielles',
 };
