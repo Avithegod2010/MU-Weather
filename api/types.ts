@@ -121,6 +121,17 @@ export interface PastDayActual {
   weatherCode: number;
 }
 
+/** One month of 1991-2020 climate normals (JSON-safe), month 1-12. */
+export interface MonthlyNormal {
+  month: number;
+  /** Mean of the daily highs (°C) across the era for this calendar month. */
+  tMaxMean: number;
+  /** Mean of the daily lows (°C) across the era for this calendar month. */
+  tMinMean: number;
+  /** Mean monthly precipitation TOTAL (mm) for this calendar month across the era. */
+  precipMean: number;
+}
+
 export interface ForecastResponse {
   latitude: number;
   longitude: number;

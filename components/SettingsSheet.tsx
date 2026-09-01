@@ -69,6 +69,7 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   daily: 'tile_daily',
   trend: 'tile_trend',
   pastWeek: 'tile_pastweek',
+  climate: 'tile_climate',
   activity: 'tile_activity',
   tripPlanner: 'tile_trip',
   calendar: 'tile_calendar',
@@ -133,6 +134,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   snow: Snowflake,
   pastWeek: Clock3,
   tripPlanner: Luggage,
+  climate: Thermometer,
 };
 
 interface SegmentedOption {

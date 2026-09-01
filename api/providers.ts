@@ -1,4 +1,4 @@
-import type { PastDayActual } from './types';
+import type { PastDayActual, MonthlyNormal } from './types';
 
 export interface ProviderCheck {
   status: 'idle' | 'checking' | 'ok' | 'error';
@@ -170,6 +170,86 @@ export async function fetchPastDays(lat: number, lon: number, days = 7): Promise
     return await requestArchiveWindow(lat, lon, start, isoDaysAgo(6));
   } catch {
     return [];
+  }
+}
+
+/**
+ * 1991-2020 climate normals for a location from the Open-Meteo Archive API
+ * (era5_seamless blends ERA5 and ERA5-Land). One big ranged request over the
+ * whole 30-year window; the ~11k daily rows are aggregated client-side into
+ * 12 monthly rows and the raw payload is discarded. Never throws: any failure
+ * degrades to null and the caller stays cache-only.
+ */
+export async function fetchClimateNormals(lat: number, lon: number): Promise<MonthlyNormal[] | null> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    start_date: '1991-01-01',
+    end_date: '2020-12-31',
+    daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
+    models: 'era5_seamless',
+    timezone: 'auto',
+  }).toString();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000);
+  try {
+    const response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`, {
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`Archive responded ${response.status}`);
+    const json = await response.json();
+    const daily: ArchiveDailyPayload | undefined = json?.daily;
+    if (!daily?.time?.length) throw new Error('No archive data');
+
+    // Accumulate per-calendar-month sums; temps and precip skip null rows
+    // independently so a lagging day cannot poison a month.
+    const buckets = Array.from({ length: 12 }, () => ({
+      tMax: 0,
+      tMin: 0,
+      precip: 0,
+      tempDays: 0,
+      precipDays: 0,
+    }));
+    for (let i = 0; i < daily.time.length; i++) {
+      const date = daily.time[i];
+      if (typeof date !== 'string' || date.length < 7) continue;
+      const monthIndex = Number(date.slice(5, 7)) - 1;
+      if (monthIndex < 0 || monthIndex > 11) continue;
+      const bucket = buckets[monthIndex];
+      const tMax = daily.temperature_2m_max?.[i];
+      const tMin = daily.temperature_2m_min?.[i];
+      if (typeof tMax === 'number' && typeof tMin === 'number') {
+        bucket.tMax += tMax;
+        bucket.tMin += tMin;
+        bucket.tempDays += 1;
+      }
+      const precip = daily.precipitation_sum?.[i];
+      if (typeof precip === 'number') {
+        bucket.precip += precip;
+        bucket.precipDays += 1;
+      }
+    }
+
+    const months: MonthlyNormal[] = [];
+    // ~30 era years (1991-2020); derived from the bucket so a truncated
+    // payload changes the divisor consistently instead of faking a total.
+    const eraYears = daily.time.length / 366;
+    for (let m = 0; m < 12; m++) {
+      const bucket = buckets[m];
+      if (bucket.tempDays === 0 || bucket.precipDays === 0) return null;
+      months.push({
+        month: m + 1,
+        tMaxMean: Math.round((bucket.tMax / bucket.tempDays) * 10) / 10,
+        tMinMean: Math.round((bucket.tMin / bucket.tempDays) * 10) / 10,
+        precipMean: Math.round((bucket.precip / eraYears) * 10) / 10,
+      });
+    }
+    return months;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 

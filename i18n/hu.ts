@@ -141,4 +141,7 @@ export const hu: Strings = {
   about_aqi: 'Az amerikai levegőminőségi index öt szennyezőt egyetlen értékbe kever; az európai index ugyanezekből 0-100+ skálát képez. A sávok minden szennyezőt az egészségtelen határértékéhez (µg/m³) viszonyítanak. 100 US-AQI (60 EU) felett az érzékenyek csökkentsék a kültéri megerőltetést; 200 US (80 EU) felett mindenki.',
   about_moon: 'A Hold 29,5 naponta járja végig fázisait - a folyamatjelző sáv mutatja, hol tartunk a jelen ciklusban. A megvilágítás a Földről látható megvilágított hányad. A telihold naplemente körül kel; az újhold a Nappal együtt.',
   about_pollen: 'A pollenadatok a Copernicus CAMS európai levegőminőségi modellből származnak, és szem/köbméterben mérjük őket. A lefedettség Európára korlátozódik; a régión kívül nincs pollenadat. Szintek: alacsony 10 alatt, mérsékelt 30 alatt, magas 75 alatt, és nagyon magas 75 vagy több szem köbméterenként. Magas napokon tartsd zárva az ablakokat a reggeli csúcs idején, zuhanyozz hazaérve, és nézd meg a pollenkérelmet a Beállítások → Értesítések menüben.',
+  tile_climate: 'Éghajlat', card_climate: 'Mi a normális itt', climate_loading: 'Éghajlati átlagok betöltése…',
+  climate_this_month: 'Egy jellemző {month}', climate_delta_warmer: '{n}° melegebb, mint egy jellemző {month}', climate_delta_cooler: '{n}° hűvösebb, mint egy jellemző {month}',
+  climate_delta_typical: 'Pontosan, mint egy jellemző {month}', climate_year_note: 'Legmelegebb: {hottest} · Leghidegebb: {coldest} · Legesősebb: {wettest}', climate_rain_normal: 'Normál eső: {n}',
 };

@@ -113,6 +113,8 @@ import { useDigest } from '../hooks/useDigest';
 import { useGoldenHour } from '../hooks/useGoldenHour';
 import { useRainAlert } from '../hooks/useRainAlert';
 import { usePastDays } from '../hooks/usePastDays';
+import { useClimateNormals } from '../hooks/useClimateNormals';
+import { ClimateCard } from '../components/ClimateCard';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
 import { useFavorites } from '../hooks/useFavorites';
@@ -140,6 +142,7 @@ export function HomeScreen() {
   const favoritesState = useFavorites();
   const weather = useWeather(active);
   const pastDays = usePastDays(active);
+  const climateNormals = useClimateNormals(active);
   const { settings, updateSettings } = useSettings();
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   const theme = useMemo(
@@ -509,6 +512,17 @@ export function HomeScreen() {
                     days={pastDays.days}
                     pastDaysRange={settings.pastDaysRange}
                     onRangeChange={(range) => updateSettings({ pastDaysRange: range })}
+                  />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.climate && showSection('climate') ? (
+                <Reveal delay={152}>
+                  <ClimateCard
+                    theme={theme}
+                    months={climateNormals.months}
+                    status={climateNormals.status}
+                    todayTMax={weather.data.daily[0]?.tMax ?? null}
                   />
                 </Reveal>
               ) : null}

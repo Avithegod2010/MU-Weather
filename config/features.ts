@@ -31,6 +31,8 @@ export const FEATURES = {
   cityComparison: true,
   /** Deep dive detail screen on tapping any detail tile */
   tileDetails: true,
+  /** "What's normal here" card - 1991-2020 climate normals for the active location */
+  climate: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

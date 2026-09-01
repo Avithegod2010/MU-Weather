@@ -465,6 +465,17 @@ export const en = {
   about_aqi: 'The US Air Quality Index blends five pollutants into one score; the European index uses a 0-100+ scale from the same pollutants. Bars show each pollutant against its unhealthy threshold (µg/m³). Above 100 US AQI (60 EU) sensitive groups should reduce outdoor exertion; above 200 US AQI (80 EU) everyone should limit time outside.',
   about_moon: 'The Moon cycles through its phases every 29.5 days - the progress bar shows where we are in the current cycle. Illumination is the lit fraction visible from Earth. Full moons rise around sunset; new moons rise with the sun.',
   about_pollen: 'Pollen counts come from the Copernicus CAMS European air-quality model and are measured in grains per cubic metre. Coverage is limited to Europe; outside the region no pollen data is available. Levels: low under 10, moderate under 30, high under 75, and very high at 75 or more grains per cubic metre. On high days, keep windows closed during the morning peak, shower after coming home, and check the pollen alert in Settings → Notifications.',
+
+  // Climate normals ("What's normal here")
+  tile_climate: 'Climate',
+  card_climate: "What's normal here",
+  climate_loading: 'Loading climate normals…',
+  climate_this_month: 'A typical {month}',
+  climate_delta_warmer: '{n}° warmer than a typical {month}',
+  climate_delta_cooler: '{n}° cooler than a typical {month}',
+  climate_delta_typical: 'Right in line with a typical {month}',
+  climate_year_note: 'Hottest: {hottest} · Coldest: {coldest} · Wettest: {wettest}',
+  climate_rain_normal: 'Normal rain: {n}',
 };
 
 export type Strings = typeof en;
