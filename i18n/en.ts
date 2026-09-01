@@ -482,6 +482,13 @@ export const en = {
   card_warnings: 'Official warnings',
   warnings_until: 'Until {t}',
   warnings_source: 'MeteoAlarm · official government warnings',
+
+  // Data export (forecast log)
+  data_export: 'Export data',
+  data_export_csv: 'Forecast log (CSV)',
+  data_export_csv_sub: 'Spreadsheet of logged predictions',
+  data_export_json: 'Forecast log (JSON)',
+  data_export_empty: 'No logged forecasts yet',
 };
 
 export type Strings = typeof en;

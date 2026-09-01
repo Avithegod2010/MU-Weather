@@ -145,4 +145,5 @@ export const hu: Strings = {
   climate_this_month: 'Egy jellemző {month}', climate_delta_warmer: '{n}° melegebb, mint egy jellemző {month}', climate_delta_cooler: '{n}° hűvösebb, mint egy jellemző {month}',
   climate_delta_typical: 'Pontosan, mint egy jellemző {month}', climate_year_note: 'Legmelegebb: {hottest} · Leghidegebb: {coldest} · Legesősebb: {wettest}', climate_rain_normal: 'Normál eső: {n}',
   tile_warnings: 'Figyelmeztetések', card_warnings: 'Hivatalos figyelmeztetések', warnings_until: '{t} időpontig', warnings_source: 'MeteoAlarm · hivatalos kormányzati figyelmeztetések',
+  data_export: 'Adatok exportálása', data_export_csv: 'Előrejelzési napló (CSV)', data_export_csv_sub: 'Táblázat a rögzített előrejelzésekről', data_export_json: 'Előrejelzési napló (JSON)', data_export_empty: 'Még nincs rögzített előrejelzés',
 };

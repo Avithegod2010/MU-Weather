@@ -145,4 +145,5 @@ export const nl: Strings = {
   climate_this_month: 'Een typische {month}', climate_delta_warmer: '{n}° warmer dan een typische {month}', climate_delta_cooler: '{n}° koeler dan een typische {month}',
   climate_delta_typical: 'Precies zoals een typische {month}', climate_year_note: 'Warmst: {hottest} · Koudst: {coldest} · Natst: {wettest}', climate_rain_normal: 'Normale regen: {n}',
   tile_warnings: 'Waarschuwingen', card_warnings: 'Officiële waarschuwingen', warnings_until: 'Tot {t}', warnings_source: 'MeteoAlarm · officiële overheidswaarschuwingen',
+  data_export: 'Data exporteren', data_export_csv: 'Voorspellingslogboek (CSV)', data_export_csv_sub: 'Spreadsheet met opgeslagen voorspellingen', data_export_json: 'Voorspellingslogboek (JSON)', data_export_empty: 'Nog geen opgeslagen voorspellingen',
 };

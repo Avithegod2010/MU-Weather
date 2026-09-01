@@ -46,6 +46,8 @@ import {
   Rows3,
   Snowflake,
   TriangleAlert,
+  FileSpreadsheet,
+  Braces,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 
@@ -87,6 +89,7 @@ import { BACKGROUND_OPTIONS } from '../config/backgrounds';
 import { COLOR_THEMES } from '../config/colorThemes';
 import { LANGUAGES, t, type StringKey } from '../utils/i18n';
 import { exportSettings, importSettings } from '../utils/backup';
+import { writeForecastLogExport, type DataExportFormat } from '../utils/dataExport';
 import type { ProviderCheck } from '../api/providers';
 import type { AppTheme } from '../theme/palettes';
 
@@ -253,6 +256,22 @@ export function SettingsSheet({
         },
       },
     ]);
+  };
+  const onExportForecastLog = async (format: DataExportFormat) => {
+    haptics.select();
+    try {
+      const uri = await writeForecastLogExport(format);
+      if (uri === null) {
+        showBackupMsg(t('data_export_empty'));
+        return;
+      }
+      await Sharing.shareAsync(uri, {
+        mimeType: format === 'csv' ? 'text/csv' : 'application/json',
+      });
+      showBackupMsg(t('backup_exported'));
+    } catch {
+      showBackupMsg(t('backup_error'));
+    }
   };
 
   const avgDelta =
@@ -1011,6 +1030,47 @@ export function SettingsSheet({
               {backupMsg}
             </Text>
           ) : null}
+
+          <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
+            {t('data_export')}
+          </Text>
+          <Pressable
+            onPress={() => void onExportForecastLog('csv')}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <FileSpreadsheet size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>
+                {t('data_export_csv')}
+              </Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('data_export_csv_sub')}
+              </Text>
+            </View>
+          </Pressable>
+          <Pressable
+            onPress={() => void onExportForecastLog('json')}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Braces size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>
+                {t('data_export_json')}
+              </Text>
+            </View>
+          </Pressable>
 
           <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
