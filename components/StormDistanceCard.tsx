@@ -5,15 +5,25 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Zap } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
+import { capeBand } from '../utils/storm';
+import { formatHourLabel } from '../utils/format';
 import type { AppTheme } from '../theme/palettes';
 
 interface StormDistanceCardProps {
   theme: AppTheme;
+  stormRisk?: { cape: number; time: string } | null;
 }
 
 type Phase = 'idle' | 'counting' | 'result';
 
-export function StormDistanceCard({ theme }: StormDistanceCardProps) {
+/** Matches the band colours used across the app (HealthCard / utils/aqi.ts). */
+const BAND_COLORS: Record<'low' | 'moderate' | 'high', string> = {
+  low: '#5BC98C',
+  moderate: '#E8D05A',
+  high: '#E85F5F',
+};
+
+export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [seconds, setSeconds] = useState(0);
   const startRef = useRef(0);
@@ -120,6 +130,38 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
           </Pressable>
         </>
       )}
+      {stormRisk ? (
+        (() => {
+          const band = capeBand(stormRisk.cape);
+          const bandLabel =
+            band === 'high'
+              ? t('band_high')
+              : band === 'moderate'
+                ? t('band_moderate')
+                : t('band_low');
+          const color = BAND_COLORS[band];
+          const valueText = `CAPE ${Math.round(stormRisk.cape).toLocaleString('en-US')} J/kg · ${t('f_peak_around')} ${formatHourLabel(stormRisk.time, false)}`;
+          return (
+            <View
+              style={styles.riskRow}
+              accessible={true}
+              accessibilityRole="text"
+              accessibilityLabel={`${t('storm_risk')}, ${bandLabel}, ${valueText}`}
+            >
+              <View style={styles.riskHead}>
+                <Text style={[styles.riskLabel, { color: theme.textSecondary }]} numberOfLines={1}>
+                  {t('storm_risk')}
+                </Text>
+                <View style={[styles.chip, { backgroundColor: theme.chipBg }]}>
+                  <View style={[styles.chipDot, { backgroundColor: color }]} />
+                  <Text style={[styles.chipText, { color }]}>{bandLabel}</Text>
+                </View>
+              </View>
+              <Text style={[styles.riskValue, { color: theme.textTertiary }]}>{valueText}</Text>
+            </View>
+          );
+        })()
+      ) : null}
     </Card>
   );
 }
@@ -158,5 +200,41 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 13.5,
     fontFamily: F.bold,
+  },
+  riskRow: {
+    marginTop: 12,
+    gap: 3,
+  },
+  riskHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  riskLabel: {
+    fontSize: 13.5,
+    fontFamily: F.semibold,
+    flexShrink: 1,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderRadius: 999,
+    paddingVertical: 3,
+    paddingHorizontal: 9,
+  },
+  chipDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  chipText: {
+    fontSize: 11.5,
+    fontFamily: F.semibold,
+  },
+  riskValue: {
+    fontSize: 12.5,
+    lineHeight: 17,
   },
 });

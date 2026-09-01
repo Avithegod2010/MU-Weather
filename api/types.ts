@@ -42,6 +42,7 @@ export interface HourPoint {
   uvIndex: number | null;
   humidity: number | null;
   pressure: number | null;
+  cape: number | null;
 }
 
 export interface DayPoint {
@@ -150,6 +151,7 @@ export interface ForecastResponse {
     wind_direction_10m: Array<number | null>;
     uv_index: Array<number | null>;
     relative_humidity_2m: Array<number | null>;
+    cape?: Array<number | null>;
   };
   minutely_15?: {
     time: string[];

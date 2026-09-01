@@ -414,6 +414,7 @@ export const en = {
   storm_thunder: 'Heard thunder',
   storm_flash: 'I saw a flash',
   storm_hint: 'See lightning? Tap flash, then tap when thunder arrives.',
+  storm_risk: 'Storm risk',
 
   // Notification copy
   notif_digest_title: 'Tomorrow at a glance',
@@ -437,6 +438,8 @@ export const en = {
   alert_pressure_sub: 'Alert when barometric pressure drops rapidly',
   alert_wind_title: 'Wind Alert',
   alert_wind_sub: 'Alert when strong winds or gusts are expected',
+  alert_cape_title: 'Storm Building Alert',
+  alert_cape_sub: 'Alert when atmospheric instability is high with no storms forecast yet',
   alerts_intro: 'Pick what you want to be warned about. Alerts appear as banners in the app and as system notifications whenever weather data refreshes.',
   storm_counting: 'Counting... tap the moment you hear thunder',
   fav_compare: 'Compare',

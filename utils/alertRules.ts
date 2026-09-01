@@ -1,5 +1,6 @@
 import { describeWmo } from './wmo';
 import { formatHourLabel, convertWind, windUnitLabel } from './format';
+import { peakCape } from './storm';
 import type { StringKey } from './i18n';
 import type { AqiInfo, CurrentConditions, DayPoint, HourPoint } from '../api/types';
 
@@ -11,7 +12,8 @@ export type AlertKey =
   | 'aqi'
   | 'pressure'
   | 'wind'
-  | 'pollen';
+  | 'pollen'
+  | 'cape';
 
 export interface AlertDefinition {
   key: AlertKey;
@@ -28,6 +30,7 @@ export const ALERT_DEFINITIONS: AlertDefinition[] = [
   { key: 'aqi', title: 'alert_aqi_title', subtitle: 'alert_aqi_sub' },
   { key: 'pressure', title: 'alert_pressure_title', subtitle: 'alert_pressure_sub' },
   { key: 'wind', title: 'alert_wind_title', subtitle: 'alert_wind_sub' },
+  { key: 'cape', title: 'alert_cape_title', subtitle: 'alert_cape_sub' },
 ];
 
 export type AlertSeverity = 'info' | 'warning' | 'severe';
@@ -50,6 +53,7 @@ export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   aqi: false,
   pressure: false,
   wind: false,
+  cape: false,
 };
 
 export function evaluateAlerts(
@@ -163,6 +167,19 @@ export function evaluateAlerts(
       message: `Winds up to ${Math.round(convertWind(Math.max(current.windGusts, current.windSpeed)))} ${windUnitLabel()}. Secure loose objects outdoors.`,
       severity: current.windGusts >= 65 ? 'severe' : 'warning',
     });
+  }
+
+  if (settings.cape && window.length) {
+    const anyThunder = window.some((hour) => describeWmo(hour.weatherCode).condition === 'thunder');
+    const peak = peakCape(window, 12);
+    if (!anyThunder && peak && peak.cape >= 2500) {
+      triggered.push({
+        key: 'cape',
+        title: 'Storm conditions building',
+        message: `Instability is high (CAPE ${Math.round(peak.cape).toLocaleString('en-US')} J/kg). Thunderstorms could develop around ${formatHourLabel(peak.time, false)} even though none are forecast yet.`,
+        severity: 'warning',
+      });
+    }
   }
 
   return triggered;

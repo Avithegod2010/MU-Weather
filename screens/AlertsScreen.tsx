@@ -67,6 +67,7 @@ const ALERT_ICONS: Record<AlertKey, typeof CloudRain> = {
   aqi: Gauge,
   pressure: TrendingDown,
   wind: Wind,
+  cape: CloudLightning,
 };
 
 interface AlertsScreenProps {

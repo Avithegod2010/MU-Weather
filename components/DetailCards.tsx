@@ -50,7 +50,8 @@ import { HealthCard } from './HealthCard';
 import { FEATURES } from '../config/features';
 import type { YearAgoState } from '../hooks/useYearAgo';
 import type { PollenInfo } from '../api/types';
-import type { AqiInfo, CurrentConditions, DayPoint, GeoLocation } from '../api/types';
+import type { AqiInfo, CurrentConditions, DayPoint, GeoLocation, HourPoint } from '../api/types';
+import { peakCape } from '../utils/storm';
 
 const POLLEN_TYPES: Array<{ key: keyof PollenInfo; label: string }> = [
   { key: 'grass', label: 'Grass' },
@@ -71,6 +72,7 @@ interface DetailCardsProps {
   utcOffsetSeconds: number;
   location: GeoLocation;
   yearAgo: YearAgoState;
+  hourly?: HourPoint[];
   hiddenTiles?: readonly string[];
 }
 
@@ -84,6 +86,7 @@ export function DetailCards({
   utcOffsetSeconds,
   location,
   yearAgo,
+  hourly,
   hiddenTiles,
 }: DetailCardsProps) {
   const show = (key: string) => !hiddenTiles || !hiddenTiles.includes(key);
@@ -106,6 +109,8 @@ export function DetailCards({
     () => moonTimes(new Date(), location.latitude, location.longitude),
     [location.latitude, location.longitude],
   );
+
+  const stormRisk = useMemo(() => (hourly ? peakCape(hourly) : null), [hourly]);
 
   const yearAgoDateLabel = yearAgo.info
     ? new Date(`${yearAgo.info.date}T12:00:00`).toLocaleDateString([], {
@@ -420,7 +425,7 @@ export function DetailCards({
         </Card>
       ) : null}
 
-      <StormDistanceCard theme={theme} />
+      <StormDistanceCard theme={theme} stormRisk={stormRisk} />
 
       {FEATURES.barometer ? (
         <BarometerCard

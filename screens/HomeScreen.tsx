@@ -556,6 +556,7 @@ export function HomeScreen() {
                   utcOffsetSeconds={weather.data.utcOffsetSeconds}
                   location={active}
                   yearAgo={yearAgo}
+                  hourly={weather.data.hourly}
                   hiddenTiles={settings.hiddenTiles}
                   onOpenTopic={
                     FEATURES.tileDetails
