@@ -90,6 +90,7 @@ export const de: Strings = {
   health_migraine: 'Migränerisiko', health_respiratory: 'Atemwege', health_flu: 'Gripperisiko',
   health_advice_migraine: 'Druckschwankungen können Kopfschmerzen auslösen.', health_advice_respiratory: 'Luftfeuchtigkeit und Luftqualität beeinflussen die Atmung.', health_advice_flu: 'Kalte, trockene Luft begünstigt die Verbreitung von Viren.',
   card_past_week: 'Letzte 7 Tage', week_rain_total: 'Regen dieser Woche', delta_vs_forecast: 'Tatsächlich vs. Prognose', past_week_note: 'Abweichungen erscheinen, sobald Prognosen gespeichert sind — ab heute.',
+  card_past_week_30: 'Letzte 30 Tage', rain_total_30: 'Regen · 30 Tage', stat_wet_days: 'Regentage', stat_biggest_swing: 'Größter Sprung',
   card_trip: 'Reiseplaner', trip_no_favorites: 'Speichere zuerst eine Favoriten-Stadt, um eine Reise zu planen.', trip_open_favorites: 'Gespeicherte Städte öffnen',
   trip_start: 'Startdatum', trip_length: 'Reisedauer', trip_days: '{n} Tage', trip_show: 'Vorhersage zeigen',
   trip_rainiest: 'Am regnerischsten', trip_warmest: 'Am wärmsten', trip_verdict_rain: 'Auf Regen einstellen — {n} von {total} Tagen sehen nass aus.', trip_verdict_dry: 'Überwiegend trocken — leicht packen und genießen.',

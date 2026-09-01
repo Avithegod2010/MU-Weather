@@ -90,6 +90,7 @@ export const id: Strings = {
   health_migraine: 'Risiko migrain', health_respiratory: 'Pernapasan', health_flu: 'Risiko flu',
   health_advice_migraine: 'Perubahan tekanan bisa memicu sakit kepala.', health_advice_respiratory: 'Kelembapan dan kualitas udara memengaruhi pernapasan.', health_advice_flu: 'Udara dingin dan kering membantu virus menyebar.',
   card_past_week: '7 Hari Terakhir', week_rain_total: 'Hujan minggu ini', delta_vs_forecast: 'Aktual vs prakiraan', past_week_note: 'Selisih muncul setelah prakiraan mulai dicatat — mulai hari ini.',
+  card_past_week_30: '30 Hari Terakhir', rain_total_30: 'Hujan · 30 hari', stat_wet_days: 'Hari hujan', stat_biggest_swing: 'Perubahan terbesar',
   card_trip: 'Perencana Perjalanan', trip_no_favorites: 'Simpan dulu kota favorit untuk merencanakan perjalanan.', trip_open_favorites: 'Buka kota tersimpan',
   trip_start: 'Tanggal mulai', trip_length: 'Durasi perjalanan', trip_days: '{n} hari', trip_show: 'Tampilkan prakiraan',
   trip_rainiest: 'Paling hujan', trip_warmest: 'Paling hangat', trip_verdict_rain: 'Siapkan perlengkapan hujan — {n} dari {total} hari tampak basah.', trip_verdict_dry: 'Sebagian besar kering — bawa barang sedikit dan nikmati.',

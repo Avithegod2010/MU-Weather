@@ -90,6 +90,7 @@ export const el: Strings = {
   health_migraine: 'Κίνδυνος ημικρανίας', health_respiratory: 'Αναπνευστικό', health_flu: 'Κίνδυνος γρίπης',
   health_advice_migraine: 'Οι μεταβολές πίεσης μπορεί να προκαλέσουν πονοκέφαλο.', health_advice_respiratory: 'Η υγρασία και η ποιότητα αέρα επηρεάζουν την αναπνοή.', health_advice_flu: 'Ο κρύος, ξηρός αέρας βοηθά στη διασπορά των ιών.',
   card_past_week: 'Τελευταίες 7 ημέρες', week_rain_total: 'Βροχή της εβδομάδας', delta_vs_forecast: 'Πραγματικό vs. πρόγνωση', past_week_note: 'Οι αποκλίσεις εμφανίζονται καθώς καταγράφονται προβλέψεις — από σήμερα.',
+  card_past_week_30: 'Τελευταίες 30 ημέρες', rain_total_30: 'Βροχή · 30 ημέρες', stat_wet_days: 'Βροχερές ημέρες', stat_biggest_swing: 'Μεγαλύτερη μεταβολή',
   card_trip: 'Σχεδιαστής ταξιδιού', trip_no_favorites: 'Αποθηκεύστε πρώτα μια αγαπημένη πόλη για να σχεδιάσετε ταξίδι.', trip_open_favorites: 'Άνοιγμα αποθηκευμένων πόλεων',
   trip_start: 'Ημερομηνία έναρξης', trip_length: 'Διάρκεια ταξιδιού', trip_days: '{n} ημέρες', trip_show: 'Εμφάνιση πρόγνωσης',
   trip_rainiest: 'Η πιο βροχερή', trip_warmest: 'Η πιο θερμή', trip_verdict_rain: 'Προετοιμαστείτε για βροχή — {n} από {total} ημέρες φαίνονται βροχερές.', trip_verdict_dry: 'Κυρίως ξηρό — ταξιδέψτε ελαφρύ και απολαύστε.',

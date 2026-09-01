@@ -493,7 +493,12 @@ export function HomeScreen() {
 
               {showSection('pastWeek') ? (
                 <Reveal delay={150}>
-                  <PastWeekCard theme={theme} days={pastDays.days} />
+                  <PastWeekCard
+                    theme={theme}
+                    days={pastDays.days}
+                    pastDaysRange={settings.pastDaysRange}
+                    onRangeChange={(range) => updateSettings({ pastDaysRange: range })}
+                  />
                 </Reveal>
               ) : null}
 

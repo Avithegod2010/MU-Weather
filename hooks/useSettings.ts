@@ -43,6 +43,8 @@ export interface AppSettings {
   colorTheme: ColorThemeKey;
   /** Home sections / detail tiles the user switched off - hidden from home */
   hiddenTiles: string[];
+  /** History window shown in the past-days card - 7 or 30 days */
+  pastDaysRange: 7 | 30;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -66,6 +68,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   homeBackground: 'dynamic',
   colorTheme: 'default',
   hiddenTiles: [],
+  pastDaysRange: 7,
 };
 
 function applySideEffects(settings: AppSettings): void {

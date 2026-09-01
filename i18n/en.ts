@@ -240,6 +240,10 @@ export const en = {
   week_rain_total: 'Rain this week',
   delta_vs_forecast: 'Actual vs forecast',
   past_week_note: 'Delta chips appear as forecasts are logged — starting today.',
+  card_past_week_30: 'Past 30 days',
+  rain_total_30: 'Rain · 30 days',
+  stat_wet_days: 'Wet days',
+  stat_biggest_swing: 'Biggest swing',
 
   // Backup & restore
   backup_section: 'Backup & restore',

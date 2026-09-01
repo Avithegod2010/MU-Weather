@@ -90,6 +90,7 @@ export const hi: Strings = {
   health_migraine: 'माइग्रेन जोखिम', health_respiratory: 'श्वसन', health_flu: 'फ्लू जोखिम',
   health_advice_migraine: 'दबाव में बदलाव सिरदर्द करा सकता है।', health_advice_respiratory: 'नमी और वायु गुणवत्ता सांसों को प्रभावित करती है।', health_advice_flu: 'ठंडी, शुष्क हवा वायरस फैलाने में मदद करती है।',
   card_past_week: 'पिछले 7 दिन', week_rain_total: 'इस हफ़्ते की बारिश', delta_vs_forecast: 'अनुमान बनाम वास्तविक', past_week_note: 'अनुमान दर्ज होने पर अंतर चिप दिखेंगे — आज से शुरू।',
+  card_past_week_30: 'पिछले 30 दिन', rain_total_30: 'बारिश · 30 दिन', stat_wet_days: 'गीले दिन', stat_biggest_swing: 'सबसे बड़ा बदलाव',
   card_trip: 'ट्रिप प्लानर', trip_no_favorites: 'पहले किसी शहर को पसंदीदा के रूप में सेव करें, फिर वहीं यात्रा की योजना बनाएँ।', trip_open_favorites: 'सेव किए गए शहर खोलें',
   trip_start: 'प्रारंभ तिथि', trip_length: 'यात्रा की अवधि', trip_days: '{n} दिन', trip_show: 'पूर्वानुमान दिखाएँ',
   trip_rainiest: 'सबसे नम', trip_warmest: 'सबसे गर्म', trip_verdict_rain: 'बारिश की तैयारी करें — {total} में से {n} दिन गीले दिख रहे हैं।', trip_verdict_dry: 'ज़्यादातर शुष्क — हल्का पैक करें और आनंद लें।',
