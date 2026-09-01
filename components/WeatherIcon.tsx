@@ -13,5 +13,16 @@ export function WeatherIcon({ code, isDay, size, themeColor }: WeatherIconProps)
   if (code === null || code === undefined) return null;
   const Icon = getWeatherIcon(code, isDay);
   const { color, fill, strokeWidth } = resolveWeatherIconProps(code, isDay, themeColor);
-  return <Icon size={size} color={color} fill={fill} strokeWidth={strokeWidth} />;
+  // Decorative: the glyphs carry no unique information — surfaces that do
+  // state the condition label it in text.
+  return (
+    <Icon
+      size={size}
+      color={color}
+      fill={fill}
+      strokeWidth={strokeWidth}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    />
+  );
 }

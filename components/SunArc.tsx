@@ -95,7 +95,13 @@ export function SunArc({ theme, sunrise, sunset, utcOffsetSeconds }: SunArcProps
 
   return (
     <View>
-      <Svg width="100%" height={HEIGHT} viewBox={`0 0 ${WIDTH} ${HEIGHT}`}>
+      <Svg
+        width="100%"
+        height={HEIGHT}
+        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
         <Path
           d={`M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`}
           stroke={theme.trackColor}

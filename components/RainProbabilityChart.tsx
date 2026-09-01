@@ -26,7 +26,14 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
   const peakIndex = slice.indexOf(peak);
 
   return (
-    <View>
+    <View
+      accessible={true}
+      accessibilityRole="text"
+      accessibilityLabel={`Chance of rain · next 12 hours · ${formatHourLabel(
+        peak.time,
+        false,
+      )} · ${Math.round(peak.precipProbability)}%`}
+    >
       <View style={[styles.chartArea, { height: CHART_HEIGHT }]}>
         {[
           { label: 'Heavy', ratio: 0.06 },

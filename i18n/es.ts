@@ -99,6 +99,7 @@ export const es: Strings = {
   backup_import: 'Importar ajustes', backup_import_subtitle: 'Restaura ajustes desde un archivo de copia',
   backup_done: 'Ajustes restaurados', backup_exported: 'Copia creada', backup_error: 'Error al exportar — inténtalo de nuevo', backup_invalid: 'Ese archivo no es una copia de ajustes válida',
   backup_confirm_title: '¿Importar ajustes?', backup_confirm_body: 'Tus ajustes actuales se sustituirán por los del archivo.', backup_cancel: 'Cancelar', backup_apply: 'Importar',
+  a11y_close: 'Cerrar', a11y_back: 'Volver', a11y_increase: 'Aumentar', a11y_decrease: 'Reducir', a11y_fav_add: 'Guardar en favoritos', a11y_fav_remove: 'Quitar de favoritos',
   icon_style: 'Estilo de iconos', icon_style_subtitle: 'Cómo se ven los iconos del tiempo en la app', icon_style_outline: 'Contorno', icon_style_filled: 'Relleno', icon_style_colorful: 'Color',
   s_title: 'Ajustes', s_sec_feedback: 'Comentarios', s_haptics: 'Respuesta háptica', s_haptics_sub: 'Vibración en toques, interruptores y alertas',
   s_sec_appearance: 'Apariencia', s_theme: 'Tema', s_theme_sub: 'Sigue el sistema o elige un fijo', s_appstyle: 'Estilo de app', s_appstyle_sub: 'Tarjetas Material You 3 o Liquid Glass esmerilado',

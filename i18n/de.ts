@@ -99,6 +99,7 @@ export const de: Strings = {
   backup_import: 'Einstellungen importieren', backup_import_subtitle: 'Einstellungen aus einer Backup-Datei wiederherstellen',
   backup_done: 'Einstellungen wiederhergestellt', backup_exported: 'Backup-Datei erstellt', backup_error: 'Export fehlgeschlagen — erneut versuchen', backup_invalid: 'Diese Datei ist kein gültiges Einstellungs-Backup',
   backup_confirm_title: 'Einstellungen importieren?', backup_confirm_body: 'Deine aktuellen Einstellungen werden durch die aus der Datei ersetzt.', backup_cancel: 'Abbrechen', backup_apply: 'Importieren',
+  a11y_close: 'Schließen', a11y_back: 'Zurück', a11y_increase: 'Erhöhen', a11y_decrease: 'Verringern', a11y_fav_add: 'Zu Favoriten hinzufügen', a11y_fav_remove: 'Aus Favoriten entfernen',
   icon_style: 'Icon-Stil', icon_style_subtitle: 'So sehen Wetter-Icons in der App aus', icon_style_outline: 'Kontur', icon_style_filled: 'Gefüllt', icon_style_colorful: 'Farbig',
   s_title: 'Einstellungen', s_sec_feedback: 'Feedback', s_haptics: 'Haptisches Feedback', s_haptics_sub: 'Vibration bei Taps, Schaltern und Warnungen',
   s_sec_appearance: 'Erscheinungsbild', s_theme: 'Design', s_theme_sub: 'System folgen oder festes Design wählen', s_appstyle: 'App-Stil', s_appstyle_sub: 'Material-You-3-Karten oder mattiertes Liquid Glass',

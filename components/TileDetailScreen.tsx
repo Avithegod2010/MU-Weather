@@ -130,7 +130,12 @@ export function DetailChart({
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
       <View style={{ width }}>
-        <Svg width={width} height={CHART_HEIGHT}>
+        <Svg
+          width={width}
+          height={CHART_HEIGHT}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        >
           {seriesList.map((series, seriesIndex) => {
             const points: CurvePoint[] = [];
             usable.forEach((hour, index) => {
@@ -526,6 +531,8 @@ export function TileDetailScreen({
                 }
               }}
               style={[styles.scaleOption, active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' }]}
+              accessibilityRole="button"
+              accessibilityState={{ selected: active }}
             >
               <Text
                 style={[
@@ -665,6 +672,8 @@ export function TileDetailScreen({
             { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
             pressed && { opacity: 0.7 },
           ]}
+          accessibilityRole="button"
+          accessibilityLabel={t('a11y_back')}
         >
           <ChevronLeft size={24} color={theme.textPrimary} strokeWidth={2.4} />
         </Pressable>

@@ -68,7 +68,12 @@ export function TrendChart({ theme, hours }: TrendChartProps) {
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
         <View style={{ width }}>
-          <Svg width={width} height={CHART_HEIGHT}>
+          <Svg
+            width={width}
+            height={CHART_HEIGHT}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
             <Path d={windPath} stroke={WIND_COLOR} strokeWidth={2} fill="none" strokeLinecap="round" strokeDasharray="5 5" opacity={0.9} />
             <Path d={dewPath} stroke={DEW_COLOR} strokeWidth={2} fill="none" strokeLinecap="round" />
             <Path d={tempPath} stroke={TEMP_COLOR} strokeWidth={2.6} fill="none" strokeLinecap="round" />

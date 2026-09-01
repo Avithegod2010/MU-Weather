@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import type { AppTheme } from '../theme/palettes';
+import { t } from '../utils/i18n';
 
 interface OverlayProps {
   theme: AppTheme;
@@ -53,7 +54,11 @@ export function Overlay({
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents={visible ? 'auto' : 'none'}>
       <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, backdropStyle]}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Close" />
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+          accessibilityLabel={t('a11y_close')}
+        />
       </Animated.View>
       <Animated.View
         style={[

@@ -99,6 +99,7 @@ export const id: Strings = {
   backup_import: 'Impor pengaturan', backup_import_subtitle: 'Pulihkan pengaturan dari berkas cadangan',
   backup_done: 'Pengaturan dipulihkan', backup_exported: 'Berkas cadangan dibuat', backup_error: 'Ekspor gagal — coba lagi', backup_invalid: 'Berkas itu bukan cadangan pengaturan yang valid',
   backup_confirm_title: 'Impor pengaturan?', backup_confirm_body: 'Pengaturan saat ini akan diganti dengan yang ada di berkas.', backup_cancel: 'Batal', backup_apply: 'Impor',
+  a11y_close: 'Tutup', a11y_back: 'Kembali', a11y_increase: 'Naikkan', a11y_decrease: 'Turunkan', a11y_fav_add: 'Simpan ke favorit', a11y_fav_remove: 'Hapus dari favorit',
   icon_style: 'Gaya ikon', icon_style_subtitle: 'Tampilan ikon cuaca di seluruh aplikasi', icon_style_outline: 'Garis', icon_style_filled: 'Isi', icon_style_colorful: 'Berwarna',
   s_title: 'Pengaturan', s_sec_feedback: 'Umpan balik', s_haptics: 'Umpan balik haptik', s_haptics_sub: 'Getaran pada ketukan, sakelar, dan peringatan',
   s_sec_appearance: 'Tampilan', s_theme: 'Tema', s_theme_sub: 'Ikuti sistem atau pilih tema tetap', s_appstyle: 'Gaya aplikasi', s_appstyle_sub: 'Kartu Material You 3 atau Liquid Glass buram',

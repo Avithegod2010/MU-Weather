@@ -99,6 +99,7 @@ export const hi: Strings = {
   backup_import: 'सेटिंग्स इंपोर्ट करें', backup_import_subtitle: 'बैकअप फ़ाइल से सेटिंग्स पुनर्स्थापित करें',
   backup_done: 'सेटिंग्स पुनर्स्थापित हुईं', backup_exported: 'बैकअप फ़ाइल बन गई', backup_error: 'निर्यात विफल — फिर से कोशिश करें', backup_invalid: 'यह फ़ाइल मान्य सेटिंग्स बैकअप नहीं है',
   backup_confirm_title: 'सेटिंग्स इंपोर्ट करें?', backup_confirm_body: 'आपकी वर्तमान सेटिंग्स बैकअप फ़ाइल वाली सेटिंग्स से बदल दी जाएँगी।', backup_cancel: 'रद्द करें', backup_apply: 'इंपोर्ट करें',
+  a11y_close: 'बंद करें', a11y_back: 'वापस जाएँ', a11y_increase: 'बढ़ाएँ', a11y_decrease: 'घटाएँ', a11y_fav_add: 'पसंदीदा में सहेजें', a11y_fav_remove: 'पसंदीदा से हटाएँ',
   icon_style: 'आइकन शैली', icon_style_subtitle: 'ऐप भर में मौसम आइकन कैसे दिखें', icon_style_outline: 'रेखांकन', icon_style_filled: 'भरा हुआ', icon_style_colorful: 'रंगीन',
   s_title: 'सेटिंग्स', s_sec_feedback: 'प्रतिक्रिया', s_haptics: 'हैप्टिक फ़ीडबैक', s_haptics_sub: 'टैप, टॉगल और अलर्ट पर कंपन',
   s_sec_appearance: 'रूप-रंग', s_theme: 'थीम', s_theme_sub: 'सिस्टम का पालन करें या एक रंग चुनें', s_appstyle: 'ऐप शैली', s_appstyle_sub: 'मटेरियल You 3 कार्ड या फ्रॉस्टेड लिक्विड ग्लास',

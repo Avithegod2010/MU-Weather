@@ -99,6 +99,7 @@ export const it: Strings = {
   backup_import: 'Importa impostazioni', backup_import_subtitle: 'Ripristina le impostazioni da un file di backup',
   backup_done: 'Impostazioni ripristinate', backup_exported: 'File di backup creato', backup_error: 'Esportazione non riuscita — riprova', backup_invalid: 'Questo file non è un backup di impostazioni valido',
   backup_confirm_title: 'Importare le impostazioni?', backup_confirm_body: 'Le impostazioni attuali verranno sostituite da quelle del file.', backup_cancel: 'Annulla', backup_apply: 'Importa',
+  a11y_close: 'Chiudi', a11y_back: 'Indietro', a11y_increase: 'Aumenta', a11y_decrease: 'Riduci', a11y_fav_add: 'Salva nei preferiti', a11y_fav_remove: 'Rimuovi dai preferiti',
   icon_style: 'Stile icone', icon_style_subtitle: 'Come appaiono le icone meteo nell’app', icon_style_outline: 'Contorno', icon_style_filled: 'Pieno', icon_style_colorful: 'Colorato',
   s_title: 'Impostazioni', s_sec_feedback: 'Feedback', s_haptics: 'Feedback tattile', s_haptics_sub: 'Vibrazione su tocchi, interruttori e avvisi',
   s_sec_appearance: 'Aspetto', s_theme: 'Tema', s_theme_sub: 'Segui il sistema o scegli un tema fisso', s_appstyle: 'Stile app', s_appstyle_sub: 'Schede Material You 3 o Liquid Glass satinato',

@@ -164,6 +164,8 @@ function Segmented({
               }
             }}
             style={[styles.segment, active && { backgroundColor: activeColor }]}
+            accessibilityRole="button"
+            accessibilityState={{ selected: active }}
           >
             <Text
               style={[
@@ -284,6 +286,8 @@ export function SettingsSheet({
                   { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
                   pressed && { opacity: 0.75 },
                 ]}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
               >
                 <View style={styles.rowTexts}>
                   <Text
@@ -377,6 +381,8 @@ export function SettingsSheet({
             }}
             hitSlop={8}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel={t('a11y_back')}
           >
             <ChevronLeft size={24} color={inputColor} strokeWidth={2.4} />
           </Pressable>

@@ -99,6 +99,7 @@ export const hu: Strings = {
   backup_import: 'Beállítások importálása', backup_import_subtitle: 'Beállítások visszaállítása mentésfájlból',
   backup_done: 'Beállítások helyreállítva', backup_exported: 'Mentésfájl létrehozva', backup_error: 'Exportálás sikertelen — próbáld újra', backup_invalid: 'Ez a fájl nem érvényes beállításmentés',
   backup_confirm_title: 'Beállítások importálása?', backup_confirm_body: 'A jelenlegi beállítások a fájlban lévőkre cserélődnek.', backup_cancel: 'Mégse', backup_apply: 'Importálás',
+  a11y_close: 'Bezárás', a11y_back: 'Vissza', a11y_increase: 'Növelés', a11y_decrease: 'Csökkentés', a11y_fav_add: 'Mentés a kedvencekhez', a11y_fav_remove: 'Eltávolítás a kedvencek közül',
   icon_style: 'Ikonstílus', icon_style_subtitle: 'Hogyan néznek ki az időjárás-ikonok az alkalmazásban', icon_style_outline: 'Kontúr', icon_style_filled: 'Kitöltött', icon_style_colorful: 'Színes',
   s_title: 'Beállítások', s_sec_feedback: 'Visszajelzés', s_haptics: 'Haptikus visszajelzés', s_haptics_sub: 'Rezgés koppintásnál, kapcsolóknál és riasztásoknál',
   s_sec_appearance: 'Megjelenés', s_theme: 'Téma', s_theme_sub: 'Kövesd a rendszert, vagy válassz rögzítettet', s_appstyle: 'Alkalmazás stílus', s_appstyle_sub: 'Material You 3 kártyák vagy matt Liquid Glass',

@@ -98,11 +98,13 @@ interface StepperRowProps {
 function StepperButton({
   theme,
   icon: Icon,
+  direction,
   disabled,
   onPress,
 }: {
   theme: AppTheme;
   icon: LucideIcon;
+  direction: 'increase' | 'decrease';
   disabled: boolean;
   onPress: () => void;
 }) {
@@ -119,6 +121,9 @@ function StepperButton({
         disabled && { opacity: 0.35 },
         pressed && !disabled && { opacity: 0.7 },
       ]}
+      accessibilityRole="button"
+      accessibilityLabel={t(direction === 'increase' ? 'a11y_increase' : 'a11y_decrease')}
+      accessibilityState={{ disabled }}
     >
       <Icon size={15} color={theme.textPrimary} strokeWidth={2.4} />
     </Pressable>
@@ -137,11 +142,23 @@ function StepperRow({
   return (
     <View style={styles.stepperRow}>
       <Text style={[styles.stepperLabel, { color: theme.textSecondary }]}>{label}</Text>
-      <StepperButton theme={theme} icon={ChevronLeft} disabled={!canDecrement} onPress={onDecrement} />
+      <StepperButton
+        theme={theme}
+        icon={ChevronLeft}
+        direction="decrease"
+        disabled={!canDecrement}
+        onPress={onDecrement}
+      />
       <Text style={[styles.stepperValue, { color: theme.textPrimary }]} numberOfLines={1}>
         {value}
       </Text>
-      <StepperButton theme={theme} icon={ChevronRight} disabled={!canIncrement} onPress={onIncrement} />
+      <StepperButton
+        theme={theme}
+        icon={ChevronRight}
+        direction="increase"
+        disabled={!canIncrement}
+        onPress={onIncrement}
+      />
     </View>
   );
 }
@@ -257,6 +274,8 @@ export function TripPlannerCard({ theme, favorites, onOpenFavorites }: TripPlann
                     },
                     pressed && { opacity: 0.7 },
                   ]}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
                 >
                   {isSelected ? (
                     <MapPin size={12} color={theme.accent} strokeWidth={2.4} />

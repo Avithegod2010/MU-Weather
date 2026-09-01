@@ -15,7 +15,12 @@ export function MoonPhaseVisual({ fraction, waxing, size = 84 }: MoonPhaseVisual
   const clamped = Math.min(1, Math.max(0, fraction));
   const offset = (1 - clamped) * size * (waxing ? -1 : 1);
   return (
-    <Svg width={size} height={size}>
+    <Svg
+      width={size}
+      height={size}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
       <Defs>
         <ClipPath id={`moonClip-${size}`}>
           <Circle cx={r} cy={r} r={r - 1} />
@@ -52,7 +57,12 @@ export function RainGauge({
   const waterY = size - clamped * size;
   const id = `rainClip-${size}`;
   return (
-    <Svg width={size} height={size}>
+    <Svg
+      width={size}
+      height={size}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
       <Defs>
         <ClipPath id={id}>
           <Circle cx={r} cy={r} r={r - 2} />

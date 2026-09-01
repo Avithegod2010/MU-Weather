@@ -260,6 +260,14 @@ export const en = {
   backup_cancel: 'Cancel',
   backup_apply: 'Import',
 
+  // Accessibility labels
+  a11y_close: 'Close',
+  a11y_back: 'Go back',
+  a11y_increase: 'Increase',
+  a11y_decrease: 'Decrease',
+  a11y_fav_add: 'Save to favorites',
+  a11y_fav_remove: 'Remove from favorites',
+
   // Icon style
   icon_style: 'Icon style',
   icon_style_subtitle: 'How condition icons look across the app',

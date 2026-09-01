@@ -148,6 +148,8 @@ export function FavoritesSheet({
                     onRemove(item.id);
                   }}
                   style={styles.iconButton}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('a11y_fav_remove')}
                 >
                   <Star size={20} color="#F5C04E" fill="#F5C04E" strokeWidth={2} />
                 </Pressable>

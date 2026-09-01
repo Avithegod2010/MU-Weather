@@ -44,7 +44,11 @@ export function AqiGauge({ theme, scale = 'us', usAqi, euAqi, pm2_5, pm10, ozone
         )}
       </View>
 
-      <View style={styles.segmentTrack}>
+      <View
+        style={styles.segmentTrack}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
         {SEGMENT_COLORS.map((color) => (
           <View key={color} style={[styles.segment, { backgroundColor: color }]} />
         ))}

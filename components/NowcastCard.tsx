@@ -23,7 +23,11 @@ export function NowcastCard({ theme, minutely, nowcast }: NowcastCardProps) {
   return (
     <Card theme={theme} title={t('card_nowcast')} icon={Umbrella}>
       <Text style={[styles.headline, { color: theme.textPrimary }]}>{nowcast.headline}</Text>
-      <View style={styles.barsRow}>
+      <View
+        style={styles.barsRow}
+        importantForAccessibility="no-hide-descendants"
+        accessibilityElementsHidden
+      >
         {minutely.map((point, index) => {
           const ratio = Math.min(point.precipitation / MAX_MM, 1);
           const height = point.precipitation >= 0.02 ? Math.max(ratio * 52, 10) : 5;

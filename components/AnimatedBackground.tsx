@@ -77,7 +77,12 @@ export function AnimatedBackground({ gradient, particles = null }: AnimatedBackg
   }));
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View
+      style={StyleSheet.absoluteFill}
+      pointerEvents="none"
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
       <Animated.View style={[StyleSheet.absoluteFill, styleA]}>
         <LinearGradient
           colors={layerA}

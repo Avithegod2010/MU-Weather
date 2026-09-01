@@ -99,6 +99,7 @@ export const bn: Strings = {
   backup_import: 'সেটিংস ইমপোর্ট', backup_import_subtitle: 'ব্যাকআপ ফাইল থেকে সেটিংস ফিরিয়ে আনুন',
   backup_done: 'সেটিংস ফিরিয়ে আনা হয়েছে', backup_exported: 'ব্যাকআপ ফাইল তৈরি হয়েছে', backup_error: 'এক্সপোর্ট ব্যর্থ — আবার চেষ্টা করুন', backup_invalid: 'এই ফাইলটি বৈধ সেটিংস ব্যাকআপ নয়',
   backup_confirm_title: 'সেটিংস ইমপোর্ট করবেন?', backup_confirm_body: 'আপনার বর্তমান সেটিংস ব্যাকআপ ফাইলের সেটিংস দিয়ে প্রতিস্থাপিত হবে।', backup_cancel: 'বাতিল', backup_apply: 'ইমপোর্ট',
+  a11y_close: 'বন্ধ করুন', a11y_back: 'ফিরে যান', a11y_increase: 'বাড়ান', a11y_decrease: 'কমান', a11y_fav_add: 'প্রিয়তে সংরক্ষণ করুন', a11y_fav_remove: 'প্রিয় থেকে সরান',
   icon_style: 'আইকন স্টাইল', icon_style_subtitle: 'অ্যাপজুড়ে আবহাওয়ার আইকন কেমন দেখাবে', icon_style_outline: 'রেখা', icon_style_filled: 'ভরাট', icon_style_colorful: 'রঙিন',
   s_title: 'সেটিংস', s_sec_feedback: 'প্রতিক্রিয়া', s_haptics: 'হ্যাপটিক ফিডব্যাক', s_haptics_sub: 'ট্যাপ, টগল ও সতর্কতায় কম্পন',
   s_sec_appearance: 'চেহারা', s_theme: 'থিম', s_theme_sub: 'সিস্টেম অনুসরণ করুন বা একটি রং বেছে নিন', s_appstyle: 'অ্যাপ স্টাইল', s_appstyle_sub: 'মেটেরিয়াল You 3 কার্ড বা ফ্রস্টেড লিকুইড গ্লাস',

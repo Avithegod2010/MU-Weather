@@ -77,6 +77,7 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
               { backgroundColor: theme.chipBg },
               pressed && { opacity: 0.7 },
             ]}
+            accessibilityRole="button"
           >
             <Text style={[styles.buttonText, { color: theme.textPrimary }]}>{t('storm_measure')}</Text>
           </Pressable>
@@ -96,6 +97,7 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
               { backgroundColor: '#E8B44A' },
               pressed && { opacity: 0.7 },
             ]}
+            accessibilityRole="button"
           >
             <Text style={[styles.buttonText, { color: '#1C2431' }]}>{t('storm_thunder')}</Text>
           </Pressable>
@@ -112,6 +114,7 @@ export function StormDistanceCard({ theme }: StormDistanceCardProps) {
               { backgroundColor: theme.chipBg },
               pressed && { opacity: 0.7 },
             ]}
+            accessibilityRole="button"
           >
             <Text style={[styles.buttonText, { color: theme.textPrimary }]}>{t('storm_flash')}</Text>
           </Pressable>

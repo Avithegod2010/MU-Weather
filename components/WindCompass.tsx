@@ -34,7 +34,11 @@ export function WindCompass({ theme, speed, gusts, direction }: WindCompassProps
 
   return (
     <View style={styles.container}>
-      <View style={styles.compassWrap}>
+      <View
+        style={styles.compassWrap}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
         <Svg width={SIZE} height={SIZE}>
           <Circle
             cx={CENTER}

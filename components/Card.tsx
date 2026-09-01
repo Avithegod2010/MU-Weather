@@ -58,6 +58,7 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
       onPress={onPress}
       android_ripple={{ color: 'rgba(255,255,255,0.12)', borderless: false, radius: 400 }}
       style={({ pressed }) => [styles.pressWrap, pressed && { opacity: 0.85 }]}
+      accessibilityRole="button"
     >
       {inner}
     </Pressable>
@@ -82,7 +83,13 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
 
 function ChevronGlyph({ color }: { color: string }) {
   return (
-    <Text style={[styles.chevron, { color }]}>›</Text>
+    <Text
+      style={[styles.chevron, { color }]}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
+      ›
+    </Text>
   );
 }
 

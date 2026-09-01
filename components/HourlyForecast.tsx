@@ -168,6 +168,15 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
                   styles.toggleButton,
                   active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' },
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  entry.key === 'temp'
+                    ? t('s_temp')
+                    : entry.key === 'rain'
+                      ? t('tile_rainchart')
+                      : t('s_wind')
+                }
+                accessibilityState={{ selected: active }}
               >
                 <ToggleIcon
                   size={14}
@@ -205,7 +214,11 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
             ))}
           </View>
 
-          <View style={[styles.row, styles.iconRow]}>
+          <View
+            style={[styles.row, styles.iconRow]}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
             {slice.map((hour) => {
               return (
                 <View key={`i-${hour.time}`} style={[styles.col, { width: COL_WIDTH }]}>
@@ -215,7 +228,11 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
             })}
           </View>
 
-          <View style={[styles.curveWrap, { height: CURVE_HEIGHT, width: contentWidth }]}>
+          <View
+            style={[styles.curveWrap, { height: CURVE_HEIGHT, width: contentWidth }]}
+            importantForAccessibility="no-hide-descendants"
+            accessibilityElementsHidden
+          >
             <Svg width={contentWidth} height={CURVE_HEIGHT}>
               <Path
                 d={path}
@@ -267,6 +284,13 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
                     borderRadius: 14,
                   },
                 ]}
+                accessibilityRole="button"
+                accessibilityLabel={`${formatHourLabel(hour.time, hour.isNow)}, ${tWmo(
+                  hour.weatherCode,
+                )}, ${formatTemp(hour.temperature)}, ${t('rain_chance')} ${Math.round(
+                  hour.precipProbability,
+                )}%`}
+                accessibilityState={{ selected: index === selected }}
               />
             ))}
           </View>
@@ -305,6 +329,8 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
               }}
               hitSlop={8}
               style={({ pressed }) => [styles.panelClose, pressed && { opacity: 0.6 }]}
+              accessibilityRole="button"
+              accessibilityLabel={t('a11y_close')}
             >
               <X size={16} color={theme.textTertiary} strokeWidth={2.4} />
             </Pressable>

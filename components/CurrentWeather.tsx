@@ -87,9 +87,29 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
   }, [floatY]);
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: floatY.value }] }));
 
+  const heroLabel = [
+    location.name,
+    conditionLabel,
+    `${formatTemp(current.temperature)}`,
+    `${t('feels_like')} ${formatTemp(current.apparentTemperature)}`,
+    today ? `${formatTemp(today.tMax)} / ${formatTemp(today.tMin)}` : null,
+    commentary ?? null,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
   return (
-    <View style={[styles.container, compact && styles.containerCompact]}>
-      <View style={[styles.locationRow, compact && styles.locationRowCompact]}>
+    <View
+      style={[styles.container, compact && styles.containerCompact]}
+      accessible={true}
+      accessibilityRole="text"
+      accessibilityLabel={heroLabel}
+    >
+      <View
+        style={[styles.locationRow, compact && styles.locationRowCompact]}
+        importantForAccessibility="no-hide-descendants"
+        accessibilityElementsHidden
+      >
         <MapPin size={15} color={theme.textSecondary} strokeWidth={2.4} />
         <Text style={[styles.locationText, { color: theme.textPrimary }]} numberOfLines={1}>
           {location.name}

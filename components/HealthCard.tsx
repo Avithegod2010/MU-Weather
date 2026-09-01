@@ -62,7 +62,13 @@ export function HealthCard({ theme, current, usAqi, style, revealDelay }: Health
         {rows.map((row) => {
           const color = LEVEL_COLORS[row.risk.level];
           return (
-            <View key={row.label} style={styles.row}>
+            <View
+              key={row.label}
+              style={styles.row}
+              accessible={true}
+              accessibilityRole="text"
+              accessibilityLabel={`${row.label}, ${levelLabels[row.risk.level]}, ${t(row.risk.adviceKey)}`}
+            >
               <View style={styles.rowHead}>
                 <Text style={[styles.label, { color: theme.textSecondary }]} numberOfLines={1}>
                   {row.label}

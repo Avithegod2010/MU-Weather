@@ -99,6 +99,7 @@ export const fr: Strings = {
   backup_import: 'Importer les réglages', backup_import_subtitle: 'Restaure les réglages depuis un fichier de sauvegarde',
   backup_done: 'Réglages restaurés', backup_exported: 'Fichier de sauvegarde créé', backup_error: 'Échec de l’export — réessayez', backup_invalid: 'Ce fichier n’est pas une sauvegarde de réglages valide',
   backup_confirm_title: 'Importer les réglages ?', backup_confirm_body: 'Vos réglages actuels seront remplacés par ceux du fichier.', backup_cancel: 'Annuler', backup_apply: 'Importer',
+  a11y_close: 'Fermer', a11y_back: 'Retour', a11y_increase: 'Augmenter', a11y_decrease: 'Diminuer', a11y_fav_add: 'Ajouter aux favoris', a11y_fav_remove: 'Retirer des favoris',
   icon_style: 'Style d’icônes', icon_style_subtitle: 'L’apparence des icônes météo dans l’app', icon_style_outline: 'Contour', icon_style_filled: 'Plein', icon_style_colorful: 'Coloré',
   s_title: 'Réglages', s_sec_feedback: 'Retour', s_haptics: 'Retour haptique', s_haptics_sub: 'Vibration sur les taps, interrupteurs et alertes',
   s_sec_appearance: 'Apparence', s_theme: 'Thème', s_theme_sub: 'Suivre le système ou choisir un thème fixe', s_appstyle: 'Style de l’app', s_appstyle_sub: 'Cartes Material You 3 ou Liquid Glass dépoli',

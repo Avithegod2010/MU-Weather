@@ -99,6 +99,7 @@ export const nl: Strings = {
   backup_import: 'Instellingen importeren', backup_import_subtitle: 'Herstel instellingen vanuit een back-upbestand',
   backup_done: 'Instellingen hersteld', backup_exported: 'Back-upbestand gemaakt', backup_error: 'Exporteren mislukt — probeer opnieuw', backup_invalid: 'Dat bestand is geen geldige instellingen-back-up',
   backup_confirm_title: 'Instellingen importeren?', backup_confirm_body: 'Je huidige instellingen worden vervangen door die uit het bestand.', backup_cancel: 'Annuleren', backup_apply: 'Importeren',
+  a11y_close: 'Sluiten', a11y_back: 'Terug', a11y_increase: 'Verhogen', a11y_decrease: 'Verlagen', a11y_fav_add: 'Aan favorieten toevoegen', a11y_fav_remove: 'Uit favorieten verwijderen',
   icon_style: 'Iconenstijl', icon_style_subtitle: 'Hoe weer-iconen er in de app uitzien', icon_style_outline: 'Omlijnd', icon_style_filled: 'Gevuld', icon_style_colorful: 'Kleurrijk',
   s_title: 'Instellingen', s_sec_feedback: 'Feedback', s_haptics: 'Haptische feedback', s_haptics_sub: 'Trilling bij tikken, schakelaars en meldingen',
   s_sec_appearance: 'Weergave', s_theme: 'Thema', s_theme_sub: 'Volg het systeem of kies een vast thema', s_appstyle: 'App-stijl', s_appstyle_sub: 'Material You 3 kaarten of mat Liquid Glass',

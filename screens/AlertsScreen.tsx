@@ -113,6 +113,8 @@ export function AlertsScreen({
             { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
             pressed && { opacity: 0.7 },
           ]}
+          accessibilityRole="button"
+          accessibilityLabel={t('a11y_back')}
         >
           <ChevronLeft size={24} color={theme.textPrimary} strokeWidth={2.4} />
         </Pressable>
@@ -145,6 +147,8 @@ export function AlertsScreen({
                 { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
                 pressed && { opacity: 0.8 },
               ]}
+              accessibilityRole="button"
+              accessibilityState={{ checked: enabled }}
             >
               <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
                 <Icon size={20} color={theme.textPrimary} strokeWidth={2} />

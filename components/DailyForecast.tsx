@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { t } from '../utils/i18n';
+import { t, tWmo } from '../utils/i18n';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, ChevronDown } from '../utils/uiIcons';
@@ -77,6 +77,9 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
             </Text>
           </>
         );
+        const rowLabel = `${formatDayLabel(day.date, index)}, ${tWmo(day.weatherCode)}, ${formatTemp(
+          day.tMin,
+        )} / ${formatTemp(day.tMax)}, ${t('rain_chance')} ${Math.round(day.precipProbabilityMax)}%`;
         if (!onPressDay) {
           return (
             <View key={day.date} style={rowStyle}>
@@ -92,6 +95,9 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
               onPressDay(day, index);
             }}
             style={({ pressed }) => [...rowStyle, pressed && { opacity: 0.6 }]}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={rowLabel}
           >
             {content}
           </Pressable>
@@ -109,6 +115,8 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
             { backgroundColor: theme.chipBg },
             pressed && { opacity: 0.7 },
           ]}
+          accessibilityRole="button"
+          accessibilityState={{ expanded }}
         >
           <Text style={[styles.expandText, { color: theme.textPrimary }]}>
             {expanded

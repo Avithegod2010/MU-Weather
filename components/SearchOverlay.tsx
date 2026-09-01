@@ -127,6 +127,8 @@ export function SearchOverlay({
                 onToggleFavorite(item);
               }}
               style={styles.starButton}
+              accessibilityRole="button"
+              accessibilityLabel={fav ? t('a11y_fav_remove') : t('a11y_fav_add')}
             >
               <Star
                 size={20}
@@ -147,7 +149,13 @@ export function SearchOverlay({
     <Overlay theme={theme} visible={visible} onClose={onClose} panelStyle="top">
       <KeyboardAvoidingView behavior="height" style={styles.flexOne} enabled>
         <View style={styles.header}>
-          <Pressable onPress={onClose} hitSlop={10} style={styles.backButton}>
+          <Pressable
+            onPress={onClose}
+            hitSlop={10}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel={t('a11y_back')}
+          >
             <ChevronLeft size={26} color={inputColor} strokeWidth={2.4} />
           </Pressable>
           <View style={[styles.inputWrap, { backgroundColor: surfaceBg }]}>
