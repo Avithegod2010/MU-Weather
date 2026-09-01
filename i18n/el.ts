@@ -146,4 +146,5 @@ export const el: Strings = {
   climate_delta_typical: 'Ακριβώς όπως ένας τυπικός {month}', climate_year_note: 'Θερμότερος: {hottest} · Ψυχρότερος: {coldest} · Βροχερότερος: {wettest}', climate_rain_normal: 'Κανονική βροχή: {n}',
   tile_warnings: 'Προειδοποιήσεις', card_warnings: 'Επίσημες προειδοποιήσεις', warnings_until: 'Έως {t}', warnings_source: 'MeteoAlarm · επίσημες κρατικές προειδοποιήσεις',
   data_export: 'Εξαγωγή δεδομένων', data_export_csv: 'Ημερολόγιο προβλέψεων (CSV)', data_export_csv_sub: 'Υπολογιστικό φύλλο με τις καταγεγραμμένες προβλέψεις', data_export_json: 'Ημερολόγιο προβλέψεων (JSON)', data_export_empty: 'Δεν υπάρχουν καταγεγραμμένες προβλέψεις ακόμη',
+  speak_weather: 'Ανάγνωση του καιρού', stop_speech: 'Διακοπή ανάγνωσης', speech_text: '{city}. {condition}, {temp}. Αίσθηση {feels}.', speech_hilo: 'Μέγιστη {high}, ελάχιστη {low}.', speech_rain: 'Πιθανότητα βροχής {rain}.',
 };

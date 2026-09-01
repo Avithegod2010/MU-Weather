@@ -146,4 +146,5 @@ export const it: Strings = {
   climate_delta_typical: 'Proprio in linea con un tipico {month}', climate_year_note: 'Il più caldo: {hottest} · Il più freddo: {coldest} · Il più piovoso: {wettest}', climate_rain_normal: 'Pioggia normale: {n}',
   tile_warnings: 'Allerte', card_warnings: 'Allerte ufficiali', warnings_until: 'Fino a {t}', warnings_source: 'MeteoAlarm · allerte ufficiali del governo',
   data_export: 'Esporta dati', data_export_csv: 'Registro delle previsioni (CSV)', data_export_csv_sub: 'Foglio di calcolo delle previsioni registrate', data_export_json: 'Registro delle previsioni (JSON)', data_export_empty: 'Nessuna previsione registrata',
+  speak_weather: 'Leggi il meteo ad alta voce', stop_speech: 'Interrompi lettura', speech_text: '{city}. {condition}, {temp}. Percezione {feels}.', speech_hilo: 'Massima {high}, minima {low}.', speech_rain: 'Probabilità di pioggia {rain}.',
 };

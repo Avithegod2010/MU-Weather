@@ -146,4 +146,5 @@ export const bn: Strings = {
   climate_delta_typical: 'সাধারণ {month}-এর সঙ্গে হুবহু মেলে', climate_year_note: 'সবচেয়ে উষ্ণ: {hottest} · সবচেয়ে শীতল: {coldest} · সবচেয়ে আর্দ্র: {wettest}', climate_rain_normal: 'স্বাভাবিক বৃষ্টি: {n}',
   tile_warnings: 'সতর্কতা', card_warnings: 'আধিকারিক সতর্কতা', warnings_until: '{t} পর্যন্ত', warnings_source: 'MeteoAlarm · সরকারি আধিকারিক সতর্কতা',
   data_export: 'ডেটা রপ্তানি', data_export_csv: 'পূর্বাভাস লগ (CSV)', data_export_csv_sub: 'সংরক্ষিত পূর্বাভাসের স্প্রেডশিট', data_export_json: 'পূর্বাভাস লগ (JSON)', data_export_empty: 'এখনও কোনো সংরক্ষিত পূর্বাভাস নেই',
+  speak_weather: 'আবহাওয়া পড়ে শোনান', stop_speech: 'পড়া বন্ধ করুন', speech_text: '{city}. {condition}, {temp}. অনুভূত হয় {feels}.', speech_hilo: 'সর্বোচ্চ {high}, সর্বনিম্ন {low}.', speech_rain: 'বৃষ্টির সম্ভাবনা {rain}.',
 };

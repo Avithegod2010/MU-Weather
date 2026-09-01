@@ -489,6 +489,13 @@ export const en = {
   data_export_csv_sub: 'Spreadsheet of logged predictions',
   data_export_json: 'Forecast log (JSON)',
   data_export_empty: 'No logged forecasts yet',
+
+  // Spoken forecast ("read my weather" button)
+  speak_weather: 'Read weather aloud',
+  stop_speech: 'Stop reading',
+  speech_text: '{city}. {condition}, {temp}. Feels like {feels}.',
+  speech_hilo: 'High {high}, low {low}.',
+  speech_rain: 'Chance of rain {rain}.',
 };
 
 export type Strings = typeof en;

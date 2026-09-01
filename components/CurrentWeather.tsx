@@ -1,6 +1,6 @@
 import { t } from '../utils/i18n';
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -55,11 +55,15 @@ import {
   Navigation,
   Sunrise,
   Sunset,
+  Volume2,
+  Square,
 } from '../utils/uiIcons';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
 import { formatTemp } from '../utils/format';
 import { F } from '../theme/typography';
+import { haptics } from '../utils/haptics';
+import { buildSpokenForecast, speakForecast, stopForecastSpeech } from '../utils/speech';
 import type { CurrentConditions, DayPoint, GeoLocation } from '../api/types';
 
 interface CurrentWeatherProps {
@@ -73,6 +77,7 @@ interface CurrentWeatherProps {
 
 export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary }: CurrentWeatherProps) {
   const compact = theme.density === 'compact';
+  const [speaking, setSpeaking] = useState(false);
 
   const floatY = useSharedValue(0);
   useEffect(() => {
@@ -98,7 +103,35 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
     .filter(Boolean)
     .join(', ');
 
+  const spokenText = buildSpokenForecast({
+    city: location.name,
+    condition: conditionLabel,
+    temperature: formatTemp(current.temperature),
+    feelsLike: formatTemp(current.apparentTemperature),
+    high: today ? formatTemp(today.tMax) : undefined,
+    low: today ? formatTemp(today.tMin) : undefined,
+    rain: today ? `${Math.round(today.precipProbabilityMax)}%` : undefined,
+  });
+
+  const toggleSpeech = () => {
+    if (speaking) {
+      stopForecastSpeech();
+      setSpeaking(false);
+      return;
+    }
+    setSpeaking(true);
+    speakForecast(spokenText, {
+      onDone: () => setSpeaking(false),
+      onStopped: () => setSpeaking(false),
+      onError: () => setSpeaking(false),
+    });
+  };
+
+  // Leaving the hero (city switch, screen change) should silence the voice.
+  useEffect(() => () => stopForecastSpeech(), []);
+
   return (
+    <>
     <View
       style={[styles.container, compact && styles.containerCompact]}
       accessible={true}
@@ -152,6 +185,20 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
         </View>
       ) : null}
     </View>
+    <Pressable
+      onPress={toggleSpeech}
+      onPressIn={() => haptics.select()}
+      accessibilityRole="button"
+      accessibilityLabel={t(speaking ? 'stop_speech' : 'speak_weather')}
+      style={[styles.speechButton, { backgroundColor: theme.chipBg }]}
+    >
+      {speaking ? (
+        <Square size={18} color={theme.textPrimary} strokeWidth={2.4} />
+      ) : (
+        <Volume2 size={18} color={theme.textPrimary} strokeWidth={2.2} />
+      )}
+    </Pressable>
+    </>
   );
 }
 
@@ -233,5 +280,14 @@ const styles = StyleSheet.create({
     width: 1,
     height: 14,
     marginHorizontal: 5,
+  },
+  speechButton: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginTop: 10,
   },
 });

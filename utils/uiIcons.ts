@@ -66,5 +66,7 @@ export { default as Upload } from 'lucide-react-native/icons/upload';
 export { default as Rows3 } from 'lucide-react-native/icons/rows-3';
 export { default as FileSpreadsheet } from 'lucide-react-native/icons/file-spreadsheet';
 export { default as Braces } from 'lucide-react-native/icons/braces';
+export { default as Volume2 } from 'lucide-react-native/icons/volume-2';
+export { default as Square } from 'lucide-react-native/icons/square';
 
 export type { LucideIcon } from 'lucide-react-native';
