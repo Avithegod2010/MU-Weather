@@ -18,6 +18,7 @@ import {
   Umbrella,
   CalendarDays,
   Flower2,
+  Snowflake,
 } from '../utils/uiIcons';
 import { Card } from './Card';
 import { WindCompass } from './WindCompass';
@@ -48,6 +49,14 @@ import { StormDistanceCard } from './StormDistanceCard';
 import { BarometerCard } from './BarometerCard';
 import { HealthCard } from './HealthCard';
 import { FEATURES } from '../config/features';
+import {
+  formatAltitude,
+  formatSnowDepth,
+  formatSnowfall,
+  snowDepthNow,
+  snowRelevant,
+  snowfallNext24,
+} from '../utils/winter';
 import type { YearAgoState } from '../hooks/useYearAgo';
 import type { PollenInfo } from '../api/types';
 import type { AqiInfo, CurrentConditions, DayPoint, GeoLocation, HourPoint } from '../api/types';
@@ -73,6 +82,8 @@ interface DetailCardsProps {
   location: GeoLocation;
   yearAgo: YearAgoState;
   hourly?: HourPoint[];
+  hourlyAll?: HourPoint[];
+  elevation?: number | null;
   hiddenTiles?: readonly string[];
 }
 
@@ -87,6 +98,8 @@ export function DetailCards({
   location,
   yearAgo,
   hourly,
+  hourlyAll,
+  elevation,
   hiddenTiles,
 }: DetailCardsProps) {
   const show = (key: string) => !hiddenTiles || !hiddenTiles.includes(key);
@@ -111,6 +124,48 @@ export function DetailCards({
   );
 
   const stormRisk = useMemo(() => (hourly ? peakCape(hourly) : null), [hourly]);
+
+  /** Snow stats, or null when the tile is hidden or snow is irrelevant here. */
+  const snow = useMemo(() => {
+    // Prefer the full 16-day series so the 72h relevance window sees past hour
+    // 24; `hourlyAll` starts at local midnight, so cut to "now" via isNow.
+    const series = hourlyAll ?? hourly ?? [];
+    const nowIdx = series.findIndex((h) => h.isNow);
+    const hours = nowIdx > 0 ? series.slice(nowIdx) : series;
+    if (!snowRelevant(hours)) return null;
+    const freezingHour = hours.find((h) => h.freezingLevelM !== null) ?? null;
+    return {
+      depthCm: snowDepthNow(hours),
+      snowfallCm: snowfallNext24(hours),
+      freezingM: freezingHour?.freezingLevelM ?? null,
+    };
+  }, [hourly, hourlyAll]);
+
+  const snowRows: Array<{ label: string; value: string }> = snow
+    ? [
+        {
+          label: t('snow_depth'),
+          value: snow.depthCm === null ? '--' : formatSnowDepth(snow.depthCm),
+        },
+        { label: t('snowfall_24h'), value: formatSnowfall(snow.snowfallCm) },
+        {
+          label: t('freezing_level'),
+          value:
+            snow.freezingM === null
+              ? '--'
+              : `${formatAltitude(snow.freezingM).value} ${formatAltitude(snow.freezingM).unit}`,
+        },
+      ]
+    : [];
+
+  const snowAbove =
+    snow && snow.freezingM !== null && elevation !== null && elevation !== undefined && snow.freezingM > elevation
+      ? `+${formatAltitude(snow.freezingM - elevation).value} ${formatAltitude(snow.freezingM - elevation).unit} ${t('snow_above_you')}`
+      : null;
+
+  const snowA11yLabel = snowRows.length
+    ? `${t('card_snow')}. ${snowRows.map((row) => `${row.label}: ${row.value}`).join(', ')}${snowAbove ? `, ${snowAbove}` : ''}.`
+    : '';
 
   const yearAgoDateLabel = yearAgo.info
     ? new Date(`${yearAgo.info.date}T12:00:00`).toLocaleDateString([], {
@@ -425,6 +480,32 @@ export function DetailCards({
         </Card>
       ) : null}
 
+      {show('snow') && snow ? (
+        <Card revealDelay={630} theme={theme} title={t('card_snow')} icon={Snowflake} style={styles.half}>
+          <View
+            style={styles.stack}
+            accessible={true}
+            accessibilityRole="text"
+            accessibilityLabel={snowA11yLabel}
+          >
+            {snowRows.map((row) => (
+              <View key={row.label} style={styles.snowRow}>
+                <Text style={[styles.snowLabel, { color: theme.textSecondary }]} numberOfLines={1}>
+                  {row.label}
+                </Text>
+                <Text style={[styles.snowValue, { color: theme.textPrimary }]}>{row.value}</Text>
+              </View>
+            ))}
+            {snowAbove ? (
+              <Text style={[styles.caption, { color: theme.textTertiary }]}>{snowAbove}</Text>
+            ) : null}
+            <Text style={[styles.caption, { color: theme.textTertiary }]}>
+              {t('card_snow_sub')}
+            </Text>
+          </View>
+        </Card>
+      ) : null}
+
       <StormDistanceCard theme={theme} stormRisk={stormRisk} />
 
       {FEATURES.barometer ? (
@@ -547,5 +628,19 @@ const styles = StyleSheet.create({
     fontFamily: F.semibold,
     width: 26,
     textAlign: 'right',
+  },
+  snowRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  snowLabel: {
+    fontSize: 12.5,
+    flexShrink: 1,
+  },
+  snowValue: {
+    fontSize: 14,
+    fontFamily: F.semibold,
   },
 });

@@ -91,6 +91,9 @@ function mapHourPoint(
     windGusts: hourly.wind_gusts_10m?.[index] ?? 0,
     windDirection: hourly.wind_direction_10m?.[index] ?? 0,
     cape: hourly.cape?.[index] ?? null,
+    snowDepthM: hourly.snow_depth?.[index] ?? null,
+    snowfallCm: hourly.snowfall?.[index] ?? null,
+    freezingLevelM: hourly.freezing_level_height?.[index] ?? null,
   };
 }
 
@@ -199,7 +202,8 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
       'weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m',
     hourly:
       'temperature_2m,apparent_temperature,weather_code,precipitation_probability,precipitation,is_day,' +
-      'dew_point_2m,visibility,pressure_msl,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,relative_humidity_2m,cape',
+      'dew_point_2m,visibility,pressure_msl,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,relative_humidity_2m,cape,' +
+      'snow_depth,snowfall,freezing_level_height',
     minutely_15: 'precipitation',
     daily:
       'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max',
@@ -272,6 +276,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
   return {
     location,
     utcOffsetSeconds: forecast.utc_offset_seconds,
+    elevation: forecast.elevation ?? null,
     current,
     hourly,
     hourlyAll: buildHourlyAll(forecast),

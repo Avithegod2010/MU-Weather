@@ -83,6 +83,14 @@ export const en = {
   card_pollen: 'Pollen',
   card_pollen_sub: 'Grains per m³ · Europe coverage',
 
+  // Snow & winter card
+  card_snow: 'Snow & winter',
+  card_snow_sub: 'Depth, new snow & freezing level',
+  snow_depth: 'Snow on ground',
+  snowfall_24h: 'New snow (24 h)',
+  freezing_level: 'Freezing level',
+  snow_above_you: 'above you',
+
   // Common labels
     card_rain_today: "Today's rain",
   total_rain_today: 'Total rain today',
@@ -361,6 +369,7 @@ export const en = {
   tile_moon: 'Moon',
   tile_health: 'Health',
   tile_pollen: 'Pollen',
+  tile_snow: 'Snow',
   tile_highlights: 'Highlights',
   tile_nowcast: 'Nowcast',
   tile_rainchart: 'Rain probability',

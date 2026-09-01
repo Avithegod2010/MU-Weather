@@ -27,6 +27,7 @@ export const DETAIL_TILES: DetailTileOption[] = [
   { key: 'moon', label: 'Moon' },
   { key: 'health', label: 'Health' },
   { key: 'pollen', label: 'Pollen' },
+  { key: 'snow', label: 'Snow' },
 ];
 
 export interface HideableTile {

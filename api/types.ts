@@ -43,6 +43,9 @@ export interface HourPoint {
   humidity: number | null;
   pressure: number | null;
   cape: number | null;
+  snowDepthM: number | null;
+  snowfallCm: number | null;
+  freezingLevelM: number | null;
 }
 
 export interface DayPoint {
@@ -95,6 +98,8 @@ export interface MinutelyPoint {
 export interface WeatherBundle {
   location: GeoLocation;
   utcOffsetSeconds: number;
+  /** Altitude of the location above sea level, in metres (null when the API omits it). */
+  elevation: number | null;
   current: CurrentConditions;
   hourly: HourPoint[];
   /** Every hourly point of the forecast period (~16 days x 24h) for day deep-dives. */
@@ -121,6 +126,7 @@ export interface ForecastResponse {
   longitude: number;
   timezone: string;
   utc_offset_seconds: number;
+  elevation?: number;
   current: {
     time: string;
     temperature_2m: number;
@@ -152,6 +158,9 @@ export interface ForecastResponse {
     uv_index: Array<number | null>;
     relative_humidity_2m: Array<number | null>;
     cape?: Array<number | null>;
+    snow_depth?: Array<number | null>;
+    snowfall?: Array<number | null>;
+    freezing_level_height?: Array<number | null>;
   };
   minutely_15?: {
     time: string[];
