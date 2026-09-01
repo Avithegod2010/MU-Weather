@@ -8,6 +8,7 @@ import type { AqiScale } from '../utils/aqi';
 import { setIconStyle } from '../utils/icons';
 import type { IconStyle } from '../utils/icons';
 import type { DetailAnimStyle } from '../utils/detailAnimations';
+import type { LayoutDensity } from '../theme/palettes';
 import type { HomeBackgroundKey } from '../config/backgrounds';
 import type { ColorThemeKey } from '../config/colorThemes';
 import { setLanguage } from '../utils/i18n';
@@ -45,6 +46,8 @@ export interface AppSettings {
   hiddenTiles: string[];
   /** History window shown in the past-days card - 7 or 30 days */
   pastDaysRange: 7 | 30;
+  /** Home card spacing - 'compact' tightens paddings and hero typography */
+  layoutDensity: LayoutDensity;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -69,6 +72,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   colorTheme: 'default',
   hiddenTiles: [],
   pastDaysRange: 7,
+  layoutDensity: 'comfortable',
 };
 
 function applySideEffects(settings: AppSettings): void {

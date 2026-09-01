@@ -19,6 +19,7 @@ interface CardProps {
 
 export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight, onPress, children }: CardProps) {
   const isGlass = theme.styleMode === 'glass';
+  const compact = theme.density === 'compact';
 
   const inner = (
     <View
@@ -28,6 +29,7 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
           ? { borderWidth: 1, borderColor: theme.cardBorder, overflow: 'hidden' }
           : { backgroundColor: theme.cardBg, borderWidth: 1, borderColor: theme.cardBorder },
         styles.fill,
+        compact && styles.cardCompact,
       ]}
     >
       {isGlass ? (
@@ -40,9 +42,9 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
         />
       ) : null}
       {title ? (
-        <View style={styles.header}>
+        <View style={[styles.header, compact && styles.headerCompact]}>
           {Icon ? <Icon size={14} color={theme.textSecondary} strokeWidth={2.4} /> : null}
-          <Text style={[styles.headerText, { color: theme.textSecondary }]}>{title}</Text>
+          <Text style={[styles.headerText, { color: theme.textSecondary }, compact && styles.headerTextCompact]}>{title}</Text>
           {headerRight ? <View style={styles.headerRight}>{headerRight}</View> : null}
           {onPress ? <ChevronGlyph color={theme.textTertiary} /> : null}
         </View>
@@ -91,6 +93,10 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 20,
   },
+  cardCompact: {
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
   fill: {
     flexGrow: 1,
   },
@@ -102,6 +108,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 12,
+  },
+  headerCompact: {
+    marginBottom: 8,
   },
   headerRight: {
     flex: 1,
@@ -117,5 +126,9 @@ const styles = StyleSheet.create({
     fontFamily: F.semibold,
     letterSpacing: 1.4,
     textTransform: 'uppercase',
+  },
+  headerTextCompact: {
+    fontSize: 11,
+    letterSpacing: 1.2,
   },
 });

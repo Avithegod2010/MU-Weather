@@ -72,6 +72,7 @@ interface CurrentWeatherProps {
 }
 
 export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary }: CurrentWeatherProps) {
+  const compact = theme.density === 'compact';
 
   const floatY = useSharedValue(0);
   useEffect(() => {
@@ -87,24 +88,24 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: floatY.value }] }));
 
   return (
-    <View style={styles.container}>
-      <View style={styles.locationRow}>
+    <View style={[styles.container, compact && styles.containerCompact]}>
+      <View style={[styles.locationRow, compact && styles.locationRowCompact]}>
         <MapPin size={15} color={theme.textSecondary} strokeWidth={2.4} />
         <Text style={[styles.locationText, { color: theme.textPrimary }]} numberOfLines={1}>
           {location.name}
         </Text>
       </View>
 
-      <Animated.View style={[styles.iconWrap, floatStyle]}>
+      <Animated.View style={[styles.iconWrap, compact && styles.iconWrapCompact, floatStyle]}>
         <WeatherIcon
           code={current.weatherCode}
           isDay={current.isDay}
-          size={84}
+          size={compact ? 72 : 84}
           themeColor={theme.textPrimary}
         />
       </Animated.View>
 
-      <Text style={[styles.temperature, { color: theme.textPrimary }]}>
+      <Text style={[styles.temperature, compact && styles.temperatureCompact, { color: theme.textPrimary }]}>
         {formatTemp(current.temperature)}
       </Text>
 
@@ -118,7 +119,7 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
       ) : null}
 
       {today ? (
-        <View style={[styles.highLowChip, { backgroundColor: theme.chipBg }]}>
+        <View style={[styles.highLowChip, compact && styles.highLowChipCompact, { backgroundColor: theme.chipBg }]}>
           <ArrowUp size={13} color={theme.textPrimary} strokeWidth={2.6} />
           <Text style={[styles.highLowText, { color: theme.textPrimary }]}>
             {formatTemp(today.tMax)}
@@ -140,11 +141,18 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     gap: 6,
   },
+  containerCompact: {
+    paddingVertical: 13,
+    gap: 4,
+  },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
     marginBottom: 10,
+  },
+  locationRowCompact: {
+    marginBottom: 7,
   },
   locationText: {
     fontSize: 17,
@@ -154,11 +162,18 @@ const styles = StyleSheet.create({
   iconWrap: {
     marginBottom: 2,
   },
+  iconWrapCompact: {
+    marginBottom: 1,
+  },
   temperature: {
     fontSize: 96,
     fontFamily: F.light,
     letterSpacing: -3,
     includeFontPadding: false,
+  },
+  temperatureCompact: {
+    fontSize: 86,
+    letterSpacing: -2.5,
   },
   conditionText: {
     fontSize: 19,
@@ -185,6 +200,10 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     paddingHorizontal: 20,
     borderRadius: 999,
+  },
+  highLowChipCompact: {
+    marginTop: 9,
+    paddingVertical: 7,
   },
   highLowText: {
     fontSize: 14.5,

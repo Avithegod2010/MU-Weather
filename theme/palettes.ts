@@ -70,11 +70,14 @@ export function getPalette(condition: WeatherCondition, isDay: boolean): Palette
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type StyleMode = 'material' | 'glass';
+export type LayoutDensity = 'comfortable' | 'compact';
 
 export interface AppTheme {
   gradient: readonly [string, string, string];
   isLight: boolean;
   styleMode: StyleMode;
+  /** 'compact' tightens card padding/hero type - absent means 'comfortable' */
+  density?: LayoutDensity;
   textPrimary: string;
   textSecondary: string;
   textTertiary: string;
@@ -154,4 +157,14 @@ export function buildTheme(
     blurIntensity: 0,
     blurTint: base.isLight ? 'light' : 'dark',
   };
+}
+
+/**
+ * Density is orthogonal to colors: it only tags the theme so card containers,
+ * section spacing and the hero can tighten their metrics. Every color, border
+ * and blur value passes through untouched; absent/'comfortable' = current look.
+ */
+export function applyDensity(theme: AppTheme, layoutDensity: LayoutDensity): AppTheme {
+  if (layoutDensity !== 'compact') return theme;
+  return { ...theme, density: 'compact' };
 }

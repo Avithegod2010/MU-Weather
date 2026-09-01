@@ -81,6 +81,7 @@ import { DayDetailScreen } from '../components/DayDetailScreen';
 import { FEATURES } from '../config/features';
 import { applyHomeBackground } from '../config/backgrounds';
 import { applyColorTheme } from '../config/colorThemes';
+import { applyDensity } from '../theme/palettes';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { CurrentWeather } from '../components/CurrentWeather';
@@ -143,16 +144,25 @@ export function HomeScreen() {
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   const theme = useMemo(
     () =>
-      applyColorTheme(
-        applyHomeBackground(
-          weatherThemeResult.theme,
-          settings.homeBackground,
+      applyDensity(
+        applyColorTheme(
+          applyHomeBackground(
+            weatherThemeResult.theme,
+            settings.homeBackground,
+            settings.styleMode,
+          ),
+          settings.colorTheme,
           settings.styleMode,
         ),
-        settings.colorTheme,
-        settings.styleMode,
+        settings.layoutDensity,
       ),
-    [weatherThemeResult.theme, settings.homeBackground, settings.colorTheme, settings.styleMode],
+    [
+      weatherThemeResult.theme,
+      settings.homeBackground,
+      settings.colorTheme,
+      settings.styleMode,
+      settings.layoutDensity,
+    ],
   );
   const { condition, conditionLabel } = weatherThemeResult;
   const alertState = useAlerts(weather.data, FEATURES.backgroundAlerts && settings.backgroundAlerts);
@@ -289,6 +299,7 @@ export function HomeScreen() {
         <Animated.ScrollView
           contentContainerStyle={[
             styles.content,
+            theme.density === 'compact' && styles.contentCompact,
             { paddingTop: insets.top + 8, paddingBottom: insets.bottom + 32 },
           ]}
           showsVerticalScrollIndicator={false}
@@ -726,6 +737,9 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     gap: 22,
+  },
+  contentCompact: {
+    gap: 16,
   },
   header: {
     flexDirection: 'row',

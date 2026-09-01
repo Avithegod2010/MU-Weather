@@ -43,6 +43,7 @@ import {
   Download,
   Upload,
   Flower2,
+  Rows3,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 
@@ -581,6 +582,29 @@ export function SettingsSheet({
               }))}
               value={settings.detailAnimation}
               onChange={(value) => onUpdate({ detailAnimation: value as AppSettings['detailAnimation'] })}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Rows3 size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_density')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_density_sub')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'comfortable', label: t('s_density_comfortable') },
+                { value: 'compact', label: t('s_density_compact') },
+              ]}
+              value={settings.layoutDensity}
+              onChange={(value) => onUpdate({ layoutDensity: value as AppSettings['layoutDensity'] })}
             />
           </View>
 

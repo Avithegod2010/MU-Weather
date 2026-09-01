@@ -63,5 +63,6 @@ export { default as HeartPulse } from 'lucide-react-native/icons/heart-pulse';
 export { default as X } from 'lucide-react-native/icons/x';
 export { default as Luggage } from 'lucide-react-native/icons/luggage';export { default as Download } from 'lucide-react-native/icons/download';
 export { default as Upload } from 'lucide-react-native/icons/upload';
+export { default as Rows3 } from 'lucide-react-native/icons/rows-3';
 
 export type { LucideIcon } from 'lucide-react-native';
