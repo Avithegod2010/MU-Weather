@@ -81,6 +81,7 @@ import { DayDetailScreen } from '../components/DayDetailScreen';
 import { FEATURES } from '../config/features';
 import { applyHomeBackground } from '../config/backgrounds';
 import { applyColorTheme } from '../config/colorThemes';
+import { resolveMaterialYouPalette } from '../utils/materialYou';
 import { applyDensity } from '../theme/palettes';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
@@ -148,6 +149,9 @@ export function HomeScreen() {
   const meteoAlarm = useMeteoAlarm(active);
   const { settings, updateSettings } = useSettings();
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
+  // Resolve once per session; null (Expo Go etc.) makes the theme fall back to
+  // the static Material You gradient. Module-level memoized singleton.
+  const materialYouPalette = useMemo(() => resolveMaterialYouPalette(), []);
   const theme = useMemo(
     () =>
       applyDensity(
@@ -159,6 +163,7 @@ export function HomeScreen() {
           ),
           settings.colorTheme,
           settings.styleMode,
+          materialYouPalette,
         ),
         settings.layoutDensity,
       ),
@@ -168,6 +173,7 @@ export function HomeScreen() {
       settings.colorTheme,
       settings.styleMode,
       settings.layoutDensity,
+      materialYouPalette,
     ],
   );
   const { condition, conditionLabel } = weatherThemeResult;
