@@ -297,108 +297,6 @@ export function SettingsSheet({
 
       {view === 'main' ? (
         <Text style={[styles.title, { color: inputColor }]}>{t('s_title')}</Text>
-      ) : view === 'language' ? (
-        <>
-          {LANGUAGES.map((language) => {
-            const active = settings.language === language.key;
-            return (
-              <Pressable
-                key={language.key}
-                onPress={() => {
-                  haptics.select();
-                  onUpdate({ language: language.key });
-                }}
-                style={({ pressed }) => [
-                  styles.row,
-                  { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
-                  pressed && { opacity: 0.75 },
-                ]}
-                accessibilityRole="button"
-                accessibilityState={{ selected: active }}
-              >
-                <View style={styles.rowTexts}>
-                  <Text
-                    style={[
-                      styles.rowTitle,
-                      { color: inputColor },
-                      active && { fontFamily: F.bold },
-                    ]}
-                  >
-                    {language.name} ({language.native})
-                  </Text>
-                </View>
-                {active ? (
-                  <Check size={20} color={theme.accent} strokeWidth={2.6} />
-                ) : null}
-              </Pressable>
-            );
-          })}
-          <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
-            <Text style={[styles.noteText, { color: theme.textSecondary }]}>
-              Weather content is translated. More languages arrive in future updates.
-            </Text>
-          </View>
-        </>
-      ) : view === 'tiles' ? (
-        <>
-          <Text style={[styles.intro, { color: theme.textSecondary }]}>
-            Turn off anything you don't need and it disappears from the home screen. Your choices
-            are saved on this device.
-          </Text>
-          {TILE_GROUPS.map((group) => (
-            <View key={group.title}>
-              <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
-                {t(group.title === 'Main sections' ? 'tile_group_main' : 'tile_group_detail')}
-              </Text>
-              {group.tiles.map((tile) => {
-                const TileIcon = TILE_ICONS[tile.key] ?? Sparkles;
-                const visible = !(settings.hiddenTiles ?? []).includes(tile.key);
-                return (
-                  <View
-                    key={tile.key}
-                    style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
-                  >
-                    <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
-                      <TileIcon size={20} color={theme.textPrimary} strokeWidth={2} />
-                    </View>
-                    <View style={styles.rowTexts}>
-                      <Text style={[styles.rowTitle, { color: inputColor }]}>
-                        {t(TILE_LABEL_KEYS[tile.key])}
-                      </Text>
-                    </View>
-                    <Switch
-                      value={ready ? visible : true}
-                      onValueChange={(value) => {
-                        if (value) {
-                          haptics.success();
-                        } else {
-                          haptics.light();
-                        }
-                        const next = new Set(settings.hiddenTiles ?? []);
-                        if (value) {
-                          next.delete(tile.key);
-                        } else {
-                          next.add(tile.key);
-                        }
-                        onUpdate({ hiddenTiles: Array.from(next) });
-                      }}
-                      trackColor={{ true: theme.accent, false: theme.trackColor }}
-                      thumbColor={visible ? '#FFFFFF' : theme.textTertiary}
-                      ios_backgroundColor={theme.trackColor}
-                    />
-                  </View>
-                );
-              })}
-            </View>
-          ))}
-          <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
-            <Text style={[styles.noteText, { color: theme.textSecondary }]}>
-              Current weather and severe alerts always stay on.
-            </Text>
-          </View>
-        </>
       ) : (
         <View style={styles.titleRow}>
           <Pressable
@@ -1080,126 +978,240 @@ export function SettingsSheet({
           </View>
         </ScrollView>
       ) : (
-        <>
-          <Text style={[styles.intro, { color: theme.textSecondary }]}>
-            MU Weather blends multiple independent providers for the best accuracy. The primary
-            forecast is continuously cross-checked against a second national weather service.
-          </Text>
-
-          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
-              <CloudSun size={20} color={theme.textPrimary} strokeWidth={2} />
-            </View>
-            <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_forecast')}</Text>
-              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                {t('src_forecast_sub')}
-              </Text>
-            </View>
-            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
-          </View>
-
-          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
-              <Radar size={20} color={theme.textPrimary} strokeWidth={2} />
-            </View>
-            <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_metno')}</Text>
-              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                {t('src_metno_sub')}
-              </Text>
-              {providerCheck.status === 'ok' && delta !== null ? (
-                <Text
-                  style={[
-                    styles.deltaText,
-                    { color: delta <= 1.5 ? '#5BC98C' : '#F0964E' },
-                  ]}
-                >
-                  MET {Math.round(providerCheck.temperature ?? 0)}° vs app{' '}
-                  {Math.round(primaryTemp ?? 0)}°
+        // Sub-views (language / tiles / sources) scroll too: the bottom sheet
+        // caps at 72% of the screen, so without this the bottom rows are
+        // unreachable on shorter displays.
+        <ScrollView
+          style={styles.scrollArea}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled
+        >
+          {view === 'language' ? (
+            <>
+              {LANGUAGES.map((language) => {
+                const active = settings.language === language.key;
+                return (
+                  <Pressable
+                    key={language.key}
+                    onPress={() => {
+                      haptics.select();
+                      onUpdate({ language: language.key });
+                    }}
+                    style={({ pressed }) => [
+                      styles.row,
+                      { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+                      pressed && { opacity: 0.75 },
+                    ]}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                  >
+                    <View style={styles.rowTexts}>
+                      <Text
+                        style={[
+                          styles.rowTitle,
+                          { color: inputColor },
+                          active && { fontFamily: F.bold },
+                        ]}
+                      >
+                        {language.name} ({language.native})
+                      </Text>
+                    </View>
+                    {active ? (
+                      <Check size={20} color={theme.accent} strokeWidth={2.6} />
+                    ) : null}
+                  </Pressable>
+                );
+              })}
+              <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+                <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+                  Weather content is translated. More languages arrive in future updates.
                 </Text>
-              ) : null}
-              {accuracyHistory.length >= 2 ? (
-                <View style={styles.sparkRow}>
-                  <Svg width={120} height={30} viewBox="0 0 120 30">
-                    <Polyline
-                      points={accuracyHistory
-                        .slice(-12)
-                        .map((entry, index, array) => {
-                          const x = (index / Math.max(array.length - 1, 1)) * 116 + 2;
-                          const y = 27 - (Math.min(entry.d, 3) / 3) * 24;
-                          return `${x.toFixed(1)},${y.toFixed(1)}`;
-                        })
-                        .join(' ')}
-                      stroke={theme.accent}
-                      strokeWidth={2}
-                      fill="none"
-                      strokeLinecap="round"
-                    />
-                  </Svg>
-                  <Text style={[styles.avgText, { color: theme.textTertiary }]}>
-                    avg drift {avgDelta?.toFixed(1)}° over {accuracyHistory.length} checks
+              </View>
+            </>
+          ) : view === 'tiles' ? (
+            <>
+              <Text style={[styles.intro, { color: theme.textSecondary }]}>
+                Turn off anything you don't need and it disappears from the home screen. Your choices
+                are saved on this device.
+              </Text>
+              {TILE_GROUPS.map((group) => (
+                <View key={group.title}>
+                  <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
+                    {t(group.title === 'Main sections' ? 'tile_group_main' : 'tile_group_detail')}
+                  </Text>
+                  {group.tiles.map((tile) => {
+                    const TileIcon = TILE_ICONS[tile.key] ?? Sparkles;
+                    const visible = !(settings.hiddenTiles ?? []).includes(tile.key);
+                    return (
+                      <View
+                        key={tile.key}
+                        style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+                      >
+                        <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                          <TileIcon size={20} color={theme.textPrimary} strokeWidth={2} />
+                        </View>
+                        <View style={styles.rowTexts}>
+                          <Text style={[styles.rowTitle, { color: inputColor }]}>
+                            {t(TILE_LABEL_KEYS[tile.key])}
+                          </Text>
+                        </View>
+                        <Switch
+                          value={ready ? visible : true}
+                          onValueChange={(value) => {
+                            if (value) {
+                              haptics.success();
+                            } else {
+                              haptics.light();
+                            }
+                            const next = new Set(settings.hiddenTiles ?? []);
+                            if (value) {
+                              next.delete(tile.key);
+                            } else {
+                              next.add(tile.key);
+                            }
+                            onUpdate({ hiddenTiles: Array.from(next) });
+                          }}
+                          trackColor={{ true: theme.accent, false: theme.trackColor }}
+                          thumbColor={visible ? '#FFFFFF' : theme.textTertiary}
+                          ios_backgroundColor={theme.trackColor}
+                        />
+                      </View>
+                    );
+                  })}
+                </View>
+              ))}
+              <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+                <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+                  Current weather and severe alerts always stay on.
+                </Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <Text style={[styles.intro, { color: theme.textSecondary }]}>
+                MU Weather blends multiple independent providers for the best accuracy. The primary
+                forecast is continuously cross-checked against a second national weather service.
+              </Text>
+
+              <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                  <CloudSun size={20} color={theme.textPrimary} strokeWidth={2} />
+                </View>
+                <View style={styles.rowTexts}>
+                  <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_forecast')}</Text>
+                  <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                    {t('src_forecast_sub')}
                   </Text>
                 </View>
-              ) : null}
-            </View>
-            {providerCheck.status === 'checking' ? (
-              <StatusChip theme={theme} label={t('chip_syncing')} tone="warn" />
-            ) : providerCheck.status === 'ok' ? (
-              <StatusChip theme={theme} label={delta !== null && delta <= 1.5 ? t('chip_match') : t('chip_drift')} tone={delta !== null && delta <= 1.5 ? 'good' : 'warn'} />
-            ) : providerCheck.status === 'error' ? (
-              <StatusChip theme={theme} label={t('chip_offline')} tone="off" />
-            ) : (
-              <StatusChip theme={theme} label={t('chip_idle')} tone="warn" />
-            )}
-          </View>
+                <StatusChip theme={theme} label={t('chip_active')} tone="active" />
+              </View>
 
-          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
-              <Gauge size={20} color={theme.textPrimary} strokeWidth={2} />
-            </View>
-            <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_aqi')}</Text>
-              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                {t('src_aqi_sub')}
-              </Text>
-            </View>
-            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
-          </View>
+              <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                  <Radar size={20} color={theme.textPrimary} strokeWidth={2} />
+                </View>
+                <View style={styles.rowTexts}>
+                  <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_metno')}</Text>
+                  <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                    {t('src_metno_sub')}
+                  </Text>
+                  {providerCheck.status === 'ok' && delta !== null ? (
+                    <Text
+                      style={[
+                        styles.deltaText,
+                        { color: delta <= 1.5 ? '#5BC98C' : '#F0964E' },
+                      ]}
+                    >
+                      MET {Math.round(providerCheck.temperature ?? 0)}° vs app{' '}
+                      {Math.round(primaryTemp ?? 0)}°
+                    </Text>
+                  ) : null}
+                  {accuracyHistory.length >= 2 ? (
+                    <View style={styles.sparkRow}>
+                      <Svg width={120} height={30} viewBox="0 0 120 30">
+                        <Polyline
+                          points={accuracyHistory
+                            .slice(-12)
+                            .map((entry, index, array) => {
+                              const x = (index / Math.max(array.length - 1, 1)) * 116 + 2;
+                              const y = 27 - (Math.min(entry.d, 3) / 3) * 24;
+                              return `${x.toFixed(1)},${y.toFixed(1)}`;
+                            })
+                            .join(' ')}
+                          stroke={theme.accent}
+                          strokeWidth={2}
+                          fill="none"
+                          strokeLinecap="round"
+                        />
+                      </Svg>
+                      <Text style={[styles.avgText, { color: theme.textTertiary }]}>
+                        avg drift {avgDelta?.toFixed(1)}° over {accuracyHistory.length} checks
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+                {providerCheck.status === 'checking' ? (
+                  <StatusChip theme={theme} label={t('chip_syncing')} tone="warn" />
+                ) : providerCheck.status === 'ok' ? (
+                  <StatusChip theme={theme} label={delta !== null && delta <= 1.5 ? t('chip_match') : t('chip_drift')} tone={delta !== null && delta <= 1.5 ? 'good' : 'warn'} />
+                ) : providerCheck.status === 'error' ? (
+                  <StatusChip theme={theme} label={t('chip_offline')} tone="off" />
+                ) : (
+                  <StatusChip theme={theme} label={t('chip_idle')} tone="warn" />
+                )}
+              </View>
 
-          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
-              <MapPin size={20} color={theme.textPrimary} strokeWidth={2} />
-            </View>
-            <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_geo')}</Text>
-              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                {t('src_geo_sub')}
-              </Text>
-            </View>
-            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
-          </View>
+              <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                  <Gauge size={20} color={theme.textPrimary} strokeWidth={2} />
+                </View>
+                <View style={styles.rowTexts}>
+                  <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_aqi')}</Text>
+                  <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                    {t('src_aqi_sub')}
+                  </Text>
+                </View>
+                <StatusChip theme={theme} label={t('chip_active')} tone="active" />
+              </View>
 
-          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
-              <Wind size={20} color={theme.textPrimary} strokeWidth={2} />
-            </View>
-            <View style={styles.rowTexts}>
-              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_windy')}</Text>
-              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
-                {t('src_windy_sub')}
-              </Text>
-            </View>
-            <StatusChip theme={theme} label={t('chip_active')} tone="active" />
-          </View>
+              <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                  <MapPin size={20} color={theme.textPrimary} strokeWidth={2} />
+                </View>
+                <View style={styles.rowTexts}>
+                  <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_geo')}</Text>
+                  <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                    {t('src_geo_sub')}
+                  </Text>
+                </View>
+                <StatusChip theme={theme} label={t('chip_active')} tone="active" />
+              </View>
 
-          <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
-            <Text style={[styles.noteText, { color: theme.textSecondary }]}>
-              {updatedLabel} · Sources: open-meteo.com · met.no · windy.com
-            </Text>
-          </View>
-        </>
+              <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                  <Wind size={20} color={theme.textPrimary} strokeWidth={2} />
+                </View>
+                <View style={styles.rowTexts}>
+                  <Text style={[styles.rowTitle, { color: inputColor }]}>{t('src_windy')}</Text>
+                  <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                    {t('src_windy_sub')}
+                  </Text>
+                </View>
+                <StatusChip theme={theme} label={t('chip_active')} tone="active" />
+              </View>
+
+              <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+                <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+                  {updatedLabel} · Sources: open-meteo.com · met.no · windy.com
+                </Text>
+              </View>
+            </>
+          )}
+        </ScrollView>
       )}
     </Overlay>
   );
