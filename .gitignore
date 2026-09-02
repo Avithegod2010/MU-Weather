@@ -42,3 +42,6 @@ yarn-error.*
 
 # Agent tooling (never commit)
 .zcode/
+
+# Secrets (never commit)
+.env
