@@ -42,7 +42,13 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
         ].map(({ label, ratio }) => (
           <View key={label} style={[styles.bandLine, { top: `${ratio * 100}%` }]} pointerEvents="none">
             <View style={[styles.bandDash, { backgroundColor: theme.trackColor }]} />
-            <Text style={[styles.bandLabel, { color: theme.textTertiary }]}>{label}</Text>
+            <Text
+              style={[styles.bandLabel, { color: theme.textTertiary }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              {label}
+            </Text>
           </View>
         ))}
 
@@ -79,7 +85,12 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
 
       <View style={styles.timesRow}>
         {slice.map((item, index) => (
-          <Text key={item.time} style={[styles.timeLabel, { color: theme.textTertiary }]}>
+          <Text
+            key={item.time}
+            style={[styles.timeLabel, { color: theme.textTertiary }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {index % 2 === 0 ? formatHourLabel(item.time, item.isNow) : ''}
           </Text>
         ))}
@@ -121,7 +132,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    paddingLeft: 8,
+    // reserve the left gutter so bars/peak chip never paint over the
+    // Heavy/Moderate/Light band labels (they occupy x 2-46 of the chart)
+    paddingLeft: 48,
     paddingRight: 4,
     height: '100%',
     zIndex: 1,

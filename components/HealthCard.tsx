@@ -75,7 +75,9 @@ export function HealthCard({ theme, current, usAqi, style, revealDelay }: Health
                 </Text>
                 <View style={[styles.chip, { backgroundColor: theme.chipBg }]}>
                   <View style={[styles.chipDot, { backgroundColor: color }]} />
-                  <Text style={[styles.chipText, { color }]}>{levelLabels[row.risk.level]}</Text>
+                  <Text style={[styles.chipText, { color }]} numberOfLines={1} adjustsFontSizeToFit>
+                    {levelLabels[row.risk.level]}
+                  </Text>
                 </View>
               </View>
               <Text style={[styles.advice, { color: theme.textTertiary }]}>
@@ -110,10 +112,13 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 4,
     borderRadius: 999,
     paddingVertical: 3,
-    paddingHorizontal: 9,
+    paddingHorizontal: 7,
+    // half-width card: the pill must never push past the card edge
+    flexShrink: 0,
+    maxWidth: '62%',
   },
   chipDot: {
     width: 6,
@@ -123,6 +128,7 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: 11.5,
     fontFamily: F.semibold,
+    flexShrink: 1,
   },
   advice: {
     fontSize: 12,

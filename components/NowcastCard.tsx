@@ -36,7 +36,11 @@ export function NowcastCard({ theme, minutely, nowcast }: NowcastCardProps) {
             <View key={point.time} style={styles.barColumn}>
               <View style={[styles.bar, { height, backgroundColor: intensity }]} />
               {index % 4 === 0 ? (
-                <Text style={[styles.timeLabel, { color: theme.textTertiary }]}>
+                <Text
+                  style={[styles.timeLabel, { color: theme.textTertiary }]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
                   {formatHourLabel(point.time, index === 0 && nowcast.wet)}
                 </Text>
               ) : (
@@ -78,6 +82,8 @@ const styles = StyleSheet.create({
   timeLabel: {
     fontSize: 10.5,
     fontFamily: F.medium,
+    maxWidth: '100%',
+    height: 13,
   },
   caption: {
     fontSize: 11.5,
