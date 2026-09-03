@@ -16,6 +16,9 @@ interface StormDistanceCardProps {
 
 type Phase = 'idle' | 'counting' | 'result';
 
+/** Speed of sound at sea level, m/s — converts flash-to-bang time to distance. */
+const SOUND_SPEED_MPS = 343;
+
 /** Matches the band colours used across the app (HealthCard / utils/aqi.ts). */
 const BAND_COLORS: Record<'low' | 'moderate' | 'high', string> = {
   low: '#5BC98C',
@@ -44,9 +47,10 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
     startRef.current = Date.now();
     setSeconds(0);
     setPhase('counting');
+    // Fast tick so the live distance visibly climbs while counting.
     intervalRef.current = setInterval(() => {
       setSeconds((Date.now() - startRef.current) / 1000);
-    }, 500);
+    }, 100);
   };
 
   const registerThunder = () => {
@@ -64,19 +68,21 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
     setPhase('idle');
   };
 
-  const distanceKm = seconds / 3;
+  const distanceMeters = seconds * SOUND_SPEED_MPS;
 
   return (
     <Card theme={theme} title={t('card_storm')} icon={Zap} style={styles.card} revealDelay={600}>
       {phase === 'result' ? (
         <>
           <Text style={[styles.distance, { color: theme.textPrimary }]}>
-            {distanceKm < 1 ? '<1' : Math.round(distanceKm)} km
+            {distanceMeters < 1000
+              ? `${Math.round(distanceMeters / 10) * 10} m`
+              : `${(distanceMeters / 1000).toFixed(distanceMeters < 10000 ? 1 : 0)} km`}
           </Text>
           <Text style={[styles.caption, { color: theme.textTertiary }]}>
-            {distanceKm < 3
+            {distanceMeters < 3000
               ? 'Very close — take shelter immediately'
-              : distanceKm < 10
+              : distanceMeters < 10000
                 ? 'Storm is near — stay alert'
                 : 'Storm is at a safe distance'}
           </Text>
@@ -95,7 +101,7 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
       ) : phase === 'counting' ? (
         <>
           <Text style={[styles.listening, { color: theme.textPrimary }]}>
-            {Math.floor(seconds)}s
+            {Math.round(seconds * SOUND_SPEED_MPS / 10) * 10} m
           </Text>
           <Text style={[styles.caption, { color: theme.textSecondary }]}>
             {t('storm_counting')}
