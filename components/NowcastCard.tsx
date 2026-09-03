@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     fontSize: 10.5,
     fontFamily: F.medium,
     maxWidth: '100%',
-    height: 13,
+    height: 14,
   },
   caption: {
     fontSize: 11.5,

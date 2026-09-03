@@ -166,6 +166,9 @@ const styles = StyleSheet.create({
   },
   timesRow: {
     flexDirection: 'row',
+    // mirror the barsRow gutters so label centers stay on bar centers
+    paddingLeft: 48,
+    paddingRight: 4,
     marginTop: 10,
   },
   timeLabel: {
