@@ -149,4 +149,5 @@ export const hi: Strings = {
   speak_weather: 'मौसम सुनाएँ', stop_speech: 'सुनाना बंद करें', speech_text: '{city}. {condition}, {temp}. महसूस होता है {feels}.', speech_hilo: 'अधिकतम {high}, न्यूनतम {low}.', speech_rain: 'बारिश की संभावना {rain}.',
   err_body: 'ऐप में एक समस्या आई। आपका सेव किया डेटा सुरक्षित है।',
   rain_band_heavy: 'भारी', rain_band_moderate: 'मध्यम', rain_band_light: 'हल्की', chart_rain_caption: 'बारिश की संभावना · अगले 12 घंटे', chart_rain_a11y: 'बारिश की संभावना, अगले 12 घंटे। चरम लगभग {time}, {n} प्रतिशत।', card_nowcast_caption: '15-मिनट वर्षा पूर्वानुमान · {unit} प्रति अंतराल',
+  data_export_failed: 'एक्सपोर्ट फ़ाइल नहीं बनाई जा सकी',
 };

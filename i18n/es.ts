@@ -149,4 +149,5 @@ export const es: Strings = {
   speak_weather: 'Leer el tiempo en voz alta', stop_speech: 'Detener lectura', speech_text: '{city}. {condition}, {temp}. Sensación de {feels}.', speech_hilo: 'Máxima {high}, mínima {low}.', speech_rain: 'Probabilidad de lluvia {rain}.',
   err_body: 'La app encontró un problema. Tus datos guardados están a salvo.',
   rain_band_heavy: 'Fuerte', rain_band_moderate: 'Moderado', rain_band_light: 'Ligera', chart_rain_caption: 'Probabilidad de lluvia · próximas 12 horas', chart_rain_a11y: 'Probabilidad de lluvia, próximas 12 horas. Pico hacia las {time}, {n} por ciento.', card_nowcast_caption: 'Previsión de precipitación cada 15 minutos · {unit} por intervalo',
+  data_export_failed: 'No se pudo crear el archivo de exportación',
 };

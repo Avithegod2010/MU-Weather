@@ -260,12 +260,16 @@ export function SettingsSheet({
   const onExportForecastLog = async (format: DataExportFormat) => {
     haptics.select();
     try {
-      const uri = await writeForecastLogExport(format);
-      if (uri === null) {
+      const result = await writeForecastLogExport(format);
+      if (result.status === 'empty') {
         showBackupMsg(t('data_export_empty'));
         return;
       }
-      await Sharing.shareAsync(uri, {
+      if (result.status === 'error') {
+        showBackupMsg(t('data_export_failed'));
+        return;
+      }
+      await Sharing.shareAsync(result.uri, {
         mimeType: format === 'csv' ? 'text/csv' : 'application/json',
       });
       showBackupMsg(t('backup_exported'));

@@ -28,22 +28,34 @@ export function buildForecastLogJson(entries: ForecastLogEntry[]): string {
 }
 
 /**
- * Writes the forecast log to a dated file in the cache dir and returns its URI.
- * Returns null when the log is empty (caller picks the messaging) and null (never
- * throws) on any failure while reading, building or writing the file.
+ * Outcome of {@link writeForecastLogExport}:
+ * - `empty`: the forecast log has no entries (no file was written),
+ * - `error`: reading, building or writing the file failed (the function never throws),
+ * - `ok`: the file was written successfully; `uri` points at it.
+ */
+export type ExportResult =
+  | { status: 'empty' }
+  | { status: 'error' }
+  | { status: 'ok'; uri: string };
+
+/**
+ * Writes the forecast log to a dated file in the cache dir and returns an
+ * {@link ExportResult}. Empty log → `{ status: 'empty' }` before any write is
+ * attempted; any failure while reading, building or writing → `{ status: 'error' }`
+ * (the function never throws).
  */
 export async function writeForecastLogExport(
   format: DataExportFormat
-): Promise<string | null> {
+): Promise<ExportResult> {
   try {
     const entries = await loadForecastLog();
-    if (entries.length === 0) return null;
+    if (entries.length === 0) return { status: 'empty' };
     const content =
       format === 'csv' ? buildForecastLogCsv(entries) : buildForecastLogJson(entries);
     const file = new File(Paths.cache, `mu-weather-forecast-log-${todayStamp()}.${format}`);
     file.write(content);
-    return file.uri;
+    return { status: 'ok', uri: file.uri };
   } catch {
-    return null;
+    return { status: 'error' };
   }
 }

@@ -149,4 +149,5 @@ export const id: Strings = {
   speak_weather: 'Bacakan cuaca', stop_speech: 'Hentikan pembacaan', speech_text: '{city}. {condition}, {temp}. Terasa seperti {feels}.', speech_hilo: 'Tertinggi {high}, terendah {low}.', speech_rain: 'Kemungkinan hujan {rain}.',
   err_body: 'Aplikasi mengalami masalah. Data tersimpan Anda aman.',
   rain_band_heavy: 'Lebat', rain_band_moderate: 'Sedang', rain_band_light: 'Ringan', chart_rain_caption: 'Kemungkinan hujan · 12 jam ke depan', chart_rain_a11y: 'Kemungkinan hujan, 12 jam ke depan. Puncak sekitar {time}, {n} persen.', card_nowcast_caption: 'Prakiraan hujan 15 menit · {unit} per interval',
+  data_export_failed: 'Tidak dapat membuat file ekspor',
 };

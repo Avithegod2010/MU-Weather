@@ -149,4 +149,5 @@ export const el: Strings = {
   speak_weather: 'Ανάγνωση του καιρού', stop_speech: 'Διακοπή ανάγνωσης', speech_text: '{city}. {condition}, {temp}. Αίσθηση {feels}.', speech_hilo: 'Μέγιστη {high}, ελάχιστη {low}.', speech_rain: 'Πιθανότητα βροχής {rain}.',
   err_body: 'Η εφαρμογή αντιμετώπισε πρόβλημα. Τα αποθηκευμένα δεδομένα σας είναι ασφαλή.',
   rain_band_heavy: 'Ισχυρή', rain_band_moderate: 'Μέτρια', rain_band_light: 'Ασθενής', chart_rain_caption: 'Πιθανότητα βροχής · επόμενες 12 ώρες', chart_rain_a11y: 'Πιθανότητα βροχής, επόμενες 12 ώρες. Μέγιστο γύρω στις {time}, {n} τοις εκατό.', card_nowcast_caption: 'Πρόβλεψη βροχής ανά 15 λεπτά · {unit} ανά διάστημα',
+  data_export_failed: 'Δεν ήταν δυνατή η δημιουργία του αρχείου εξαγωγής',
 };

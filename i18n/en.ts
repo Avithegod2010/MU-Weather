@@ -489,6 +489,7 @@ export const en = {
   data_export_csv_sub: 'Spreadsheet of logged predictions',
   data_export_json: 'Forecast log (JSON)',
   data_export_empty: 'No logged forecasts yet',
+  data_export_failed: "Couldn't create the export file",
 
   // Spoken forecast ("read my weather" button)
   speak_weather: 'Read weather aloud',
