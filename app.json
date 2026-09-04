@@ -74,6 +74,18 @@
             }
           ]
         }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#0D1631",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#0D1631"
+          }
+        }
       ]
     ],
     "extra": {
