@@ -499,6 +499,14 @@ export const en = {
 
   // Error boundary fallback
   err_body: 'The app ran into a problem. Your saved data is safe.',
+
+  // Rain chart & nowcast chrome
+  rain_band_heavy: 'Heavy',
+  rain_band_moderate: 'Moderate',
+  rain_band_light: 'Light',
+  chart_rain_caption: 'Chance of rain · next 12 hours',
+  chart_rain_a11y: 'Chance of rain, next 12 hours. Peak around {time}, {n} percent.',
+  card_nowcast_caption: '15-minute precipitation nowcast · {unit} per interval',
 };
 
 export type Strings = typeof en;

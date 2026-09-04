@@ -148,4 +148,5 @@ export const nl: Strings = {
   data_export: 'Data exporteren', data_export_csv: 'Voorspellingslogboek (CSV)', data_export_csv_sub: 'Spreadsheet met opgeslagen voorspellingen', data_export_json: 'Voorspellingslogboek (JSON)', data_export_empty: 'Nog geen opgeslagen voorspellingen',
   speak_weather: 'Weer voorlezen', stop_speech: 'Voorlezen stoppen', speech_text: '{city}. {condition}, {temp}. Voelt als {feels}.', speech_hilo: 'Hoog {high}, laag {low}.', speech_rain: 'Kans op regen {rain}.',
   err_body: 'De app kreeg een probleem. Je opgeslagen gegevens zijn veilig.',
+  rain_band_heavy: 'Zwaar', rain_band_moderate: 'Matig', rain_band_light: 'Licht', chart_rain_caption: 'Kans op regen · komende 12 uur', chart_rain_a11y: 'Kans op regen, komende 12 uur. Piek rond {time}, {n} procent.', card_nowcast_caption: '15-minuten neerslagverwachting · {unit} per interval',
 };

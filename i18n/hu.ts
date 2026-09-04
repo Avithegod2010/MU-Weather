@@ -148,4 +148,5 @@ export const hu: Strings = {
   data_export: 'Adatok exportálása', data_export_csv: 'Előrejelzési napló (CSV)', data_export_csv_sub: 'Táblázat a rögzített előrejelzésekről', data_export_json: 'Előrejelzési napló (JSON)', data_export_empty: 'Még nincs rögzített előrejelzés',
   speak_weather: 'Időjárás felolvasása', stop_speech: 'Felolvasás leállítása', speech_text: '{city}. {condition}, {temp}. Hőérzet {feels}.', speech_hilo: 'Legmagasabb {high}, legalacsonyabb {low}.', speech_rain: 'Eső esélye {rain}.',
   err_body: 'Az alkalmazás problémába ütközött. A mentett adataid biztonságban vannak.',
+  rain_band_heavy: 'Erős', rain_band_moderate: 'Mérsékelt', rain_band_light: 'Gyenge', chart_rain_caption: 'Eső esélye · következő 12 óra', chart_rain_a11y: 'Eső esélye, következő 12 óra. Csúcs körül {time}, {n} százalék.', card_nowcast_caption: '15 perces csapadékelőrejelzés · {unit} időszakonként',
 };

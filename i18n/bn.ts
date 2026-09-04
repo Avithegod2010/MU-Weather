@@ -148,4 +148,5 @@ export const bn: Strings = {
   data_export: 'ডেটা রপ্তানি', data_export_csv: 'পূর্বাভাস লগ (CSV)', data_export_csv_sub: 'সংরক্ষিত পূর্বাভাসের স্প্রেডশিট', data_export_json: 'পূর্বাভাস লগ (JSON)', data_export_empty: 'এখনও কোনো সংরক্ষিত পূর্বাভাস নেই',
   speak_weather: 'আবহাওয়া পড়ে শোনান', stop_speech: 'পড়া বন্ধ করুন', speech_text: '{city}. {condition}, {temp}. অনুভূত হয় {feels}.', speech_hilo: 'সর্বোচ্চ {high}, সর্বনিম্ন {low}.', speech_rain: 'বৃষ্টির সম্ভাবনা {rain}.',
   err_body: 'অ্যাপে একটি সমস্যা হয়েছে। আপনার সংরক্ষিত ডেটা নিরাপদ।',
+  rain_band_heavy: 'ভারী', rain_band_moderate: 'মধ্যম', rain_band_light: 'হালকা', chart_rain_caption: 'বৃষ্টির সম্ভাবনা · আগামী ১২ ঘণ্টা', chart_rain_a11y: 'বৃষ্টির সম্ভাবনা, আগামী ১২ ঘণ্টা। সর্বোচ্চ প্রায় {time}, {n} শতাংশ।', card_nowcast_caption: '১৫ মিনিটের বৃষ্টির পূর্বাভাস · প্রতি অন্তরে {unit}',
 };

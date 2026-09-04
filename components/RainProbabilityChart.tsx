@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { t } from '../utils/i18n';
 import type { AppTheme } from '../theme/palettes';
 import type { HourPoint } from '../api/types';
 import { formatHourLabel } from '../utils/format';
@@ -29,16 +30,15 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
     <View
       accessible={true}
       accessibilityRole="text"
-      accessibilityLabel={`Chance of rain · next 12 hours · ${formatHourLabel(
-        peak.time,
-        false,
-      )} · ${Math.round(peak.precipProbability)}%`}
+      accessibilityLabel={t('chart_rain_a11y')
+        .replace('{time}', formatHourLabel(peak.time, false))
+        .replace('{n}', String(Math.round(peak.precipProbability)))}
     >
       <View style={[styles.chartArea, { height: CHART_HEIGHT }]}>
         {[
-          { label: 'Heavy', ratio: 0.06 },
-          { label: 'Moderate', ratio: 0.42 },
-          { label: 'Light', ratio: 0.78 },
+          { label: t('rain_band_heavy'), ratio: 0.06 },
+          { label: t('rain_band_moderate'), ratio: 0.42 },
+          { label: t('rain_band_light'), ratio: 0.78 },
         ].map(({ label, ratio }) => (
           <View key={label} style={[styles.bandLine, { top: `${ratio * 100}%` }]} pointerEvents="none">
             <View style={[styles.bandDash, { backgroundColor: theme.trackColor }]} />
@@ -96,7 +96,7 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
         ))}
       </View>
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
-        Chance of rain · next 12 hours
+        {t('chart_rain_caption')}
       </Text>
     </View>
   );

@@ -148,4 +148,5 @@ export const fr: Strings = {
   data_export: 'Exporter les données', data_export_csv: 'Journal des prévisions (CSV)', data_export_csv_sub: 'Tableur des prévisions enregistrées', data_export_json: 'Journal des prévisions (JSON)', data_export_empty: 'Aucune prévision enregistrée pour le moment',
   speak_weather: 'Lire la météo à voix haute', stop_speech: 'Arrêter la lecture', speech_text: '{city}. {condition}, {temp}. Ressenti {feels}.', speech_hilo: 'Maximale {high}, minimale {low}.', speech_rain: 'Probabilité de pluie {rain}.',
   err_body: "L'application a rencontré un problème. Vos données sauvegardées sont en sécurité.",
+  rain_band_heavy: 'Forte', rain_band_moderate: 'Modérée', rain_band_light: 'Faible', chart_rain_caption: 'Probabilité de pluie · 12 prochaines heures', chart_rain_a11y: 'Probabilité de pluie, 12 prochaines heures. Pic vers {time}, {n} pour cent.', card_nowcast_caption: 'Prévision des précipitations à 15 min · {unit} par intervalle',
 };

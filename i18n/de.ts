@@ -148,4 +148,5 @@ export const de: Strings = {
   data_export: 'Daten exportieren', data_export_csv: 'Prognoseprotokoll (CSV)', data_export_csv_sub: 'Tabelle der gespeicherten Prognosen', data_export_json: 'Prognoseprotokoll (JSON)', data_export_empty: 'Noch keine gespeicherten Prognosen',
   speak_weather: 'Wetter vorlesen', stop_speech: 'Vorlesen beenden', speech_text: '{city}. {condition}, {temp}. Gefühlt {feels}.', speech_hilo: 'Höchstwert {high}, Tiefstwert {low}.', speech_rain: 'Regenwahrscheinlichkeit {rain}.',
   err_body: 'Die App hat ein Problem. Deine gespeicherten Daten sind sicher.',
+  rain_band_heavy: 'Stark', rain_band_moderate: 'Mäßig', rain_band_light: 'Leicht', chart_rain_caption: 'Regenwahrscheinlichkeit · nächste 12 Stunden', chart_rain_a11y: 'Regenwahrscheinlichkeit, nächste 12 Stunden. Spitze gegen {time}, {n} Prozent.', card_nowcast_caption: '15-Minuten-Niederschlagsvorhersage · {unit} pro Intervall',
 };

@@ -51,7 +51,7 @@ export function NowcastCard({ theme, minutely, nowcast }: NowcastCardProps) {
         })}
       </View>
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
-        15-minute precipitation nowcast · {precipUnitLabel()} per interval
+        {t('card_nowcast_caption').replace('{unit}', precipUnitLabel())}
       </Text>
     </Card>
   );
