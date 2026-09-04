@@ -10,6 +10,7 @@ export { default as CloudRain } from 'lucide-react-native/icons/cloud-rain';
 export { default as CloudSnow } from 'lucide-react-native/icons/cloud-snow';
 export { default as Snowflake } from 'lucide-react-native/icons/snowflake';
 export { default as CloudLightning } from 'lucide-react-native/icons/cloud-lightning';
+export { default as CloudOff } from 'lucide-react-native/icons/cloud-off';
 export { default as CloudHail } from 'lucide-react-native/icons/cloud-hail';
 export { default as Clock } from 'lucide-react-native/icons/clock';
 export { default as MapPin } from 'lucide-react-native/icons/map-pin';

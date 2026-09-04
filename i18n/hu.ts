@@ -147,4 +147,5 @@ export const hu: Strings = {
   tile_warnings: 'Figyelmeztetések', card_warnings: 'Hivatalos figyelmeztetések', warnings_until: '{t} időpontig', warnings_source: 'MeteoAlarm · hivatalos kormányzati figyelmeztetések',
   data_export: 'Adatok exportálása', data_export_csv: 'Előrejelzési napló (CSV)', data_export_csv_sub: 'Táblázat a rögzített előrejelzésekről', data_export_json: 'Előrejelzési napló (JSON)', data_export_empty: 'Még nincs rögzített előrejelzés',
   speak_weather: 'Időjárás felolvasása', stop_speech: 'Felolvasás leállítása', speech_text: '{city}. {condition}, {temp}. Hőérzet {feels}.', speech_hilo: 'Legmagasabb {high}, legalacsonyabb {low}.', speech_rain: 'Eső esélye {rain}.',
+  err_body: 'Az alkalmazás problémába ütközött. A mentett adataid biztonságban vannak.',
 };

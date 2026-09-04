@@ -10,6 +10,7 @@ import {
   Outfit_700Bold,
 } from './utils/fonts';
 import { HomeScreen } from './screens/HomeScreen';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import './tasks/backgroundAlertTask';
 
 export default function App() {
@@ -26,9 +27,11 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider>
-      <HomeScreen />
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <HomeScreen />
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 

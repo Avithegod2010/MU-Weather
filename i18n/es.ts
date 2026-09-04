@@ -147,4 +147,5 @@ export const es: Strings = {
   tile_warnings: 'Avisos', card_warnings: 'Avisos oficiales', warnings_until: 'Hasta {t}', warnings_source: 'MeteoAlarm · avisos gubernamentales oficiales',
   data_export: 'Exportar datos', data_export_csv: 'Registro de predicciones (CSV)', data_export_csv_sub: 'Hoja de cálculo con las predicciones guardadas', data_export_json: 'Registro de predicciones (JSON)', data_export_empty: 'Aún no hay predicciones guardadas',
   speak_weather: 'Leer el tiempo en voz alta', stop_speech: 'Detener lectura', speech_text: '{city}. {condition}, {temp}. Sensación de {feels}.', speech_hilo: 'Máxima {high}, mínima {low}.', speech_rain: 'Probabilidad de lluvia {rain}.',
+  err_body: 'La app encontró un problema. Tus datos guardados están a salvo.',
 };

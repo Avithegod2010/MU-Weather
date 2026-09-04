@@ -147,4 +147,5 @@ export const hi: Strings = {
   tile_warnings: 'चेतावनियाँ', card_warnings: 'आधिकारिक चेतावनियाँ', warnings_until: '{t} तक', warnings_source: 'MeteoAlarm · सरकारी आधिकारिक चेतावनियाँ',
   data_export: 'डेटा निर्यात', data_export_csv: 'पूर्वानुमान लॉग (CSV)', data_export_csv_sub: 'दर्ज पूर्वानुमानों की स्प्रेडशीट', data_export_json: 'पूर्वानुमान लॉग (JSON)', data_export_empty: 'अभी कोई दर्ज पूर्वानुमान नहीं',
   speak_weather: 'मौसम सुनाएँ', stop_speech: 'सुनाना बंद करें', speech_text: '{city}. {condition}, {temp}. महसूस होता है {feels}.', speech_hilo: 'अधिकतम {high}, न्यूनतम {low}.', speech_rain: 'बारिश की संभावना {rain}.',
+  err_body: 'ऐप में एक समस्या आई। आपका सेव किया डेटा सुरक्षित है।',
 };

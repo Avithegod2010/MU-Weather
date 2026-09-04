@@ -496,6 +496,9 @@ export const en = {
   speech_text: '{city}. {condition}, {temp}. Feels like {feels}.',
   speech_hilo: 'High {high}, low {low}.',
   speech_rain: 'Chance of rain {rain}.',
+
+  // Error boundary fallback
+  err_body: 'The app ran into a problem. Your saved data is safe.',
 };
 
 export type Strings = typeof en;

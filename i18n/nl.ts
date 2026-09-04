@@ -147,4 +147,5 @@ export const nl: Strings = {
   tile_warnings: 'Waarschuwingen', card_warnings: 'Officiële waarschuwingen', warnings_until: 'Tot {t}', warnings_source: 'MeteoAlarm · officiële overheidswaarschuwingen',
   data_export: 'Data exporteren', data_export_csv: 'Voorspellingslogboek (CSV)', data_export_csv_sub: 'Spreadsheet met opgeslagen voorspellingen', data_export_json: 'Voorspellingslogboek (JSON)', data_export_empty: 'Nog geen opgeslagen voorspellingen',
   speak_weather: 'Weer voorlezen', stop_speech: 'Voorlezen stoppen', speech_text: '{city}. {condition}, {temp}. Voelt als {feels}.', speech_hilo: 'Hoog {high}, laag {low}.', speech_rain: 'Kans op regen {rain}.',
+  err_body: 'De app kreeg een probleem. Je opgeslagen gegevens zijn veilig.',
 };

@@ -147,4 +147,5 @@ export const fr: Strings = {
   tile_warnings: 'Alertes', card_warnings: 'Alertes officielles', warnings_until: "Jusqu'à {t}", warnings_source: 'MeteoAlarm · alertes gouvernementales officielles',
   data_export: 'Exporter les données', data_export_csv: 'Journal des prévisions (CSV)', data_export_csv_sub: 'Tableur des prévisions enregistrées', data_export_json: 'Journal des prévisions (JSON)', data_export_empty: 'Aucune prévision enregistrée pour le moment',
   speak_weather: 'Lire la météo à voix haute', stop_speech: 'Arrêter la lecture', speech_text: '{city}. {condition}, {temp}. Ressenti {feels}.', speech_hilo: 'Maximale {high}, minimale {low}.', speech_rain: 'Probabilité de pluie {rain}.',
+  err_body: "L'application a rencontré un problème. Vos données sauvegardées sont en sécurité.",
 };

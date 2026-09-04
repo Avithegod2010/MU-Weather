@@ -147,4 +147,5 @@ export const de: Strings = {
   tile_warnings: 'Warnungen', card_warnings: 'Offizielle Warnungen', warnings_until: 'Bis {t}', warnings_source: 'MeteoAlarm · offizielle Regierungswarnungen',
   data_export: 'Daten exportieren', data_export_csv: 'Prognoseprotokoll (CSV)', data_export_csv_sub: 'Tabelle der gespeicherten Prognosen', data_export_json: 'Prognoseprotokoll (JSON)', data_export_empty: 'Noch keine gespeicherten Prognosen',
   speak_weather: 'Wetter vorlesen', stop_speech: 'Vorlesen beenden', speech_text: '{city}. {condition}, {temp}. Gefühlt {feels}.', speech_hilo: 'Höchstwert {high}, Tiefstwert {low}.', speech_rain: 'Regenwahrscheinlichkeit {rain}.',
+  err_body: 'Die App hat ein Problem. Deine gespeicherten Daten sind sicher.',
 };

@@ -147,4 +147,5 @@ export const id: Strings = {
   tile_warnings: 'Peringatan', card_warnings: 'Peringatan resmi', warnings_until: 'Hingga {t}', warnings_source: 'MeteoAlarm · peringatan resmi pemerintah',
   data_export: 'Ekspor data', data_export_csv: 'Log prakiraan (CSV)', data_export_csv_sub: 'Lembar lajur prakiraan yang tercatat', data_export_json: 'Log prakiraan (JSON)', data_export_empty: 'Belum ada prakiraan yang tercatat',
   speak_weather: 'Bacakan cuaca', stop_speech: 'Hentikan pembacaan', speech_text: '{city}. {condition}, {temp}. Terasa seperti {feels}.', speech_hilo: 'Tertinggi {high}, terendah {low}.', speech_rain: 'Kemungkinan hujan {rain}.',
+  err_body: 'Aplikasi mengalami masalah. Data tersimpan Anda aman.',
 };
