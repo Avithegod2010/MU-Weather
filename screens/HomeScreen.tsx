@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { F } from '../theme/typography';
 import {
   ActivityIndicator,
+  AppState,
   Pressable,
   RefreshControl,
   StyleSheet,
@@ -81,7 +82,7 @@ import { DayDetailScreen } from '../components/DayDetailScreen';
 import { FEATURES } from '../config/features';
 import { applyHomeBackground } from '../config/backgrounds';
 import { applyColorTheme } from '../config/colorThemes';
-import { resolveMaterialYouPalette } from '../utils/materialYou';
+import { resolveMaterialYouPalette, refreshMaterialYouPalette, type MaterialYouPalette } from '../utils/materialYou';
 import { applyDensity } from '../theme/palettes';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
@@ -151,7 +152,26 @@ export function HomeScreen() {
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   // Resolve once per session; null (Expo Go etc.) makes the theme fall back to
   // the static Material You gradient. Module-level memoized singleton.
-  const materialYouPalette = useMemo(() => resolveMaterialYouPalette(), []);
+  const [materialYouPalette, setMaterialYouPalette] = useState<MaterialYouPalette | null>(
+    () => resolveMaterialYouPalette(),
+  );
+  // A wallpaper change only surfaces when the app comes back to the foreground:
+  // re-run the guarded resolve + validate, compare with the current palette
+  // (65 short strings - stringify is cheap) and adopt the new one only when it
+  // really differs, so nothing re-renders and the theme never re-applies for a
+  // no-op foreground. When 'materialyou' is not the active theme the listener
+  // is not even registered, so the refresh path can never reach the theme memo.
+  useEffect(() => {
+    if (settings.colorTheme !== 'materialyou') return;
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') return;
+      const next = refreshMaterialYouPalette();
+      if (next === null) return; // resolve failed - keep whatever is on screen
+      if (JSON.stringify(next) === JSON.stringify(materialYouPalette)) return; // wallpaper unchanged
+      setMaterialYouPalette(next);
+    });
+    return () => subscription.remove();
+  }, [settings.colorTheme, materialYouPalette]);
   const theme = useMemo(
     () =>
       applyDensity(

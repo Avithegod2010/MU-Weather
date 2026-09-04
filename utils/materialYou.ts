@@ -91,3 +91,26 @@ export function resolveMaterialYouPalette(): MaterialYouPalette | null {
   if (cached === undefined) cached = compute();
   return cached;
 }
+
+/**
+ * Re-run the guarded resolve + validate cycle and return the fresh result.
+ * Used on app foreground transitions so a wallpaper change is picked up
+ * without restarting the app. Every failure path is guarded:
+ * - `compute()` itself try/catches the native call and validation, so a
+ *   synchronous native throw becomes `null` here.
+ * - A `null` result never evicts an already-good palette from the memo
+ *   (one failed refresh must not regress the theme to the static gradient),
+ *   and the catch keeps the previous palette so this can never throw into a
+ *   React event handler. Callers compare against their current palette and
+ *   simply ignore a `null` return.
+ */
+export function refreshMaterialYouPalette(): MaterialYouPalette | null {
+  try {
+    const next = compute();
+    if (next !== null || cached == null) cached = next;
+    return next;
+  } catch (error) {
+    console.log('[materialYou] palette refresh failed - keeping the previous palette', error);
+    return cached ?? null;
+  }
+}
