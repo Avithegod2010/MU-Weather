@@ -98,6 +98,15 @@ export function formatPressure(hPa: number | null | undefined): string {
   return `${formatPressureValue(hPa)} ${pressureUnitLabel()}`;
 }
 
+/**
+ * Converted pressure trend/delta (10-min or 3-h) with unit-appropriate
+ * decimals: trends are small, so inHg needs 2 dp or typical changes render
+ * as "0.0". Sign is the caller's concern.
+ */
+export function formatPressureTrendDelta(hPa: number): string {
+  return convertPressure(hPa).toFixed(unitState.pressure === 'inHg' ? 2 : 1);
+}
+
 function parseLocalIso(iso: string): Date | null {
   if (!iso) return null;
   const normalized = iso.length === 16 ? `${iso}:00Z` : iso.endsWith('Z') ? iso : `${iso}Z`;

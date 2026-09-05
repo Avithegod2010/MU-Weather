@@ -29,7 +29,7 @@ import {
   formatPressureValue,
   formatVisibility,
   windUnitLabel,
-  convertPressure,
+  formatPressureTrendDelta,
   dewPointComfort,
   formatPressureTrend,
   precipUnitLabel,
@@ -470,7 +470,7 @@ export function TileDetailScreen({
         value:
           current.pressureTrend === null
             ? '--'
-            : `${current.pressureTrend > 0 ? '+' : ''}${convertPressure(current.pressureTrend).toFixed(1)} ${pressureUnitLabel()}`,
+            : `${current.pressureTrend > 0 ? '+' : ''}${formatPressureTrendDelta(current.pressureTrend)} ${pressureUnitLabel()}`,
       },
       { label: t('f_high_24'), value: range.max !== null ? formatPressure(range.max) : '--' },
       { label: t('f_low_24'), value: range.min !== null ? formatPressure(range.min) : '--' },

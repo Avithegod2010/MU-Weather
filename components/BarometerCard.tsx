@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Gauge } from '../utils/uiIcons';
 import { Card } from './Card';
 import { useBarometer } from '../hooks/useBarometer';
-import { convertPressure, formatPressure, formatPressureValue, pressureUnitLabel } from '../utils/format';
+import { formatPressureTrendDelta, formatPressure, formatPressureValue, pressureUnitLabel } from '../utils/format';
 import type { AppTheme } from '../theme/palettes';
 
 interface BarometerCardProps {
@@ -23,14 +23,14 @@ export function BarometerCard({ theme, forecastPressure, revealDelay = 660 }: Ba
       : trendPer10Min > 0.2
         ? t('baro_rising_fast').replace(
             '{n}',
-            `${convertPressure(trendPer10Min).toFixed(1)} ${pressureUnitLabel()}`,
+            `${formatPressureTrendDelta(trendPer10Min)} ${pressureUnitLabel()}`,
           )
         : trendPer10Min > 0.05
           ? t('trend_rising')
           : trendPer10Min < -0.2
             ? t('baro_falling_fast').replace(
                 '{n}',
-                `${convertPressure(trendPer10Min).toFixed(1)} ${pressureUnitLabel()}`,
+                `${formatPressureTrendDelta(trendPer10Min)} ${pressureUnitLabel()}`,
               )
             : trendPer10Min < -0.05
               ? t('trend_falling')
@@ -54,7 +54,7 @@ export function BarometerCard({ theme, forecastPressure, revealDelay = 660 }: Ba
             <Text style={[styles.caption, { color: theme.textTertiary }]}>
               {t('baro_forecast_sea').replace('{n}', formatPressure(forecastPressure))}
               {delta !== null
-                ? ` · ${t('baro_at_altitude').replace('{n}', `${delta >= 0 ? '+' : ''}${convertPressure(delta).toFixed(1)}`)}`
+                ? ` · ${t('baro_at_altitude').replace('{n}', `${delta >= 0 ? '+' : ''}${formatPressureTrendDelta(delta)}`)}`
                 : ''}
             </Text>
           </>
