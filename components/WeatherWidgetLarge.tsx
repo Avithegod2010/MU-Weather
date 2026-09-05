@@ -22,7 +22,7 @@ interface WeatherWidgetLargeProps {
   rainChance: string;
   precipitation: string;
   updatedLabel: string;
-  hours: Array<{ label: string; temp: string; rain: string }>;
+  hours: Array<{ time: string; label: string; temp: string; rain: string }>;
   /** Whether data exists at all - false renders the no-data placeholder. */
   hasData: boolean;
 }
@@ -32,7 +32,9 @@ interface WeatherWidgetLargeProps {
  * strip for the next few hours, rendered through RemoteViews by the
  * react-native-android-widget task handler. All styling goes through the
  * `style` prop (fontSize/color/backgroundColor are style keys in this
- * library, not top-level props). Tap opens the app.
+ * library, not top-level props). Tapping the background opens the app; each
+ * hour cell sends an `openHour` click (with the hour's ISO time) to the task
+ * handler, which launches the app focused on that hour.
  */
 export function WeatherWidgetLarge({
   temperature,
@@ -102,8 +104,11 @@ export function WeatherWidgetLarge({
           >
             {hours.map((hour) => (
               <FlexWidget
-                key={hour.label}
+                key={hour.time}
                 style={{ flexDirection: 'column', alignItems: 'center', flex: 1 }}
+                clickAction="openHour"
+                clickActionData={{ time: hour.time }}
+                accessibilityLabel={`${hour.label}, ${hour.temp}, ${hour.rain} chance of rain`}
               >
                 <TextWidget text={hour.label} style={{ fontSize: 10, color: C.dark.subtle }} />
                 <TextWidget
@@ -133,6 +138,7 @@ export function renderWeatherWidgetLargeFromBundle(bundle: WeatherBundle): React
   const today = bundle.daily[0];
   const { label } = describeWmo(bundle.current.weatherCode);
   const hours = bundle.hourly.slice(0, 5).map((hour) => ({
+    time: hour.time,
     // hour.time is ISO "YYYY-MM-DDTHH:mm" - the HH part is enough for a strip label.
     label: `${hour.time.slice(11, 13)}h`,
     temp: `${Math.round(hour.temperature)}°`,

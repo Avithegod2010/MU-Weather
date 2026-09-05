@@ -1,5 +1,5 @@
 import { t, tWmo } from '../utils/i18n';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -21,6 +21,7 @@ import {
   convertWind,
   formatHourLabel,
   formatPrecip,
+  formatPressure,
   formatTemp,
   formatVisibility,
   windUnitLabel,
@@ -29,9 +30,18 @@ import { inlineEntering, inlineExiting } from '../utils/detailAnimations';
 import { F } from '../theme/typography';
 import type { HourPoint } from '../api/types';
 
+/** External (widget deep-link) request to open one specific hour's panel. */
+export interface HourFocusTarget {
+  /** HourPoint time, ISO "YYYY-MM-DDTHH:mm". */
+  time: string;
+  /** Increases on every focus request so repeated taps re-open the panel. */
+  seq: number;
+}
+
 interface HourlyForecastProps {
   theme: AppTheme;
   hours: HourPoint[];
+  focus?: HourFocusTarget | null;
 }
 
 type HourView = 'temp' | 'rain' | 'wind';
@@ -40,11 +50,29 @@ const COL_WIDTH = 72;
 const CURVE_HEIGHT = 72;
 const CURVE_PADDING = 16;
 
-export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
+export function HourlyForecast({ theme, hours, focus }: HourlyForecastProps) {
   const [view, setView] = useState<HourView>('temp');
   const [selected, setSelected] = useState<number | null>(null);
   const scrollRef = useRef<ScrollView>(null);
   const viewportWidth = useRef(0);
+  const lastFocusSeq = useRef(0);
+  // Must stay above the early return (rules of hooks).
+  useEffect(() => {
+    if (!focus || focus.seq === lastFocusSeq.current) return;
+    lastFocusSeq.current = focus.seq;
+    const slice = hours.slice(0, 24);
+    const index = slice.findIndex((hour) => hour.time === focus.time);
+    if (index < 0) return;
+    setSelected(index);
+    const viewport = viewportWidth.current;
+    if (viewport > 0) {
+      const target = Math.min(
+        Math.max(index * COL_WIDTH + COL_WIDTH / 2 - viewport / 2, 0),
+        Math.max(slice.length * COL_WIDTH - viewport, 0),
+      );
+      scrollRef.current?.scrollTo({ x: target, animated: true });
+    }
+  }, [focus, hours]);
   const slice = hours.slice(0, 24);
   if (!slice.length) return null;
 
@@ -135,7 +163,7 @@ export function HourlyForecast({ theme, hours }: HourlyForecastProps) {
       stats.push({ label: t('dew_point'), value: formatTemp(selectedHour.dewPoint) });
     }
     if (selectedHour.pressure !== null) {
-      stats.push({ label: t('card_pressure'), value: `${Math.round(selectedHour.pressure)} hPa` });
+      stats.push({ label: t('card_pressure'), value: formatPressure(selectedHour.pressure) });
     }
     if (selectedHour.uvIndex !== null) {
       stats.push({ label: t('card_uv'), value: String(Math.round(selectedHour.uvIndex)) });

@@ -4,18 +4,29 @@ export type TempUnit = 'celsius' | 'fahrenheit';
 export type WindUnit = 'kmh' | 'mph';
 export type TimeFormat = '12h' | '24h';
 export type PrecipUnit = 'mm' | 'inches';
+export type PressureUnit = 'hPa' | 'mmHg' | 'inHg';
 
 interface UnitState {
   temp: TempUnit;
   wind: WindUnit;
   time: TimeFormat;
   precip: PrecipUnit;
+  pressure: PressureUnit;
+  /** Show the Beaufort force name next to wind speeds */
+  beaufort: boolean;
 }
 
 /** 1 inch = 25.4 mm exactly. */
 const MM_PER_INCH = 25.4;
 
-let unitState: UnitState = { temp: 'celsius', wind: 'kmh', time: '12h', precip: 'mm' };
+let unitState: UnitState = {
+  temp: 'celsius',
+  wind: 'kmh',
+  time: '12h',
+  precip: 'mm',
+  pressure: 'hPa',
+  beaufort: false,
+};
 
 export function setUnits(next: Partial<UnitState>): void {
   unitState = { ...unitState, ...next };
@@ -59,6 +70,32 @@ export function formatPrecip(mmValue: number | null | undefined): string {
     return `-- ${precipUnitLabel()}`;
   }
   return `${formatPrecipValue(mmValue)} ${precipUnitLabel()}`;
+}
+
+/** hPa is the API unit; display units convert from it. */
+export function pressureUnitLabel(): PressureUnit {
+  return unitState.pressure;
+}
+
+/** hPa → mmHg ×0.750062; hPa → inHg ×0.02953. */
+export function convertPressure(hPa: number): number {
+  if (unitState.pressure === 'mmHg') return hPa * 0.750062;
+  if (unitState.pressure === 'inHg') return hPa * 0.02953;
+  return hPa;
+}
+
+/** Number part of a pressure reading: hPa/mmHg 0 decimals, inHg 2. */
+export function formatPressureValue(hPa: number | null | undefined): string {
+  if (hPa === null || hPa === undefined || Number.isNaN(hPa)) return '--';
+  return convertPressure(hPa).toFixed(unitState.pressure === 'inHg' ? 2 : 0);
+}
+
+/** Full pressure reading with unit, e.g. "1013 hPa" or "29.91 inHg". */
+export function formatPressure(hPa: number | null | undefined): string {
+  if (hPa === null || hPa === undefined || Number.isNaN(hPa)) {
+    return `-- ${pressureUnitLabel()}`;
+  }
+  return `${formatPressureValue(hPa)} ${pressureUnitLabel()}`;
 }
 
 function parseLocalIso(iso: string): Date | null {

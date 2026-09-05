@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
+import * as Linking from 'expo-linking';
 import Animated, {
   FadeIn,
   useAnimatedScrollHandler,
@@ -87,7 +88,7 @@ import { applyDensity } from '../theme/palettes';
 import { getSnarkComment } from '../utils/snark';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { CurrentWeather } from '../components/CurrentWeather';
-import { HourlyForecast } from '../components/HourlyForecast';
+import { HourlyForecast, type HourFocusTarget } from '../components/HourlyForecast';
 import { DailyForecast } from '../components/DailyForecast';
 import { DetailCards } from '../components/DetailCards';
 import { RainProbabilityChart } from '../components/RainProbabilityChart';
@@ -172,6 +173,44 @@ export function HomeScreen() {
     });
     return () => subscription.remove();
   }, [settings.colorTheme, materialYouPalette]);
+  // Android static app shortcuts (long-press app icon) deep-link in via
+  // muweather://radar | search | favorites, and the 4x2 widget's hour cells
+  // via muweather://hour/<ISO>. Registered only in real builds - Expo Go
+  // cannot receive launcher shortcut or widget-click intents.
+  const [hourFocus, setHourFocus] = useState<HourFocusTarget | null>(null);
+  const hourFocusSeq = useRef(0);
+  useEffect(() => {
+    const openShortcut = (url: string | null) => {
+      if (!url) return;
+      const { path, hostname } = Linking.parse(url);
+      if (hostname === 'hour' && typeof path === 'string' && path.length > 0) {
+        const raw = path.replace(/^\//, '');
+        // Parsers disagree on whether the ISO colon survives - accept both.
+        const time = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(raw)
+          ? raw
+          : (() => {
+              try {
+                const decoded = decodeURIComponent(raw);
+                return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(decoded) ? decoded : null;
+              } catch {
+                return null;
+              }
+            })();
+        if (time) {
+          hourFocusSeq.current += 1;
+          setHourFocus({ time, seq: hourFocusSeq.current });
+        }
+        return;
+      }
+      const target = path ?? hostname;
+      if (target === 'radar') setMapOpen(true);
+      else if (target === 'search') setSearchOpen(true);
+      else if (target === 'favorites') setFavoritesOpen(true);
+    };
+    Linking.getInitialURL().then(openShortcut).catch(() => {});
+    const subscription = Linking.addEventListener('url', (event) => openShortcut(event.url));
+    return () => subscription.remove();
+  }, []);
   const theme = useMemo(
     () =>
       applyDensity(
@@ -513,7 +552,7 @@ export function HomeScreen() {
 
               {showSection('hourly') ? (
                 <Reveal delay={170}>
-                  <HourlyForecast theme={theme} hours={weather.data.hourly} />
+                  <HourlyForecast theme={theme} hours={weather.data.hourly} focus={hourFocus} />
                 </Reveal>
               ) : null}
 
