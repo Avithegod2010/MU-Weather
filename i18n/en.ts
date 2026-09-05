@@ -449,6 +449,7 @@ export const en = {
 
   // Notification copy
   notif_digest_title: 'Tomorrow at a glance',
+  notif_digest_action: 'Read my forecast',
   notif_golden_title: 'Golden hour soon',
   notif_golden_body: 'Golden light starts in about {n} min — perfect for photos.',
 

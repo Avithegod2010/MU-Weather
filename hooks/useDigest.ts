@@ -4,6 +4,7 @@ import * as Notifications from '../utils/notifications';
 import { t } from '../utils/i18n';
 import { describeWmo } from '../utils/wmo';
 import { uvBand } from '../utils/aqi';
+import { DIGEST_CATEGORY } from '../utils/spokenDigest';
 import type { WeatherBundle } from '../api/types';
 
 const DIGEST_IDENTIFIER = 'daily-digest';
@@ -54,6 +55,7 @@ export function useDigest(
             title: t('notif_digest_title'),
             body,
             sound: false,
+            categoryIdentifier: DIGEST_CATEGORY,
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.DAILY,

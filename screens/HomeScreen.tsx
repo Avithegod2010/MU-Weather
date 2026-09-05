@@ -113,6 +113,8 @@ import { useSettings } from '../hooks/useSettings';
 import { useProviderStatus } from '../hooks/useProviderStatus';
 import { useYearAgo } from '../hooks/useYearAgo';
 import { useDigest } from '../hooks/useDigest';
+import { registerDigestReadAction, setSpokenDigestSource } from '../utils/spokenDigest';
+import { formatTemp } from '../utils/format';
 import { useGoldenHour } from '../hooks/useGoldenHour';
 import { useRainAlert } from '../hooks/useRainAlert';
 import { usePastDays } from '../hooks/usePastDays';
@@ -246,6 +248,29 @@ export function HomeScreen() {
   useDigest(settings.digestEnabled, settings.digestHour, weather.data);
   useGoldenHour(settings.goldenHourEnabled, weather.data);
   useRainAlert(settings.rainAlertEnabled, weather.data);
+  // Digest notification's "Read my forecast" action: register the category in
+  // the app language, and keep the spoken-forecast source fresh so a tap on
+  // the action can speak the current forecast.
+  useEffect(() => {
+    void registerDigestReadAction();
+  }, [settings.language]);
+  useEffect(() => {
+    const data = weather.data;
+    if (!data || !active) {
+      setSpokenDigestSource(null);
+      return;
+    }
+    const today = data.daily[0] ?? null;
+    setSpokenDigestSource({
+      city: active.name,
+      condition: conditionLabel,
+      temperature: formatTemp(data.current.temperature),
+      feelsLike: formatTemp(data.current.apparentTemperature),
+      high: today ? formatTemp(today.tMax) : undefined,
+      low: today ? formatTemp(today.tMin) : undefined,
+      rain: today ? `${Math.round(today.precipProbabilityMax)}%` : undefined,
+    });
+  }, [weather.data, active, conditionLabel, settings.tempUnit]);
   const calendarWeather = useCalendarWeather(
     FEATURES.calendarWeather && calendarEnabled,
     weather.data?.daily ?? [],
