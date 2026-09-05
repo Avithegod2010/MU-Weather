@@ -32,8 +32,9 @@ export default function App() {
     });
     // Cold start: the app was launched by the action tap — recover the response.
     void Notifications.getLastNotificationResponseAsync().then((response) => {
+      // Clear unconditionally: a stale response must never replay on a later launch.
+      void Notifications.clearLastNotificationResponseAsync();
       if (response?.actionIdentifier === DIGEST_READ_ACTION) {
-        void Notifications.clearLastNotificationResponseAsync();
         void speakDigestFromSource();
       }
     });

@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, Clock3 as History } from '../utils/uiIcons';
 import { Card } from './Card';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
-import { formatPrecip, formatPrecipValue, tempColor, getUnits, formatDayFull } from '../utils/format';
+import { formatPrecip, formatPrecipValue, tempColor, getUnits } from '../utils/format';
 import { loadForecastLog, type ForecastLogEntry } from '../utils/forecastLog';
 import { computeAccuracy } from '../utils/accuracy';
 import { haptics } from '../utils/haptics';
@@ -37,6 +37,12 @@ const SPARK_PADDING = 8;
 function weekdayOf(date: string): number {
   const time = Date.parse(`${date}T12:00:00Z`);
   return Number.isNaN(time) ? -1 : new Date(time).getUTCDay();
+}
+
+/** Short localized date, e.g. "Sep 3" — disambiguates the repeated weekdays a 30-day window holds. */
+function shortDate(date: string): string {
+  const time = Date.parse(`${date}T12:00:00`);
+  return Number.isNaN(time) ? '' : new Date(time).toLocaleDateString([], { month: 'short', day: 'numeric' });
 }
 
 /** Signed delta chip text, e.g. `+2°`, `-1°`, `±0°`. */
@@ -246,6 +252,8 @@ function AccuracyBody({
   }
 
   const worst = stats.worstMiss;
+  // Display-unit scale for the worst-miss chip (deltaColor thresholds stay °C-calibrated).
+  const deltaScale = getUnits().temp === 'fahrenheit' ? 9 / 5 : 1;
 
   return (
     <>
@@ -274,7 +282,7 @@ function AccuracyBody({
             {t('accuracy_rain')}
           </Text>
           <Text style={[styles.accValue, { color: theme.textPrimary }]}>
-            {stats.rainCorrect}/{stats.compared}
+            {stats.rainTotal > 0 ? `${stats.rainCorrect}/${stats.rainTotal}` : '–'}
           </Text>
         </View>
         <View style={styles.accRow}>
@@ -292,11 +300,11 @@ function AccuracyBody({
           {worst ? (
             <View style={styles.accWorst}>
               <Text style={[styles.accDate, { color: theme.textTertiary }]}>
-                {formatDayFull(worst.date)}
+                {shortDate(worst.date)}
               </Text>
               <View style={[styles.chip, { backgroundColor: theme.chipBg }]}>
                 <Text style={[styles.chipText, { color: deltaColor(worst.delta) }]}>
-                  {deltaChipText(worst.delta, 0)}
+                  {deltaChipText(worst.delta * deltaScale, 0)}
                 </Text>
               </View>
             </View>

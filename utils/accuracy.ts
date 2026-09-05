@@ -8,8 +8,10 @@ export interface AccuracyStats {
   maeHigh: number;
   /** Mean |actual.tMin - forecast.tMin| in raw °C */
   maeLow: number;
-  /** Days where "was it a rain day?" call agreed (>= 1.0 mm on both sides) */
+  /** Actual rain days whose forecast also called rain (>= 1.0 mm) */
   rainCorrect: number;
+  /** Actual rain days in the compared window — the denominator for rainCorrect */
+  rainTotal: number;
   /** Biggest |ΔtMax| day, signed actual - forecast (rounded) */
   worstMiss: { date: string; delta: number } | null;
 }
@@ -33,6 +35,7 @@ export function computeAccuracy(
   let highErrorSum = 0;
   let lowErrorSum = 0;
   let rainCorrect = 0;
+  let rainTotal = 0;
   let worstMiss: AccuracyStats['worstMiss'] = null;
 
   for (const actual of actuals) {
@@ -47,7 +50,10 @@ export function computeAccuracy(
 
     const actualRain = actual.precipSum >= RAIN_DAY_MM;
     const forecastRain = forecast.precipSum >= RAIN_DAY_MM;
-    if (actualRain === forecastRain) rainCorrect += 1;
+    if (actualRain) {
+      rainTotal += 1;
+      if (forecastRain) rainCorrect += 1;
+    }
 
     const delta = Math.round(highDelta);
     if (!worstMiss || Math.abs(delta) > Math.abs(worstMiss.delta)) {
@@ -61,6 +67,7 @@ export function computeAccuracy(
     maeHigh: highErrorSum / compared,
     maeLow: lowErrorSum / compared,
     rainCorrect,
+    rainTotal,
     worstMiss,
   };
 }
