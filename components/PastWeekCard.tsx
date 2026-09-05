@@ -6,8 +6,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, Clock3 as History } from '../utils/uiIcons';
 import { Card } from './Card';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
-import { formatPrecip, formatPrecipValue, tempColor } from '../utils/format';
+import { formatPrecip, formatPrecipValue, tempColor, getUnits, formatDayFull } from '../utils/format';
 import { loadForecastLog, type ForecastLogEntry } from '../utils/forecastLog';
+import { computeAccuracy } from '../utils/accuracy';
 import { haptics } from '../utils/haptics';
 import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
@@ -18,8 +19,8 @@ interface PastWeekCardProps {
   /** Archive actuals, oldest first. May hold up to 30 days. */
   days: PastDayActual[];
   /** History window shown - the archive feed covers both options */
-  pastDaysRange?: 7 | 30;
-  onRangeChange?: (range: 7 | 30) => void;
+  pastDaysRange?: 7 | 30 | 'accuracy';
+  onRangeChange?: (range: 7 | 30 | 'accuracy') => void;
 }
 
 const PRECIP_COLOR = '#A5DBF9';
@@ -70,16 +71,17 @@ export function PastWeekCard({ theme, days, pastDaysRange = 7, onRangeChange }: 
 
   const ordered = [...days].sort((a, b) => (a.date < b.date ? -1 : 1));
   const shown = pastDaysRange === 30 ? ordered : ordered.slice(-7);
+  const isAccuracy = pastDaysRange === 'accuracy';
   const isMonth = pastDaysRange === 30;
 
   return (
     <Card
       theme={theme}
-      title={t(isMonth ? 'card_past_week_30' : 'card_past_week')}
+      title={t(isAccuracy ? 'card_accuracy' : isMonth ? 'card_past_week_30' : 'card_past_week')}
       icon={History}
       headerRight={
         <View style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}>
-          {([7, 30] as const).map((option) => {
+          {([7, 30, 'accuracy'] as const).map((option) => {
             const active = pastDaysRange === option;
             return (
               <Pressable
@@ -95,7 +97,9 @@ export function PastWeekCard({ theme, days, pastDaysRange = 7, onRangeChange }: 
                   active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' },
                 ]}
                 accessibilityRole="button"
-                accessibilityLabel={t('trip_days').replace('{n}', String(option))}
+                accessibilityLabel={
+                  option === 'accuracy' ? t('accuracy_tab') : t('trip_days').replace('{n}', String(option))
+                }
                 accessibilityState={{ selected: active }}
               >
                 <Text
@@ -104,7 +108,7 @@ export function PastWeekCard({ theme, days, pastDaysRange = 7, onRangeChange }: 
                     { color: active ? theme.textPrimary : theme.textTertiary },
                   ]}
                 >
-                  {option}
+                  {option === 'accuracy' ? t('accuracy_tab') : option}
                 </Text>
               </Pressable>
             );
@@ -112,7 +116,9 @@ export function PastWeekCard({ theme, days, pastDaysRange = 7, onRangeChange }: 
         </View>
       }
     >
-      {isMonth ? (
+      {isAccuracy ? (
+        <AccuracyBody theme={theme} days={ordered} log={log} />
+      ) : isMonth ? (
         <ThirtyDayBody theme={theme} days={shown} />
       ) : (
         <SevenDayBody theme={theme} days={shown} log={log} />
@@ -206,6 +212,99 @@ function SevenDayBody({
           {t('past_week_note')}
         </Text>
       ) : null}
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Accuracy view: personal mean errors over the whole logged window    */
+/* ------------------------------------------------------------------ */
+
+/** °C delta → display-unit number string with 1 decimal (°F scale ×9/5). */
+function deltaDisplay(c: number): string {
+  const value = getUnits().temp === 'fahrenheit' ? c * (9 / 5) : c;
+  return value.toFixed(1);
+}
+
+function AccuracyBody({
+  theme,
+  days,
+  log,
+}: {
+  theme: AppTheme;
+  days: PastDayActual[];
+  log: ForecastLogEntry[];
+}) {
+  const stats = computeAccuracy(log, days);
+
+  if (!stats) {
+    return (
+      <Text style={[styles.footnote, { color: theme.textTertiary }]}>
+        {t('accuracy_empty')}
+      </Text>
+    );
+  }
+
+  const worst = stats.worstMiss;
+
+  return (
+    <>
+      <Text style={[styles.accHeadline, { color: theme.textSecondary }]}>
+        {t('accuracy_headline').split('{n}').join(deltaDisplay(stats.maeHigh))}
+      </Text>
+      <View style={styles.accRows}>
+        <View style={styles.accRow}>
+          <Text style={[styles.accLabel, { color: theme.textSecondary }]}>
+            {t('accuracy_high')}
+          </Text>
+          <Text style={[styles.accValue, { color: theme.textPrimary }]}>
+            ±{deltaDisplay(stats.maeHigh)}°
+          </Text>
+        </View>
+        <View style={styles.accRow}>
+          <Text style={[styles.accLabel, { color: theme.textSecondary }]}>
+            {t('accuracy_low')}
+          </Text>
+          <Text style={[styles.accValue, { color: theme.textPrimary }]}>
+            ±{deltaDisplay(stats.maeLow)}°
+          </Text>
+        </View>
+        <View style={styles.accRow}>
+          <Text style={[styles.accLabel, { color: theme.textSecondary }]}>
+            {t('accuracy_rain')}
+          </Text>
+          <Text style={[styles.accValue, { color: theme.textPrimary }]}>
+            {stats.rainCorrect}/{stats.compared}
+          </Text>
+        </View>
+        <View style={styles.accRow}>
+          <Text style={[styles.accLabel, { color: theme.textSecondary }]}>
+            {t('accuracy_days')}
+          </Text>
+          <Text style={[styles.accValue, { color: theme.textPrimary }]}>
+            {stats.compared}
+          </Text>
+        </View>
+        <View style={styles.accRow}>
+          <Text style={[styles.accLabel, { color: theme.textSecondary }]}>
+            {t('accuracy_worst')}
+          </Text>
+          {worst ? (
+            <View style={styles.accWorst}>
+              <Text style={[styles.accDate, { color: theme.textTertiary }]}>
+                {formatDayFull(worst.date)}
+              </Text>
+              <View style={[styles.chip, { backgroundColor: theme.chipBg }]}>
+                <Text style={[styles.chipText, { color: deltaColor(worst.delta) }]}>
+                  {deltaChipText(worst.delta, 0)}
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <Text style={[styles.accValue, { color: theme.textPrimary }]}>–</Text>
+          )}
+        </View>
+      </View>
     </>
   );
 }
@@ -380,6 +479,36 @@ const styles = StyleSheet.create({
   footnote: {
     fontSize: 11,
     marginTop: 3,
+    fontFamily: F.regular,
+  },
+  accHeadline: {
+    fontSize: 13.5,
+    fontFamily: F.semibold,
+    marginBottom: 10,
+  },
+  accRows: {
+    gap: 7,
+  },
+  accRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  accLabel: {
+    fontSize: 11.5,
+    fontFamily: F.regular,
+  },
+  accValue: {
+    fontSize: 11.5,
+    fontFamily: F.semibold,
+  },
+  accWorst: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  accDate: {
+    fontSize: 11,
     fontFamily: F.regular,
   },
 });

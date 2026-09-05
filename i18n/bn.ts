@@ -97,6 +97,7 @@ export const bn: Strings = {
   health_advice_migraine: 'চাপের ওঠানামা মাথাব্যথা করাতে পারে।', health_advice_respiratory: 'আর্দ্রতা ও বায়ুর গুণমান শ্বাসকে প্রভাবিত করে।', health_advice_flu: 'ঠান্ডা, শুষ্ক বাতাস ভাইরাস ছড়াতে সাহায্য করে।',
   card_past_week: 'গত ৭ দিন', week_rain_total: 'এই সপ্তাহের বৃষ্টি', delta_vs_forecast: 'পূর্বাভাস বনাম প্রকৃত', past_week_note: 'পূর্বাভাস সংরক্ষণ শুরু হলে ডেল্টা চিপ দেখা যাবে — আজ থেকে।',
   card_past_week_30: 'গত ৩০ দিন', rain_total_30: 'বৃষ্টি · ৩০ দিন', stat_wet_days: 'ভেজা দিন', stat_biggest_swing: 'সবচেয়ে বড় ওঠানামা',
+  accuracy_tab: 'নির্ভুলতা', card_accuracy: 'পূর্বাভাসের নির্ভুলতা', accuracy_headline: 'আপনার পূর্বাভাস গড়ে প্রায় {n}° এদিক-ওদিক ছিল', accuracy_high: 'দিনের সর্বোচ্চ, গড় ত্রুটি', accuracy_low: 'রাতের সর্বনিম্ন, গড় ত্রুটি', accuracy_rain: 'ঠিক বলা বৃষ্টির দিন', accuracy_days: 'তুলনা করা দিন', accuracy_worst: 'সবচেয়ে বড় ভুল', accuracy_empty: 'এখনও কোনো পূর্বাভাস সংরক্ষিত নেই — অ্যাপ আজ থেকে শেখা শুরু করে',
   card_trip: 'ট্রিপ প্ল্যানার', trip_no_favorites: 'প্রথমে একটি শহর প্রিয় হিসেবে সংরক্ষণ করুন, তারপর সেখানেই ভ্রমণের পরিকল্পনা করুন।', trip_open_favorites: 'সংরক্ষিত শহর খুলুন',
   trip_start: 'শুরুর তারিখ', trip_length: 'ভ্রমণের দৈর্ঘ্য', trip_days: '{n} দিন', trip_show: 'পূর্বাভাস দেখান',
   trip_rainiest: 'সবচেয়ে আর্দ্র', trip_warmest: 'সবচেয়ে উষ্ণ', trip_verdict_rain: 'বৃষ্টির প্রস্তুতি নিন — {total}-এর মধ্যে {n} দিন ভেজা মনে হচ্ছে।', trip_verdict_dry: 'বেশিরভাগই শুষ্ক — হালকা প্যাক করুন, উপভোগ করুন।',

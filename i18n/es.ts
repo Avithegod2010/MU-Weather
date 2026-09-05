@@ -97,6 +97,7 @@ export const es: Strings = {
   health_advice_migraine: 'Los cambios de presión pueden provocar dolores de cabeza.', health_advice_respiratory: 'La humedad y la calidad del aire afectan la respiración.', health_advice_flu: 'El aire frío y seco favorece la propagación de virus.',
   card_past_week: 'Últimos 7 días', week_rain_total: 'Lluvia de la semana', delta_vs_forecast: 'Real vs pronóstico', past_week_note: 'Las diferencias aparecen a medida que se registran pronósticos — desde hoy.',
   card_past_week_30: 'Últimos 30 días', rain_total_30: 'Lluvia · 30 días', stat_wet_days: 'Días de lluvia', stat_biggest_swing: 'Mayor cambio',
+  accuracy_tab: 'Precisión', card_accuracy: 'Precisión del pronóstico', accuracy_headline: 'Tus pronósticos se desviaron unos {n}° de media', accuracy_high: 'Máxima diurna, error medio', accuracy_low: 'Mínima nocturna, error medio', accuracy_rain: 'Días de lluvia acertados', accuracy_days: 'Días comparados', accuracy_worst: 'Mayor fallo', accuracy_empty: 'Aún no hay pronósticos registrados — la app empieza a aprender desde hoy',
   card_trip: 'Planificador de viajes', trip_no_favorites: 'Guarda primero una ciudad favorita para planear un viaje.', trip_open_favorites: 'Abrir ciudades guardadas',
   trip_start: 'Fecha de inicio', trip_length: 'Duración del viaje', trip_days: '{n} días', trip_show: 'Mostrar pronóstico',
   trip_rainiest: 'Más lluvioso', trip_warmest: 'Más cálido', trip_verdict_rain: 'Empaca para lluvia — {n} de {total} días se ven húmedos.', trip_verdict_dry: 'Mayormente seco — empaca ligero y disfruta.',

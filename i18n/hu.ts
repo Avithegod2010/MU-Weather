@@ -97,6 +97,7 @@ export const hu: Strings = {
   health_advice_migraine: 'A nyomásváltozások fejfájást okozhatnak.', health_advice_respiratory: 'A páratartalom és a levegő minősége befolyásolja a légzést.', health_advice_flu: 'A hideg, száraz levegő segíti a vírusok terjedését.',
   card_past_week: 'Elmúlt 7 nap', week_rain_total: 'Heti csapadék', delta_vs_forecast: 'Valós vs. előrejelzés', past_week_note: 'Az eltérések a rögzített előrejelzésekkel jelennek meg — mától.',
   card_past_week_30: 'Elmúlt 30 nap', rain_total_30: 'Csapadék · 30 nap', stat_wet_days: 'Esős napok', stat_biggest_swing: 'Legnagyobb ugrás',
+  accuracy_tab: 'Pontosság', card_accuracy: 'Előrejelzés pontossága', accuracy_headline: 'Az előrejelzései átlagosan körülbelül {n}°-ot tévedtek', accuracy_high: 'Nappali maximum, átlagos hiba', accuracy_low: 'Éjszakai minimum, átlagos hiba', accuracy_rain: 'Helyesen jelzett esős napok', accuracy_days: 'Összehasonlított napok', accuracy_worst: 'Legnagyobb tévedés', accuracy_empty: 'Még nincs rögzített előrejelzés — az alkalmazás mától tanul',
   card_trip: 'Utazástervező', trip_no_favorites: 'Először ments el egy kedvenc várost, hogy utat tervezhess.', trip_open_favorites: 'Mentett városok megnyitása',
   trip_start: 'Indulás dátuma', trip_length: 'Utazás hossza', trip_days: '{n} nap', trip_show: 'Előrejelzés megjelenítése',
   trip_rainiest: 'Legesősebb', trip_warmest: 'Legmelegebb', trip_verdict_rain: 'Készülj esőre — {total} napból {n} vizesnek tűnik.', trip_verdict_dry: 'Többnyire száraz — csomagolj könnyedén és élvezd.',

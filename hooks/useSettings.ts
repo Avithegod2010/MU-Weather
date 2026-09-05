@@ -48,8 +48,8 @@ export interface AppSettings {
   colorTheme: ColorThemeKey;
   /** Home sections / detail tiles the user switched off - hidden from home */
   hiddenTiles: string[];
-  /** History window shown in the past-days card - 7 or 30 days */
-  pastDaysRange: 7 | 30;
+  /** History window shown in the past-days card - 7, 30 days, or the accuracy view */
+  pastDaysRange: 7 | 30 | 'accuracy';
   /** Home card spacing - 'compact' tightens paddings and hero typography */
   layoutDensity: LayoutDensity;
 }

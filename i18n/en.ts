@@ -252,6 +252,15 @@ export const en = {
   rain_total_30: 'Rain · 30 days',
   stat_wet_days: 'Wet days',
   stat_biggest_swing: 'Biggest swing',
+  accuracy_tab: 'Accuracy',
+  card_accuracy: 'Forecast accuracy',
+  accuracy_headline: 'Your forecasts were about {n}° off on average',
+  accuracy_high: 'Daytime high, mean error',
+  accuracy_low: 'Overnight low, mean error',
+  accuracy_rain: 'Rain days called right',
+  accuracy_days: 'Days compared',
+  accuracy_worst: 'Biggest miss',
+  accuracy_empty: 'No predictions logged yet — the app starts learning from today',
 
   // Backup & restore
   backup_section: 'Backup & restore',

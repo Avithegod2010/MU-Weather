@@ -97,6 +97,7 @@ export const nl: Strings = {
   health_advice_migraine: 'Drukschommelingen kunnen hoofdpijn veroorzaken.', health_advice_respiratory: 'Vochtigheid en luchtkwaliteit beïnvloeden de ademhaling.', health_advice_flu: 'Koude, droge lucht helpt virussen zich te verspreiden.',
   card_past_week: 'Afgelopen 7 dagen', week_rain_total: 'Regen deze week', delta_vs_forecast: 'Werkelijk vs. voorspeld', past_week_note: 'Afwijkingen verschijnen zodra voorspellingen zijn opgeslagen — vanaf vandaag.',
   card_past_week_30: 'Afgelopen 30 dagen', rain_total_30: 'Regen · 30 dagen', stat_wet_days: 'Natte dagen', stat_biggest_swing: 'Grootste sprong',
+  accuracy_tab: 'Nauwkeurigheid', card_accuracy: 'Nauwkeurigheid van voorspellingen', accuracy_headline: 'Je voorspellingen zaten er gemiddeld ongeveer {n}° naast', accuracy_high: 'Overdagse maximum, gemiddelde fout', accuracy_low: 'Nachtelijke minimum, gemiddelde fout', accuracy_rain: 'Regendagen goed voorspeld', accuracy_days: 'Vergelijken dagen', accuracy_worst: 'Grootste misser', accuracy_empty: 'Nog geen voorspellingen opgeslagen — de app leert vanaf vandaag',
   card_trip: 'Reisplanner', trip_no_favorites: 'Bewaar eerst een favoriete stad om een reis te plannen.', trip_open_favorites: 'Opgeslagen steden openen',
   trip_start: 'Startdatum', trip_length: 'Reisduur', trip_days: '{n} dagen', trip_show: 'Prognose tonen',
   trip_rainiest: 'Regenachtigst', trip_warmest: 'Warmst', trip_verdict_rain: 'Pak regenkleding in — {n} van {total} dagen lijken nat.', trip_verdict_dry: 'Meestal droog — pak licht in en geniet.',
