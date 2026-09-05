@@ -13,7 +13,8 @@ export type AlertKey =
   | 'pressure'
   | 'wind'
   | 'pollen'
-  | 'cape';
+  | 'cape'
+  | 'heat';
 
 export interface AlertDefinition {
   key: AlertKey;
@@ -26,6 +27,7 @@ export const ALERT_DEFINITIONS: AlertDefinition[] = [
   { key: 'thunder', title: 'alert_thunder_title', subtitle: 'alert_thunder_sub' },
   { key: 'frost', title: 'alert_frost_title', subtitle: 'alert_frost_sub' },
   { key: 'uv', title: 'alert_uv_title', subtitle: 'alert_uv_sub' },
+  { key: 'heat', title: 'alert_heat_title', subtitle: 'alert_heat_sub' },
   { key: 'pollen', title: 'alert_pollen_title', subtitle: 'alert_pollen_sub' },
   { key: 'aqi', title: 'alert_aqi_title', subtitle: 'alert_aqi_sub' },
   { key: 'pressure', title: 'alert_pressure_title', subtitle: 'alert_pressure_sub' },
@@ -54,6 +56,7 @@ export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   pressure: false,
   wind: false,
   cape: false,
+  heat: false,
 };
 
 export function evaluateAlerts(
@@ -112,6 +115,15 @@ export function evaluateAlerts(
       title: extreme ? 'Extreme UV today' : 'High UV today',
       message: `UV index peaks at ${Math.round(today.uvIndexMax)}. Sunscreen and shade advised between 11 AM – 3 PM.`,
       severity: extreme ? 'severe' : 'warning',
+    });
+  }
+
+  if (settings.heat && today && today.tMax >= 30) {
+    triggered.push({
+      key: 'heat',
+      title: 'Heat warning',
+      message: `High of ${Math.round(today.tMax)}° today. Stay hydrated, avoid the midday sun, and check on vulnerable people.`,
+      severity: today.tMax >= 35 ? 'severe' : 'warning',
     });
   }
 

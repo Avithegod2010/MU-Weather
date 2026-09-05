@@ -462,6 +462,8 @@ export const en = {
   alert_wind_sub: 'Alert when strong winds or gusts are expected',
   alert_cape_title: 'Storm Building Alert',
   alert_cape_sub: 'Alert when atmospheric instability is high with no storms forecast yet',
+  alert_heat_title: 'Heat warning',
+  alert_heat_sub: "Warns when the day's high reaches 30° or more",
   alerts_intro: 'Pick what you want to be warned about. Alerts appear as banners in the app and as system notifications whenever weather data refreshes.',
   storm_counting: 'Counting... tap the moment you hear thunder',
   fav_compare: 'Compare',
