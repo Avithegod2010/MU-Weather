@@ -50,6 +50,7 @@ import {
   Braces,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
+import appJson from '../app.json';
 
 /** Every adjust-tiles label, translated. */
 const TILE_LABEL_KEYS: Record<string, StringKey> = {
@@ -113,7 +114,10 @@ async function ensureNotificationPermission(): Promise<boolean> {
   return requested === 'granted';
 }
 
-type SheetView = 'main' | 'sources' | 'tiles' | 'language';
+type SheetView = 'main' | 'sources' | 'tiles' | 'language' | 'about';
+
+/** App version shown in the About view (kept in sync with app.json). */
+const APP_VERSION: string = appJson.expo.version;
 
 const TILE_ICONS: Record<string, LucideIcon> = {
   highlights: Zap,
@@ -316,11 +320,13 @@ export function SettingsSheet({
             <ChevronLeft size={24} color={inputColor} strokeWidth={2.4} />
           </Pressable>
           <Text style={[styles.title, { color: inputColor, paddingHorizontal: 0 }]}>
-            {view === 'sources'
-              ? 'Data sources'
-              : view === 'tiles'
-                ? 'Adjust tiles'
-                : 'Language'}
+            {view === 'about'
+              ? t('about_title')
+              : view === 'sources'
+                ? 'Data sources'
+                : view === 'tiles'
+                  ? 'Adjust tiles'
+                  : 'Language'}
           </Text>
         </View>
       )}
@@ -883,6 +889,29 @@ export function SettingsSheet({
             <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
           </Pressable>
 
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              setView('about');
+            }}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Info size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('settings_about')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('settings_about_sub')}
+              </Text>
+            </View>
+            <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
+          </Pressable>
+
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
             {t('backup_section')}
           </Text>
@@ -977,13 +1006,13 @@ export function SettingsSheet({
           <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
             <Text style={[styles.noteText, { color: theme.textSecondary }]}>
-              More personalization arrives in future updates.
+              {t('s_general_note')}
             </Text>
           </View>
         </ScrollView>
       ) : (
-        // Sub-views (language / tiles / sources) scroll too: the bottom sheet
-        // caps at 72% of the screen, so without this the bottom rows are
+        // Sub-views (language / tiles / about / sources) scroll too: the bottom
+        // sheet caps at 72% of the screen, so without this the bottom rows are
         // unreachable on shorter displays.
         <ScrollView
           style={styles.scrollArea}
@@ -1030,15 +1059,14 @@ export function SettingsSheet({
               <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
                 <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
                 <Text style={[styles.noteText, { color: theme.textSecondary }]}>
-                  Weather content is translated. More languages arrive in future updates.
+                  {t('s_lang_note')}
                 </Text>
               </View>
             </>
           ) : view === 'tiles' ? (
             <>
               <Text style={[styles.intro, { color: theme.textSecondary }]}>
-                Turn off anything you don't need and it disappears from the home screen. Your choices
-                are saved on this device.
+                {t('s_tiles_intro')}
               </Text>
               {TILE_GROUPS.map((group) => (
                 <View key={group.title}>
@@ -1089,7 +1117,39 @@ export function SettingsSheet({
               <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
                 <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
                 <Text style={[styles.noteText, { color: theme.textSecondary }]}>
-                  Current weather and severe alerts always stay on.
+                  {t('s_tiles_note')}
+                </Text>
+              </View>
+            </>
+          ) : view === 'about' ? (
+            <>
+              <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                  <CloudSun size={20} color={theme.textPrimary} strokeWidth={2} />
+                </View>
+                <View style={styles.rowTexts}>
+                  <Text style={[styles.rowTitle, { color: inputColor }]}>MU Weather</Text>
+                  <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                    {t('about_version').replace('{v}', APP_VERSION)}
+                  </Text>
+                </View>
+              </View>
+              <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+                <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+                  {t('about_privacy')}
+                </Text>
+              </View>
+              <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+                <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+                  {t('about_sources_note')}
+                </Text>
+              </View>
+              <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+                <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+                <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+                  {t('about_license_note')}
                 </Text>
               </View>
             </>

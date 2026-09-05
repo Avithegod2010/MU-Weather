@@ -336,6 +336,19 @@ export const en = {
   s_snark_sub: 'Sarcastic commentary under the temperature',
   s_sources: 'Data sources',
   s_sources_sub: 'Providers powering forecasts, radar and air quality',
+  settings_about: 'About',
+  settings_about_sub: 'Version, privacy and data policy',
+  s_general_note: 'More personalization arrives in future updates.',
+  s_lang_note: 'Weather content is translated. More languages arrive in future updates.',
+  s_tiles_intro: "Turn off anything you don't need and it disappears from the home screen. Your choices are saved on this device.",
+  s_tiles_note: 'Current weather and severe alerts always stay on.',
+
+  // About view
+  about_title: 'About MU Weather',
+  about_version: 'Version {v}',
+  about_privacy: 'All your data stays on this device. No accounts, no tracking, no analytics.',
+  about_sources_note: 'Weather data comes from independent providers. See Data sources for the full list and live status.',
+  about_license_note: 'Personal hobby project. Forecast data © Open-Meteo (CC-BY 4.0), MET Norway, Windy.',
 
   // Settings — data sources view
   src_forecast: 'Open-Meteo Forecast',
