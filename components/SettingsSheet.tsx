@@ -800,6 +800,56 @@ export function SettingsSheet({
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Gauge size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_pressure')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_pressure_sub')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'hPa', label: 'hPa' },
+                { value: 'mmHg', label: 'mmHg' },
+                { value: 'inHg', label: 'inHg' },
+              ]}
+              value={settings.pressureUnit}
+              onChange={(value) => onUpdate({ pressureUnit: value as AppSettings['pressureUnit'] })}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Wind size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_beaufort')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_beaufort_sub')}
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.windBeaufort : false}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                } else {
+                  haptics.light();
+                }
+                onUpdate({ windBeaufort: value });
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.windBeaufort ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Umbrella size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>

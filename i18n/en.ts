@@ -543,6 +543,21 @@ export const en = {
   src_met_delta: 'MET {x}° vs app {y}°',
   src_drift: 'avg drift {d}° over {n} checks',
   src_footer: 'Sources: open-meteo.com · met.no · windy.com',
+
+  // Pressure unit + Beaufort display
+  s_pressure: 'Pressure unit',
+  s_pressure_sub: 'Barometer, pressure card and deep-dive',
+  s_beaufort: 'Beaufort scale',
+  s_beaufort_sub: 'Show the Beaufort force name next to wind speeds',
+  bft_force: 'Force {n}',
+  bft_0: 'Calm', bft_1: 'Light air', bft_2: 'Light breeze', bft_3: 'Gentle breeze', bft_4: 'Moderate breeze', bft_5: 'Fresh breeze', bft_6: 'Strong breeze', bft_7: 'Near gale', bft_8: 'Gale', bft_9: 'Strong gale', bft_10: 'Storm', bft_11: 'Violent storm', bft_12: 'Hurricane',
+  baro_measuring: 'Measuring...',
+  baro_rising_fast: 'Rising fast ({n}/10min)',
+  baro_falling_fast: 'Falling fast ({n}/10min)',
+  baro_measured_by: 'Measured by your phone · live',
+  baro_forecast_sea: 'Forecast (sea-level): {n}',
+  baro_at_altitude: '{n} at your altitude',
+  baro_no_sensor: 'No barometer sensor on this device',
 };
 
 export type Strings = typeof en;

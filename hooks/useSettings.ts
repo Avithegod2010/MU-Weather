@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setHapticsEnabled } from '../utils/haptics';
 import { setUnits } from '../utils/format';
-import type { TempUnit, WindUnit, TimeFormat, PrecipUnit } from '../utils/format';
+import type { TempUnit, WindUnit, TimeFormat, PrecipUnit, PressureUnit } from '../utils/format';
 import { setAqiScale } from '../utils/aqi';
 import type { AqiScale } from '../utils/aqi';
 import { setIconStyle } from '../utils/icons';
@@ -25,6 +25,10 @@ export interface AppSettings {
   tempUnit: TempUnit;
   windUnit: WindUnit;
   precipUnit: PrecipUnit;
+  /** Barometric-pressure display unit - hPa everywhere in the API */
+  pressureUnit: PressureUnit;
+  /** Show the Beaufort force name next to wind speeds */
+  windBeaufort: boolean;
   /** Air-quality index scale - US EPA or European EEA */
   aqiScale: AqiScale;
   /** Weather icon look - outline strokes, filled shapes, or colorful hues */
@@ -58,6 +62,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   tempUnit: 'celsius',
   windUnit: 'kmh',
   precipUnit: 'mm',
+  pressureUnit: 'hPa',
+  windBeaufort: false,
   aqiScale: 'us',
   iconStyle: 'outline',
   timeFormat: '12h',
@@ -83,6 +89,8 @@ function applySideEffects(settings: AppSettings): void {
     wind: settings.windUnit,
     precip: settings.precipUnit,
     time: settings.timeFormat,
+    pressure: settings.pressureUnit,
+    beaufort: settings.windBeaufort,
   });
   setAqiScale(settings.aqiScale);
   setIconStyle(settings.iconStyle);

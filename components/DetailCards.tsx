@@ -36,7 +36,10 @@ import {
   formatVisibility,
   formatTime12,
   precipUnitLabel,
+  formatPressureValue,
+  pressureUnitLabel,
 } from '../utils/format';
+import { beaufortText } from '../utils/beaufort';
 import { pollenLevel } from '../utils/aqi';
 import type { AqiScale } from '../utils/aqi';
 import {
@@ -186,6 +189,11 @@ export function DetailCards({
           gusts={current.windGusts}
           direction={current.windDirection}
         />
+        {beaufortText(current.windSpeed) ? (
+          <Text style={[styles.caption, { color: theme.textTertiary }]} numberOfLines={1}>
+            {beaufortText(current.windSpeed)}
+          </Text>
+        ) : null}
       </Card>)}
 
       {show('aqi') && (<Card revealDelay={60} theme={theme} title={t('card_aqi')} icon={Gauge} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('aqi') : undefined}>
@@ -280,9 +288,9 @@ export function DetailCards({
 
       {show('pressure') && (<Card revealDelay={300} theme={theme} title={t('card_pressure')} icon={Gauge} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('pressure') : undefined}>
         <View style={styles.stack}>
-          <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
-            {Math.round(current.pressure)}
-            <Text style={[styles.unitText, { color: theme.textSecondary }]}> hPa</Text>
+          <Text style={[styles.bigValue, { color: theme.textPrimary }]} numberOfLines={1}>
+            {formatPressureValue(current.pressure)}
+            <Text style={[styles.unitText, { color: theme.textSecondary }]}> {pressureUnitLabel()}</Text>
           </Text>
           <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>{trend}</Text>
           <Text style={[styles.caption, { color: theme.textTertiary }]}>

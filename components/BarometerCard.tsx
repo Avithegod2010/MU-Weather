@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Gauge } from '../utils/uiIcons';
 import { Card } from './Card';
 import { useBarometer } from '../hooks/useBarometer';
+import { convertPressure, formatPressure, formatPressureValue, pressureUnitLabel } from '../utils/format';
 import type { AppTheme } from '../theme/palettes';
 
 interface BarometerCardProps {
@@ -18,16 +19,22 @@ export function BarometerCard({ theme, forecastPressure, revealDelay = 660 }: Ba
 
   const trendLabel =
     trendPer10Min === null
-      ? 'Measuring...'
+      ? t('baro_measuring')
       : trendPer10Min > 0.2
-        ? `Rising fast (${trendPer10Min.toFixed(1)} hPa/10min)`
+        ? t('baro_rising_fast').replace(
+            '{n}',
+            `${convertPressure(trendPer10Min).toFixed(1)} ${pressureUnitLabel()}`,
+          )
         : trendPer10Min > 0.05
-          ? 'Rising'
+          ? t('trend_rising')
           : trendPer10Min < -0.2
-            ? `Falling fast (${trendPer10Min.toFixed(1)} hPa/10min)`
+            ? t('baro_falling_fast').replace(
+                '{n}',
+                `${convertPressure(trendPer10Min).toFixed(1)} ${pressureUnitLabel()}`,
+              )
             : trendPer10Min < -0.05
-              ? 'Falling'
-              : 'Steady';
+              ? t('trend_falling')
+              : t('trend_steady');
 
   const delta = pressure !== null ? pressure - forecastPressure : null;
 
@@ -37,17 +44,17 @@ export function BarometerCard({ theme, forecastPressure, revealDelay = 660 }: Ba
         {available && pressure !== null ? (
           <>
             <Text style={[styles.bigValue, { color: theme.textPrimary }]}>
-              {pressure.toFixed(1)}
-              <Text style={[styles.unitText, { color: theme.textSecondary }]}> hPa</Text>
+              {formatPressureValue(pressure)}
+              <Text style={[styles.unitText, { color: theme.textSecondary }]}> {pressureUnitLabel()}</Text>
             </Text>
             <Text style={[styles.bandLabel, { color: theme.textSecondary }]}>{trendLabel}</Text>
             <Text style={[styles.caption, { color: theme.textTertiary }]}>
-              Measured by your phone · live
+              {t('baro_measured_by')}
             </Text>
             <Text style={[styles.caption, { color: theme.textTertiary }]}>
-              Forecast (sea-level): {Math.round(forecastPressure)} hPa
+              {t('baro_forecast_sea').replace('{n}', formatPressure(forecastPressure))}
               {delta !== null
-                ? ` · ${delta >= 0 ? '+' : ''}${delta.toFixed(1)} at your altitude`
+                ? ` · ${t('baro_at_altitude').replace('{n}', `${delta >= 0 ? '+' : ''}${convertPressure(delta).toFixed(1)}`)}`
                 : ''}
             </Text>
           </>
@@ -55,7 +62,7 @@ export function BarometerCard({ theme, forecastPressure, revealDelay = 660 }: Ba
           <>
             <Text style={[styles.bigValue, { color: theme.textTertiary }]}>--</Text>
             <Text style={[styles.caption, { color: theme.textTertiary }]}>
-              No barometer sensor on this device
+              {t('baro_no_sensor')}
             </Text>
           </>
         )}

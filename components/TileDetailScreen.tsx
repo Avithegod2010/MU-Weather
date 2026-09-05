@@ -25,12 +25,17 @@ import {
   formatHourLabel,
   formatPrecip,
   formatPrecipValue,
+  formatPressure,
+  formatPressureValue,
   formatVisibility,
   windUnitLabel,
+  convertPressure,
   dewPointComfort,
   formatPressureTrend,
   precipUnitLabel,
+  pressureUnitLabel,
 } from '../utils/format';
+import { beaufortForce, beaufortText } from '../utils/beaufort';
 import { moonPhase } from '../utils/moon';
 import { moonTimes } from '../utils/sunCalc';
 import { europeanAqiBand, usAqiBand, humidityComfort, pollenLevel } from '../utils/aqi';
@@ -335,6 +340,8 @@ export function TileDetailScreen({
       unit: windUnitLabel(),
       label: `${t('from_prefix')} ${compassLabel(current.windDirection)}`,
       accent: '#8FD0B8',
+      // Beaufort option ON only; '' when OFF, so the hero is unchanged.
+      sub: beaufortText(current.windSpeed) || undefined,
     };
     chart = (
       <DetailChart
@@ -352,7 +359,11 @@ export function TileDetailScreen({
       { label: t('f_max_gust_24'), value: `${Math.round(convertWind(Math.max(...gusts)))} ${windUnitLabel()}` },
       { label: t('f_avg_24'), value: `${Math.round(convertWind(avgSpeed))} ${windUnitLabel()}` },
       { label: t('f_direction'), value: `${compassLabel(current.windDirection)} (${Math.round(current.windDirection)}°)` },
-      { label: t('f_beaufort'), value: beaufortLabel(current.windSpeed) },
+      {
+        label: t('f_beaufort'),
+        // Option OFF → bare force number ("4"); option ON → "Force 4 · Moderate breeze".
+        value: beaufortText(current.windSpeed) || String(beaufortForce(current.windSpeed)),
+      },
     ];
     about = t('about_wind');
   } else if (view.topic === 'uv') {
@@ -445,7 +456,7 @@ export function TileDetailScreen({
   } else if (view.topic === 'pressure') {
     const range = next24Range(hours, (hour) => hour.pressure);
     const trend = formatPressureTrend(current.pressureTrend);
-    hero = { value: `${Math.round(current.pressure)}`, unit: 'hPa', label: trend, accent: '#B9A7F5' };
+    hero = { value: formatPressureValue(current.pressure), unit: pressureUnitLabel(), label: trend, accent: '#B9A7F5' };
     chart = (
       <DetailChart
         theme={theme}
@@ -459,10 +470,10 @@ export function TileDetailScreen({
         value:
           current.pressureTrend === null
             ? '--'
-            : `${current.pressureTrend > 0 ? '+' : ''}${current.pressureTrend.toFixed(1)} hPa`,
+            : `${current.pressureTrend > 0 ? '+' : ''}${convertPressure(current.pressureTrend).toFixed(1)} ${pressureUnitLabel()}`,
       },
-      { label: t('f_high_24'), value: range.max !== null ? `${Math.round(range.max)} hPa` : '--' },
-      { label: t('f_low_24'), value: range.min !== null ? `${Math.round(range.min)} hPa` : '--' },
+      { label: t('f_high_24'), value: range.max !== null ? formatPressure(range.max) : '--' },
+      { label: t('f_low_24'), value: range.min !== null ? formatPressure(range.min) : '--' },
       {
         label: t('f_meaning'),
         value:
@@ -810,18 +821,6 @@ function uvAdvice(uv: number | null): string {
 
 function comfortLabel(humidity: number): string {
   return humidityComfort(humidity);
-}
-
-function beaufortLabel(speedKmh: number): string {
-  if (speedKmh < 1) return '0 · Calm';
-  if (speedKmh < 6) return '1 · Light air';
-  if (speedKmh < 12) return '2 · Light breeze';
-  if (speedKmh < 20) return '3 · Gentle breeze';
-  if (speedKmh < 29) return '4 · Moderate breeze';
-  if (speedKmh < 39) return '5 · Fresh breeze';
-  if (speedKmh < 50) return '6 · Strong breeze';
-  if (speedKmh < 62) return '7 · Near gale';
-  return '8+ · Gale';
 }
 
 const styles = StyleSheet.create({
