@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import { formatHourLabel } from './format';
 import type { MinutelyPoint } from '../api/types';
 
@@ -16,7 +17,7 @@ const WET_THRESHOLD = 0.02;
 
 export function computeNowcast(minutely: MinutelyPoint[]): Nowcast {
   if (!minutely.length) {
-    return { kind: 'dry', headline: 'No minute-level data', minutesUntilChange: null, changeTime: null, peakMm: 0, wet: false };
+    return { kind: 'dry', headline: t('nowcast_no_data'), minutesUntilChange: null, changeTime: null, peakMm: 0, wet: false };
   }
 
   const peakMm = minutely.reduce((max, point) => Math.max(max, point.precipitation), 0);
@@ -27,7 +28,7 @@ export function computeNowcast(minutely: MinutelyPoint[]): Nowcast {
     if (startIndex === -1) {
       return {
         kind: 'dry',
-        headline: 'No rain expected in the next 3 hours',
+        headline: t('nowcast_no_rain'),
         minutesUntilChange: null,
         changeTime: null,
         peakMm,
@@ -40,8 +41,8 @@ export function computeNowcast(minutely: MinutelyPoint[]): Nowcast {
       kind: 'starting',
       headline:
         minutes <= 45
-          ? `Rain starting in about ${minutes} min`
-          : `Rain expected around ${formatHourLabel(time, false)}`,
+          ? t('nowcast_starting_min').replace('{n}', String(minutes))
+          : t('nowcast_starting_time').replace('{time}', formatHourLabel(time, false)),
       minutesUntilChange: minutes,
       changeTime: time,
       peakMm,
@@ -53,7 +54,7 @@ export function computeNowcast(minutely: MinutelyPoint[]): Nowcast {
   if (stopIndex === -1) {
     return {
       kind: 'ongoing',
-      headline: 'Rain continuing through the next 3 hours',
+      headline: t('nowcast_continuing'),
       minutesUntilChange: null,
       changeTime: null,
       peakMm,
@@ -64,7 +65,10 @@ export function computeNowcast(minutely: MinutelyPoint[]): Nowcast {
   const time = minutely[stopIndex].time;
   return {
     kind: 'stopping',
-    headline: minutes <= 45 ? `Rain easing in about ${minutes} min` : `Rain easing around ${formatHourLabel(time, false)}`,
+    headline:
+      minutes <= 45
+        ? t('nowcast_easing_min').replace('{n}', String(minutes))
+        : t('nowcast_easing_time').replace('{time}', formatHourLabel(time, false)),
     minutesUntilChange: minutes,
     changeTime: time,
     peakMm,

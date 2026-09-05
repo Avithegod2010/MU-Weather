@@ -89,6 +89,7 @@ import { TILE_GROUPS } from '../config/tiles';
 import { BACKGROUND_OPTIONS } from '../config/backgrounds';
 import { COLOR_THEMES } from '../config/colorThemes';
 import { LANGUAGES, t, type StringKey } from '../utils/i18n';
+import { formatClockParts } from '../utils/format';
 import { exportSettings, importSettings } from '../utils/backup';
 import { writeForecastLogExport, type DataExportFormat } from '../utils/dataExport';
 import type { ProviderCheck } from '../api/providers';
@@ -294,8 +295,11 @@ export function SettingsSheet({
 
   const updatedLabel =
     lastUpdated === null
-      ? 'Waiting for first sync'
-      : `Last sync ${new Date(lastUpdated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`;
+      ? t('sync_waiting')
+      : t('sync_last').replace(
+          '{time}',
+          new Date(lastUpdated).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+        );
 
   return (
     <Overlay theme={theme} visible={visible} onClose={onClose} panelStyle="bottom">
@@ -323,10 +327,10 @@ export function SettingsSheet({
             {view === 'about'
               ? t('about_title')
               : view === 'sources'
-                ? 'Data sources'
+                ? t('s_sources')
                 : view === 'tiles'
-                  ? 'Adjust tiles'
-                  : 'Language'}
+                  ? t('s_adjust')
+                  : t('s_language')}
           </Text>
         </View>
       )}
@@ -416,9 +420,9 @@ export function SettingsSheet({
             <Segmented
               theme={theme}
               options={[
-                { value: 'system', label: 'System' },
-                { value: 'light', label: 'Light' },
-                { value: 'dark', label: 'Dark' },
+                { value: 'system', label: t('theme_system') },
+                { value: 'light', label: t('theme_light') },
+                { value: 'dark', label: t('theme_dark') },
               ]}
               value={settings.themeMode}
               onChange={(value) => onUpdate({ themeMode: value as AppSettings['themeMode'] })}
@@ -657,9 +661,9 @@ export function SettingsSheet({
               <Segmented
                 theme={theme}
                 options={[
-                  { value: '7', label: '7 AM' },
-                  { value: '8', label: '8 AM' },
-                  { value: '9', label: '9 AM' },
+                  { value: '7', label: formatClockParts(7, 0) },
+                  { value: '8', label: formatClockParts(8, 0) },
+                  { value: '9', label: formatClockParts(9, 0) },
                 ]}
                 value={String(settings.digestHour)}
                 onChange={(value) => onUpdate({ digestHour: Number(value) })}
@@ -1156,8 +1160,7 @@ export function SettingsSheet({
           ) : (
             <>
               <Text style={[styles.intro, { color: theme.textSecondary }]}>
-                MU Weather blends multiple independent providers for the best accuracy. The primary
-                forecast is continuously cross-checked against a second national weather service.
+                {t('src_intro')}
               </Text>
 
               <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -1189,8 +1192,9 @@ export function SettingsSheet({
                         { color: delta <= 1.5 ? '#5BC98C' : '#F0964E' },
                       ]}
                     >
-                      MET {Math.round(providerCheck.temperature ?? 0)}° vs app{' '}
-                      {Math.round(primaryTemp ?? 0)}°
+                      {t('src_met_delta')
+                        .replace('{x}', String(Math.round(providerCheck.temperature ?? 0)))
+                        .replace('{y}', String(Math.round(primaryTemp ?? 0)))}
                     </Text>
                   ) : null}
                   {accuracyHistory.length >= 2 ? (
@@ -1212,7 +1216,9 @@ export function SettingsSheet({
                         />
                       </Svg>
                       <Text style={[styles.avgText, { color: theme.textTertiary }]}>
-                        avg drift {avgDelta?.toFixed(1)}° over {accuracyHistory.length} checks
+                        {t('src_drift')
+                          .replace('{d}', avgDelta?.toFixed(1) ?? '--')
+                          .replace('{n}', String(accuracyHistory.length))}
                       </Text>
                     </View>
                   ) : null}
@@ -1270,7 +1276,7 @@ export function SettingsSheet({
               <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
                 <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
                 <Text style={[styles.noteText, { color: theme.textSecondary }]}>
-                  {updatedLabel} · Sources: open-meteo.com · met.no · windy.com
+                  {updatedLabel} · {t('src_footer')}
                 </Text>
               </View>
             </>

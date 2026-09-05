@@ -73,7 +73,7 @@ export function localIsoToEpoch(iso: string): number {
   return parsed ? parsed.getTime() : NaN;
 }
 
-function formatClockParts(hours: number, minutes: number): string {
+export function formatClockParts(hours: number, minutes: number): string {
   if (unitState.time === '24h') {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   }

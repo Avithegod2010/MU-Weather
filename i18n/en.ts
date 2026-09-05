@@ -521,6 +521,28 @@ export const en = {
   chart_rain_caption: 'Chance of rain · next 12 hours',
   chart_rain_a11y: 'Chance of rain, next 12 hours. Peak around {time}, {n} percent.',
   card_nowcast_caption: '15-minute precipitation nowcast · {unit} per interval',
+
+  // Nowcast headlines
+  nowcast_no_data: 'No minute-level data',
+  nowcast_no_rain: 'No rain expected in the next 3 hours',
+  nowcast_starting_min: 'Rain starting in about {n} min',
+  nowcast_starting_time: 'Rain expected around {time}',
+  nowcast_continuing: 'Rain continuing through the next 3 hours',
+  nowcast_easing_min: 'Rain easing in about {n} min',
+  nowcast_easing_time: 'Rain easing around {time}',
+
+  // Theme mode segmented labels
+  theme_system: 'System',
+  theme_light: 'Light',
+  theme_dark: 'Dark',
+
+  // Sync status + sources-view extras
+  sync_waiting: 'Waiting for first sync',
+  sync_last: 'Last sync {time}',
+  src_intro: 'MU Weather blends multiple independent providers for the best accuracy. The primary forecast is continuously cross-checked against a second national weather service.',
+  src_met_delta: 'MET {x}° vs app {y}°',
+  src_drift: 'avg drift {d}° over {n} checks',
+  src_footer: 'Sources: open-meteo.com · met.no · windy.com',
 };
 
 export type Strings = typeof en;
