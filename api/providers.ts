@@ -1,4 +1,4 @@
-import type { PastDayActual, MonthlyNormal } from './types';
+import type { PastDayActual, MonthlyNormal, OnThisDayYear } from './types';
 
 export interface ProviderCheck {
   status: 'idle' | 'checking' | 'ok' | 'error';
@@ -287,4 +287,74 @@ export async function fetchMetNorway(lat: number, lon: number): Promise<number> 
   } finally {
     clearTimeout(timer);
   }
+}
+
+/** One single-day Archive-API observation; null when that day/region is unusable. */
+async function fetchArchiveDay(lat: number, lon: number, dateStr: string): Promise<HistoricalInfo | null> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    start_date: dateStr,
+    end_date: dateStr,
+    daily: 'temperature_2m_max,temperature_2m_min,weather_code',
+    timezone: 'auto',
+  }).toString();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`, {
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`Archive responded ${response.status}`);
+    const json = await response.json();
+    const daily = json?.daily;
+    if (!daily?.time?.length) throw new Error('No archive data');
+    const tMax = daily.temperature_2m_max?.[0];
+    const tMin = daily.temperature_2m_min?.[0];
+    // Skip days with incomplete rows instead of inventing values (the row
+    // would otherwise be cached indefinitely by this feature).
+    if (typeof tMax !== 'number' || typeof tMin !== 'number') return null;
+    return {
+      date: dateStr,
+      tMax,
+      tMin,
+      weatherCode: daily.weather_code?.[0] ?? 3,
+    };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Observed weather on today's calendar day across the last `years` years
+ * (default 10), via parallel single-day Archive-API requests. Feb 29 falls
+ * back to Feb 28 like fetchYearAgo. Rows come back newest-first, only years
+ * with usable data. Returns null only when EVERY request failed (network/
+ * service down) so the caller can show nothing rather than an empty card.
+ */
+export async function fetchOnThisDayYears(lat: number, lon: number, years = 10): Promise<OnThisDayYear[] | null> {
+  const d = new Date();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  let day = String(d.getDate()).padStart(2, '0');
+  if (month === '02' && day === '29') day = '28';
+  const monthDay = `${month}-${day}`;
+  const currentYear = d.getFullYear();
+
+  const requests = [];
+  for (let offset = 1; offset <= years; offset++) {
+    const targetYear = currentYear - offset;
+    requests.push(
+      fetchArchiveDay(lat, lon, `${targetYear}-${monthDay}`).then((info) =>
+        info ? { ...info, year: targetYear } : null,
+      ),
+    );
+  }
+  const results = await Promise.all(requests);
+  const rows = results
+    .filter((row): row is OnThisDayYear => row !== null)
+    .sort((a, b) => b.year - a.year);
+  return rows.length > 0 ? rows : null;
 }

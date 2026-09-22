@@ -35,6 +35,8 @@ export const FEATURES = {
   climate: true,
   /** Official severe-weather warnings card - MeteoAlarm CAP feeds (EU members) */
   meteoalarm: true,
+  /** "Weather on this day" card - observed weather on today's date in past years */
+  onThisDay: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

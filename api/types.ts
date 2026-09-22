@@ -132,6 +132,17 @@ export interface MonthlyNormal {
   precipMean: number;
 }
 
+/** Weather observed on today's calendar day in one past year (JSON-safe). */
+export interface OnThisDayYear {
+  /** The past calendar year this row describes. */
+  year: number;
+  /** ISO date the observation is for (YYYY-MM-DD). */
+  date: string;
+  tMax: number;
+  tMin: number;
+  weatherCode: number;
+}
+
 export interface ForecastResponse {
   latitude: number;
   longitude: number;

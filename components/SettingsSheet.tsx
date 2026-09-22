@@ -74,6 +74,7 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   trend: 'tile_trend',
   pastWeek: 'tile_pastweek',
   climate: 'tile_climate',
+  onThisDay: 'tile_onthisday',
   warnings: 'tile_warnings',
   activity: 'tile_activity',
   tripPlanner: 'tile_trip',
@@ -145,6 +146,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   pastWeek: Clock3,
   tripPlanner: Luggage,
   climate: Thermometer,
+  onThisDay: CalendarDays,
   warnings: TriangleAlert,
 };
 

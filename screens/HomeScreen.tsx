@@ -119,8 +119,10 @@ import { useGoldenHour } from '../hooks/useGoldenHour';
 import { useRainAlert } from '../hooks/useRainAlert';
 import { usePastDays } from '../hooks/usePastDays';
 import { useClimateNormals } from '../hooks/useClimateNormals';
+import { useOnThisDay } from '../hooks/useOnThisDay';
 import { useMeteoAlarm } from '../hooks/useMeteoAlarm';
 import { ClimateCard } from '../components/ClimateCard';
+import { OnThisDayCard } from '../components/OnThisDayCard';
 import { WarningsCard } from '../components/WarningsCard';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
@@ -150,6 +152,7 @@ export function HomeScreen() {
   const weather = useWeather(active);
   const pastDays = usePastDays(active);
   const climateNormals = useClimateNormals(active);
+  const onThisDay = useOnThisDay(active);
   const meteoAlarm = useMeteoAlarm(active);
   const { settings, updateSettings } = useSettings();
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
@@ -617,6 +620,12 @@ export function HomeScreen() {
                     status={climateNormals.status}
                     todayTMax={weather.data.daily[0]?.tMax ?? null}
                   />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.onThisDay && showSection('onThisDay') ? (
+                <Reveal delay={154}>
+                  <OnThisDayCard theme={theme} years={onThisDay.years} status={onThisDay.status} />
                 </Reveal>
               ) : null}
 
