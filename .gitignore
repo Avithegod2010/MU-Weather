@@ -42,6 +42,19 @@ yarn-error.*
 
 # Agent tooling (never commit)
 .zcode/
+.mimosa/
+.claude/
+
+# AI/dev session notes (local only, not part of the open-source project)
+AGENTS.md
+PROJECT_STATUS.txt
+CLAUDE.md
+docs/
 
 # Secrets (never commit)
 .env
+
+# Local verification logs
+tsc*.log
+rewrite*.log
+rewrite*.done
