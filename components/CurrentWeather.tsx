@@ -64,6 +64,7 @@ import { formatTemp } from '../utils/format';
 import { F } from '../theme/typography';
 import { haptics } from '../utils/haptics';
 import { buildSpokenForecast, speakForecast, stopForecastSpeech } from '../utils/speech';
+import { isDigestSpeaking, stopDigestSpeech } from '../utils/spokenDigest';
 import type { CurrentConditions, DayPoint, GeoLocation } from '../api/types';
 
 interface CurrentWeatherProps {
@@ -114,8 +115,12 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
   });
 
   const toggleSpeech = () => {
-    if (speaking) {
+    // A digest readout ("Read my forecast" from the notification) counts as
+    // speaking even though the button never started it — the first tap stops it
+    // instead of silently restarting the hero readout.
+    if (speaking || isDigestSpeaking()) {
       stopForecastSpeech();
+      stopDigestSpeech();
       setSpeaking(false);
       return;
     }

@@ -1,4 +1,4 @@
-import { t, tDay } from '../utils/i18n';
+import { t, tDay, getLanguage } from '../utils/i18n';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -39,10 +39,12 @@ function weekdayOf(date: string): number {
   return Number.isNaN(time) ? -1 : new Date(time).getUTCDay();
 }
 
-/** Short localized date, e.g. "Sep 3" — disambiguates the repeated weekdays a 30-day window holds. */
+/** Short localized date, e.g. "Sep 3" — follows the IN-APP language, not the device. */
 function shortDate(date: string): string {
   const time = Date.parse(`${date}T12:00:00`);
-  return Number.isNaN(time) ? '' : new Date(time).toLocaleDateString([], { month: 'short', day: 'numeric' });
+  return Number.isNaN(time)
+    ? ''
+    : new Date(time).toLocaleDateString(getLanguage(), { month: 'short', day: 'numeric' });
 }
 
 /** Signed delta chip text, e.g. `+2°`, `-1°`, `±0°`. */
@@ -109,6 +111,9 @@ export function PastWeekCard({ theme, days, pastDaysRange = 7, onRangeChange }: 
                 accessibilityState={{ selected: active }}
               >
                 <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.75}
                   style={[
                     styles.rangeText,
                     { color: active ? theme.textPrimary : theme.textTertiary },
@@ -464,13 +469,15 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     padding: 2,
     gap: 2,
+    flexShrink: 1,
   },
   rangeOption: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 1,
   },
   rangeText: {
     fontSize: 11,

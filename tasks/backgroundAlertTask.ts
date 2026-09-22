@@ -9,6 +9,7 @@ import {
   ALERTS_STORAGE_KEY,
 } from '../utils/fireAlertNotifications';
 import { DEFAULT_ALERT_SETTINGS } from '../utils/alertRules';
+import { rescheduleDigestFromCache, SETTINGS_KEY } from '../hooks/useDigest';
 
 export const BACKGROUND_ALERT_TASK = 'background-alert-task';
 
@@ -26,10 +27,14 @@ if (!globalScope.__muBgAlertTaskDefined) {
       const raw = await AsyncStorage.getItem(ALERTS_STORAGE_KEY);
       const settings = { ...DEFAULT_ALERT_SETTINGS, ...(raw ? JSON.parse(raw) : {}) };
       const anyAlertEnabled = Object.values(settings).some(Boolean);
-      if (!anyAlertEnabled) return BackgroundTask.BackgroundTaskResult.Success;
+      const digestRaw = await AsyncStorage.getItem(SETTINGS_KEY);
+      const digestEnabled = digestRaw ? JSON.parse(digestRaw).digestEnabled === true : false;
+      if (!anyAlertEnabled && !digestEnabled) return BackgroundTask.BackgroundTaskResult.Success;
 
       const data = await fetchWeather(location);
-      await fireAlertNotifications(settings, data);
+      if (anyAlertEnabled) {
+        await fireAlertNotifications(settings, data);
+      }
       // Keep the home-screen widget fed even when the app is closed. The
       // bundle is also the widget's cache source, so persist it here too.
       try {
@@ -37,6 +42,11 @@ if (!globalScope.__muBgAlertTaskDefined) {
         await refreshWeatherWidgets();
       } catch {
         // Widget updates are best-effort.
+      }
+      // Refresh the digest schedule from the cached bundle so a user who has
+      // not opened the app still gets a current notification body.
+      if (digestEnabled) {
+        await rescheduleDigestFromCache();
       }
 
       return BackgroundTask.BackgroundTaskResult.Success;

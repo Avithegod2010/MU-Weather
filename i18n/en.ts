@@ -450,6 +450,11 @@ export const en = {
   // Notification copy
   notif_digest_title: 'Tomorrow at a glance',
   notif_digest_action: 'Read my forecast',
+  // Digest body fragments: 'H 24°', '40% rain', 'UV high'
+  digest_high: 'H',
+  digest_low: 'L',
+  digest_rain: '{n}% rain',
+  digest_uv: 'UV {n}',
   notif_golden_title: 'Golden hour soon',
   notif_golden_body: 'Golden light starts in about {n} min — perfect for photos.',
 
@@ -493,6 +498,7 @@ export const en = {
 
   // Climate normals ("What's normal here")
   tile_climate: 'Climate',
+  tile_onthisday: 'On this day',
   card_climate: "What's normal here",
   climate_loading: 'Loading climate normals…',
   climate_this_month: 'A typical {month}',
@@ -501,6 +507,11 @@ export const en = {
   climate_delta_typical: 'Right in line with a typical {month}',
   climate_year_note: 'Hottest: {hottest} · Coldest: {coldest} · Wettest: {wettest}',
   climate_rain_normal: 'Normal rain: {n}',
+
+  // Weather on this day (Archive-API history)
+  card_onthisday: 'Weather on this day',
+  otd_years_ago: '{n} years ago',
+  otd_one_year_ago: 'A year ago',
 
   // Official severe-weather warnings (MeteoAlarm)
   tile_warnings: 'Warnings',

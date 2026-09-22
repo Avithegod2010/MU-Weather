@@ -28,14 +28,17 @@ export default function App() {
   // Unconditional hook: must sit ABOVE the fonts early return.
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener((response) => {
-      if (response.actionIdentifier === DIGEST_READ_ACTION) void speakDigestFromSource();
+      if (response.actionIdentifier === DIGEST_READ_ACTION) {
+        void speakDigestFromSource(response.notification.request.content.body ?? undefined);
+      }
     });
     // Cold start: the app was launched by the action tap — recover the response.
+    // The body is the offline fallback the action can still read aloud.
     void Notifications.getLastNotificationResponseAsync().then((response) => {
       // Clear unconditionally: a stale response must never replay on a later launch.
       void Notifications.clearLastNotificationResponseAsync();
       if (response?.actionIdentifier === DIGEST_READ_ACTION) {
-        void speakDigestFromSource();
+        void speakDigestFromSource(response.notification.request.content.body ?? undefined);
       }
     });
     return () => sub.remove();
