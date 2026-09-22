@@ -54,6 +54,10 @@ eas build -p android --profile preview
 
 All app data (settings, forecast log, caches) stays on the device. The only network traffic is weather data from the providers above. No accounts, no analytics, no tracking.
 
-## License
+## Author
 
-[MIT](./LICENSE)
+Created and maintained by [Avithegod2010](https://github.com/Avithegod2010).
+The entire commit history of this repository is authored under that account's GitHub noreply address — the authorship record is the commit history itself.
+
+MIT © Avithegod2010 — see [LICENSE](./LICENSE).
+

@@ -1,5 +1,6 @@
 {
   "name": "mu-weather",
+  "author": "Avithegod2010 (https://github.com/Avithegod2010)",
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
