@@ -4,10 +4,10 @@ import * as Notifications from '../utils/notifications';
 import { t, setLanguage } from '../utils/i18n';
 import { describeWmo } from '../utils/wmo';
 import { uvBand } from '../utils/aqi';
-import { formatTemp, setUnits } from '../utils/format';
+import { formatTemp, getUnits, setUnits } from '../utils/format';
 import { DIGEST_CATEGORY } from '../utils/spokenDigest';
 import { loadLastWeather } from '../utils/storage';
-import type { WeatherBundle } from '../api/types';
+import type { DayPoint, EnsembleSpread, WeatherBundle } from '../api/types';
 
 const DIGEST_IDENTIFIER = 'daily-digest';
 /** Persisted settings key (kept in sync with hooks/useSettings.ts). */
@@ -20,7 +20,7 @@ export interface AccuracyEntry {
   d: number;
 }
 
-export function buildDigestBody(data: WeatherBundle): string | null {
+export function buildDigestBody(data: WeatherBundle, ensemble?: EnsembleSpread | null): string | null {
   const tomorrow = data.daily[1] ?? data.daily[0];
   if (!tomorrow) return null;
   const { label } = describeWmo(tomorrow.weatherCode);
@@ -39,7 +39,34 @@ export function buildDigestBody(data: WeatherBundle): string | null {
   if (uv && tomorrow.uvIndexMax >= 6) {
     parts.push(t('digest_uv').split('{n}').join(uv.label));
   }
+  const confidence = ensembleConfidenceLine(tomorrow, ensemble);
+  if (confidence) parts.push(confidence);
   return parts.join(' · ');
+}
+
+/**
+ * One confidence clause for the digest, derived from the ensemble spread of
+ * tomorrow's daytime hours: "… ±1.3° (high confidence)". Needs at least 6
+ * valid hours to be meaningful; returns null when the spread is absent.
+ */
+function ensembleConfidenceLine(day: DayPoint, ensemble: EnsembleSpread | null | undefined): string | null {
+  if (!ensemble || ensemble.points.length === 0) return null;
+  const widths: number[] = [];
+  for (const point of ensemble.points) {
+    if (!point.time.startsWith(day.date)) continue;
+    const hour = Number(point.time.slice(11, 13));
+    if (hour < 6 || hour > 21) continue;
+    widths.push(point.tP90 - point.tP10);
+  }
+  if (widths.length < 6) return null;
+  const meanWidth = widths.reduce((sum, width) => sum + width, 0) / widths.length;
+  // ± is half the P10-P90 width, expressed in the user's unit (°F spans are 9/5 wider).
+  const half = meanWidth / 2;
+  const unit = getUnits().temp === 'fahrenheit' ? (half * 9) / 5 : half;
+  const rounded = unit.toFixed(1);
+  const bandKey =
+    meanWidth < 2.5 ? 'digest_conf_high' : meanWidth < 5 ? 'digest_conf_medium' : 'digest_conf_low';
+  return t('digest_conf').split('{n}').join(rounded).split('{band}').join(t(bandKey));
 }
 
 /** Epoch ms of the next `hour:00` occurrence (today if still ahead, else tomorrow). */
@@ -81,6 +108,7 @@ export function useDigest(
   enabled: boolean,
   hour: number,
   data: WeatherBundle | null,
+  ensemble?: EnsembleSpread | null,
 ): void {
   // The target date the current schedule was built for. Re-scheduling costs two
   // native calls, so only do it when the target day changes or after a gap.
@@ -88,7 +116,7 @@ export function useDigest(
 
   useEffect(() => {
     if (!enabled || !data) return;
-    const body = buildDigestBody(data);
+    const body = buildDigestBody(data, ensemble);
     if (!body) return;
 
     const now = Date.now();
@@ -106,7 +134,7 @@ export function useDigest(
         // Scheduling is best-effort.
       }
     })();
-  }, [enabled, hour, data]);
+  }, [enabled, hour, data, ensemble]);
 }
 
 /**
@@ -115,7 +143,7 @@ export function useDigest(
  * re-applied first so the body follows the stored unit and language (the
  * background JS context starts with the defaults).
  */
-export async function rescheduleDigestFromCache(): Promise<void> {
+export async function rescheduleDigestFromCache(ensemble?: EnsembleSpread | null): Promise<void> {
   try {
     const data = await loadLastWeather();
     if (!data) return;
@@ -140,7 +168,7 @@ export async function rescheduleDigestFromCache(): Promise<void> {
       beaufort: stored.windBeaufort === true,
     });
 
-    const body = buildDigestBody(data);
+    const body = buildDigestBody(data, ensemble);
     if (!body) return;
     await scheduleDigestAt(body, nextDigestAt(hour));
   } catch {

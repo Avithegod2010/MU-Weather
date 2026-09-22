@@ -132,6 +132,29 @@ export interface MonthlyNormal {
   precipMean: number;
 }
 
+/** One hourly ensemble-spread point (JSON-safe). Percentiles are over all members. */
+export interface EnsembleSpreadPoint {
+  /** Local ISO hour, matches HourPoint.time. */
+  time: string;
+  /** 10th percentile 2 m temperature across ensemble members (°C). */
+  tP10: number;
+  /** Ensemble median 2 m temperature (°C). */
+  tMedian: number;
+  /** 90th percentile 2 m temperature across ensemble members (°C). */
+  tP90: number;
+  /** Member-derived rain probability 0-100 (share of members with precipitation >= 0.1 mm). */
+  rainProb: number;
+}
+
+/** Ensemble spread for one location, fetched from the Ensemble API (JSON-safe). */
+export interface EnsembleSpread {
+  points: EnsembleSpreadPoint[];
+  /** Number of members the percentiles were computed over. */
+  members: number;
+  /** Epoch ms of the fetch - ensembles go stale, cache entries expire. */
+  fetchedAt: number;
+}
+
 /** Weather observed on today's calendar day in one past year (JSON-safe). */
 export interface OnThisDayYear {
   /** The past calendar year this row describes. */

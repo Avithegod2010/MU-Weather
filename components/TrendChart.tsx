@@ -8,11 +8,13 @@ import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import { formatHourLabel, formatTemp, convertWind, windUnitLabel } from '../utils/format';
 import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
-import type { HourPoint } from '../api/types';
+import type { EnsembleSpreadPoint, HourPoint } from '../api/types';
 
 interface TrendChartProps {
   theme: AppTheme;
   hours: HourPoint[];
+  /** Optional ensemble spread; aligned to hours by time string. Renders a confidence band. */
+  ensemble?: EnsembleSpreadPoint[] | null;
 }
 
 const COL_WIDTH = 16;
@@ -24,7 +26,7 @@ const TEMP_COLOR = '#F5A962';
 const DEW_COLOR = '#6FA8DC';
 const WIND_COLOR = '#8FD0B8';
 
-export function TrendChart({ theme, hours }: TrendChartProps) {
+export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
   const slice = hours.slice(0, 48);
   if (slice.length < 2) return null;
 
@@ -35,8 +37,18 @@ export function TrendChart({ theme, hours }: TrendChartProps) {
   const temps = slice.map((hour) => hour.temperature);
   const dews = slice.map((hour) => hour.dewPoint ?? hour.temperature - 2);
   const winds = slice.map((hour) => hour.windSpeed);
-  const tempMin = Math.min(...temps, ...dews);
-  const tempMax = Math.max(...temps, ...dews);
+
+  // Align the ensemble band to the displayed slice by time string.
+  const bandByTime = ensemble ? new Map(ensemble.map((point) => [point.time, point])) : null;
+  const band: Array<{ p10: number; p90: number } | null> | null = bandByTime
+    ? slice.map((hour) => {
+        const point = bandByTime.get(hour.time);
+        return point ? { p10: point.tP10, p90: point.tP90 } : null;
+      })
+    : null;
+
+  const tempMin = Math.min(...temps, ...dews, ...(band?.flatMap((b) => (b ? [b.p10] : [])) ?? []));
+  const tempMax = Math.max(...temps, ...dews, ...(band?.flatMap((b) => (b ? [b.p90] : [])) ?? []));
   const windMax = Math.max(...winds, 5) * 1.15;
 
   const toPoints = (values: number[], min: number, max: number): CurvePoint[] =>
@@ -48,6 +60,26 @@ export function TrendChart({ theme, hours }: TrendChartProps) {
   const tempPath = smoothPath(toPoints(temps, tempMin, tempMax));
   const dewPath = smoothPath(toPoints(dews, tempMin, tempMax));
   const windPath = smoothPath(toPoints(winds, 0, windMax));
+
+  // Ensemble confidence band: smoothed P90 upper edge forward, P10 lower edge
+  // reversed, closed into one filled polygon. Drawn behind the line paths.
+  let bandPath = '';
+  if (band) {
+    const upperPoints: CurvePoint[] = [];
+    const lowerPoints: CurvePoint[] = [];
+    band.forEach((entry, index) => {
+      if (!entry) return;
+      const x = index * COL_WIDTH + COL_WIDTH / 2;
+      upperPoints.push({ x, y: scaleY(entry.p90, tempMin, tempMax, top, bottom) });
+      lowerPoints.push({ x, y: scaleY(entry.p10, tempMin, tempMax, top, bottom) });
+    });
+    if (upperPoints.length >= 2) {
+      const upperD = smoothPath(upperPoints);
+      const lowerReversed = [...lowerPoints].reverse();
+      const lowerD = smoothPath(lowerReversed).replace(/^M/, 'L');
+      bandPath = `${upperD} ${lowerD} Z`;
+    }
+  }
 
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
@@ -64,6 +96,19 @@ export function TrendChart({ theme, hours }: TrendChartProps) {
             <Text style={[styles.legendText, { color: theme.textTertiary }]}>{item.label}</Text>
           </View>
         ))}
+        {bandPath ? (
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.legendDot,
+                { backgroundColor: TEMP_COLOR, opacity: theme.isLight ? 0.3 : 0.4, borderRadius: 2 },
+              ]}
+            />
+            <Text style={[styles.legendText, { color: theme.textTertiary }]}>
+              {t('trend_band_label')}
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
@@ -74,6 +119,9 @@ export function TrendChart({ theme, hours }: TrendChartProps) {
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
           >
+            {bandPath ? (
+              <Path d={bandPath} fill={TEMP_COLOR} opacity={theme.isLight ? 0.16 : 0.22} stroke="none" />
+            ) : null}
             <Path d={windPath} stroke={WIND_COLOR} strokeWidth={2} fill="none" strokeLinecap="round" strokeDasharray="5 5" opacity={0.9} />
             <Path d={dewPath} stroke={DEW_COLOR} strokeWidth={2} fill="none" strokeLinecap="round" />
             <Path d={tempPath} stroke={TEMP_COLOR} strokeWidth={2.6} fill="none" strokeLinecap="round" />
@@ -97,6 +145,7 @@ export function TrendChart({ theme, hours }: TrendChartProps) {
 
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
         Next 48 hours · {formatTemp(tempMin)} to {formatTemp(tempMax)} · wind to {Math.round(convertWind(windMax / 1.15))} {windUnitLabel()}
+        {bandPath ? ` · ${t('trend_band_caption')}` : ''}
       </Text>
     </Card>
   );

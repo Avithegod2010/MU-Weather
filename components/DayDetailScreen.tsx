@@ -27,13 +27,15 @@ import {
   sectionEntering,
   type DetailAnimStyle,
 } from '../utils/detailAnimations';
-import type { DayPoint, HourPoint } from '../api/types';
+import type { DayPoint, EnsembleSpreadPoint, HourPoint } from '../api/types';
 
 interface DayDetailScreenProps {
   theme: AppTheme;
   day: DayPoint | null;
   index: number;
   hours: HourPoint[];
+  /** Ensemble spread points for this day (P10-P90 band on the temp chart). */
+  ensemble?: EnsembleSpreadPoint[] | null;
   visible: boolean;
   animStyle?: DetailAnimStyle;
   onClose: () => void;
@@ -77,6 +79,7 @@ export function DayDetailScreen({
   day,
   index,
   hours,
+  ensemble,
   visible,
   animStyle = 'fade',
   onClose,
@@ -178,7 +181,13 @@ export function DayDetailScreen({
             theme={theme}
             hours={dayHours}
             seriesList={[{ pick: (hour) => hour.temperature, color: '#F5A962' }]}
+            band={ensemble ?? null}
           />
+          {ensemble && ensemble.length > 0 ? (
+            <Text style={[styles.bandCaption, { color: theme.textTertiary }]}>
+              {t('trend_band_caption')}
+            </Text>
+          ) : null}
         </SectionCard>
 
         <SectionCard theme={theme} animStyle={animStyle} title={t('card_rain')} order={2}>
@@ -202,6 +211,11 @@ export function DayDetailScreen({
 }
 
 const styles = StyleSheet.create({
+  bandCaption: {
+    fontSize: 11.5,
+    fontFamily: F.regular,
+    marginTop: 8,
+  },
   container: {
     position: 'absolute',
     top: 0,

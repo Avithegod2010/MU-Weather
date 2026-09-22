@@ -2,7 +2,9 @@ import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchWeather } from '../api/openMeteo';
+import { fetchEnsembleSpread } from '../api/providers';
 import { loadLastLocation, saveLastWeather } from '../utils/storage';
+import { loadEnsembleCache, saveEnsembleCache, isEnsembleFresh } from '../utils/ensembleCache';
 import { refreshWeatherWidgets } from '../widget/weatherWidgetTask';
 import {
   fireAlertNotifications,
@@ -44,9 +46,22 @@ if (!globalScope.__muBgAlertTaskDefined) {
         // Widget updates are best-effort.
       }
       // Refresh the digest schedule from the cached bundle so a user who has
-      // not opened the app still gets a current notification body.
+      // not opened the app still gets a current notification body. The ensemble
+      // cache is refreshed first (TTL-gated) so the confidence line is current.
       if (digestEnabled) {
-        await rescheduleDigestFromCache();
+        let spread = null;
+        try {
+          const cached = await loadEnsembleCache(location.latitude, location.longitude);
+          if (cached && isEnsembleFresh(cached)) {
+            spread = { points: cached.points, members: cached.members, fetchedAt: cached.fetchedAt };
+          } else {
+            spread = await fetchEnsembleSpread(location.latitude, location.longitude);
+            if (spread) await saveEnsembleCache(location.latitude, location.longitude, spread);
+          }
+        } catch {
+          // Ensemble is optional - the digest works without the confidence line.
+        }
+        await rescheduleDigestFromCache(spread);
       }
 
       return BackgroundTask.BackgroundTaskResult.Success;

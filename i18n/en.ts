@@ -581,6 +581,14 @@ export const en = {
   baro_forecast_sea: 'Forecast (sea-level): {n}',
   baro_at_altitude: '{n} at your altitude',
   baro_no_sensor: 'No barometer sensor on this device',
+
+  // ── bot1: ensemble + multi-model ──
+  trend_band_label: 'Ensemble P10–P90',
+  trend_band_caption: 'shaded = 80% ensemble range',
+  digest_conf: '±{n}° ({band})',
+  digest_conf_high: 'high confidence',
+  digest_conf_medium: 'moderate confidence',
+  digest_conf_low: 'low confidence',
 };
 
 export type Strings = typeof en;

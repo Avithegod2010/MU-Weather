@@ -107,6 +107,7 @@ import { Card } from '../components/Card';
 import { MapScreen } from './MapScreen';
 import { CompareScreen } from './CompareScreen';
 import { useCityComparison } from '../hooks/useCityComparison';
+import { useEnsemble } from '../hooks/useEnsemble';
 import { AlertsScreen } from './AlertsScreen';
 import { useAlerts } from '../hooks/useAlerts';
 import { useSettings } from '../hooks/useSettings';
@@ -154,6 +155,7 @@ export function HomeScreen() {
   const climateNormals = useClimateNormals(active);
   const onThisDay = useOnThisDay(active);
   const meteoAlarm = useMeteoAlarm(active);
+  const ensemble = useEnsemble(FEATURES.ensemble ? active : null);
   const { settings, updateSettings } = useSettings();
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   // Resolve once per session; null (Expo Go etc.) makes the theme fall back to
@@ -248,7 +250,7 @@ export function HomeScreen() {
   );
   const providerCheck = providerStatus.check;
   const yearAgo = useYearAgo(active);
-  useDigest(settings.digestEnabled, settings.digestHour, weather.data);
+  useDigest(settings.digestEnabled, settings.digestHour, weather.data, ensemble.spread);
   useGoldenHour(settings.goldenHourEnabled, weather.data);
   useRainAlert(settings.rainAlertEnabled, weather.data);
   // Digest notification's "Read my forecast" action: register the category in
@@ -597,7 +599,7 @@ export function HomeScreen() {
 
               {FEATURES.trendChart && showSection('trend') ? (
                 <Reveal delay={140}>
-                  <TrendChart theme={theme} hours={weather.data.hourly} />
+                  <TrendChart theme={theme} hours={weather.data.hourly} ensemble={ensemble.spread?.points ?? null} />
                 </Reveal>
               ) : null}
 
@@ -846,6 +848,11 @@ export function HomeScreen() {
           dayDetail && weather.data
             ? weather.data.hourlyAll.filter((hour) => hour.time.startsWith(dayDetail.day.date))
             : []
+        }
+        ensemble={
+          dayDetail && ensemble.spread
+            ? ensemble.spread.points.filter((point) => point.time.startsWith(dayDetail.day.date))
+            : null
         }
         visible={dayDetail !== null && weather.data !== null}
         animStyle={settings.detailAnimation}

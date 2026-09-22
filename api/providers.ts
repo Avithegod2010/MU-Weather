@@ -1,4 +1,4 @@
-import type { PastDayActual, MonthlyNormal, OnThisDayYear } from './types';
+import type { EnsembleSpread, EnsembleSpreadPoint, PastDayActual, MonthlyNormal, OnThisDayYear } from './types';
 
 export interface ProviderCheck {
   status: 'idle' | 'checking' | 'ok' | 'error';
@@ -357,4 +357,90 @@ export async function fetchOnThisDayYears(lat: number, lon: number, years = 10):
     .filter((row): row is OnThisDayYear => row !== null)
     .sort((a, b) => b.year - a.year);
   return rows.length > 0 ? rows : null;
+}
+
+const ENSEMBLE_URL = 'https://ensemble-api.open-meteo.com/v1/ensemble';
+/** Rain counts when at least this much precipitation falls in the hour. */
+const ENSEMBLE_RAIN_THRESHOLD_MM = 0.1;
+
+interface EnsembleApiResponse {
+  hourly?: {
+    time?: string[];
+  } & Record<string, Array<number | null> | string[] | undefined>;
+}
+
+function percentile(sorted: number[], p: number): number {
+  const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
+  return sorted[index];
+}
+
+/**
+ * Hourly ensemble spread for the next 4 days from the Ensemble API
+ * (ICON-EPS seamless: control + 39 members). Percentiles are computed
+ * client-side over the member arrays. Returns null on any failure - the
+ * caller hides the feature. Members that lack a precipitation array still
+ * count toward temperature percentiles; rain probability uses only members
+ * that reported precipitation.
+ */
+export async function fetchEnsembleSpread(lat: number, lon: number): Promise<EnsembleSpread | null> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    hourly: 'temperature_2m,precipitation',
+    forecast_days: '4',
+    timezone: 'auto',
+    models: 'icon_seamless',
+  }).toString();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(`${ENSEMBLE_URL}?${params}`, { signal: controller.signal });
+    if (!response.ok) throw new Error(`Ensemble responded ${response.status}`);
+    const json = (await response.json()) as EnsembleApiResponse;
+    const hourly = json?.hourly;
+    const times = hourly?.time;
+    if (!hourly || !Array.isArray(times) || times.length === 0) return null;
+
+    const memberTempKeys = Object.keys(hourly).filter(
+      (key) => /^temperature_2m_member\d+$/.test(key) && Array.isArray(hourly[key]),
+    );
+    if (memberTempKeys.length === 0) return null;
+
+    const points: EnsembleSpreadPoint[] = [];
+    for (let i = 0; i < times.length; i++) {
+      const temps: number[] = [];
+      let wetMembers = 0;
+      let precipMembers = 0;
+      for (const key of memberTempKeys) {
+        const tempsArray = hourly[key] as Array<number | null>;
+        const value = tempsArray[i];
+        if (typeof value === 'number') temps.push(value);
+        const precipKey = key.replace('temperature_2m', 'precipitation');
+        const precipArray = hourly[precipKey];
+        if (Array.isArray(precipArray)) {
+          const precip = (precipArray as Array<number | null>)[i];
+          if (typeof precip === 'number') {
+            precipMembers += 1;
+            if (precip >= ENSEMBLE_RAIN_THRESHOLD_MM) wetMembers += 1;
+          }
+        }
+      }
+      if (temps.length === 0) continue;
+      temps.sort((a, b) => a - b);
+      points.push({
+        time: times[i],
+        tP10: percentile(temps, 10),
+        tMedian: percentile(temps, 50),
+        tP90: percentile(temps, 90),
+        rainProb: precipMembers > 0 ? (wetMembers / precipMembers) * 100 : 0,
+      });
+    }
+    if (points.length === 0) return null;
+    return { points, members: memberTempKeys.length, fetchedAt: Date.now() };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
 }

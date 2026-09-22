@@ -37,6 +37,8 @@ export const FEATURES = {
   meteoalarm: true,
   /** "Weather on this day" card - observed weather on today's date in past years */
   onThisDay: true,
+  /** Ensemble forecast confidence band (P10-P90) on the trend chart + digest */
+  ensemble: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

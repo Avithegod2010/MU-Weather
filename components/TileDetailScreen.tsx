@@ -50,7 +50,7 @@ import {
   type DetailAnimStyle,
 } from '../utils/detailAnimations';
 import type { TopicKey } from '../config/tiles';
-import type { WeatherBundle, HourPoint, PollenInfo } from '../api/types';
+import type { WeatherBundle, HourPoint, PollenInfo, EnsembleSpreadPoint } from '../api/types';
 
 export type { TopicKey } from '../config/tiles';
 
@@ -104,6 +104,7 @@ export function DetailChart({
   fixedMin,
   fixedMax,
   legendLabels,
+  band,
 }: {
   theme: AppTheme;
   hours: HourPoint[];
@@ -111,6 +112,8 @@ export function DetailChart({
   fixedMin?: number;
   fixedMax?: number;
   legendLabels?: string[];
+  /** Optional P10-P90 band aligned to hours by time string; drawn behind the series. */
+  band?: EnsembleSpreadPoint[] | null;
 }) {
   const slice = hours.slice(0, 24);
   const usable = slice.filter((hour) =>
@@ -122,8 +125,18 @@ export function DetailChart({
   const allValues = seriesList
     .flatMap((series) => usable.map((hour) => series.pick(hour)))
     .filter((value): value is number => value !== null);
-  let min = fixedMin ?? Math.min(...allValues);
-  let max = fixedMax ?? Math.max(...allValues);
+
+  const bandByTime = band ? new Map(band.map((point) => [point.time, point])) : null;
+  const bandRows: Array<{ p10: number; p90: number } | null> | null = bandByTime
+    ? usable.map((hour) => {
+        const point = bandByTime.get(hour.time);
+        return point ? { p10: point.tP10, p90: point.tP90 } : null;
+      })
+    : null;
+  const bandValues = bandRows?.flatMap((row) => (row ? [row.p10, row.p90] : [])) ?? [];
+
+  let min = fixedMin ?? Math.min(...allValues, ...bandValues);
+  let max = fixedMax ?? Math.max(...allValues, ...bandValues);
   if (fixedMin === undefined || fixedMax === undefined) {
     const pad = Math.max((max - min) * 0.12, 0.001);
     if (fixedMin === undefined) min -= pad;
@@ -131,6 +144,23 @@ export function DetailChart({
   }
 
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
+
+  // Ensemble band polygon: P90 forward, P10 reversed, closed. First child so it
+  // renders behind the series paths.
+  let bandPath = '';
+  if (bandRows) {
+    const upperPoints: CurvePoint[] = [];
+    const lowerPoints: CurvePoint[] = [];
+    bandRows.forEach((row, index) => {
+      if (!row) return;
+      const x = index * COL_WIDTH + COL_WIDTH / 2;
+      upperPoints.push({ x, y: scaleY(row.p90, min, max, PADDING, CHART_HEIGHT - PADDING - 16) });
+      lowerPoints.push({ x, y: scaleY(row.p10, min, max, PADDING, CHART_HEIGHT - PADDING - 16) });
+    });
+    if (upperPoints.length >= 2) {
+      bandPath = `${smoothPath(upperPoints)} ${smoothPath([...lowerPoints].reverse()).replace(/^M/, 'L')} Z`;
+    }
+  }
 
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
@@ -141,6 +171,14 @@ export function DetailChart({
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
         >
+          {bandPath ? (
+            <Path
+              d={bandPath}
+              fill={seriesList[0]?.color ?? '#F5A962'}
+              opacity={theme.isLight ? 0.16 : 0.22}
+              stroke="none"
+            />
+          ) : null}
           {seriesList.map((series, seriesIndex) => {
             const points: CurvePoint[] = [];
             usable.forEach((hour, index) => {
