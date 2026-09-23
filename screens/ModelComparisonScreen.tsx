@@ -25,6 +25,8 @@ const LABEL_WIDTH = 96;
 const COL_WIDTH = 88;
 /** How many forecast days to show (tomorrow is index 1 in daily arrays). */
 const DAYS_SHOWN = 5;
+/** Green used for the model that sits closest to the multi-model consensus. */
+const CONSENSUS_COLOR = '#5BC98C';
 
 /** Short localized weekday for an ISO date string. */
 function formatDayShort(date: string): string {
@@ -53,6 +55,22 @@ export function ModelComparisonScreen({
       .filter((value): value is number => typeof value === 'number');
     if (highs.length < 2) return null;
     return Math.max(...highs) - Math.min(...highs);
+  };
+
+  /** Model whose high is closest to the multi-model median — the consensus pick. */
+  const consensusModel = (dayIndex: number): string | null => {
+    const rows = valid
+      .map((entry) => ({ model: entry.model, tMax: entry.days[dayIndex]?.tMax }))
+      .filter(
+        (row): row is { model: ModelForecast['model']; tMax: number } =>
+          typeof row.tMax === 'number',
+      );
+    if (rows.length < 3) return null;
+    const sorted = [...rows].sort((a, b) => a.tMax - b.tMax);
+    const median = sorted[Math.floor(sorted.length / 2)].tMax;
+    return rows.reduce((best, row) =>
+      Math.abs(row.tMax - median) < Math.abs(best.tMax - median) ? row : best,
+    ).model;
   };
 
   return (
@@ -111,6 +129,7 @@ export function ModelComparisonScreen({
             {dayIndexes.map((dayIndex) => {
               const date = firstDates[dayIndex]?.date ?? null;
               const spread = spreadForDay(dayIndex);
+              const consensus = consensusModel(dayIndex);
               return (
                 <View key={dayIndex} style={[styles.dayRow, { borderTopColor: theme.trackColor }]}>
                   <View style={{ width: LABEL_WIDTH }}>
@@ -125,6 +144,7 @@ export function ModelComparisonScreen({
                   </View>
                   {valid.map((entry) => {
                     const day: ModelForecastDay | undefined = entry.days[dayIndex];
+                    const isConsensus = entry.model === consensus;
                     if (!day) {
                       return (
                         <View key={entry.model} style={[styles.valueCell, { width: COL_WIDTH }]}>
@@ -135,7 +155,7 @@ export function ModelComparisonScreen({
                     return (
                       <View key={entry.model} style={[styles.valueCell, { width: COL_WIDTH }]}>
                         <WeatherIcon code={day.weatherCode} isDay size={18} themeColor={theme.textSecondary} />
-                        <Text style={[styles.valueText, { color: theme.textPrimary }]}>
+                        <Text style={[styles.valueText, { color: isConsensus ? CONSENSUS_COLOR : theme.textPrimary }]}>
                           {formatTemp(day.tMax)}
                         </Text>
                         <Text style={[styles.lowText, { color: theme.textTertiary }]}>
@@ -144,6 +164,9 @@ export function ModelComparisonScreen({
                             ? ` · ${Math.round(day.precipProb)}%`
                             : ''}
                         </Text>
+                        {isConsensus ? (
+                          <View style={[styles.consensusDot, { backgroundColor: CONSENSUS_COLOR }]} />
+                        ) : null}
                       </View>
                     );
                   })}
@@ -257,6 +280,11 @@ const styles = StyleSheet.create({
   lowText: {
     fontSize: 11,
     fontFamily: F.regular,
+  },
+  consensusDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
   },
   caption: {
     textAlign: 'center',
