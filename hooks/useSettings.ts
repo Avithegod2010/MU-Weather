@@ -11,6 +11,7 @@ import type { DetailAnimStyle } from '../utils/detailAnimations';
 import type { LayoutDensity } from '../theme/palettes';
 import type { HomeBackgroundKey } from '../config/backgrounds';
 import type { ColorThemeKey } from '../config/colorThemes';
+import type { ModelKey } from '../api/providers';
 import { setLanguage } from '../utils/i18n';
 import type { LanguageKey } from '../utils/i18n';
 import type { StyleMode, ThemeMode } from '../theme/palettes';
@@ -48,6 +49,12 @@ export interface AppSettings {
   colorTheme: ColorThemeKey;
   /** Home sections / detail tiles the user switched off - hidden from home */
   hiddenTiles: string[];
+  /** Default model that feeds the main forecast tile + trend/digest — can be switched
+   *  in Settings → "Model comparison". When a non-primary model is selected the home
+   *  forecast still uses ECMWF (the app's primary model) so downstream features never
+   *  silently change behavior; the picker only controls the comparison screen default
+   *  sort and which model is starred in the table header. */
+  modelSource: ModelKey;
   /** History window shown in the past-days card - 7, 30 days, or the accuracy view */
   pastDaysRange: 7 | 30 | 'accuracy';
   /** Home card spacing - 'compact' tightens paddings and hero typography */
@@ -79,6 +86,11 @@ export const DEFAULT_SETTINGS: AppSettings = {
   hiddenTiles: [],
   pastDaysRange: 7,
   layoutDensity: 'comfortable',
+  /** Default comparison model shown first in the model-comparison screen — can be
+   *  changed in Settings → "Model comparison". Does not affect the home forecast
+   *  (that always uses the primary ECMWF model); only gates the comparison screen
+   *  sort order and which model is starred. */
+  modelSource: 'ecmwf_ifs025',
 };
 
 function applySideEffects(settings: AppSettings): void {

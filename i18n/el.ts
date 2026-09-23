@@ -161,4 +161,13 @@ export const el: Strings = {
   digest_conf_high: 'υψηλή εμπιστοσύνη',
   digest_conf_medium: 'μέτρια εμπιστοσύνη',
   digest_conf_low: 'χαμηλή εμπιστοσύνη',
+  tile_models: 'Σύγκριση μοντέλων',
+  mc_eyebrow: 'ΠΟΛΛΑ ΜΟΝΤΕΛΑ',
+  mc_title: 'Σύγκριση μοντέλων',
+  mc_loading: 'Ερώτηση όλων των μοντέλων…',
+  mc_error: 'Τα δεδομένα μοντέλων δεν είναι διαθέσιμα αυτή τη στιγμή.',
+  mc_spread: '±{n}° διασπορά',
+  mc_caption: 'Αύριο + 4 ημέρες από έξι παγκόσμια μοντέλα καιρού. Μεγαλύτερη διασπορά = λιγότερη βεβαιότητα.',
+  s_models: 'Σύγκριση μοντέλων',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };

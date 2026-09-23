@@ -161,4 +161,13 @@ export const id: Strings = {
   digest_conf_high: 'keyakinan tinggi',
   digest_conf_medium: 'keyakinan sedang',
   digest_conf_low: 'keyakinan rendah',
+  tile_models: 'Perbandingan model',
+  mc_eyebrow: 'MULTI-MODEL',
+  mc_title: 'Perbandingan model',
+  mc_loading: 'Meminta semua model…',
+  mc_error: 'Data model tidak tersedia saat ini.',
+  mc_spread: 'sebaran ±{n}°',
+  mc_caption: 'Besok + 4 hari dari enam model cuaca global. Sebaran lebih lebar = kurang pasti.',
+  s_models: 'Perbandingan model',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };

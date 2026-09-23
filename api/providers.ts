@@ -444,3 +444,110 @@ export async function fetchEnsembleSpread(lat: number, lon: number): Promise<Ens
     clearTimeout(timer);
   }
 }
+
+
+// ── Multi-model comparison (F2) ──
+
+export type ModelKey =
+  | 'ecmwf_ifs025'
+  | 'gfs_seamless'
+  | 'icon_seamless'
+  | 'meteofrance_seamless'
+  | 'jma_seamless'
+  | 'metno_nordic';
+
+/** Short display labels for the comparison table + settings picker. */
+export const MODEL_LABELS: Record<ModelKey, string> = {
+  ecmwf_ifs025: 'ECMWF',
+  gfs_seamless: 'GFS',
+  icon_seamless: 'ICON',
+  meteofrance_seamless: 'Météo-France',
+  jma_seamless: 'JMA',
+  metno_nordic: 'MET Nordic',
+};
+
+export const MODEL_KEYS: ModelKey[] = [
+  'ecmwf_ifs025',
+  'gfs_seamless',
+  'icon_seamless',
+  'meteofrance_seamless',
+  'jma_seamless',
+  'metno_nordic',
+];
+
+export interface ModelForecastDay {
+  date: string;
+  tMax: number;
+  tMin: number;
+  precipProb: number | null;
+  weatherCode: number;
+}
+
+export interface ModelForecast {
+  model: ModelKey;
+  days: ModelForecastDay[];
+}
+
+interface MultiModelDaily {
+  time?: string[];
+  [suffixed: string]: unknown;
+}
+
+/**
+ * One forecast-API call with every comparison model; the response carries
+ * suffixed daily keys (temperature_2m_max_<model>, ...). Regional models can
+ * be silently absent for a location (metno_nordic outside the Nordics) - those
+ * models simply return null and the UI shows a dash.
+ */
+export async function fetchModelForecast(lat: number, lon: number): Promise<ModelForecast[] | null> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    daily:
+      'temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code',
+    forecast_days: '7',
+    timezone: 'auto',
+    models: MODEL_KEYS.join(','),
+  }).toString();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`, {
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error(`Forecast responded ${response.status}`);
+    const json = (await response.json()) as { daily?: MultiModelDaily };
+    const daily = json?.daily;
+    const times = daily?.time;
+    if (!daily || !Array.isArray(times) || times.length === 0) return null;
+
+    const result: ModelForecast[] = [];
+    for (const model of MODEL_KEYS) {
+      const maxes = daily[`temperature_2m_max_${model}`];
+      const mins = daily[`temperature_2m_min_${model}`];
+      if (!Array.isArray(maxes) || !Array.isArray(mins)) continue; // region-unsupported model
+      const probs = daily[`precipitation_probability_max_${model}`];
+      const codes = daily[`weather_code_${model}`];
+      const days: ModelForecastDay[] = [];
+      for (let i = 0; i < times.length; i++) {
+        const tMax = maxes[i];
+        const tMin = mins[i];
+        if (typeof tMax !== 'number' || typeof tMin !== 'number') continue;
+        days.push({
+          date: times[i],
+          tMax,
+          tMin,
+          precipProb: Array.isArray(probs) && typeof probs[i] === 'number' ? (probs[i] as number) : null,
+          weatherCode: Array.isArray(codes) && typeof codes[i] === 'number' ? (codes[i] as number) : 3,
+        });
+      }
+      if (days.length > 0) result.push({ model, days });
+    }
+    return result.length > 0 ? result : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}

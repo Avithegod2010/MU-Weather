@@ -161,4 +161,13 @@ export const bn: Strings = {
   digest_conf_high: 'উচ্চ আস্থা',
   digest_conf_medium: 'মাঝারি আস্থা',
   digest_conf_low: 'কম আস্থা',
+  tile_models: 'মডেল তুলনা',
+  mc_eyebrow: 'মাল্টি-মডেল',
+  mc_title: 'মডেল তুলনা',
+  mc_loading: 'সব মডেল জিজ্ঞাসা করা হচ্ছে…',
+  mc_error: 'মডেল ডেটা এখনই পাওয়া যাচ্ছে না।',
+  mc_spread: '±{n}° বিস্তার',
+  mc_caption: 'আগামীকাল + ৪ দিন ছয়টি বৈশ্বিক আবহাওয়া মডেল থেকে। বেশি বিস্তার = কম নিশ্চয়তা।',
+  s_models: 'মডেল তুলনা',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };

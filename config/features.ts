@@ -39,6 +39,8 @@ export const FEATURES = {
   onThisDay: true,
   /** Ensemble forecast confidence band (P10-P90) on the trend chart + digest */
   ensemble: true,
+  /** Multi-model comparison screen (ECMWF/GFS/ICON/MF/JMA/MET Nordic) */
+  modelComparison: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

@@ -589,6 +589,15 @@ export const en = {
   digest_conf_high: 'high confidence',
   digest_conf_medium: 'moderate confidence',
   digest_conf_low: 'low confidence',
+  tile_models: 'Model comparison',
+  mc_eyebrow: 'MULTI-MODEL',
+  mc_title: 'Model comparison',
+  mc_loading: 'Asking every model…',
+  mc_error: 'Model data is unavailable right now.',
+  mc_spread: '±{n}° spread',
+  mc_caption: 'Tomorrow + 4 days from six global weather models. Wider spread = less certain.',
+  s_models: 'Model comparison',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };
 
 export type Strings = typeof en;

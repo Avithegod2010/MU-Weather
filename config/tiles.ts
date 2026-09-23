@@ -54,6 +54,7 @@ export const TILE_GROUPS: TileGroup[] = [
       { key: 'pastWeek', label: 'Past week' },
       { key: 'climate', label: 'Climate' },
       { key: 'onThisDay', label: 'On this day' },
+      { key: 'models', label: 'Model comparison' },
       { key: 'warnings', label: 'Warnings' },
       { key: 'activity', label: 'Activity planner' },
       { key: 'tripPlanner', label: 'Trip planner' },

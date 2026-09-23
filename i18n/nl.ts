@@ -161,4 +161,13 @@ export const nl: Strings = {
   digest_conf_high: 'hoge betrouwbaarheid',
   digest_conf_medium: 'gemiddelde betrouwbaarheid',
   digest_conf_low: 'lage betrouwbaarheid',
+  tile_models: 'Modelvergelijking',
+  mc_eyebrow: 'MULTI-MODEL',
+  mc_title: 'Modelvergelijking',
+  mc_loading: 'Alle modellen worden bevraagd…',
+  mc_error: 'Modelgegevens zijn nu niet beschikbaar.',
+  mc_spread: '±{n}° spreiding',
+  mc_caption: 'Morgen + 4 dagen van zes mondiale weermodellen. Grotere spreiding = onzekerder.',
+  s_models: 'Modelvergelijking',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };

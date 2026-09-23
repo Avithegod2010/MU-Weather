@@ -107,6 +107,8 @@ import { Card } from '../components/Card';
 import { MapScreen } from './MapScreen';
 import { CompareScreen } from './CompareScreen';
 import { useCityComparison } from '../hooks/useCityComparison';
+import { ModelComparisonScreen } from './ModelComparisonScreen';
+import { useModelComparison } from '../hooks/useModelComparison';
 import { useEnsemble } from '../hooks/useEnsemble';
 import { AlertsScreen } from './AlertsScreen';
 import { useAlerts } from '../hooks/useAlerts';
@@ -146,6 +148,7 @@ export function HomeScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [calendarEnabled, setCalendarEnabled] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [modelsOpen, setModelsOpen] = useState(false);
   const [detailTopic, setDetailTopic] = useState<TopicKey | null>(null);
   const [dayDetail, setDayDetail] = useState<{ day: DayPoint; index: number } | null>(null);
 
@@ -284,6 +287,10 @@ export function HomeScreen() {
   const comparison = useCityComparison(
     FEATURES.cityComparison ? favoritesState.favorites : [],
     compareOpen,
+  );
+  const modelComparison = useModelComparison(
+    FEATURES.modelComparison ? active : null,
+    modelsOpen,
   );
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -673,6 +680,20 @@ export function HomeScreen() {
                 </Reveal>
               ) : null}
 
+              {FEATURES.modelComparison && showSection('models') ? (
+                <Reveal delay={205}>
+                  <Card
+                    theme={theme}
+                    title={t('mc_title')}
+                    icon={Database}
+                    onPress={() => setModelsOpen(true)}
+                  >
+                    <Text style={[styles.credit, { color: theme.textTertiary }]}>
+                      {t('mc_caption')}
+                    </Text>
+                  </Card>
+                </Reveal>
+              ) : null}
               <Reveal delay={160}>
                 <SectionTitle theme={theme}>{t('sec_details')}</SectionTitle>
                 <DetailCards
@@ -827,6 +848,14 @@ export function HomeScreen() {
         onClose={() => setCompareOpen(false)}
         entries={comparison.results}
         status={comparison.status}
+      />
+
+      <ModelComparisonScreen
+        theme={theme}
+        visible={modelsOpen}
+        onClose={() => setModelsOpen(false)}
+        results={modelComparison.results}
+        status={modelComparison.status}
       />
 
       <TileDetailScreen

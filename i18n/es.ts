@@ -161,4 +161,13 @@ export const es: Strings = {
   digest_conf_high: 'confianza alta',
   digest_conf_medium: 'confianza moderada',
   digest_conf_low: 'confianza baja',
+  tile_models: 'Comparación de modelos',
+  mc_eyebrow: 'MULTIMODELO',
+  mc_title: 'Comparación de modelos',
+  mc_loading: 'Consultando todos los modelos…',
+  mc_error: 'Los datos de los modelos no están disponibles ahora.',
+  mc_spread: '±{n}° de dispersión',
+  mc_caption: 'Mañana + 4 días de seis modelos meteorológicos globales. Mayor dispersión = menos certeza.',
+  s_models: 'Comparación de modelos',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };

@@ -161,4 +161,13 @@ export const hu: Strings = {
   digest_conf_high: 'magas biztonság',
   digest_conf_medium: 'közepes biztonság',
   digest_conf_low: 'alacsony biztonság',
+  tile_models: 'Modell-összehasonlítás',
+  mc_eyebrow: 'MULTI-MODELL',
+  mc_title: 'Modell-összehasonlítás',
+  mc_loading: 'Minden modell lekérdezése…',
+  mc_error: 'A modelladatok jelenleg nem érhetők el.',
+  mc_spread: '±{n}° szórás',
+  mc_caption: 'Holnap + 4 nap hat globális időjárási modellből. Nagyobb szórás = bizonytalanabb.',
+  s_models: 'Modell-összehasonlítás',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };

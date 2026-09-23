@@ -90,6 +90,7 @@ import { TILE_GROUPS } from '../config/tiles';
 import { BACKGROUND_OPTIONS } from '../config/backgrounds';
 import { COLOR_THEMES } from '../config/colorThemes';
 import { LANGUAGES, t, type StringKey } from '../utils/i18n';
+import { MODEL_KEYS, MODEL_LABELS } from '../api/providers';
 import { formatClockParts } from '../utils/format';
 import { exportSettings, importSettings } from '../utils/backup';
 import { writeForecastLogExport, type DataExportFormat } from '../utils/dataExport';
@@ -577,6 +578,53 @@ export function SettingsSheet({
               value={settings.iconStyle}
               onChange={(value) => onUpdate({ iconStyle: value as AppSettings['iconStyle'] })}
             />
+          </View>
+
+          {/* ── bot1: ensemble + multi-model ── */}
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Database size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_models')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_models_sub')}
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.modelChips, { backgroundColor: theme.chipBg }]}>
+              {MODEL_KEYS.map((key) => {
+                const active = settings.modelSource === key;
+                return (
+                  <Pressable
+                    key={key}
+                    onPress={() => {
+                      if (!active) {
+                        haptics.select();
+                        onUpdate({ modelSource: key });
+                      }
+                    }}
+                    style={({ pressed }) => [
+                      styles.modelChip,
+                      { backgroundColor: active ? theme.accent : 'transparent' },
+                      pressed && { opacity: 0.7 },
+                    ]}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                  >
+                    <Text
+                      style={[
+                        styles.modelChipLabel,
+                        { color: active ? '#FFFFFF' : theme.textSecondary },
+                      ]}
+                    >
+                      {MODEL_LABELS[key]}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
 
           <Pressable
@@ -1481,6 +1529,22 @@ const styles = StyleSheet.create({
   segmentRow: {
     paddingHorizontal: 16,
     marginBottom: 10,
+  },
+  modelChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  modelChip: {
+    borderRadius: 999,
+    paddingVertical: 7,
+    paddingHorizontal: 13,
+  },
+  modelChipLabel: {
+    fontSize: 12.5,
+    fontFamily: F.semibold,
   },
   bgScroller: {
     flexGrow: 0,

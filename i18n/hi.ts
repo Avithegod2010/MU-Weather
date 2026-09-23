@@ -161,4 +161,13 @@ export const hi: Strings = {
   digest_conf_high: 'उच्च विश्वास',
   digest_conf_medium: 'मध्यम विश्वास',
   digest_conf_low: 'कम विश्वास',
+  tile_models: 'मॉडल तुलना',
+  mc_eyebrow: 'मल्टी-मॉडल',
+  mc_title: 'मॉडल तुलना',
+  mc_loading: 'सभी मॉडल से पूछा जा रहा है…',
+  mc_error: 'मॉडल डेटा अभी उपलब्ध नहीं है।',
+  mc_spread: '±{n}° फैलाव',
+  mc_caption: 'कल + 4 दिन छह वैश्विक मौसम मॉडलों से। ज़्यादा फैलाव = कम निश्चितता।',
+  s_models: 'मॉडल तुलना',
+  s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
 };
