@@ -41,6 +41,11 @@ export const FEATURES = {
   ensemble: true,
   /** Multi-model comparison screen (ECMWF/GFS/ICON/MF/JMA/MET Nordic) */
   modelComparison: true,
+  // ── bot2: aurora + alerts + wear ──
+  /** Aurora & space-weather card - NOAA SWPC Kp outlook, auto-hides below ±45° */
+  aurora: true,
+  /** "Best time outdoors" card - best 2-hour daylight window today */
+  bestWindow: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

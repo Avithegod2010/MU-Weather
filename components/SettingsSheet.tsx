@@ -80,6 +80,8 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   tripPlanner: 'tile_trip',
   calendar: 'tile_calendar',
   marine: 'tile_marine',
+  aurora: 'tile_aurora',
+  bestWindow: 'tile_best_window',
 };
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
@@ -132,6 +134,9 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   activity: Footprints,
   calendar: CloudSun,
   marine: Sailboat,
+  // ── bot2: aurora + alerts + wear ──
+  aurora: Sparkles,
+  bestWindow: Clock,
   wind: Wind,
   aqi: Gauge,
   uv: Sun,

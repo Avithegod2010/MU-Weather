@@ -78,6 +78,12 @@ import { CalendarCard } from '../components/CalendarCard';
 import { useCalendarWeather } from '../hooks/useCalendarWeather';
 import { useMarine } from '../hooks/useMarine';
 import { MarineCard } from '../components/MarineCard';
+// ── bot2: aurora + alerts + wear ──
+import { useAurora } from '../hooks/useAurora';
+import { AuroraCard } from '../components/AuroraCard';
+import { BestWindowCard } from '../components/BestWindowCard';
+import { computeBestWindow, bestWindowLine } from '../utils/bestWindow';
+import { computeWearLine } from '../utils/whatToWear';
 import { TileDetailScreen, type TopicKey } from '../components/TileDetailScreen';
 import { DayDetailScreen } from '../components/DayDetailScreen';
 import { FEATURES } from '../config/features';
@@ -284,6 +290,8 @@ export function HomeScreen() {
     weather.data?.daily ?? [],
   );
   const marine = useMarine(FEATURES.marineForecast ? active : null);
+  // ── bot2: aurora + alerts + wear ──
+  const aurora = useAurora(FEATURES.aurora ? active : null);
   const comparison = useCityComparison(
     FEATURES.cityComparison ? favoritesState.favorites : [],
     compareOpen,
@@ -304,6 +312,17 @@ export function HomeScreen() {
   const highlights = useMemo(
     () => (weather.data ? computeHighlights(weather.data, nowcast) : []),
     [weather.data, nowcast],
+  );
+  // ── bot2: aurora + alerts + wear ──
+  const bestWindow = useMemo(
+    () => (FEATURES.bestWindow && weather.data ? computeBestWindow(weather.data.hourly) : null),
+    [weather.data],
+  );
+  const bestWindowLabel = bestWindow ? bestWindowLine(bestWindow) : null;
+  const wearLine = useMemo(
+    () =>
+      weather.data ? computeWearLine(weather.data.current, weather.data.daily[0] ?? null) : null,
+    [weather.data],
   );
   const commentary = useMemo(
     () => (settings.snarkMode && weather.data ? getSnarkComment(weather.data) : null),
@@ -563,6 +582,15 @@ export function HomeScreen() {
                 />
               </Reveal>
 
+              {/* ── bot2: aurora + alerts + wear ── */}
+              {wearLine ? (
+                <Reveal delay={20}>
+                  <Text style={[styles.wearLine, { color: theme.textSecondary }]}>
+                    {wearLine.text}
+                  </Text>
+                </Reveal>
+              ) : null}
+
               {showSection('highlights') ? (
                 <Reveal delay={60}>
                   <HighlightsCard theme={theme} highlights={highlights} />
@@ -694,6 +722,24 @@ export function HomeScreen() {
                   </Card>
                 </Reveal>
               ) : null}
+
+              {/* ── bot2: aurora + alerts + wear ── */}
+              {FEATURES.bestWindow && showSection('bestWindow') && bestWindow && bestWindowLabel ? (
+                <Reveal delay={210}>
+                  <BestWindowCard theme={theme} line={bestWindowLabel} score={bestWindow.score} />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.aurora && showSection('aurora') ? (
+                <Reveal delay={220}>
+                  <AuroraCard
+                    theme={theme}
+                    forecast={aurora.forecast}
+                    latitude={active?.latitude ?? null}
+                  />
+                </Reveal>
+              ) : null}
+
               <Reveal delay={160}>
                 <SectionTitle theme={theme}>{t('sec_details')}</SectionTitle>
                 <DetailCards
@@ -988,6 +1034,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     marginTop: 4,
+  },
+  // ── bot2: aurora + alerts + wear ──
+  wearLine: {
+    textAlign: 'center',
+    fontSize: 12.5,
+    fontFamily: F.medium,
+    marginTop: 2,
   },
   footerRow: {
     flexDirection: 'row',
