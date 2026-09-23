@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from './notifications';
 import { evaluateAlerts } from './alertRules';
-import type { AlertSettings, TriggeredAlert } from './alertRules';
+import type { AlertExtras, AlertSettings, TriggeredAlert } from './alertRules';
+import { computeNowcast } from './nowcast';
+import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
 import type { WeatherBundle } from '../api/types';
 
 export const ALERTS_STORAGE_KEY = '@mu_weather/alerts_v1';
@@ -24,18 +26,42 @@ export async function ensureChannel(): Promise<void> {
  * Evaluate alert rules against fresh weather data and fire notifications for
  * anything whose cooldown has expired. Shared by the in-app refresh flow AND
  * the background task so both behave identically.
+ *
+ * Rules that need live fetches or data outside WeatherBundle (rain easing,
+ * aurora) are materialized here first; evaluateAlerts itself stays synchronous
+ * and side-effect free so it can be called from anywhere.
+ *
  * Returns the triggered alerts (for in-app banners) regardless of delivery.
  */
+/**
+ * Materialize the inputs the alert rules need but cannot derive synchronously:
+ * the nowcast (rain easing) and the SWPC Kp outlook (aurora). The latitude gate
+ * mirrors the Aurora card so a below-45° location never pays for the request.
+ */
+async function buildAlertExtras(settings: AlertSettings, data: WeatherBundle): Promise<AlertExtras> {
+  const extras: AlertExtras = {};
+  if (settings.raineasing) {
+    extras.nowcast = computeNowcast(data.minutely);
+  }
+  if (settings.aurora && Math.abs(data.location.latitude) >= AURORA_LATITUDE_MIN) {
+    const kpMax = await fetchAuroraMaxKp();
+    if (kpMax !== null) extras.auroraKpMax = kpMax;
+  }
+  return extras;
+}
+
 export async function fireAlertNotifications(
   settings: AlertSettings,
   data: WeatherBundle,
 ): Promise<TriggeredAlert[]> {
+  const extras = await buildAlertExtras(settings, data);
   const triggered = evaluateAlerts(
     settings,
     data.current,
     data.hourly,
     data.daily[0] ?? null,
     data.aqi,
+    extras,
   );
   if (!triggered.length) return [];
 

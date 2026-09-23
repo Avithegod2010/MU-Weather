@@ -51,6 +51,7 @@ import {
   Navigation,
   Sunrise,
   Sunset,
+  Sparkles,
 } from '../utils/uiIcons';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
@@ -69,6 +70,14 @@ const ALERT_ICONS: Record<AlertKey, typeof CloudRain> = {
   wind: Wind,
   cape: CloudLightning,
   heat: Thermometer,
+  // ── bot2: aurora + alerts + wear ──
+  aurora: Sparkles,
+  fog: CloudFog,
+  blackice: Snowflake,
+  coldsnap: Thermometer,
+  tempdrop: ArrowDown,
+  stargazing: Star,
+  raineasing: Umbrella,
 };
 
 interface AlertsScreenProps {
