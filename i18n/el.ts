@@ -173,4 +173,27 @@ export const el: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Άνεση {n}/100',
   tile_aurora: 'Σέλας', card_aurora: 'Σέλας & διαστημικός καιρός', aurora_now: 'Kp τώρα', aurora_forecast: 'Επόμενες 3 ημέρες', aurora_chance_high: 'Καλή πιθανότητα — βρείτε σκοτεινό μέρος', aurora_chance_maybe: 'Πιθανό αν ο ουρανός μείνει καθαρός', aurora_chance_low: 'Πολύ αμυδρό από εδώ', aurora_source: 'NOAA Διαστημικός καιρός', card_best_window: 'Καλύτερη ώρα για έξω', best_window_line: 'Η ώρα {time} φαίνεται καλύτερη σήμερα', tile_best_window: 'Καλύτερη ώρα για έξω', wear_jacket: 'Καιρός για μπουφάν — {n}', wear_shirt: 'Καιρός για πουκάμισο — {n}', wear_shorts: 'Καιρός για σορτς — {n}', wear_umbrella: 'πάρτε ομπρέλα', wear_sunscreen: 'βάλτε αντηλιακό', wear_windy: 'έχει ριπές έξω', alert_aurora_title: 'Παρακολούθηση σέλαος', alert_aurora_sub: 'Ειδοποιήστε με όταν μπορεί να φανεί σέλας', alert_fog_title: 'Παρακολούθηση ομίχλης', alert_fog_sub: 'Ειδοποιήστε με όταν πέφτει η ορατότητα ή έχει ομίχλη', alert_blackice_title: 'Παρακολούθηση παγετού δρόμου', alert_blackice_sub: 'Ειδοποιήστε με όταν η βροχή μπορεί να παγώσει το δρόμο', alert_coldsnap_title: 'Παρακολούθηση ψύχους', alert_coldsnap_sub: 'Ειδοποιήστε με όταν πέσει κάτω από −10°', alert_tempdrop_title: 'Παρακολούθηση πτώσης θερμοκρασίας', alert_tempdrop_sub: 'Ειδοποιήστε με για απότομη πτώση σε 6 ώρες', alert_stargazing_title: 'Παρακολούθηση έναστρου ουρανού', alert_stargazing_sub: 'Ειδοποιήστε με όταν η νύχτα είναι καθαρή και ήρεμη', alert_raineasing_title: 'Παρακολούθηση τέλους βροχής', alert_raineasing_sub: 'Ειδοποιήστε με όταν η βροχή κοντεύει να σταματήσει',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Ακρίβεια μοντέλων',
+  acc_models_caption: 'Σύγκριση τις τελευταίες {n} ημέρες',
+  acc_models_empty: 'Δεν έχουν καταγραφεί ακόμη συγκρίσεις μοντέλων',
+  alert_history_title: 'Πρόσφατες ειδοποιήσεις',
+  alert_history_empty: 'Δεν έχουν σταλεί ακόμη ειδοποιήσεις',
+  alert_history_clear: 'Εκκαθάριση',
+  alert_favorites_title: 'Παρακολούθηση αποθηκευμένων πόλεων',
+  alert_favorites_sub: 'Εφαρμόστε τους ίδιους κανόνες ειδοποίησης στις αποθηκευμένες πόλεις σας',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Ραντάρ βροχής',
+  radar_eyebrow: 'Ραντάρ βροχής',
+  radar_play: 'Αναπαραγωγή',
+  radar_pause: 'Παύση',
+  radar_now: 'Τώρα',
+  radar_min_ago: 'πριν {n} λεπτά',
+  radar_min_ahead: 'σε {n} λεπτά',
+  radar_caption: 'Εικόνες ραντάρ από RainViewer · οι τελευταίες 2 ώρες',
+  radar_error: 'Τα δεδομένα ραντάρ δεν είναι διαθέσιμα',
+  radar_retry: 'Δοκιμάστε ξανά',
+  radar_open_layers: 'Άνοιγμα χάρτη επιπέδων',
+  radar_open_radar: 'Κινούμενο ραντάρ',
 };
+

@@ -69,5 +69,12 @@ export { default as FileSpreadsheet } from 'lucide-react-native/icons/file-sprea
 export { default as Braces } from 'lucide-react-native/icons/braces';
 export { default as Volume2 } from 'lucide-react-native/icons/volume-2';
 export { default as Square } from 'lucide-react-native/icons/square';
+// ── bot1: rain radar ──
+export { default as Play } from 'lucide-react-native/icons/play';
+export { default as Pause } from 'lucide-react-native/icons/pause';
+export { default as Layers } from 'lucide-react-native/icons/layers';
+export { default as Plus } from 'lucide-react-native/icons/plus';
+export { default as Minus } from 'lucide-react-native/icons/minus';
+export { default as LocateFixed } from 'lucide-react-native/icons/locate-fixed';
 
 export type { LucideIcon } from 'lucide-react-native';

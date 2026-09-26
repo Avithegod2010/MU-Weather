@@ -13,6 +13,7 @@ import {
   CloudLightning,
   Gauge,
   ChevronLeft,
+  Radar as RadarIcon,
 } from '../utils/uiIcons';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
@@ -57,9 +58,11 @@ interface MapScreenProps {
   location: GeoLocation;
   visible: boolean;
   onClose: () => void;
+  /** Open the animated RainViewer radar for the same location. */
+  onOpenRadar: () => void;
 }
 
-export function MapScreen({ theme, location, visible, onClose }: MapScreenProps) {
+export function MapScreen({ theme, location, visible, onClose, onOpenRadar }: MapScreenProps) {
   const insets = useSafeAreaInsets();
   const [layer, setLayer] = useState<MapLayer>('precip');
   const [loading, setLoading] = useState(true);
@@ -103,6 +106,25 @@ export function MapScreen({ theme, location, visible, onClose }: MapScreenProps)
           <ChevronLeft size={24} color={theme.textPrimary} strokeWidth={2.4} />
         </Pressable>
       </View>
+
+      <Pressable
+        onPress={() => {
+          haptics.select();
+          onOpenRadar();
+        }}
+        style={({ pressed }) => [
+          styles.radarButton,
+          { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+          pressed && { opacity: 0.8 },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={t('radar_open_radar')}
+      >
+        <RadarIcon size={17} color={theme.textPrimary} strokeWidth={2.2} />
+        <Text style={[styles.radarButtonText, { color: theme.textPrimary }]} numberOfLines={1}>
+          {t('radar_open_radar')}
+        </Text>
+      </Pressable>
 
       <View style={[styles.chipsWrap, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
         {LAYERS.map((entry) => {
@@ -232,6 +254,20 @@ const styles = StyleSheet.create({
   },
   chipLabel: {
     fontSize: 12.5,
+    fontFamily: F.semibold,
+  },
+  radarButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  radarButtonText: {
+    fontSize: 13.5,
     fontFamily: F.semibold,
   },
   mapWrap: {

@@ -173,4 +173,27 @@ export const es: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Confort {n}/100',
   tile_aurora: 'Aurora', card_aurora: 'Aurora y clima espacial', aurora_now: 'Kp ahora', aurora_forecast: 'Próximos 3 días', aurora_chance_high: 'Buena probabilidad — busca un lugar oscuro', aurora_chance_maybe: 'Posible si el cielo sigue despejado', aurora_chance_low: 'Demasiado débil desde aquí', aurora_source: 'NOAA Clima Espacial', card_best_window: 'Mejor momento para salir', best_window_line: '{time} se ve mejor hoy', tile_best_window: 'Mejor momento para salir', wear_jacket: 'Tiempo de chaqueta — {n}', wear_shirt: 'Tiempo de camisa — {n}', wear_shorts: 'Tiempo de pantalón corto — {n}', wear_umbrella: 'lleva paraguas', wear_sunscreen: 'usa protector solar', wear_windy: 'hay ráfagas fuera', alert_aurora_title: 'Vigilar auroras', alert_aurora_sub: 'Avísame si la actividad geomagnética puede traer auroras', alert_fog_title: 'Vigilar niebla', alert_fog_sub: 'Avísame si baja la visibilidad o se forma niebla', alert_blackice_title: 'Vigilar hielo en carretera', alert_blackice_sub: 'Avísame si la lluvia helada puede helar la calzada', alert_coldsnap_title: 'Vigilar ola de frío', alert_coldsnap_sub: 'Avísame si la mínima baja de −10°', alert_tempdrop_title: 'Vigilar caída de temperatura', alert_tempdrop_sub: 'Avísame si la temperatura cae rápido en 6 horas', alert_stargazing_title: 'Vigilar estrellas', alert_stargazing_sub: 'Avísame si la noche se ve despejada y tranquila', alert_raineasing_title: 'Vigilar fin de lluvia', alert_raineasing_sub: 'Avísame si la lluvia actual está por parar',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Precisión de los modelos',
+  acc_models_caption: 'Comparado en los últimos {n} días',
+  acc_models_empty: 'Aún no hay comparaciones de modelos registradas',
+  alert_history_title: 'Avisos recientes',
+  alert_history_empty: 'Aún no se han entregado avisos',
+  alert_history_clear: 'Borrar',
+  alert_favorites_title: 'Vigilancia de ciudades guardadas',
+  alert_favorites_sub: 'Aplica las mismas reglas de aviso a tus ciudades guardadas',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Radar de lluvia',
+  radar_eyebrow: 'Radar de lluvia',
+  radar_play: 'Reproducir',
+  radar_pause: 'Pausar',
+  radar_now: 'Ahora',
+  radar_min_ago: 'hace {n} min',
+  radar_min_ahead: 'en {n} min',
+  radar_caption: 'Imágenes de radar de RainViewer · las últimas 2 horas',
+  radar_error: 'Datos de radar no disponibles',
+  radar_retry: 'Reintentar',
+  radar_open_layers: 'Abrir el mapa de capas',
+  radar_open_radar: 'Radar animado',
 };
+

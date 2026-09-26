@@ -8,16 +8,20 @@ import { Card } from './Card';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import { formatPrecip, formatPrecipValue, tempColor, getUnits } from '../utils/format';
 import { loadForecastLog, type ForecastLogEntry } from '../utils/forecastLog';
-import { computeAccuracy } from '../utils/accuracy';
+import { loadModelLog, type ModelLogEntry } from '../utils/modelAccuracyLog';
+import { computeAccuracy, computeModelAccuracy } from '../utils/accuracy';
+import { MODEL_LABELS } from '../api/providers';
 import { haptics } from '../utils/haptics';
 import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
-import type { PastDayActual } from '../api/types';
+import type { GeoLocation, PastDayActual } from '../api/types';
 
 interface PastWeekCardProps {
   theme: AppTheme;
   /** Archive actuals, oldest first. May hold up to 30 days. */
   days: PastDayActual[];
+  /** Active location - the model leaderboard only scores entries for this place. */
+  location: GeoLocation | null;
   /** History window shown - the archive feed covers both options */
   pastDaysRange?: 7 | 30 | 'accuracy';
   onRangeChange?: (range: 7 | 30 | 'accuracy') => void;
@@ -61,14 +65,23 @@ function deltaColor(diff: number): string {
   return BAD_DELTA;
 }
 
-export function PastWeekCard({ theme, days, pastDaysRange = 7, onRangeChange }: PastWeekCardProps) {
+export function PastWeekCard({
+  theme,
+  days,
+  location,
+  pastDaysRange = 7,
+  onRangeChange,
+}: PastWeekCardProps) {
   const [log, setLog] = useState<ForecastLogEntry[]>([]);
+  const [modelLog, setModelLog] = useState<ModelLogEntry[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const entries = await loadForecastLog();
-      if (!cancelled) setLog(entries);
+      const [entries, modelEntries] = await Promise.all([loadForecastLog(), loadModelLog()]);
+      if (cancelled) return;
+      setLog(entries);
+      setModelLog(modelEntries);
     })();
     return () => {
       cancelled = true;
@@ -128,7 +141,13 @@ export function PastWeekCard({ theme, days, pastDaysRange = 7, onRangeChange }: 
       }
     >
       {isAccuracy ? (
-        <AccuracyBody theme={theme} days={ordered} log={log} />
+        <AccuracyBody
+          theme={theme}
+          days={ordered}
+          log={log}
+          modelLog={modelLog}
+          location={location}
+        />
       ) : isMonth ? (
         <ThirtyDayBody theme={theme} days={shown} />
       ) : (
@@ -241,10 +260,14 @@ function AccuracyBody({
   theme,
   days,
   log,
+  modelLog,
+  location,
 }: {
   theme: AppTheme;
   days: PastDayActual[];
   log: ForecastLogEntry[];
+  modelLog: ModelLogEntry[];
+  location: GeoLocation | null;
 }) {
   const stats = computeAccuracy(log, days);
 
@@ -318,7 +341,80 @@ function AccuracyBody({
           )}
         </View>
       </View>
+
+      <ModelLeaderboard theme={theme} days={days} modelLog={modelLog} location={location} />
     </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Model leaderboard: which global model has been closest lately       */
+/* ------------------------------------------------------------------ */
+
+/** Bar colour for a hit rate: 70 %+ green, 50 %+ amber, below that red. */
+function hitColor(rate: number): string {
+  if (rate >= 0.7) return GOOD_DELTA;
+  if (rate >= 0.5) return OK_DELTA;
+  return BAD_DELTA;
+}
+
+function ModelLeaderboard({
+  theme,
+  days,
+  modelLog,
+  location,
+}: {
+  theme: AppTheme;
+  days: PastDayActual[];
+  modelLog: ModelLogEntry[];
+  location: GeoLocation | null;
+}) {
+  const { rows, comparedDays } = computeModelAccuracy(modelLog, days, location);
+
+  if (rows.length === 0) {
+    return (
+      <Text style={[styles.footnote, { color: theme.textTertiary }]}>
+        {t('acc_models_empty')}
+      </Text>
+    );
+  }
+
+  return (
+    <View style={styles.modelBlock}>
+      <Text style={[styles.accHeadline, { color: theme.textSecondary }]}>
+        {t('acc_models_title')}
+      </Text>
+      <View style={styles.accRows}>
+        {rows.map((row) => {
+          const hitPct = Math.round(row.hitRate * 100);
+          return (
+            <View key={row.model} style={styles.modelRow}>
+              <View style={styles.modelTexts}>
+                <Text style={[styles.modelName, { color: theme.textPrimary }]} numberOfLines={1}>
+                  {MODEL_LABELS[row.model]}
+                </Text>
+                <Text style={[styles.modelSub, { color: theme.textTertiary }]} numberOfLines={1}>
+                  {t('accuracy_high')}: ±{deltaDisplay(row.maeHigh)}° ·{' '}
+                  {t('trip_days').replace('{n}', String(row.compared))}
+                </Text>
+              </View>
+              <View style={[styles.modelTrack, { backgroundColor: theme.chipBg }]}>
+                <View
+                  style={[
+                    styles.modelFill,
+                    { width: `${hitPct}%`, backgroundColor: hitColor(row.hitRate) },
+                  ]}
+                />
+              </View>
+              <Text style={[styles.modelHit, { color: theme.textPrimary }]}>{hitPct}%</Text>
+            </View>
+          );
+        })}
+      </View>
+      <Text style={[styles.footnote, { color: theme.textTertiary }]}>
+        {t('acc_models_caption').split('{n}').join(String(comparedDays))}
+      </Text>
+    </View>
   );
 }
 
@@ -525,5 +621,41 @@ const styles = StyleSheet.create({
   accDate: {
     fontSize: 11,
     fontFamily: F.regular,
+  },
+  modelBlock: {
+    marginTop: 14,
+  },
+  modelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 9,
+  },
+  modelTexts: {
+    flex: 1,
+    gap: 1,
+  },
+  modelName: {
+    fontSize: 12,
+    fontFamily: F.semibold,
+  },
+  modelSub: {
+    fontSize: 10.5,
+    fontFamily: F.regular,
+  },
+  modelTrack: {
+    width: 54,
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  modelFill: {
+    height: 6,
+    borderRadius: 3,
+  },
+  modelHit: {
+    width: 34,
+    textAlign: 'right',
+    fontSize: 12,
+    fontFamily: F.bold,
   },
 });

@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loadFavorites, saveFavorites } from '../utils/favoritesStore';
 import type { GeoLocation } from '../api/types';
-
-const FAVORITES_KEY = '@mu_weather/favorites_v1';
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<GeoLocation[]>([]);
@@ -12,12 +10,9 @@ export function useFavorites() {
     let cancelled = false;
     (async () => {
       try {
-        const raw = await AsyncStorage.getItem(FAVORITES_KEY);
+        const stored = await loadFavorites();
         if (cancelled) return;
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) setFavorites(parsed as GeoLocation[]);
-        }
+        setFavorites(stored);
       } catch {
         // Corrupt storage: start with an empty list.
       } finally {
@@ -31,11 +26,7 @@ export function useFavorites() {
 
   const persist = useCallback(async (next: GeoLocation[]) => {
     setFavorites(next);
-    try {
-      await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(next));
-    } catch {
-      // Storage full or unavailable: keep in-memory state.
-    }
+    await saveFavorites(next);
   }, []);
 
   const toggleFavorite = useCallback(

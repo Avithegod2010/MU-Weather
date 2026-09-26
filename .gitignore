@@ -45,6 +45,7 @@ yarn-error.*
 .zcode/
 .mimosa/
 .claude/
+.cline/
 
 # AI/dev session notes (local only, not part of the open-source project)
 AGENTS.md

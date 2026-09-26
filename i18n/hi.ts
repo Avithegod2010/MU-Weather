@@ -173,4 +173,27 @@ export const hi: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'आराम {n}/100',
   tile_aurora: 'ध्रुवीय ज्योति', card_aurora: 'ध्रुवीय ज्योति और अंतरिक्ष मौसम', aurora_now: 'Kp अभी', aurora_forecast: 'अगले 3 दिन', aurora_chance_high: 'अच्छी संभावना — अँधेरी जगह जाएँ', aurora_chance_maybe: 'आसमान साफ रहा तो दिख सकती है', aurora_chance_low: 'यहाँ से बहुत धुंधली', aurora_source: 'NOAA अंतरिक्ष मौसम', card_best_window: 'बाहर जाने का सबसे अच्छा समय', best_window_line: '{time} आज सबसे अच्छा लग रहा है', tile_best_window: 'बाहर जाने का सबसे अच्छा समय', wear_jacket: 'जैकेट का मौसम — {n}', wear_shirt: 'शर्ट का मौसम — {n}', wear_shorts: 'शॉर्ट्स का मौसम — {n}', wear_umbrella: 'छाता ले जाएँ', wear_sunscreen: 'सनस्क्रीन लगाएँ', wear_windy: 'बाहर तेज़ हवा है', alert_aurora_title: 'ध्रुवीय ज्योति नज़र', alert_aurora_sub: 'भू-चुंबकीय गतिविधि से ज्योति दिखे तो बताएँ', alert_fog_title: 'कोहरा नज़र', alert_fog_sub: 'दृश्यता घटे या कोहरा बने तो बताएँ', alert_blackice_title: 'फिसलन भरी सड़क नज़र', alert_blackice_sub: 'जमने वाली बारिश से सड़क बर्फीली हो तो बताएँ', alert_coldsnap_title: 'अचानक ठंड नज़र', alert_coldsnap_sub: 'न्यूनतम −10° से नीचे जाए तो बताएँ', alert_tempdrop_title: 'तापमान गिरावट नज़र', alert_tempdrop_sub: '6 घंटों में तापमान तेज़ी से गिरे तो बताएँ', alert_stargazing_title: 'तारा-दर्शन नज़र', alert_stargazing_sub: 'रात साफ और शांत लगे तो बताएँ', alert_raineasing_title: 'बारिश थमने की नज़र', alert_raineasing_sub: 'चल रही बारिश थमने वाली हो तो बताएँ',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'मॉडल सटीकता',
+  acc_models_caption: 'पिछले {n} दिनों में तुलना',
+  acc_models_empty: 'अभी तक कोई मॉडल तुलना दर्ज नहीं',
+  alert_history_title: 'हाल की चेतावनियाँ',
+  alert_history_empty: 'अभी तक कोई चेतावनी नहीं भेजी गई',
+  alert_history_clear: 'साफ़ करें',
+  alert_favorites_title: 'सहेजे गए शहरों पर नज़र',
+  alert_favorites_sub: 'अपने सहेजे गए शहरों पर वही चेतावनी नियम चलाएँ',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'वर्षा रडार',
+  radar_eyebrow: 'वर्षा रडार',
+  radar_play: 'चलाएँ',
+  radar_pause: 'रोकें',
+  radar_now: 'अभी',
+  radar_min_ago: '{n} मिनट पहले',
+  radar_min_ahead: '{n} मिनट में',
+  radar_caption: 'RainViewer द्वारा रडार चित्र · पिछले 2 घंटे',
+  radar_error: 'रडार डेटा उपलब्ध नहीं',
+  radar_retry: 'पुनः प्रयास करें',
+  radar_open_layers: 'लेयर नक्शा खोलें',
+  radar_open_radar: 'एनिमेटेड रडार',
 };
+

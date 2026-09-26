@@ -173,4 +173,27 @@ export const fr: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Confort {n}/100',
   tile_aurora: 'Aurores', card_aurora: 'Aurores et météo spatiale', aurora_now: 'Kp actuel', aurora_forecast: '3 prochains jours', aurora_chance_high: 'Bonne chance — trouvez un endroit sombre', aurora_chance_maybe: 'Possible si le ciel reste dégagé', aurora_chance_low: 'Trop faible depuis ici', aurora_source: 'NOAA Météo spatiale', card_best_window: 'Meilleur moment pour sortir', best_window_line: '{time} semble idéal aujourd’hui', tile_best_window: 'Meilleur moment pour sortir', wear_jacket: 'Temps de veste — {n}', wear_shirt: 'Temps de chemise — {n}', wear_shorts: 'Temps de short — {n}', wear_umbrella: 'prenez un parapluie', wear_sunscreen: 'mettez de la crème solaire', wear_windy: 'il y a des rafales dehors', alert_aurora_title: 'Veille aurores', alert_aurora_sub: 'Me prévenir si l’activité géomagnétique peut amener des aurores', alert_fog_title: 'Veille brouillard', alert_fog_sub: 'Me prévenir si la visibilité baisse ou si du brouillard se forme', alert_blackice_title: 'Veille verglas', alert_blackice_sub: 'Me prévenir si la pluie verglaçante peut glacer la route', alert_coldsnap_title: 'Veille vague de froid', alert_coldsnap_sub: 'Me prévenir si la minimale passe sous −10°', alert_tempdrop_title: 'Veille chute de température', alert_tempdrop_sub: 'Me prévenir si la température chute vite en 6 heures', alert_stargazing_title: 'Veille ciel étoilé', alert_stargazing_sub: 'Me prévenir si la nuit s’annonce claire et calme', alert_raineasing_title: 'Veille fin de pluie', alert_raineasing_sub: 'Me prévenir si la pluie actuelle va bientôt s’arrêter',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Précision des modèles',
+  acc_models_caption: 'Comparé sur les {n} derniers jours',
+  acc_models_empty: 'Aucune comparaison de modèles enregistrée pour l’instant',
+  alert_history_title: 'Alertes récentes',
+  alert_history_empty: 'Aucune alerte reçue pour l’instant',
+  alert_history_clear: 'Effacer',
+  alert_favorites_title: 'Surveillance des villes enregistrées',
+  alert_favorites_sub: 'Appliquer les mêmes règles d’alerte à vos villes enregistrées',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Radar de pluie',
+  radar_eyebrow: 'Radar de pluie',
+  radar_play: 'Lecture',
+  radar_pause: 'Pause',
+  radar_now: 'Maintenant',
+  radar_min_ago: 'il y a {n} min',
+  radar_min_ahead: 'dans {n} min',
+  radar_caption: 'Images radar par RainViewer · les 2 dernières heures',
+  radar_error: 'Données radar indisponibles',
+  radar_retry: 'Réessayer',
+  radar_open_layers: 'Ouvrir la carte des couches',
+  radar_open_radar: 'Radar animé',
 };
+

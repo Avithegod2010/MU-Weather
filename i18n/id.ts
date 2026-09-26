@@ -173,4 +173,27 @@ export const id: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Kenyamanan {n}/100',
   tile_aurora: 'Aurora', card_aurora: 'Aurora & cuaca antariksa', aurora_now: 'Kp kini', aurora_forecast: '3 hari ke depan', aurora_chance_high: 'Peluang bagus — cari tempat gelap', aurora_chance_maybe: 'Mungkin bila langit tetap cerah', aurora_chance_low: 'Terlalu redup dari sini', aurora_source: 'NOAA Cuaca Antariksa', card_best_window: 'Waktu terbaik di luar', best_window_line: '{time} terlihat paling baik hari ini', tile_best_window: 'Waktu terbaik di luar', wear_jacket: 'Cuaca berjaket — {n}', wear_shirt: 'Cuaca berkemeja — {n}', wear_shorts: 'Cuaca bercelana pendek — {n}', wear_umbrella: 'bawa payung', wear_sunscreen: 'pakai tabir surya', wear_windy: 'berangin di luar', alert_aurora_title: 'Pantau aurora', alert_aurora_sub: 'Beri tahu saya bila aurora mungkin muncul', alert_fog_title: 'Pantau kabut', alert_fog_sub: 'Beri tahu saya bila jarak pandang turun atau berkabut', alert_blackice_title: 'Pantau jalan licin', alert_blackice_sub: 'Beri tahu saya bila hujan bisa membeku di jalan', alert_coldsnap_title: 'Pantau dingin ekstrem', alert_coldsnap_sub: 'Beri tahu saya bila suhu di bawah −10°', alert_tempdrop_title: 'Pantau penurunan suhu', alert_tempdrop_sub: 'Beri tahu saya bila suhu turun cepat dalam 6 jam', alert_stargazing_title: 'Pantau bintang', alert_stargazing_sub: 'Beri tahu saya bila malam cerah dan tenang', alert_raineasing_title: 'Pantau hujan reda', alert_raineasing_sub: 'Beri tahu saya bila hujan hampir berhenti',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Akurasi model',
+  acc_models_caption: 'Dibandingkan selama {n} hari terakhir',
+  acc_models_empty: 'Belum ada perbandingan model yang tercatat',
+  alert_history_title: 'Peringatan terbaru',
+  alert_history_empty: 'Belum ada peringatan yang dikirim',
+  alert_history_clear: 'Hapus',
+  alert_favorites_title: 'Pantauan kota tersimpan',
+  alert_favorites_sub: 'Jalankan aturan peringatan yang sama untuk kota tersimpanmu',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Radar hujan',
+  radar_eyebrow: 'Radar hujan',
+  radar_play: 'Putar',
+  radar_pause: 'Jeda',
+  radar_now: 'Kini',
+  radar_min_ago: '{n} menit lalu',
+  radar_min_ahead: 'dalam {n} menit',
+  radar_caption: 'Citra radar oleh RainViewer · 2 jam terakhir',
+  radar_error: 'Data radar tidak tersedia',
+  radar_retry: 'Coba lagi',
+  radar_open_layers: 'Buka peta lapisan',
+  radar_open_radar: 'Radar animasi',
 };
+

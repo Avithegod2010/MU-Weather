@@ -12,6 +12,9 @@ import {
 } from '../utils/fireAlertNotifications';
 import { DEFAULT_ALERT_SETTINGS } from '../utils/alertRules';
 import { rescheduleDigestFromCache, SETTINGS_KEY } from '../hooks/useDigest';
+import { fireFavoriteCityAlerts } from '../utils/favoriteCityAlerts';
+import { LANGUAGES, setLanguage } from '../utils/i18n';
+import type { LanguageKey } from '../utils/i18n';
 
 export const BACKGROUND_ALERT_TASK = 'background-alert-task';
 
@@ -29,13 +32,30 @@ if (!globalScope.__muBgAlertTaskDefined) {
       const raw = await AsyncStorage.getItem(ALERTS_STORAGE_KEY);
       const settings = { ...DEFAULT_ALERT_SETTINGS, ...(raw ? JSON.parse(raw) : {}) };
       const anyAlertEnabled = Object.values(settings).some(Boolean);
-      const digestRaw = await AsyncStorage.getItem(SETTINGS_KEY);
-      const digestEnabled = digestRaw ? JSON.parse(digestRaw).digestEnabled === true : false;
+      // Same settings blob the digest path reads (SETTINGS_KEY from useDigest).
+      const settingsRaw = await AsyncStorage.getItem(SETTINGS_KEY);
+      const storedSettings: Record<string, unknown> = settingsRaw ? JSON.parse(settingsRaw) : {};
+      const digestEnabled = storedSettings.digestEnabled === true;
       if (!anyAlertEnabled && !digestEnabled) return BackgroundTask.BackgroundTaskResult.Success;
+
+      // A headless background start begins with i18n's default language (English).
+      // Apply the stored one BEFORE anything fires, or every alert - including the
+      // city-prefixed saved-city titles - would read English for non-English users.
+      const storedLanguage = storedSettings.language;
+      if (
+        typeof storedLanguage === 'string' &&
+        LANGUAGES.some((option) => option.key === storedLanguage)
+      ) {
+        setLanguage(storedLanguage as LanguageKey);
+      }
 
       const data = await fetchWeather(location);
       if (anyAlertEnabled) {
         await fireAlertNotifications(settings, data);
+        // Saved-city sweep: "rain starting in Paris" while you are elsewhere.
+        // Opt-in via the `favorites` alert key and rate-limited internally, so
+        // the 30-minute task cannot hammer the API.
+        await fireFavoriteCityAlerts(settings, data);
       }
       // Keep the home-screen widget fed even when the app is closed. The
       // bundle is also the widget's cache source, so persist it here too.

@@ -23,7 +23,10 @@ export type AlertKey =
   | 'coldsnap'
   | 'tempdrop'
   | 'stargazing'
-  | 'raineasing';
+  | 'raineasing'
+  // ── bot1: saved-city alerts ──
+  /** Not a rule of its own: enables running every rule for the saved cities too. */
+  | 'favorites';
 
 export interface AlertDefinition {
   key: AlertKey;
@@ -50,6 +53,8 @@ export const ALERT_DEFINITIONS: AlertDefinition[] = [
   { key: 'tempdrop', title: 'alert_tempdrop_title', subtitle: 'alert_tempdrop_sub' },
   { key: 'stargazing', title: 'alert_stargazing_title', subtitle: 'alert_stargazing_sub' },
   { key: 'raineasing', title: 'alert_raineasing_title', subtitle: 'alert_raineasing_sub' },
+  // ── bot1: saved-city alerts ──
+  { key: 'favorites', title: 'alert_favorites_title', subtitle: 'alert_favorites_sub' },
 ];
 
 export type AlertSeverity = 'info' | 'warning' | 'severe';
@@ -82,6 +87,8 @@ export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   tempdrop: false,
   stargazing: false,
   raineasing: false,
+  // ── bot1: saved-city alerts ──
+  favorites: false,
 };
 
 /**

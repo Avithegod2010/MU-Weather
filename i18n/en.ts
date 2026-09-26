@@ -631,6 +631,29 @@ export const en = {
   alert_stargazing_sub: 'Notify me when tonight looks clear and calm',
   alert_raineasing_title: 'Rain easing watch',
   alert_raineasing_sub: 'Notify me when current rain is about to stop',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Model accuracy',
+  acc_models_caption: 'Compared over the last {n} days',
+  acc_models_empty: 'No model comparisons logged yet',
+  alert_history_title: 'Recent alerts',
+  alert_history_empty: 'No alerts delivered yet',
+  alert_history_clear: 'Clear',
+  alert_favorites_title: 'Saved cities watch',
+  alert_favorites_sub: 'Run the same alert rules for your saved cities',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Rain radar',
+  radar_eyebrow: 'Rain radar',
+  radar_play: 'Play',
+  radar_pause: 'Pause',
+  radar_now: 'Now',
+  radar_min_ago: '{n} min ago',
+  radar_min_ahead: 'in {n} min',
+  radar_caption: 'Radar imagery by RainViewer · the last 2 hours',
+  radar_error: 'Radar data unavailable',
+  radar_retry: 'Retry',
+  radar_open_layers: 'Open the layer map',
+  radar_open_radar: 'Animated radar',
 };
+
 
 export type Strings = typeof en;

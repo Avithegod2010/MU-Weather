@@ -13,6 +13,7 @@ import {
   loadAlertSettings,
   ALERTS_STORAGE_KEY,
 } from '../utils/fireAlertNotifications';
+import { fireFavoriteCityAlerts } from '../utils/favoriteCityAlerts';
 import {
   registerBackgroundAlerts,
   unregisterBackgroundAlerts,
@@ -72,6 +73,9 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
     void fireAlertNotifications(settings, data).then((triggered) => {
       setActiveAlerts(triggered);
     });
+    // Saved-city sweep, throttled to one pass every 20 minutes inside the util
+    // (the background task fires it too, for the app-closed case).
+    void fireFavoriteCityAlerts(settings, data);
   }, [data, settings, ready]);
 
   useEffect(() => {

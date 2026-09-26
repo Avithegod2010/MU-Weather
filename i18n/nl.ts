@@ -173,4 +173,27 @@ export const nl: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Comfort {n}/100',
   tile_aurora: 'Poollicht', card_aurora: 'Poollicht & ruimteweer', aurora_now: 'Kp nu', aurora_forecast: 'Komende 3 dagen', aurora_chance_high: 'Goede kans — zoek een donkere plek', aurora_chance_maybe: 'Misschien als de lucht helder blijft', aurora_chance_low: 'Te zwak vanaf hier', aurora_source: 'NOAA Ruimteweer', card_best_window: 'Beste moment buiten', best_window_line: '{time} ziet er vandaag het beste uit', tile_best_window: 'Beste moment buiten', wear_jacket: 'Jasweer — {n}', wear_shirt: 'Overhemdweer — {n}', wear_shorts: 'Korte-broekenweer — {n}', wear_umbrella: 'neem een paraplu mee', wear_sunscreen: 'smeer je in met zonnebrand', wear_windy: 'het is winderig buiten', alert_aurora_title: 'Poollichtwacht', alert_aurora_sub: 'Waarschuw me als poollicht mogelijk is', alert_fog_title: 'Mistwacht', alert_fog_sub: 'Waarschuw me bij slecht zicht of mist', alert_blackice_title: 'IJzelwacht', alert_blackice_sub: 'Waarschuw me bij mogelijke ijzel op de weg', alert_coldsnap_title: 'Koudewacht', alert_coldsnap_sub: 'Waarschuw me als het kouder dan −10° wordt', alert_tempdrop_title: 'Temperatuurvalwacht', alert_tempdrop_sub: 'Waarschuw me bij snelle daling in 6 uur', alert_stargazing_title: 'Sterrenwacht', alert_stargazing_sub: 'Waarschuw me bij een heldere, rustige nacht', alert_raineasing_title: 'Regenstopwacht', alert_raineasing_sub: 'Waarschuw me als de regen bijna stopt',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Modelnauwkeurigheid',
+  acc_models_caption: 'Vergeleken over de laatste {n} dagen',
+  acc_models_empty: 'Nog geen modelvergelijkingen geregistreerd',
+  alert_history_title: 'Recente waarschuwingen',
+  alert_history_empty: 'Nog geen waarschuwingen bezorgd',
+  alert_history_clear: 'Wissen',
+  alert_favorites_title: 'Bewaking opgeslagen steden',
+  alert_favorites_sub: 'Pas dezelfde waarschuwingsregels toe op je opgeslagen steden',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Regenradar',
+  radar_eyebrow: 'Regenradar',
+  radar_play: 'Afspelen',
+  radar_pause: 'Pauzeren',
+  radar_now: 'Nu',
+  radar_min_ago: '{n} min geleden',
+  radar_min_ahead: 'over {n} min',
+  radar_caption: 'Radarbeelden van RainViewer · de laatste 2 uur',
+  radar_error: 'Radargegevens niet beschikbaar',
+  radar_retry: 'Opnieuw proberen',
+  radar_open_layers: 'De lagenkaart openen',
+  radar_open_radar: 'Geanimeerde radar',
 };
+

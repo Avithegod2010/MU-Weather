@@ -1,0 +1,156 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchWeather } from '../api/openMeteo';
+import { evaluateAlerts } from './alertRules';
+import type { AlertSettings, TriggeredAlert } from './alertRules';
+import { buildAlertExtras, deliverAlerts } from './fireAlertNotifications';
+import { loadFavorites } from './favoritesStore';
+import { t } from './i18n';
+import type { GeoLocation, WeatherBundle } from '../api/types';
+
+/** At most this many saved cities per sweep - every city costs a full fetch. */
+export const MAX_FAVORITE_CHECKS = 3;
+/** One sweep every 20 minutes; both the app refresh path and the background task call in. */
+const SWEEP_TTL_MS = 20 * 60 * 1000;
+const SWEEP_STAMP_KEY = '@mu_weather/fav_alert_sweep_v1';
+
+/**
+ * Sweep bookkeeping: when the last sweep ran, plus the rotation offset - which
+ * city the next sweep starts at. The offset is what lets more saved cities
+ * exist than one sweep can check.
+ */
+interface SweepState {
+  at: number;
+  next: number;
+}
+
+/**
+ * Same place? The forecast only depends on the coordinates, and the tolerance
+ * is deliberately ~1 km (two decimal places). The earlier 1e-4° (~11 m) missed
+ * whenever the saved-city coordinates and the live fix came from different
+ * geocoders, so a user already standing in a saved city could still be told
+ * "rain starting in <that city>". Trade-off: two genuinely different saved
+ * cities less than ~1 km apart are treated as one place - acceptable, because
+ * at city scale the forecast is the same for both.
+ */
+function isSamePlace(a: GeoLocation, b: GeoLocation): boolean {
+  return Math.abs(a.latitude - b.latitude) < 1e-2 && Math.abs(a.longitude - b.longitude) < 1e-2;
+}
+
+/**
+ * Persisted sweep state. The stamp used to be a bare epoch number; that shape
+ * still parses (offset 0) instead of throwing away the rate limit on upgrade.
+ */
+async function loadSweepState(): Promise<SweepState> {
+  try {
+    const raw = await AsyncStorage.getItem(SWEEP_STAMP_KEY);
+    if (!raw) return { at: 0, next: 0 };
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed === 'number' && Number.isFinite(parsed)) return { at: parsed, next: 0 };
+    if (parsed && typeof parsed === 'object') {
+      const state = parsed as Partial<SweepState>;
+      return {
+        at: typeof state.at === 'number' && Number.isFinite(state.at) ? state.at : 0,
+        next:
+          typeof state.next === 'number' && Number.isFinite(state.next) && state.next >= 0
+            ? Math.floor(state.next)
+            : 0,
+      };
+    }
+    return { at: 0, next: 0 };
+  } catch {
+    return { at: 0, next: 0 };
+  }
+}
+
+async function saveSweepState(state: SweepState): Promise<void> {
+  try {
+    await AsyncStorage.setItem(SWEEP_STAMP_KEY, JSON.stringify(state));
+  } catch {
+    // Non-critical bookkeeping.
+  }
+}
+
+/**
+ * Run the alert rules for the user's saved cities, so the phone can say
+ * "Rain starting in Paris in 40 min" while the user is somewhere else.
+ *
+ * Gated by the opt-in `favorites` alert key, capped at MAX_FAVORITE_CHECKS
+ * cities per sweep, and rate-limited to one sweep every 20 minutes because both
+ * the refresh path and the background task call it.
+ *
+ * Rotation: a sweep starts where the previous one stopped and the offset
+ * advances by the number of cities actually checked, so one sweep per 20
+ * minutes eventually reaches every saved city - each city is checked at least
+ * once every ceil(N / MAX_FAVORITE_CHECKS) sweeps, i.e. within roughly
+ * 20 min x ceil(N/3) while the app is in use (about 40 min for 5 saved cities).
+ * With the app closed, the OS background cadence (a 30-minute task minimum)
+ * stretches that further.
+ *
+ * Delivered alerts get a per-city cooldown namespace, so an alert for one city
+ * can never silence the same alert for another, and the notification title
+ * carries the city name.
+ *
+ * Aurora is deliberately skipped for saved cities: whether you can see aurora
+ * depends on the sky above *you*, not on the saved city's latitude.
+ */
+export async function fireFavoriteCityAlerts(
+  settings: AlertSettings,
+  current: WeatherBundle,
+): Promise<TriggeredAlert[]> {
+  if (!settings.favorites) return [];
+
+  const sweep = await loadSweepState();
+  // A legacy stamp (or none) is due; the state also holds the rotation offset.
+  if (sweep.at > 0 && Date.now() - sweep.at <= SWEEP_TTL_MS) return [];
+
+  const favorites = (await loadFavorites()).filter(
+    (favorite) => !isSamePlace(favorite, current.location),
+  );
+  if (favorites.length === 0) {
+    await saveSweepState({ at: Date.now(), next: 0 });
+    return [];
+  }
+
+  // Rotate through the stable list: pick up where the last sweep stopped.
+  const start = sweep.next % favorites.length;
+  const count = Math.min(MAX_FAVORITE_CHECKS, favorites.length);
+  const picks = Array.from(
+    { length: count },
+    (_, index) => favorites[(start + index) % favorites.length],
+  );
+
+  const citySettings: AlertSettings = { ...settings, aurora: false };
+  const allTriggered: TriggeredAlert[] = [];
+
+  for (const city of picks) {
+    try {
+      const data = await fetchWeather(city);
+      const extras = await buildAlertExtras(citySettings, data);
+      const triggered = evaluateAlerts(
+        citySettings,
+        data.current,
+        data.hourly,
+        data.daily[0] ?? null,
+        data.aqi,
+        extras,
+      );
+      if (triggered.length === 0) continue;
+      allTriggered.push(...triggered);
+      await deliverAlerts(triggered, {
+        city: city.name,
+        cooldownPrefix: `${city.id}|`,
+        titleFormatter: (alert) =>
+          t('alert_city_title')
+            .split('{city}')
+            .join(city.name)
+            .split('{title}')
+            .join(alert.title),
+      });
+    } catch {
+      // One unreachable saved city must never block the others.
+    }
+  }
+
+  await saveSweepState({ at: Date.now(), next: (start + count) % favorites.length });
+  return allTriggered;
+}

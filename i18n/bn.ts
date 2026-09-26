@@ -173,4 +173,27 @@ export const bn: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'আরাম {n}/100',
   tile_aurora: 'মেরুজ্যোতি', card_aurora: 'মেরুজ্যোতি ও মহাকাশ আবহাওয়া', aurora_now: 'Kp এখন', aurora_forecast: 'পরের ৩ দিন', aurora_chance_high: 'ভালো সম্ভাবনা — অন্ধকার জায়গায় যান', aurora_chance_maybe: 'আকাশ পরিষ্কার থাকলে দেখা যেতে পারে', aurora_chance_low: 'এখান থেকে খুব ঝাপসা', aurora_source: 'NOAA মহাকাশ আবহাওয়া', card_best_window: 'বাইরে যাওয়ার সেরা সময়', best_window_line: '{time} আজ সবচেয়ে ভালো লাগছে', tile_best_window: 'বাইরে যাওয়ার সেরা সময়', wear_jacket: 'জ্যাকেটের আবহাওয়া — {n}', wear_shirt: 'শার্টের আবহাওয়া — {n}', wear_shorts: 'শর্টসের আবহাওয়া — {n}', wear_umbrella: 'ছাতা নিয়ে যান', wear_sunscreen: 'সানস্ক্রিন লাগান', wear_windy: 'বাইরে দমকা বাতাস', alert_aurora_title: 'মেরুজ্যোতি নজর', alert_aurora_sub: 'ভূ-চুম্বকীয় সক্রিয়তায় জ্যোতি দেখা দিলে জানান', alert_fog_title: 'কুয়াশা নজর', alert_fog_sub: 'দৃশ্যমানতা কমলে বা কুয়াশা হলে জানান', alert_blackice_title: 'পিচ্ছিল রাস্তা নজর', alert_blackice_sub: 'জমাট বৃষ্টিতে রাস্তা বরফ হলে জানান', alert_coldsnap_title: 'হঠাৎ শীত নজর', alert_coldsnap_sub: 'সর্বনিম্ন −10°-এর নিচে নামলে জানান', alert_tempdrop_title: 'তাপমাত্রা পতন নজর', alert_tempdrop_sub: '৬ ঘণ্টায় তাপমাত্রা দ্রুত কমলে জানান', alert_stargazing_title: 'তারা দেখা নজর', alert_stargazing_sub: 'রাত পরিষ্কার ও শান্ত লাগলে জানান', alert_raineasing_title: 'বৃষ্টি কমার নজর', alert_raineasing_sub: 'চলতি বৃষ্টি থামতে চললে জানান',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'মডেল নির্ভুলতা',
+  acc_models_caption: 'গত {n} দিনে তুলনা',
+  acc_models_empty: 'এখনও কোনো মডেল তুলনা নথিভুক্ত হয়নি',
+  alert_history_title: 'সাম্প্রতিক সতর্কতা',
+  alert_history_empty: 'এখনও কোনো সতর্কতা পাঠানো হয়নি',
+  alert_history_clear: 'মুছুন',
+  alert_favorites_title: 'সংরক্ষিত শহরে নজর',
+  alert_favorites_sub: 'আপনার সংরক্ষিত শহরেও একই সতর্কতার নিয়ম চালান',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'বৃষ্টির রাডার',
+  radar_eyebrow: 'বৃষ্টির রাডার',
+  radar_play: 'চালান',
+  radar_pause: 'থামান',
+  radar_now: 'এখন',
+  radar_min_ago: '{n} মিনিট আগে',
+  radar_min_ahead: '{n} মিনিটে',
+  radar_caption: 'RainViewer-এর রাডার ছবি · গত ২ ঘণ্টা',
+  radar_error: 'রাডার ডেটা পাওয়া যাচ্ছে না',
+  radar_retry: 'আবার চেষ্টা করুন',
+  radar_open_layers: 'লেয়ার ম্যাপ খুলুন',
+  radar_open_radar: 'অ্যানিমেটেড রাডার',
 };
+

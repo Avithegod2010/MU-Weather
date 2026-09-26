@@ -173,4 +173,27 @@ export const it: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Comfort {n}/100',
   tile_aurora: 'Aurora', card_aurora: 'Aurora e meteo spaziale', aurora_now: 'Kp adesso', aurora_forecast: 'Prossimi 3 giorni', aurora_chance_high: 'Buona probabilità — cerca un posto buio', aurora_chance_maybe: 'Possibile se il cielo resta sereno', aurora_chance_low: 'Troppo debole da qui', aurora_source: 'NOAA Meteo spaziale', card_best_window: 'Momento migliore fuori', best_window_line: '{time} sembra il migliore oggi', tile_best_window: 'Momento migliore fuori', wear_jacket: 'Tempo da giacca — {n}', wear_shirt: 'Tempo da camicia — {n}', wear_shorts: 'Tempo da pantaloncini — {n}', wear_umbrella: 'porta l’ombrello', wear_sunscreen: 'metti la protezione solare', wear_windy: 'fuori è ventoso', alert_aurora_title: 'Avviso aurora', alert_aurora_sub: 'Avvisami se l’attività geomagnetica può portare aurore', alert_fog_title: 'Avviso nebbia', alert_fog_sub: 'Avvisami se cala la visibilità o c’è nebbia', alert_blackice_title: 'Avviso ghiaccio', alert_blackice_sub: 'Avvisami se la pioggia può ghiacciare la strada', alert_coldsnap_title: 'Avviso freddo intenso', alert_coldsnap_sub: 'Avvisami se scende sotto −10°', alert_tempdrop_title: 'Avviso calo termico', alert_tempdrop_sub: 'Avvisami se cala in fretta in 6 ore', alert_stargazing_title: 'Avviso stelle', alert_stargazing_sub: 'Avvisami se la notte è serena e calma', alert_raineasing_title: 'Avviso fine pioggia', alert_raineasing_sub: 'Avvisami se la pioggia sta per smettere',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Precisione dei modelli',
+  acc_models_caption: 'Confrontato negli ultimi {n} giorni',
+  acc_models_empty: 'Nessun confronto tra modelli registrato finora',
+  alert_history_title: 'Avvisi recenti',
+  alert_history_empty: 'Nessun avviso ricevuto finora',
+  alert_history_clear: 'Cancella',
+  alert_favorites_title: 'Controllo città salvate',
+  alert_favorites_sub: 'Applica le stesse regole di avviso alle tue città salvate',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Radar pioggia',
+  radar_eyebrow: 'Radar pioggia',
+  radar_play: 'Riproduci',
+  radar_pause: 'Pausa',
+  radar_now: 'Adesso',
+  radar_min_ago: '{n} min fa',
+  radar_min_ahead: 'tra {n} min',
+  radar_caption: 'Immagini radar di RainViewer · le ultime 2 ore',
+  radar_error: 'Dati radar non disponibili',
+  radar_retry: 'Riprova',
+  radar_open_layers: 'Apri la mappa dei livelli',
+  radar_open_radar: 'Radar animato',
 };
+

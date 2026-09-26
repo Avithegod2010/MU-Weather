@@ -111,10 +111,12 @@ import { FavoritesSheet } from '../components/FavoritesSheet';
 import { SectionTitle } from '../components/SectionTitle';
 import { Card } from '../components/Card';
 import { MapScreen } from './MapScreen';
+import { RadarScreen } from './RadarScreen';
 import { CompareScreen } from './CompareScreen';
 import { useCityComparison } from '../hooks/useCityComparison';
 import { ModelComparisonScreen } from './ModelComparisonScreen';
 import { useModelComparison } from '../hooks/useModelComparison';
+import { useModelAccuracyLog } from '../hooks/useModelAccuracyLog';
 import { useEnsemble } from '../hooks/useEnsemble';
 import { AlertsScreen } from './AlertsScreen';
 import { useAlerts } from '../hooks/useAlerts';
@@ -150,6 +152,7 @@ export function HomeScreen() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [mapOpen, setMapOpen] = useState(false);
+  const [radarOpen, setRadarOpen] = useState(false);
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [calendarEnabled, setCalendarEnabled] = useState(false);
@@ -219,7 +222,7 @@ export function HomeScreen() {
         return;
       }
       const target = path ?? hostname;
-      if (target === 'radar') setMapOpen(true);
+      if (target === 'radar') setRadarOpen(true);
       else if (target === 'search') setSearchOpen(true);
       else if (target === 'favorites') setFavoritesOpen(true);
     };
@@ -300,6 +303,9 @@ export function HomeScreen() {
     FEATURES.modelComparison ? active : null,
     modelsOpen,
   );
+  // Per-model accuracy: one multi-model sweep every six hours (TTL-gated) that
+  // feeds the model leaderboard in the past-days accuracy view. Renders nothing.
+  useModelAccuracyLog(active, FEATURES.modelComparison);
   const scrollY = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
@@ -643,6 +649,7 @@ export function HomeScreen() {
                   <PastWeekCard
                     theme={theme}
                     days={pastDays.days}
+                    location={active}
                     pastDaysRange={settings.pastDaysRange}
                     onRangeChange={(range) => updateSettings({ pastDaysRange: range })}
                   />
@@ -860,6 +867,21 @@ export function HomeScreen() {
         location={active ?? { id: 'current', name: 'World', latitude: 20, longitude: 0 }}
         visible={mapOpen}
         onClose={() => setMapOpen(false)}
+        onOpenRadar={() => {
+          setMapOpen(false);
+          setRadarOpen(true);
+        }}
+      />
+
+      <RadarScreen
+        theme={theme}
+        location={active ?? { id: 'current', name: 'World', latitude: 20, longitude: 0 }}
+        visible={radarOpen}
+        onClose={() => setRadarOpen(false)}
+        onOpenLayers={() => {
+          setRadarOpen(false);
+          setMapOpen(true);
+        }}
       />
 
       <SearchOverlay

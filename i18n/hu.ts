@@ -173,4 +173,27 @@ export const hu: Strings = {
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Komfort {n}/100',
   tile_aurora: 'Sarki fény', card_aurora: 'Sarki fény & űridőjárás', aurora_now: 'Kp most', aurora_forecast: 'Következő 3 nap', aurora_chance_high: 'Jó esély — keress sötét helyet', aurora_chance_maybe: 'Lehetséges, ha tiszta marad az ég', aurora_chance_low: 'Innen túl halvány', aurora_source: 'NOAA űridőjárás', card_best_window: 'Legjobb kinti idő', best_window_line: '{time} tűnik ma a legjobbnak', tile_best_window: 'Legjobb kinti idő', wear_jacket: 'Dzsekis idő — {n}', wear_shirt: 'Inges idő — {n}', wear_shorts: 'Rövidnadrágos idő — {n}', wear_umbrella: 'vigyél esernyőt', wear_sunscreen: 'használj naptejet', wear_windy: 'szeles odakint', alert_aurora_title: 'Sarki fény figyelő', alert_aurora_sub: 'Értesíts, ha sarki fény lehetséges', alert_fog_title: 'Köd figyelő', alert_fog_sub: 'Értesíts, ha romlik a látás vagy köd lesz', alert_blackice_title: 'Jeges út figyelő', alert_blackice_sub: 'Értesíts, ha az eső lefagyhat az úton', alert_coldsnap_title: 'Hideghullám figyelő', alert_coldsnap_sub: 'Értesíts, ha −10° alá esik', alert_tempdrop_title: 'Hőmérséklet-esés figyelő', alert_tempdrop_sub: 'Értesíts gyors esésnél 6 órán belül', alert_stargazing_title: 'Csillagnéző figyelő', alert_stargazing_sub: 'Értesíts tiszta, nyugodt éjszakánál', alert_raineasing_title: 'Esővég figyelő', alert_raineasing_sub: 'Értesíts, ha mindjárt eláll az eső',
+  // ── bot1: model accuracy + alert history + saved cities + radar ──
+  acc_models_title: 'Modellpontosság',
+  acc_models_caption: 'Az elmúlt {n} nap összehasonlítása',
+  acc_models_empty: 'Még nincs naplózott modell-összehasonlítás',
+  alert_history_title: 'Legutóbbi riasztások',
+  alert_history_empty: 'Még nem érkezett riasztás',
+  alert_history_clear: 'Törlés',
+  alert_favorites_title: 'Mentett városok figyelése',
+  alert_favorites_sub: 'Futtasd ugyanazokat a riasztási szabályokat a mentett városaidra',
+  alert_city_title: '{city} · {title}',
+  radar_title: 'Esőradar',
+  radar_eyebrow: 'Esőradar',
+  radar_play: 'Lejátszás',
+  radar_pause: 'Szünet',
+  radar_now: 'Most',
+  radar_min_ago: '{n} perccel ezelőtt',
+  radar_min_ahead: '{n} perc múlva',
+  radar_caption: 'Radarképek a RainViewer-től · az elmúlt 2 óra',
+  radar_error: 'A radaradatok nem érhetők el',
+  radar_retry: 'Újra',
+  radar_open_layers: 'Rétegtérkép megnyitása',
+  radar_open_radar: 'Animált radar',
 };
+
