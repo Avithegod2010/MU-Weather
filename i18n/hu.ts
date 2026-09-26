@@ -195,5 +195,37 @@ export const hu: Strings = {
   radar_retry: 'Újra',
   radar_open_layers: 'Rétegtérkép megnyitása',
   radar_open_radar: 'Animált radar',
-};
 
+  // ── graph explorer ──
+  card_graphs: 'Időjárási grafikonok',
+  tile_graphs: 'Grafikonok',
+  gx_range_24h: '24 óra',
+  gx_range_7d: '7 nap',
+  gx_range_30d: 'Elmúlt 30 nap',
+  gx_hourly: 'Óránkénti előrejelzési adatok',
+  gx_daily: 'Napi tényleges értékek · egy pont = egy nap',
+  gx_temp: 'Hőmérséklet',
+  gx_apparent: 'Érzett hőmérséklet',
+  gx_precip_prob: 'Esély esőre',
+  gx_precip_amt: 'Csapadék',
+  gx_wind: 'Szél sebessége',
+  gx_gusts: 'Széllökések',
+  gx_wind_dir: 'Szél iránya',
+  gx_pressure: 'Légnyomás',
+  gx_humidity: 'Páratartalom',
+  gx_uv: 'UV-index',
+  gx_visibility: 'Látótávolság',
+  gx_cape: 'CAPE',
+  gx_high: 'Magas',
+  gx_low: 'Alacsony',
+  gx_empty: 'Ehhez az időszakhoz még nincs ábrázolható adat.',
+  gx_scrub_hint: 'Húzd vagy koppints a grafikonra az értékek elolvasásához',
+  gx_card_caption: '24 ó · 7 nap · 30 nap',
+  gx_chart_a11y: '{metric} grafikon, {range}. {value} {time} időpontban. Húzd vagy koppints a felfedezéshez.',
+  gx_a11y_metric: 'Metrika: {n}',
+  gx_a11y_range: 'Időszak: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · KÖVETKEZŐ 5 NAP',
+  d_aqi_day_curve: 'ÓRÁNKÉNT · {day}',
+};

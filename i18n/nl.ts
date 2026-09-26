@@ -195,5 +195,37 @@ export const nl: Strings = {
   radar_retry: 'Opnieuw proberen',
   radar_open_layers: 'De lagenkaart openen',
   radar_open_radar: 'Geanimeerde radar',
-};
 
+  // ── graph explorer ──
+  card_graphs: 'Weergrafieken',
+  tile_graphs: 'Grafieken',
+  gx_range_24h: '24 uur',
+  gx_range_7d: '7 dagen',
+  gx_range_30d: 'Afgelopen 30 dagen',
+  gx_hourly: 'Uurlijkse voorspellingsgegevens',
+  gx_daily: 'Dagelijkse metingen · één punt = één dag',
+  gx_temp: 'Temperatuur',
+  gx_apparent: 'Voelt als',
+  gx_precip_prob: 'Kans op regen',
+  gx_precip_amt: 'Neerslag',
+  gx_wind: 'Windsnelheid',
+  gx_gusts: 'Windstoten',
+  gx_wind_dir: 'Windrichting',
+  gx_pressure: 'Luchtdruk',
+  gx_humidity: 'Luchtvochtigheid',
+  gx_uv: 'UV-index',
+  gx_visibility: 'Zicht',
+  gx_cape: 'CAPE',
+  gx_high: 'Hoog',
+  gx_low: 'Laag',
+  gx_empty: 'Nog geen ploteerbare gegevens voor deze periode.',
+  gx_scrub_hint: 'Sleep of tik op de grafiek om waarden te lezen',
+  gx_card_caption: '24 u · 7 dagen · 30 dagen',
+  gx_chart_a11y: '{metric}-grafiek, {range}. {value} om {time}. Sleep of tik om te verkennen.',
+  gx_a11y_metric: 'Metriek: {n}',
+  gx_a11y_range: 'Periode: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · KOMENDE 5 DAGEN',
+  d_aqi_day_curve: 'PER UUR · {day}',
+};

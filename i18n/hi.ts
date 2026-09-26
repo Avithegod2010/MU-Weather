@@ -195,5 +195,37 @@ export const hi: Strings = {
   radar_retry: 'पुनः प्रयास करें',
   radar_open_layers: 'लेयर नक्शा खोलें',
   radar_open_radar: 'एनिमेटेड रडार',
-};
 
+  // ── graph explorer ──
+  card_graphs: 'मौसम ग्राफ़',
+  tile_graphs: 'ग्राफ़',
+  gx_range_24h: '24 घंटे',
+  gx_range_7d: '7 दिन',
+  gx_range_30d: 'पिछले 30 दिन',
+  gx_hourly: 'घंटेवार पूर्वानुमान डेटा',
+  gx_daily: 'दैनिक वास्तविक · एक बिंदु = एक दिन',
+  gx_temp: 'तापमान',
+  gx_apparent: 'महसूस होता है',
+  gx_precip_prob: 'बारिश की संभावना',
+  gx_precip_amt: 'वर्षा',
+  gx_wind: 'हवा की गति',
+  gx_gusts: 'हवा के झोंके',
+  gx_wind_dir: 'हवा की दिशा',
+  gx_pressure: 'वायुदाब',
+  gx_humidity: 'आर्द्रता',
+  gx_uv: 'यूवी सूचकांक',
+  gx_visibility: 'दृश्यता',
+  gx_cape: 'CAPE',
+  gx_high: 'अधिकतम',
+  gx_low: 'न्यूनतम',
+  gx_empty: 'इस अवधि के लिए अभी कोई चार्ट-योग्य डेटा नहीं है।',
+  gx_scrub_hint: 'मान पढ़ने के लिए चार्ट को खींचें या टैप करें',
+  gx_card_caption: '24 घं · 7 दिन · 30 दिन',
+  gx_chart_a11y: '{metric} चार्ट, {range}। {time} पर {value}। देखने के लिए खींचें या टैप करें।',
+  gx_a11y_metric: 'मेट्रिक: {n}',
+  gx_a11y_range: 'अवधि: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · अगले 5 दिन',
+  d_aqi_day_curve: 'प्रति घंटा · {day}',
+};

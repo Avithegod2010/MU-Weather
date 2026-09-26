@@ -653,6 +653,39 @@ export const en = {
   radar_retry: 'Retry',
   radar_open_layers: 'Open the layer map',
   radar_open_radar: 'Animated radar',
+
+  // ── graph explorer ──
+  card_graphs: 'Weather graphs',
+  tile_graphs: 'Graphs',
+  gx_range_24h: '24 hours',
+  gx_range_7d: '7 days',
+  gx_range_30d: 'Past 30 days',
+  gx_hourly: 'Hourly forecast data',
+  gx_daily: 'Daily actuals · one point = one day',
+  gx_temp: 'Temperature',
+  gx_apparent: 'Feels like',
+  gx_precip_prob: 'Rain chance',
+  gx_precip_amt: 'Precipitation',
+  gx_wind: 'Wind speed',
+  gx_gusts: 'Gusts',
+  gx_wind_dir: 'Wind direction',
+  gx_pressure: 'Pressure',
+  gx_humidity: 'Humidity',
+  gx_uv: 'UV index',
+  gx_visibility: 'Visibility',
+  gx_cape: 'CAPE',
+  gx_high: 'High',
+  gx_low: 'Low',
+  gx_empty: 'No chartable data for this range yet.',
+  gx_scrub_hint: 'Drag or tap the chart to read values',
+  gx_card_caption: '24 h · 7 days · 30 days',
+  gx_chart_a11y: '{metric} chart, {range}. {value} at {time}. Drag or tap to explore.',
+  gx_a11y_metric: 'Metric: {n}',
+  gx_a11y_range: 'Range: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · NEXT 5 DAYS',
+  d_aqi_day_curve: 'HOURLY · {day}',
 };
 
 

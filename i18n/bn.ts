@@ -195,5 +195,37 @@ export const bn: Strings = {
   radar_retry: 'আবার চেষ্টা করুন',
   radar_open_layers: 'লেয়ার ম্যাপ খুলুন',
   radar_open_radar: 'অ্যানিমেটেড রাডার',
-};
 
+  // ── graph explorer ──
+  card_graphs: 'আবহাওয়ার গ্রাফ',
+  tile_graphs: 'গ্রাফ',
+  gx_range_24h: '24 ঘন্টা',
+  gx_range_7d: '7 দিন',
+  gx_range_30d: 'গত 30 দিন',
+  gx_hourly: 'ঘণ্টাভিত্তিক পূর্বানুমানের তথ্য',
+  gx_daily: 'দৈনিক প্রকৃত · একটি বিন্দু = এক দিন',
+  gx_temp: 'তাপমাত্রা',
+  gx_apparent: 'অনুভূত হয়',
+  gx_precip_prob: 'বৃষ্টির সম্ভাবনা',
+  gx_precip_amt: 'বৃষ্টিপাত',
+  gx_wind: 'বাতাসের গতি',
+  gx_gusts: 'বাতাসের ঝোড়া',
+  gx_wind_dir: 'বাতাসের দিক',
+  gx_pressure: 'চাপ',
+  gx_humidity: 'আর্দ্রতা',
+  gx_uv: 'ইউভি সূচক',
+  gx_visibility: 'দৃশ্যমানতা',
+  gx_cape: 'CAPE',
+  gx_high: 'সর্বোচ্চ',
+  gx_low: 'সর্বনিম্ন',
+  gx_empty: 'এই সময়ের জন্য এখনো চার্টযোগ্য তথ্য নেই।',
+  gx_scrub_hint: 'মান পড়তে চার্টটি টেনে বা ট্যাপ করুন',
+  gx_card_caption: '24 ঘণ্টা · 7 দিন · 30 দিন',
+  gx_chart_a11y: '{metric} চার্ট, {range}। {time} এ {value}। দেখতে টেনে বা ট্যাপ করুন।',
+  gx_a11y_metric: 'মেট্রিক: {n}',
+  gx_a11y_range: 'পরিসর: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · পরের ৫ দিন',
+  d_aqi_day_curve: 'ঘণ্টাপ্রতি · {day}',
+};

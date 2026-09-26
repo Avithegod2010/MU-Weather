@@ -14,19 +14,24 @@ import {
   Umbrella,
   Moon as MoonIcon,
   Flower2,
+  TrendingUp,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import { AnimatedBackground } from './AnimatedBackground';
+import { GraphExplorer } from './GraphExplorer';
 import { haptics } from '../utils/haptics';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import {
   compassLabel,
   convertWind,
+  formatDayFull,
+  formatDayLabel,
   formatHourLabel,
   formatPrecip,
   formatPrecipValue,
   formatPressure,
   formatPressureValue,
+  formatTemp,
   formatVisibility,
   windUnitLabel,
   formatPressureTrendDelta,
@@ -38,7 +43,15 @@ import {
 import { beaufortForce, beaufortText } from '../utils/beaufort';
 import { moonPhase } from '../utils/moon';
 import { moonTimes } from '../utils/sunCalc';
-import { europeanAqiBand, usAqiBand, humidityComfort, pollenLevel } from '../utils/aqi';
+import {
+  aqiBandForScale,
+  europeanAqiBand,
+  europeanAqiFraction,
+  usAqiBand,
+  usAqiFraction,
+  humidityComfort,
+  pollenLevel,
+} from '../utils/aqi';
 import type { AqiScale } from '../utils/aqi';
 import type { AppTheme } from '../theme/palettes';
 import { F } from '../theme/typography';
@@ -50,7 +63,8 @@ import {
   type DetailAnimStyle,
 } from '../utils/detailAnimations';
 import type { TopicKey } from '../config/tiles';
-import type { WeatherBundle, HourPoint, PollenInfo, EnsembleSpreadPoint } from '../api/types';
+import type { WeatherBundle, HourPoint, PollenInfo, EnsembleSpreadPoint, PastDayActual } from '../api/types';
+import { buildAqiDayPeaks } from '../api/openMeteo';
 
 export type { TopicKey } from '../config/tiles';
 
@@ -63,6 +77,8 @@ interface TileDetailScreenProps {
   /** Air-quality index scale for the aqi topic (persisted in settings). */
   aqiScale?: AqiScale;
   onAqiScaleChange?: (scale: AqiScale) => void;
+  /** Archive actuals feeding the graphs topic's 30-day range. */
+  pastDays?: PastDayActual[];
   onClose: () => void;
 }
 
@@ -76,6 +92,7 @@ const TOPIC_META: Record<TopicKey, { title: string; icon: LucideIcon }> = {
   precipitation: { title: t('card_precipitation'), icon: Umbrella },
   moon: { title: t('card_moon'), icon: MoonIcon },
   pollen: { title: t('card_pollen'), icon: Flower2 },
+  graphs: { title: t('card_graphs'), icon: TrendingUp },
 };
 
 /** Species display names stay plain English, matching the home pollen card. */
@@ -274,6 +291,50 @@ function BarRow({
   );
 }
 
+/**
+ * One day of the 5-day AQI outlook: weekday label, band-colored peak bar,
+ * peak number. Whole row is a pressable that swaps the hourly curve below.
+ */
+function AqiDayRow({
+  theme,
+  label,
+  peak,
+  fraction,
+  bandColor,
+  bandLabel,
+  selected,
+  onSelect,
+}: {
+  theme: AppTheme;
+  label: string;
+  peak: number;
+  fraction: number;
+  bandColor: string;
+  bandLabel: string;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onSelect}
+      style={[
+        styles.aqiDayRow,
+        { borderColor: selected ? bandColor : 'transparent' },
+        selected && { backgroundColor: theme.chipBg },
+      ]}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      accessibilityLabel={`${label}, ${peak}, ${bandLabel}`}
+    >
+      <Text style={[styles.aqiDayLabel, { color: theme.textPrimary }]}>{label}</Text>
+      <View style={[styles.barTrack, styles.aqiDayTrack, { backgroundColor: theme.chipBg }]}>
+        <View style={[styles.barFill, { width: `${Math.round(Math.min(1, Math.max(0.02, fraction)) * 100)}%`, backgroundColor: bandColor }]} />
+      </View>
+      <Text style={[styles.aqiDayValue, { color: theme.textPrimary }]}>{peak}</Text>
+    </Pressable>
+  );
+}
+
 function SectionCard({
   theme,
   title,
@@ -319,6 +380,7 @@ export function TileDetailScreen({
   animStyle = 'fade',
   aqiScale,
   onAqiScaleChange,
+  pastDays,
   onClose,
 }: TileDetailScreenProps) {
   const insets = useSafeAreaInsets();
@@ -327,6 +389,8 @@ export function TileDetailScreen({
 
   const [mounted, setMounted] = useState(Boolean(visible));
   const [show, setShow] = useState(Boolean(visible));
+  /** Index into the 5-day AQI peak list whose hourly curve is shown. */
+  const [selectedAqiDay, setSelectedAqiDay] = useState(0);
 
   useEffect(() => {
     if (visible) {
@@ -339,6 +403,11 @@ export function TileDetailScreen({
     return () => clearTimeout(timer);
   }, [visible]);
 
+  // A new location/topic resets the inspected day to the first one.
+  useEffect(() => {
+    setSelectedAqiDay(0);
+  }, [topic, data?.location.id]);
+
   if (!mounted || !show || !cacheRef.current) return null;
   const view = cacheRef.current;
 
@@ -346,6 +415,7 @@ export function TileDetailScreen({
   const Icon = meta.icon;
   const current = view.data.current;
   const today = view.data.daily[0] ?? null;
+  const todayStamp = today?.date.slice(0, 10) ?? '';
   const hours = view.data.hourly;
 
   interface HeroState {
@@ -360,8 +430,10 @@ export function TileDetailScreen({
   let chart: React.ReactNode = null;
   let chartTitle = t('d_next24');
   let pollutantChart: React.ReactNode = null;
+  let aqiForecast: React.ReactNode = null;
   let scaleToggle: React.ReactNode = null;
   let dewChart: React.ReactNode = null;
+  let explorer: React.ReactNode = null;
   let factRows: Array<{ label: string; value: string }> = [];
   let bars: Array<{ label: string; value: string; fraction: number; color: string }> | null = null;
   let barsTitle = t('d_pollutants');
@@ -551,7 +623,12 @@ export function TileDetailScreen({
     about = t('about_precip');
   } else if (view.topic === 'aqi') {
     const aqiHourly = view.data.aqiHourly ?? [];
-    const aqiMap = new Map(aqiHourly.map((point) => [point.time, point]));
+    // The 24h sections keep the OLD slice contract: the first 24 points of the
+    // rolling 120h window start at the current hour, so charts/bars/hero are
+    // byte-identical to before. The 5-day peaks below use the whole window.
+    // (Older cached bundles stored only 24 points; slice() is a no-op there.)
+    const aqi24 = aqiHourly.slice(0, 24);
+    const aqiMap = new Map(aqi24.map((point) => [point.time, point]));
     const aqi = view.data.aqi;
     // European scale falls back to US cleanly when the location has no EU data.
     const hasEuHourly = aqiHourly.some((point) => point.euAqi !== null);
@@ -635,6 +712,107 @@ export function TileDetailScreen({
       : null;
     factRows = [{ label: t('f_advice'), value: band ? band.advice : '--' }];
     about = t('about_aqi');
+    // "Next 5 days": per-day peak bars over the rolling window, band-colored
+    // per the ACTIVE scale (with the same EU→US fallback the hero uses), plus
+    // a tap-to-inspect hourly curve for the selected day that reuses
+    // DetailChart. Fails closed: absent/empty hourly data renders nothing.
+    const dayPeaks = buildAqiDayPeaks(aqiHourly).slice(0, 5);
+    const hasDayPeaks =
+      dayPeaks.length >= 2 &&
+      dayPeaks.some((day) => (scale === 'european' ? day.euPeak ?? day.usPeak : day.usPeak) !== null);
+    if (hasDayPeaks) {
+      const peakFor = (index: number): number | null => {
+        const day = dayPeaks[index];
+        if (!day) return null;
+        return scale === 'european' ? day.euPeak ?? day.usPeak : day.usPeak;
+      };
+      const firstWithData = Math.max(
+        0,
+        dayPeaks.findIndex((_, index) => peakFor(index) !== null),
+      );
+      const selectedDay = Math.min(selectedAqiDay, dayPeaks.length - 1);
+      const selectedPeak = peakFor(selectedDay) ?? peakFor(firstWithData);
+      const selectedDate = selectedPeak !== null ? dayPeaks[selectedDay]?.date ?? null : dayPeaks[firstWithData]?.date ?? null;
+      const dayHours: HourPoint[] = [];
+      if (selectedDate) {
+        const dayPoints = aqiHourly.filter((point) => point.time.slice(0, 10) === selectedDate);
+        dayHours.push(
+          ...dayPoints.map((point, index) => ({
+            time: point.time,
+            temperature: 0,
+            apparent: 0,
+            weatherCode: 3,
+            precipProbability: 0,
+            precipitation: 0,
+            isDay: true,
+            isNow: index === 0,
+            dewPoint: null,
+            visibility: null,
+            windSpeed: 0,
+            windGusts: 0,
+            windDirection: 0,
+            uvIndex: null,
+            humidity: null,
+            pressure: null,
+            cape: null,
+            snowDepthM: null,
+            snowfallCm: null,
+            freezingLevelM: null,
+          })),
+        );
+      }
+      const dayAqiMap = new Map(aqiHourly.map((point) => [point.time, point]));
+      aqiForecast = (
+        <View style={styles.aqiDaysWrap}>
+          {dayPeaks.map((day, index) => {
+            const peak = peakFor(index);
+            if (peak === null) return null;
+            const dayBand = aqiBandForScale(scale, peak);
+            // EU gauge runs 0-120 while US runs 0-300: normalize each so an
+            // EU day and a US day with the same band fill the bar equally.
+            const fraction =
+              scale === 'european' ? europeanAqiFraction(peak) : usAqiFraction(peak);
+            return (
+              <AqiDayRow
+                key={day.date}
+                theme={theme}
+                label={formatDayLabel(day.date, day.date.slice(0, 10) === todayStamp ? index : index + 2)}
+                peak={Math.round(peak)}
+                fraction={fraction}
+                bandColor={dayBand?.color ?? theme.trackColor}
+                bandLabel={dayBand?.label ?? ''}
+                selected={index === selectedDay && selectedPeak !== null}
+                onSelect={() => {
+                  haptics.select();
+                  setSelectedAqiDay(index);
+                }}
+              />
+            );
+          })}
+          {selectedPeak !== null && dayHours.length >= 2 ? (
+            <View style={styles.aqiDayCurve}>
+              <Text style={[styles.aqiDayCurveTitle, { color: theme.textTertiary }]}>
+                {t('d_aqi_day_curve').replace('{day}', formatDayFull(dayHours[0]?.time.slice(0, 10) ?? ''))}
+              </Text>
+              <DetailChart
+                theme={theme}
+                hours={dayHours}
+                seriesList={[
+                  {
+                    pick: (hour) => {
+                      const point = dayAqiMap.get(hour.time);
+                      if (!point) return null;
+                      return scale === 'european' ? point.euAqi ?? point.usAqi : point.usAqi;
+                    },
+                    color: '#5BC98C',
+                  },
+                ]}
+              />
+            </View>
+          ) : null}
+        </View>
+      );
+    }
   } else if (view.topic === 'moon') {
     const moon = moonPhase();
     const times = moonTimes(new Date(), view.data.location.latitude, view.data.location.longitude);
@@ -690,12 +868,30 @@ export function TileDetailScreen({
       ];
     }
     about = t('about_pollen');
+  } else if (view.topic === 'graphs') {
+    hero = {
+      value: formatTemp(view.data.current.temperature),
+      label: t('gx_scrub_hint'),
+      accent: '#F5A962',
+    };
+    explorer = (
+      <GraphExplorer
+        theme={theme}
+        hourlyAll={view.data.hourlyAll}
+        pastDays={pastDays ?? []}
+      />
+    );
+    // The About section always renders; reuse the range caption so the graphs
+    // topic doesn't show an empty card (no about_graphs key is in the spec).
+    about = t('gx_card_caption');
   }
 
   let order = 0;
+  const explorerOrder = explorer ? order++ : -1;
   const toggleOrder = scaleToggle ? order++ : -1;
   const chartOrder = chart ? order++ : -1;
   const pollutantOrder = pollutantChart ? order++ : -1;
+  const aqiForecastOrder = aqiForecast ? order++ : -1;
   const dewOrder = dewChart ? order++ : -1;
   const barsOrder = bars ? order++ : -1;
   const progressOrder = progress ? order++ : -1;
@@ -748,6 +944,12 @@ export function TileDetailScreen({
           ) : null}
         </Animated.View>
 
+        {explorer ? (
+          <SectionCard theme={theme} animStyle={animStyle} order={explorerOrder}>
+            {explorer}
+          </SectionCard>
+        ) : null}
+
         {scaleToggle ? (
           <SectionCard theme={theme} animStyle={animStyle} order={toggleOrder}>
             {scaleToggle}
@@ -763,6 +965,12 @@ export function TileDetailScreen({
         {pollutantChart ? (
           <SectionCard theme={theme} animStyle={animStyle} title={t('d_pollutants24')} order={pollutantOrder}>
             {pollutantChart}
+          </SectionCard>
+        ) : null}
+
+        {aqiForecast ? (
+          <SectionCard theme={theme} animStyle={animStyle} title={t('d_aqi5')} order={aqiForecastOrder}>
+            {aqiForecast}
           </SectionCard>
         ) : null}
 
@@ -1034,6 +1242,43 @@ const styles = StyleSheet.create({
     fontFamily: F.medium,
     textAlign: 'right',
     flexShrink: 1,
+  },
+  aqiDaysWrap: {
+    gap: 8,
+  },
+  aqiDayRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  aqiDayLabel: {
+    fontSize: 13,
+    fontFamily: F.medium,
+    width: 86,
+    flexShrink: 0,
+  },
+  aqiDayTrack: {
+    flex: 1,
+  },
+  aqiDayValue: {
+    fontSize: 14,
+    fontFamily: F.semibold,
+    width: 34,
+    textAlign: 'right',
+    flexShrink: 0,
+  },
+  aqiDayCurve: {
+    gap: 6,
+    paddingTop: 4,
+  },
+  aqiDayCurveTitle: {
+    fontSize: 11,
+    fontFamily: F.semibold,
+    letterSpacing: 1.2,
   },
   aboutText: {
     fontSize: 13.5,

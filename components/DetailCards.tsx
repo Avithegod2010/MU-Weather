@@ -19,6 +19,7 @@ import {
   CalendarDays,
   Flower2,
   Snowflake,
+  TrendingUp,
 } from '../utils/uiIcons';
 import { Card } from './Card';
 import { WindCompass } from './WindCompass';
@@ -33,6 +34,7 @@ import {
   dewPointComfort,
   formatPressureTrend,
   formatPrecipValue,
+  formatTemp,
   formatVisibility,
   formatTime12,
   precipUnitLabel,
@@ -513,6 +515,15 @@ export function DetailCards({
           </View>
         </Card>
       ) : null}
+
+      {show('graphs') && (<Card revealDelay={660} theme={theme} title={t('card_graphs')} icon={TrendingUp} style={styles.half} onPress={onOpenTopic ? () => onOpenTopic('graphs') : undefined}>
+        <View style={styles.stack}>
+          <Text style={[styles.bigValue, { color: theme.textPrimary }]} numberOfLines={1}>
+            {formatTemp(current.temperature)}
+          </Text>
+          <Text style={[styles.caption, { color: theme.textTertiary }]}>{t('gx_card_caption')}</Text>
+        </View>
+      </Card>)}
 
       <StormDistanceCard theme={theme} stormRisk={stormRisk} />
 

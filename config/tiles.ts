@@ -7,7 +7,8 @@ export type TopicKey =
   | 'pressure'
   | 'precipitation'
   | 'moon'
-  | 'pollen';
+  | 'pollen'
+  | 'graphs';
 
 export interface DetailTileOption {
   key: string;
@@ -28,6 +29,7 @@ export const DETAIL_TILES: DetailTileOption[] = [
   { key: 'health', label: 'Health' },
   { key: 'pollen', label: 'Pollen' },
   { key: 'snow', label: 'Snow' },
+  { key: 'graphs', label: 'Graphs' },
 ];
 
 export interface HideableTile {

@@ -81,13 +81,26 @@ export interface AqiInfo {
   pollen: PollenInfo | null;
 }
 
-/** One hourly point of the air-quality forecast (~24 points, JSON-safe). */
+/** One hourly point of the air-quality forecast (JSON-safe). */
 export interface AqiHourPoint {
   time: string;
   usAqi: number | null;
   euAqi: number | null;
   pm25: number | null;
   pm10: number | null;
+}
+
+/**
+ * One day's peak AQI, derived client-side from the hourly forecast
+ * (the API serves hourly only - no daily AQI aggregates). JSON-safe.
+ */
+export interface AqiDayPeak {
+  /** Calendar day `YYYY-MM-DD` in the forecast location's timezone. */
+  date: string;
+  /** Peak US AQI of the day's hours (null when the day has no data). */
+  usPeak: number | null;
+  /** Peak European AQI of the day's hours (null when the day has no data). */
+  euPeak: number | null;
 }
 
 export interface MinutelyPoint {
@@ -107,7 +120,7 @@ export interface WeatherBundle {
   minutely: MinutelyPoint[];
   daily: DayPoint[];
   aqi: AqiInfo | null;
-  /** Hourly US/EU AQI + particulate forecast for the next 24h (empty when the air-quality API fails). */
+  /** Hourly US/EU AQI + particulate forecast, rolling 120 h (empty when the air-quality API fails). */
   aqiHourly: AqiHourPoint[];
   fetchedAt: number;
 }
@@ -248,12 +261,12 @@ export interface AirQualityResponse {
     ozone: number | null;
     nitrogen_dioxide: number | null;
     sulphur_dioxide: number | null;
-    alder: number | null;
-    birch: number | null;
-    grass: number | null;
-    mugwort: number | null;
-    olive: number | null;
-    ragweed: number | null;
+    alder_pollen: number | null;
+    birch_pollen: number | null;
+    grass_pollen: number | null;
+    mugwort_pollen: number | null;
+    olive_pollen: number | null;
+    ragweed_pollen: number | null;
   };
   hourly?: {
     time: string[];

@@ -195,5 +195,37 @@ export const it: Strings = {
   radar_retry: 'Riprova',
   radar_open_layers: 'Apri la mappa dei livelli',
   radar_open_radar: 'Radar animato',
-};
 
+  // ── graph explorer ──
+  card_graphs: 'Grafici meteo',
+  tile_graphs: 'Grafici',
+  gx_range_24h: '24 ore',
+  gx_range_7d: '7 giorni',
+  gx_range_30d: 'Ultimi 30 giorni',
+  gx_hourly: 'Dati previsioni orarie',
+  gx_daily: 'Dati giornalieri reali · un punto = un giorno',
+  gx_temp: 'Temperatura',
+  gx_apparent: 'Percepita',
+  gx_precip_prob: 'Probabilità di pioggia',
+  gx_precip_amt: 'Precipitazioni',
+  gx_wind: 'Velocità del vento',
+  gx_gusts: 'Raffiche',
+  gx_wind_dir: 'Direzione del vento',
+  gx_pressure: 'Pressione',
+  gx_humidity: 'Umidità',
+  gx_uv: 'Indice UV',
+  gx_visibility: 'Visibilità',
+  gx_cape: 'CAPE',
+  gx_high: 'Max',
+  gx_low: 'Min',
+  gx_empty: 'Nessun dato graficabile per questo intervallo.',
+  gx_scrub_hint: 'Trascina o tocca il grafico per leggere i valori',
+  gx_card_caption: '24 h · 7 giorni · 30 giorni',
+  gx_chart_a11y: 'Grafico {metric}, {range}. {value} alle {time}. Trascina o tocca per esplorare.',
+  gx_a11y_metric: 'Metrica: {n}',
+  gx_a11y_range: 'Intervallo: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · PROSSIMI 5 GIORNI',
+  d_aqi_day_curve: 'OGNI ORA · {day}',
+};

@@ -1,5 +1,6 @@
 import type {
   AirQualityResponse,
+  AqiDayPeak,
   AqiHourPoint,
   AqiInfo,
   CurrentConditions,
@@ -153,11 +154,11 @@ function buildDaily(response: ForecastResponse): DayPoint[] {
   }));
 }
 
-/** Hourly US/EU AQI + particulate forecast for the next 24h (bounded, JSON-safe). */
-function buildAqiHourly(response: AirQualityResponse): AqiHourPoint[] {
+/** Hourly US/EU AQI + particulate forecast (rolling window, bounded, JSON-safe). */
+function buildAqiHourly(response: AirQualityResponse, maxHours: number): AqiHourPoint[] {
   const hourly = response.hourly;
   if (!hourly?.time?.length) return [];
-  const count = Math.min(hourly.time.length, 24);
+  const count = Math.min(hourly.time.length, maxHours);
   const points: AqiHourPoint[] = [];
   for (let index = 0; index < count; index++) {
     points.push({
@@ -169,6 +170,36 @@ function buildAqiHourly(response: AirQualityResponse): AqiHourPoint[] {
     });
   }
   return points;
+}
+
+/**
+ * Per-day peak AQI for the 5-day section, grouped by the `YYYY-MM-DD` prefix
+ * of the API's local-ISO hourly timestamps (the request uses timezone=auto).
+ * Days with no readings at all are dropped; empty hourly input yields [].
+ */
+export function buildAqiDayPeaks(points: AqiHourPoint[]): AqiDayPeak[] {
+  const byDay = new Map<string, { us: number[]; eu: number[] }>();
+  for (const point of points) {
+    const date = point.time.slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    let bucket = byDay.get(date);
+    if (!bucket) {
+      bucket = { us: [], eu: [] };
+      byDay.set(date, bucket);
+    }
+    if (point.usAqi !== null) bucket.us.push(point.usAqi);
+    if (point.euAqi !== null) bucket.eu.push(point.euAqi);
+  }
+  const peaks: AqiDayPeak[] = [];
+  for (const [date, bucket] of byDay) {
+    if (bucket.us.length === 0 && bucket.eu.length === 0) continue;
+    peaks.push({
+      date,
+      usPeak: bucket.us.length ? Math.max(...bucket.us) : null,
+      euPeak: bucket.eu.length ? Math.max(...bucket.eu) : null,
+    });
+  }
+  return peaks;
 }
 
 type BaseCurrentConditions = Omit<
@@ -214,9 +245,9 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
   const aqiParams = new URLSearchParams({
     latitude: location.latitude.toFixed(4),
     longitude: location.longitude.toFixed(4),
-    current: 'us_aqi,european_aqi,pm2_5,pm10,ozone,nitrogen_dioxide,sulphur_dioxide,alder,birch,grass,mugwort,olive,ragweed',
+    current: 'us_aqi,european_aqi,pm2_5,pm10,ozone,nitrogen_dioxide,sulphur_dioxide,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen',
     hourly: 'us_aqi,european_aqi,pm2_5,pm10',
-    forecast_hours: '24',
+    forecast_hours: '120',
     timezone: 'auto',
   }).toString();
 
@@ -237,12 +268,12 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
   if (aqiResponse?.current) {
     const ac = aqiResponse.current;
     const pollen: PollenInfo = {
-      alder: ac.alder,
-      birch: ac.birch,
-      grass: ac.grass,
-      mugwort: ac.mugwort,
-      olive: ac.olive,
-      ragweed: ac.ragweed,
+      alder: ac.alder_pollen,
+      birch: ac.birch_pollen,
+      grass: ac.grass_pollen,
+      mugwort: ac.mugwort_pollen,
+      olive: ac.olive_pollen,
+      ragweed: ac.ragweed_pollen,
     };
     const pollenAvailable = Object.values(pollen).some((value) => value !== null && value !== undefined);
     aqi = {
@@ -283,7 +314,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
     minutely: buildMinutely(forecast),
     daily: buildDaily(forecast),
     aqi,
-    aqiHourly: aqiResponse ? buildAqiHourly(aqiResponse) : [],
+    aqiHourly: aqiResponse ? buildAqiHourly(aqiResponse, 120) : [],
     fetchedAt: Date.now(),
   };
 }

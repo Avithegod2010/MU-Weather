@@ -195,5 +195,37 @@ export const el: Strings = {
   radar_retry: 'Δοκιμάστε ξανά',
   radar_open_layers: 'Άνοιγμα χάρτη επιπέδων',
   radar_open_radar: 'Κινούμενο ραντάρ',
-};
 
+  // ── graph explorer ──
+  card_graphs: 'Γραφήματα καιρού',
+  tile_graphs: 'Γραφήματα',
+  gx_range_24h: '24 ώρες',
+  gx_range_7d: '7 ημέρες',
+  gx_range_30d: 'Τελευταίες 30 ημέρες',
+  gx_hourly: 'Ωριαία δεδομένα πρόγνωσης',
+  gx_daily: 'Ημερήσια πραγματικά · ένα σημείο = μία ημέρα',
+  gx_temp: 'Θερμοκρασία',
+  gx_apparent: 'Αισθητή',
+  gx_precip_prob: 'Πιθανότητα βροχής',
+  gx_precip_amt: 'Βροχόπτωση',
+  gx_wind: 'Ταχύτητα αέρα',
+  gx_gusts: 'Ριπές',
+  gx_wind_dir: 'Κατεύθυνση αέρα',
+  gx_pressure: 'Πίεση',
+  gx_humidity: 'Υγρασία',
+  gx_uv: 'Δείκτης UV',
+  gx_visibility: 'Ορατότητα',
+  gx_cape: 'CAPE',
+  gx_high: 'Μέγιστη',
+  gx_low: 'Ελάχιστη',
+  gx_empty: 'Δεν υπάρχουν ακόμη γραφήσιμα δεδομένα για αυτό το εύρος.',
+  gx_scrub_hint: 'Σύρετε ή αγγίξτε το γράφημα για τιμές',
+  gx_card_caption: '24 ώ · 7 ημέρες · 30 ημέρες',
+  gx_chart_a11y: 'Γράφημα {metric}, {range}. {value} στις {time}. Σύρετε ή αγγίξτε για εξερεύνηση.',
+  gx_a11y_metric: 'Μετρική: {n}',
+  gx_a11y_range: 'Εύρος: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · ΕΠΟΜΕΝΕΣ 5 ΗΜΕΡΕΣ',
+  d_aqi_day_curve: 'ΑΝΑ ΩΡΑ · {day}',
+};

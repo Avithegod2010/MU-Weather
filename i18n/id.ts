@@ -195,5 +195,37 @@ export const id: Strings = {
   radar_retry: 'Coba lagi',
   radar_open_layers: 'Buka peta lapisan',
   radar_open_radar: 'Radar animasi',
-};
 
+  // ── graph explorer ──
+  card_graphs: 'Grafik cuaca',
+  tile_graphs: 'Grafik',
+  gx_range_24h: '24 jam',
+  gx_range_7d: '7 hari',
+  gx_range_30d: '30 hari terakhir',
+  gx_hourly: 'Data prakiraan per jam',
+  gx_daily: 'Data harian aktual · satu titik = satu hari',
+  gx_temp: 'Suhu',
+  gx_apparent: 'Terasa seperti',
+  gx_precip_prob: 'Peluang hujan',
+  gx_precip_amt: 'Curah hujan',
+  gx_wind: 'Kecepatan angin',
+  gx_gusts: 'Hembusan angin',
+  gx_wind_dir: 'Arah angin',
+  gx_pressure: 'Tekanan',
+  gx_humidity: 'Kelembapan',
+  gx_uv: 'Indeks UV',
+  gx_visibility: 'Jarak pandang',
+  gx_cape: 'CAPE',
+  gx_high: 'Tinggi',
+  gx_low: 'Rendah',
+  gx_empty: 'Belum ada data yang bisa digrafikkan untuk rentang ini.',
+  gx_scrub_hint: 'Seret atau ketuk grafik untuk membaca nilai',
+  gx_card_caption: '24 j · 7 hari · 30 hari',
+  gx_chart_a11y: 'Grafik {metric}, {range}. {value} pada {time}. Seret atau ketuk untuk menjelajahi.',
+  gx_a11y_metric: 'Metrik: {n}',
+  gx_a11y_range: 'Rentang: {n}',
+
+  // ── aqi 5-day forecast ──
+  d_aqi5: 'AQI · 5 HARI KE DEPAN',
+  d_aqi_day_curve: 'PER JAM · {day}',
+};

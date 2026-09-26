@@ -934,6 +934,7 @@ export function HomeScreen() {
         animStyle={settings.detailAnimation}
         aqiScale={settings.aqiScale}
         onAqiScaleChange={(scale) => updateSettings({ aqiScale: scale })}
+        pastDays={pastDays.days}
         onClose={() => setDetailTopic(null)}
       />
 
