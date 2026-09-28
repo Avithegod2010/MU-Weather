@@ -249,4 +249,22 @@ export const bn: Strings = {
   marine_max24: 'সর্বোচ্চ · ২৪ ঘণ্টা',
   marine_source: 'সামুদ্রিক: Open-Meteo-এর মাধ্যমে DWD ICON Wave',
   marine_rising: '{n} পর্যন্ত বাড়ছে',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'সূর্য ও গোধূলি',
+  tile_sun_twilight: 'সূর্য ও গোধূলি',
+  tw_elevation: 'সূর্যের উচ্চতা',
+  tw_azimuth: 'দিগংশ',
+  tw_civil_dawn: 'সিভিল ভোর',
+  tw_civil_dusk: 'সিভিল গোধূলি',
+  tw_darkness: 'সম্পূর্ণ অন্ধকার',
+  tw_blue_now: 'ব্লু আওয়ার এখন',
+  tw_blue_in: 'ব্লু আওয়ার {n} মিনিটে',
+  tw_polar_day: 'আজ সূর্য অস্ত যায় না',
+  tw_polar_night: 'আজ সূর্য ওঠে না',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'প্রথম আলো',
+  tw_solar_noon: 'সূর্য মধ্যদিন',
 };

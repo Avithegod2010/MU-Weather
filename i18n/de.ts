@@ -249,4 +249,22 @@ export const de: Strings = {
   marine_max24: 'Spitze · 24 h',
   marine_source: 'Seegang: DWD ICON Wave via Open-Meteo',
   marine_rising: 'steigend auf {n}',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'Sonne & Dämmerung',
+  tile_sun_twilight: 'Sonne & Dämmerung',
+  tw_elevation: 'Sonnenhöhe',
+  tw_azimuth: 'Azimut',
+  tw_civil_dawn: 'Bürgerl. Morgen',
+  tw_civil_dusk: 'Bürgerl. Abend',
+  tw_darkness: 'Volle Dunkelheit',
+  tw_blue_now: 'Blaue Stunde jetzt',
+  tw_blue_in: 'Blaue Stunde in {n} Min.',
+  tw_polar_day: 'Die Sonne geht heute nicht unter',
+  tw_polar_night: 'Die Sonne geht heute nicht auf',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'Erstes Licht',
+  tw_solar_noon: 'Sonnenmittag',
 };

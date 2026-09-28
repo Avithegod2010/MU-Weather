@@ -53,6 +53,7 @@ import {
 import { StormDistanceCard } from './StormDistanceCard';
 import { BarometerCard } from './BarometerCard';
 import { HealthCard } from './HealthCard';
+import { SunTwilightCard } from './SunTwilightCard';
 import { FEATURES } from '../config/features';
 import {
   formatAltitude,
@@ -524,6 +525,16 @@ export function DetailCards({
           <Text style={[styles.caption, { color: theme.textTertiary }]}>{t('gx_card_caption')}</Text>
         </View>
       </Card>)}
+
+      {show('sunTwilight') && (
+        <SunTwilightCard
+          theme={theme}
+          latitude={location.latitude}
+          longitude={location.longitude}
+          style={styles.half}
+          revealDelay={690}
+        />
+      )}
 
       <StormDistanceCard theme={theme} stormRisk={stormRisk} />
 

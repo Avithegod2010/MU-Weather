@@ -249,4 +249,22 @@ export const hi: Strings = {
   marine_max24: 'चरम · 24 घं',
   marine_source: 'समुद्री: Open-Meteo द्वारा DWD ICON Wave',
   marine_rising: '{n} तक बढ़ रहा',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'सूर्य और ट्वाइलाइट',
+  tile_sun_twilight: 'सूर्य और ट्वाइलाइट',
+  tw_elevation: 'सूरज की ऊंचाई',
+  tw_azimuth: 'दिगंश',
+  tw_civil_dawn: 'सिविल भोर',
+  tw_civil_dusk: 'सिविल सांझ',
+  tw_darkness: 'पूरा अंधेरा',
+  tw_blue_now: 'ब्लुअवर अभी',
+  tw_blue_in: 'ब्लुअवर {n} मिनट में',
+  tw_polar_day: 'आज सूरज नहीं डूबेगा',
+  tw_polar_night: 'आज सूरज नहीं उगेगा',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'पहली रोशनी',
+  tw_solar_noon: 'सूर्य मध्याह',
 };

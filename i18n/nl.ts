@@ -249,4 +249,22 @@ export const nl: Strings = {
   marine_max24: 'Piek · 24 u',
   marine_source: 'Marien: DWD ICON Wave via Open-Meteo',
   marine_rising: 'oplopend tot {n}',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'Zon & schemering',
+  tile_sun_twilight: 'Zon & schemering',
+  tw_elevation: 'Zonhoogte',
+  tw_azimuth: 'Azimuth',
+  tw_civil_dawn: 'Burg. ochtend',
+  tw_civil_dusk: 'Burg. avond',
+  tw_darkness: 'Volledig donker',
+  tw_blue_now: 'Blauwe uur nu',
+  tw_blue_in: 'Blauwe uur over {n} min',
+  tw_polar_day: 'De zon gaat niet onder',
+  tw_polar_night: 'De zon komt niet op',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'Eerste licht',
+  tw_solar_noon: 'Zonnemiddag',
 };

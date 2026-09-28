@@ -249,4 +249,22 @@ export const fr: Strings = {
   marine_max24: 'Pic · 24 h',
   marine_source: 'Marin : DWD ICON Wave via Open-Meteo',
   marine_rising: 'montant à {n}',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'Soleil et crépuscule',
+  tile_sun_twilight: 'Soleil et crépuscule',
+  tw_elevation: 'Hauteur du soleil',
+  tw_azimuth: 'Azimut',
+  tw_civil_dawn: 'Aube civile',
+  tw_civil_dusk: 'Crépuscule civil',
+  tw_darkness: 'Nuit noire',
+  tw_blue_now: 'Heure bleue maintenant',
+  tw_blue_in: 'Heure bleue dans {n} min',
+  tw_polar_day: 'Le soleil ne se couche pas aujourd\'hui',
+  tw_polar_night: 'Le soleil ne se lève pas aujourd\'hui',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'Première lumière',
+  tw_solar_noon: 'Midi solaire',
 };

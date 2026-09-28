@@ -249,4 +249,22 @@ export const hu: Strings = {
   marine_max24: 'Csúcs · 24 ó',
   marine_source: 'Tengeri: DWD ICON Wave az Open-Meteo révén',
   marine_rising: '{n}-re emelkedik',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'Nap & szürkület',
+  tile_sun_twilight: 'Nap & szürkület',
+  tw_elevation: 'Nap magassága',
+  tw_azimuth: 'Azimut',
+  tw_civil_dawn: 'Polgári hajnal',
+  tw_civil_dusk: 'Polgári alkony',
+  tw_darkness: 'Teljes sötét',
+  tw_blue_now: 'Kék óra most',
+  tw_blue_in: 'Kék óra {n} perc múlva',
+  tw_polar_day: 'Ma nem nyugszik le a nap',
+  tw_polar_night: 'Ma nem kel fel a nap',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'Első fény',
+  tw_solar_noon: 'Nappdéli pont',
 };

@@ -707,6 +707,24 @@ export const en = {
   marine_max24: 'Peak · 24 h',
   marine_source: 'Marine: DWD ICON Wave via Open-Meteo',
   marine_rising: 'building to {n}',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'Sun & Twilight',
+  tile_sun_twilight: 'Sun & Twilight',
+  tw_elevation: 'Sun elevation',
+  tw_azimuth: 'Azimuth',
+  tw_civil_dawn: 'Civil dawn',
+  tw_civil_dusk: 'Civil dusk',
+  tw_darkness: 'Full dark',
+  tw_blue_now: 'Blue hour now',
+  tw_blue_in: 'Blue hour in {n} min',
+  tw_polar_day: 'Sun never sets today',
+  tw_polar_night: 'Sun stays down today',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'First light',
+  tw_solar_noon: 'Solar noon',
 };
 
 

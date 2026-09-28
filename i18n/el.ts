@@ -249,4 +249,22 @@ export const el: Strings = {
   marine_max24: 'Κορύφωση · 24 ω',
   marine_source: 'Θαλάσσια: DWD ICON Wave μέσω Open-Meteo',
   marine_rising: 'ανεβαίνει σε {n}',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'Ήλιος & σούρουπο',
+  tile_sun_twilight: 'Ήλιος & σούρουπο',
+  tw_elevation: 'Ύψος ήλιου',
+  tw_azimuth: 'Αζιμούθιο',
+  tw_civil_dawn: 'Πολιτική αυγή',
+  tw_civil_dusk: 'Πολιτικό σούρουπο',
+  tw_darkness: 'Πλήρες σκοτάδι',
+  tw_blue_now: 'Μπλε ώρα τώρα',
+  tw_blue_in: 'Μπλε ώρα σε {n} λεπτά',
+  tw_polar_day: 'Ο ήλιος δεν δύει σήμερα',
+  tw_polar_night: 'Ο ήλιος δεν ανατέλλει σήμερα',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'Πρώτο φως',
+  tw_solar_noon: 'Μεσημεριανός ήλιος',
 };

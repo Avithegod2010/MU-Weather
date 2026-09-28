@@ -249,4 +249,22 @@ export const id: Strings = {
   marine_max24: 'Puncak · 24 j',
   marine_source: 'Kelautan: DWD ICON Wave via Open-Meteo',
   marine_rising: 'naik ke {n}',
+
+
+  // ── sun & twilight card ──
+  card_sun_twilight: 'Matahari & senja',
+  tile_sun_twilight: 'Matahari & senja',
+  tw_elevation: 'Ketinggian matahari',
+  tw_azimuth: 'Azimut',
+  tw_civil_dawn: 'Fajar sipil',
+  tw_civil_dusk: 'Senja sipil',
+  tw_darkness: 'Gelap total',
+  tw_blue_now: 'Jam biru sekarang',
+  tw_blue_in: 'Jam biru dalam {n} mnt',
+  tw_polar_day: 'Matahari tidak terbenam hari ini',
+  tw_polar_night: 'Matahari tidak terbit hari ini',
+
+  // ── sun & twilight: arc + full phase rows ──
+  tw_first_light: 'Cahaya pertama',
+  tw_solar_noon: 'Tengah hari matahari',
 };

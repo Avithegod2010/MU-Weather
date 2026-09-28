@@ -48,6 +48,7 @@ import {
   TriangleAlert,
   FileSpreadsheet,
   Braces,
+  Sunrise,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import appJson from '../app.json';
@@ -67,6 +68,7 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   pollen: 'tile_pollen',
   snow: 'tile_snow',
   graphs: 'tile_graphs',
+  sunTwilight: 'tile_sun_twilight',
   highlights: 'tile_highlights',
   nowcast: 'tile_nowcast',
   rainChart: 'tile_rainchart',
@@ -151,6 +153,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   pollen: Flower2,
   snow: Snowflake,
   graphs: TrendingUp,
+  sunTwilight: Sunrise,
   pastWeek: Clock3,
   tripPlanner: Luggage,
   climate: Thermometer,
