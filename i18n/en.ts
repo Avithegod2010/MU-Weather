@@ -708,7 +708,6 @@ export const en = {
   marine_source: 'Marine: DWD ICON Wave via Open-Meteo',
   marine_rising: 'building to {n}',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'Sun & Twilight',
   tile_sun_twilight: 'Sun & Twilight',
@@ -737,7 +736,11 @@ export const en = {
   hist_cooler_today: '{n}° cooler than today',
   hist_same_today: 'About the same as today',
   hist_recent: 'Recently explored',
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'City widget',
+  wcfg_sub: 'Choose which saved city this widget shows.',
+  wcfg_loading: 'Loading saved cities…',
+  wcfg_cancel: 'Cancel',
 };
-
 
 export type Strings = typeof en;

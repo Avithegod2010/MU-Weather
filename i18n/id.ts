@@ -250,7 +250,6 @@ export const id: Strings = {
   marine_source: 'Kelautan: DWD ICON Wave via Open-Meteo',
   marine_rising: 'naik ke {n}',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'Matahari & senja',
   tile_sun_twilight: 'Matahari & senja',
@@ -279,4 +278,10 @@ export const id: Strings = {
   hist_cooler_today: '{n}° lebih dingin dari hari ini',
   hist_same_today: 'Sama seperti hari ini',
   hist_recent: 'Terakhir dijelajahi',
+
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'Widget kota',
+  wcfg_sub: 'Pilih kota tersimpan yang ditampilkan widget ini.',
+  wcfg_loading: 'Memuat kota tersimpan…',
+  wcfg_cancel: 'Batal',
 };

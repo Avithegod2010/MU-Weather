@@ -250,7 +250,6 @@ export const hi: Strings = {
   marine_source: 'समुद्री: Open-Meteo द्वारा DWD ICON Wave',
   marine_rising: '{n} तक बढ़ रहा',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'सूर्य और ट्वाइलाइट',
   tile_sun_twilight: 'सूर्य और ट्वाइलाइट',
@@ -279,4 +278,10 @@ export const hi: Strings = {
   hist_cooler_today: 'आज से {n}° ठंडा',
   hist_same_today: 'आज जैसा ही',
   hist_recent: 'हाल में देखे गए',
+
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'सिटी विजेट',
+  wcfg_sub: 'चुनें कि यह विजेट कौन-सी सहेजी गई शहर दिखाए।',
+  wcfg_loading: 'सहेजे गए शहर लोड हो रहे हैं…',
+  wcfg_cancel: 'रद्द करें',
 };

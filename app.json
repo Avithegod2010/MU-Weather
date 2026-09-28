@@ -85,6 +85,18 @@
               "targetCellHeight": 3,
               "resizeMode": "horizontal|vertical",
               "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "MUWeatherWidgetCity",
+              "label": "MU Weather City",
+              "description": "Conditions for a saved city of your choice",
+              "minWidth": "180dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000,
+              "widgetFeatures": "reconfigurable|configuration_optional"
             }
           ]
         }

@@ -250,7 +250,6 @@ export const it: Strings = {
   marine_source: 'Mare: DWD ICON Wave via Open-Meteo',
   marine_rising: 'in aumento a {n}',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'Sole e crepuscolo',
   tile_sun_twilight: 'Sole e crepuscolo',
@@ -279,4 +278,10 @@ export const it: Strings = {
   hist_cooler_today: '{n}° più freddo di oggi',
   hist_same_today: 'Come oggi',
   hist_recent: 'Visti di recente',
+
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'Widget città',
+  wcfg_sub: 'Scegli quale città salvata mostra questo widget.',
+  wcfg_loading: 'Caricamento delle città salvate…',
+  wcfg_cancel: 'Annulla',
 };

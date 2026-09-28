@@ -250,7 +250,6 @@ export const nl: Strings = {
   marine_source: 'Zeegegevens: DWD ICON Wave via Open-Meteo',
   marine_rising: 'oplopend tot {n}',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'Zon & schemering',
   tile_sun_twilight: 'Zon & schemering',
@@ -279,4 +278,10 @@ export const nl: Strings = {
   hist_cooler_today: '{n}° kouder dan vandaag',
   hist_same_today: 'Zoals vandaag',
   hist_recent: 'Recent bekeken',
+
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'Stadswidget',
+  wcfg_sub: 'Kies welke opgeslagen stad deze widget toont.',
+  wcfg_loading: 'Opgeslagen steden laden…',
+  wcfg_cancel: 'Annuleren',
 };

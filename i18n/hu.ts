@@ -250,7 +250,6 @@ export const hu: Strings = {
   marine_source: 'Tengeri: DWD ICON Wave az Open-Meteo révén',
   marine_rising: '{n}-re emelkedik',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'Nap & szürkület',
   tile_sun_twilight: 'Nap & szürkület',
@@ -279,4 +278,10 @@ export const hu: Strings = {
   hist_cooler_today: '{n}° hidegebb a maínál',
   hist_same_today: 'Ma közelében',
   hist_recent: 'Legutóbban nézett',
+
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'Város-widget',
+  wcfg_sub: 'Válaszd ki, mely mentett várost mutatja ez a widgetet.',
+  wcfg_loading: 'Mentett városok betöltése…',
+  wcfg_cancel: 'Mégse',
 };

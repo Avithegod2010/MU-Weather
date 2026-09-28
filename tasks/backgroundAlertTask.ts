@@ -13,6 +13,8 @@ import {
 import { DEFAULT_ALERT_SETTINGS } from '../utils/alertRules';
 import { rescheduleDigestFromCache, SETTINGS_KEY } from '../hooks/useDigest';
 import { fireFavoriteCityAlerts } from '../utils/favoriteCityAlerts';
+import { refreshCitySnapshots, toCitySnapshot, saveCitySnapshot } from '../utils/citySnapshots';
+import { loadWidgetCities } from '../utils/widgetCityConfig';
 import { LANGUAGES, setLanguage } from '../utils/i18n';
 import type { LanguageKey } from '../utils/i18n';
 
@@ -36,7 +38,14 @@ if (!globalScope.__muBgAlertTaskDefined) {
       const settingsRaw = await AsyncStorage.getItem(SETTINGS_KEY);
       const storedSettings: Record<string, unknown> = settingsRaw ? JSON.parse(settingsRaw) : {};
       const digestEnabled = storedSettings.digestEnabled === true;
-      if (!anyAlertEnabled && !digestEnabled) return BackgroundTask.BackgroundTaskResult.Success;
+      // A placed multi-city widget needs this task to run too, or its city
+      // snapshots would never refresh while the app is closed. (The two
+      // built-in widgets have the same pre-existing gap - they are only fed
+      // when an alert or the digest is on.)
+      const cityWidgetConfigured = (await loadWidgetCities()).length > 0;
+      if (!anyAlertEnabled && !digestEnabled && !cityWidgetConfigured) {
+        return BackgroundTask.BackgroundTaskResult.Success;
+      }
 
       // A headless background start begins with i18n's default language (English).
       // Apply the stored one BEFORE anything fires, or every alert - including the
@@ -61,6 +70,11 @@ if (!globalScope.__muBgAlertTaskDefined) {
       // bundle is also the widget's cache source, so persist it here too.
       try {
         await saveLastWeather(data);
+        // Multi-city widgets read per-city snapshots, not this bundle. The
+        // current location's snapshot is free (we already have the data); the
+        // sweep fetches any other shown cities, rate-limited and rotated.
+        await saveCitySnapshot(toCitySnapshot(data));
+        await refreshCitySnapshots({ alreadyFetched: [data] });
         await refreshWeatherWidgets();
       } catch {
         // Widget updates are best-effort.

@@ -250,7 +250,6 @@ export const el: Strings = {
   marine_source: 'Θαλάσσια δεδομένα: DWD ICON Wave μέσω Open-Meteo',
   marine_rising: 'ανεβαίνει σε {n}',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'Ήλιος & σούρουπο',
   tile_sun_twilight: 'Ήλιος & σούρουπο',
@@ -279,4 +278,10 @@ export const el: Strings = {
   hist_cooler_today: '{n}° ψυχρότερα από σήμερα',
   hist_same_today: 'Όπως σήμερα',
   hist_recent: 'Πρόσφατες προβολές',
+
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'Γραμμοφόρο πόλης',
+  wcfg_sub: 'Επιλέξτε ποια αποθηκευμένη πόλη δείχνει αυτό το γραμμοφόρο.',
+  wcfg_loading: 'Φόρτωση αποθηκευμένων πόλεων…',
+  wcfg_cancel: 'Ακύρωση',
 };

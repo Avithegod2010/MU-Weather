@@ -1,5 +1,5 @@
 import type React from 'react';
-import { registerWidgetTaskHandler, requestWidgetUpdate } from 'react-native-android-widget';
+import { registerWidgetTaskHandler, requestWidgetUpdate, requestWidgetUpdateById } from 'react-native-android-widget';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { WeatherWidget, renderWeatherWidgetFromBundle } from '../components/WeatherWidget';
@@ -8,6 +8,13 @@ import {
   WeatherWidgetDashboard,
   renderWeatherWidgetDashboardFromBundle,
 } from '../components/WeatherWidgetDashboard';
+import {
+  renderCityWidgetFromSnapshot,
+  renderCityWidgetNoData,
+  renderCityWidgetUnconfigured,
+} from '../components/WeatherWidgetCity';
+import { loadCitySnapshot } from '../utils/citySnapshots';
+import { loadWidgetCity, loadWidgetCities } from '../utils/widgetCityConfig';
 import type { WeatherBundle } from '../api/types';
 
 export const WEATHER_WIDGET_NAME = 'MUWeatherWidget';
@@ -15,6 +22,8 @@ export const WEATHER_WIDGET_NAME = 'MUWeatherWidget';
 export const WEATHER_WIDGET_NAME_LARGE = 'MUWeatherWidgetLarge';
 
 export const WEATHER_WIDGET_NAME_DASHBOARD = 'MUWeatherWidgetDashboard';
+
+export const WEATHER_WIDGET_NAME_CITY = 'MUWeatherWidgetCity';
 
 const WEATHER_CACHE_KEY = '@mu_weather/last_weather_v1';
 
@@ -117,6 +126,20 @@ async function renderFromCacheDashboard(): Promise<React.JSX.Element> {
   return renderWeatherWidgetDashboardFromBundle(bundle);
 }
 
+/**
+ * Redraw ONE multi-city widget instance.
+ *
+ * The per-instance path is necessary because each placed widget shows a
+ * different city, so a name-only `requestWidgetUpdate` (which would redraw every
+ * instance identically) cannot be used here.
+ */
+export async function renderCityWidgetInstance(widgetId: number): Promise<React.JSX.Element> {
+  const city = await loadWidgetCity(widgetId);
+  if (!city) return renderCityWidgetUnconfigured();
+  const snapshot = await loadCitySnapshot(city.id);
+  return snapshot ? renderCityWidgetFromSnapshot(snapshot) : renderCityWidgetNoData();
+}
+
 if (!globalScope.__muWidgetTaskDefined) {
   globalScope.__muWidgetTaskDefined = true;
 
@@ -141,14 +164,21 @@ if (!globalScope.__muWidgetTaskDefined) {
       renderWidget(await renderFromCacheDashboard());
       return;
     }
+    if (widgetInfo.widgetName === WEATHER_WIDGET_NAME_CITY) {
+      // Per-instance: each city widget resolves its own configured city.
+      renderWidget(await renderCityWidgetInstance(widgetInfo.widgetId));
+      return;
+    }
     renderWidget(await renderFromCache());
   });
 }
 
 /**
- * Redraw every placed widget (2x2, 4x2 and 4x3) from the cached bundle. Called
- * whenever the app writes a fresh weather bundle, so the widgets always
- * mirror app data.
+ * Redraw every placed widget from the cached bundle. Called whenever the app
+ * writes a fresh weather bundle, so the widgets always mirror app data.
+ *
+ * The multi-city widget is redrawn PER INSTANCE (each shows a different city),
+ * so it is handled separately from the name-keyed updates below.
  */
 export async function refreshWeatherWidgets(): Promise<void> {
   const updates = [
@@ -163,4 +193,30 @@ export async function refreshWeatherWidgets(): Promise<void> {
     }
   });
   await Promise.allSettled(updates);
+  await refreshCityWidgets();
+}
+
+/**
+ * Redraw every placed multi-city widget instance from its own city's snapshot.
+ * Instances with no stored city or no fresh snapshot render their placeholder.
+ */
+export async function refreshCityWidgets(): Promise<void> {
+  try {
+    const configs = await loadWidgetCities();
+    await Promise.allSettled(
+      configs.map(async ({ widgetId }) => {
+        try {
+          await requestWidgetUpdateById({
+            widgetName: WEATHER_WIDGET_NAME_CITY,
+            widgetId,
+            renderWidget: () => renderCityWidgetInstance(widgetId),
+          });
+        } catch {
+          // That instance was removed from the home screen - non-critical.
+        }
+      }),
+    );
+  } catch {
+    // Native module absent (Expo Go) - non-critical.
+  }
 }

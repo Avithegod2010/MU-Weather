@@ -250,7 +250,6 @@ export const es: Strings = {
   marine_source: 'Datos marinos: DWD ICON Wave vía Open-Meteo',
   marine_rising: 'subiendo a {n}',
 
-
   // ── sun & twilight card ──
   card_sun_twilight: 'Sol y crepúsculo',
   tile_sun_twilight: 'Sol y crepúsculo',
@@ -279,4 +278,10 @@ export const es: Strings = {
   hist_cooler_today: '{n}° más frío que hoy',
   hist_same_today: 'Igual que hoy',
   hist_recent: 'Explorado recientemente',
+
+  // ── bot: multi-city widget configuration ──
+  wcfg_title: 'Widget de ciudad',
+  wcfg_sub: 'Elige qué ciudad guardada muestra este widget.',
+  wcfg_loading: 'Cargando ciudades guardadas…',
+  wcfg_cancel: 'Cancelar',
 };
