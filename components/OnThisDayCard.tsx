@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { t } from '../utils/i18n';
-import { CalendarDays } from '../utils/uiIcons';
+import { CalendarDays, ChevronRight } from '../utils/uiIcons';
+import { haptics } from '../utils/haptics';
 import { Card } from './Card';
 import { formatTemp } from '../utils/format';
 import { describeWmo } from '../utils/wmo';
@@ -17,9 +18,12 @@ interface OnThisDayCardProps {
    * absent while loading or after a failure (no skeleton). Kept so future
    * loading/error states don't need a call-site change. */
   status: 'idle' | 'loading' | 'ok' | 'error';
+  /** Opens the historical explorer. Omitted by callers that don't want the
+   * entry point, in which case the card renders exactly as it did before. */
+  onExplore?: () => void;
 }
 
-export function OnThisDayCard({ theme, years }: OnThisDayCardProps) {
+export function OnThisDayCard({ theme, years, onExplore }: OnThisDayCardProps) {
   // No rows yet (or the fetch failed): card absent, not crashed - same
   // contract as ClimateCard.
   if (!years || years.length === 0) return null;
@@ -48,6 +52,27 @@ export function OnThisDayCard({ theme, years }: OnThisDayCardProps) {
           </View>
         );
       })}
+      {onExplore ? (
+        <Pressable
+          onPress={() => {
+            haptics.select();
+            onExplore();
+          }}
+          style={({ pressed }) => [
+            styles.exploreRow,
+            { backgroundColor: theme.chipBg },
+            pressed && { opacity: 0.7 },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={t('hist_explore')}
+        >
+          <CalendarDays size={15} color={theme.textPrimary} strokeWidth={2.2} />
+          <Text style={[styles.exploreText, { color: theme.textPrimary }]} numberOfLines={1}>
+            {t('hist_explore')}
+          </Text>
+          <ChevronRight size={16} color={theme.textTertiary} strokeWidth={2.2} />
+        </Pressable>
+      ) : null}
     </Card>
   );
 }
@@ -76,5 +101,19 @@ const styles = StyleSheet.create({
   rowTemps: {
     fontSize: 20,
     fontFamily: F.bold,
+  },
+  exploreRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    alignSelf: 'flex-start',
+  },
+  exploreText: {
+    fontSize: 12.5,
+    fontFamily: F.semibold,
   },
 });

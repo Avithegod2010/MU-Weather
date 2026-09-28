@@ -321,6 +321,27 @@ export async function fetchOnThisDayYears(lat: number, lon: number, years = 10):
   return rows.length > 0 ? rows : null;
 }
 
+/**
+ * Observed weather for ONE arbitrary past date (YYYY-MM-DD) - the historical
+ * explorer. A single ranged Archive call (start_date = end_date) parsed by the
+ * same `requestArchiveWindow` helper the 30-day view uses, so the row shape and
+ * the "skip incomplete rows" rule are identical. Returns null when the archive
+ * has no usable row (service down, or a date inside its few-days lag) so the
+ * screen can offer a retry instead of inventing numbers. Never throws.
+ */
+export async function fetchHistoricalDay(
+  lat: number,
+  lon: number,
+  date: string,
+): Promise<PastDayActual | null> {
+  try {
+    const days = await requestArchiveWindow(lat, lon, date, date);
+    return days[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 const ENSEMBLE_URL = 'https://ensemble-api.open-meteo.com/v1/ensemble';
 /** Rain counts when at least this much precipitation falls in the hour. */
 const ENSEMBLE_RAIN_THRESHOLD_MM = 0.1;

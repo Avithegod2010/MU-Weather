@@ -267,4 +267,16 @@ export const nl: Strings = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'Eerste licht',
   tw_solar_noon: 'Zonnemiddag',
+
+  // ── historical explorer ──
+  hist_title: 'Geschiedenis',
+  hist_explore: 'Elke datum bekijken',
+  hist_day: 'Dag',
+  hist_month: 'Maand',
+  hist_year: 'Jaar',
+  hist_vs_today: 'Vergeleken met vandaag',
+  hist_warmer_today: '{n}° warmer dan vandaag',
+  hist_cooler_today: '{n}° kouder dan vandaag',
+  hist_same_today: 'Zoals vandaag',
+  hist_recent: 'Recent bekeken',
 };

@@ -86,6 +86,7 @@ import { computeBestWindow, bestWindowLine } from '../utils/bestWindow';
 import { computeWearLine } from '../utils/whatToWear';
 import { TileDetailScreen, type TopicKey } from '../components/TileDetailScreen';
 import { DayDetailScreen } from '../components/DayDetailScreen';
+import { HistoricalExplorerScreen } from '../components/HistoricalExplorerScreen';
 import { FEATURES } from '../config/features';
 import { applyHomeBackground } from '../config/backgrounds';
 import { applyColorTheme } from '../config/colorThemes';
@@ -160,6 +161,7 @@ export function HomeScreen() {
   const [modelsOpen, setModelsOpen] = useState(false);
   const [detailTopic, setDetailTopic] = useState<TopicKey | null>(null);
   const [dayDetail, setDayDetail] = useState<{ day: DayPoint; index: number } | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const favoritesState = useFavorites();
   const weather = useWeather(active);
@@ -669,7 +671,12 @@ export function HomeScreen() {
 
               {FEATURES.onThisDay && showSection('onThisDay') ? (
                 <Reveal delay={154}>
-                  <OnThisDayCard theme={theme} years={onThisDay.years} status={onThisDay.status} />
+                  <OnThisDayCard
+                    theme={theme}
+                    years={onThisDay.years}
+                    status={onThisDay.status}
+                    onExplore={() => setHistoryOpen(true)}
+                  />
                 </Reveal>
               ) : null}
 
@@ -956,6 +963,17 @@ export function HomeScreen() {
         visible={dayDetail !== null && weather.data !== null}
         animStyle={settings.detailAnimation}
         onClose={() => setDayDetail(null)}
+      />
+
+      <HistoricalExplorerScreen
+        theme={theme}
+        visible={historyOpen && active !== null}
+        animStyle={settings.detailAnimation}
+        latitude={active?.latitude ?? null}
+        longitude={active?.longitude ?? null}
+        todayTMax={weather.data?.daily[0]?.tMax ?? null}
+        normals={climateNormals.months}
+        onClose={() => setHistoryOpen(false)}
       />
     </View>
   );

@@ -267,4 +267,16 @@ export const el: Strings = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'Πρώτο φως',
   tw_solar_noon: 'Μεσημεριανός ήλιος',
+
+  // ── historical explorer ──
+  hist_title: 'Ιστορικό',
+  hist_explore: 'Εξερεύνηση οποιασδήποτε ημερομηνίας',
+  hist_day: 'Ημέρα',
+  hist_month: 'Μήνας',
+  hist_year: 'Έτος',
+  hist_vs_today: 'Σε σύγκριση με σήμερα',
+  hist_warmer_today: '{n}° θερμότερα από σήμερα',
+  hist_cooler_today: '{n}° ψυχρότερα από σήμερα',
+  hist_same_today: 'Όπως σήμερα',
+  hist_recent: 'Πρόσφατες αναζητήσεις',
 };

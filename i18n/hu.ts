@@ -267,4 +267,16 @@ export const hu: Strings = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'Első fény',
   tw_solar_noon: 'Nappdéli pont',
+
+  // ── historical explorer ──
+  hist_title: 'Előzmények',
+  hist_explore: 'Bármely dátum',
+  hist_day: 'Nap',
+  hist_month: 'Hónap',
+  hist_year: 'Év',
+  hist_vs_today: 'A maihoz képest',
+  hist_warmer_today: '{n}° melegebb a maínál',
+  hist_cooler_today: '{n}° hidegebb a maínál',
+  hist_same_today: 'Ma közelében',
+  hist_recent: 'Legutóbban nézett',
 };

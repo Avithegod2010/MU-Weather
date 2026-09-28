@@ -267,4 +267,16 @@ export const de: Strings = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'Erstes Licht',
   tw_solar_noon: 'Sonnenmittag',
+
+  // ── historical explorer ──
+  hist_title: 'Verlauf',
+  hist_explore: 'Beliebiges Datum',
+  hist_day: 'Tag',
+  hist_month: 'Monat',
+  hist_year: 'Jahr',
+  hist_vs_today: 'Verglichen mit heute',
+  hist_warmer_today: '{n}° wärmer als heute',
+  hist_cooler_today: '{n}° kälter als heute',
+  hist_same_today: 'Wie heute',
+  hist_recent: 'Zuletzt angesehen',
 };

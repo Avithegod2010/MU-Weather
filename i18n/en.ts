@@ -725,6 +725,18 @@ export const en = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'First light',
   tw_solar_noon: 'Solar noon',
+
+  // ── historical explorer ──
+  hist_title: 'History',
+  hist_explore: 'Explore any date',
+  hist_day: 'Day',
+  hist_month: 'Month',
+  hist_year: 'Year',
+  hist_vs_today: 'Compared with today',
+  hist_warmer_today: '{n}° warmer than today',
+  hist_cooler_today: '{n}° cooler than today',
+  hist_same_today: 'About the same as today',
+  hist_recent: 'Recently explored',
 };
 
 

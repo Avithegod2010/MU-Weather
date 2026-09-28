@@ -267,4 +267,16 @@ export const hi: Strings = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'पहली रोशनी',
   tw_solar_noon: 'सूर्य मध्याह',
+
+  // ── historical explorer ──
+  hist_title: 'इतिहास',
+  hist_explore: 'कोई भी तारीख देखें',
+  hist_day: 'दिन',
+  hist_month: 'महीना',
+  hist_year: 'वर्ष',
+  hist_vs_today: 'आज की तुलना में',
+  hist_warmer_today: 'आज से {n}° गर्म',
+  hist_cooler_today: 'आज से {n}° ठंडा',
+  hist_same_today: 'आज जैसा ही',
+  hist_recent: 'हाल में देखे गए',
 };

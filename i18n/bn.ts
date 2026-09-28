@@ -267,4 +267,16 @@ export const bn: Strings = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'প্রথম আলো',
   tw_solar_noon: 'সূর্য মধ্যদিন',
+
+  // ── historical explorer ──
+  hist_title: 'ইতিহাস',
+  hist_explore: 'যেকোনো তারিখ দেখুন',
+  hist_day: 'দিন',
+  hist_month: 'মাস',
+  hist_year: 'বছর',
+  hist_vs_today: 'আজকের তুলনায়',
+  hist_warmer_today: 'আজকের চেয়ে {n}° বেশি গরম',
+  hist_cooler_today: 'আজকের চেয়ে {n}° ঠান্ডা',
+  hist_same_today: 'আজকের মতোই',
+  hist_recent: 'সম্প্রতি দেখা',
 };

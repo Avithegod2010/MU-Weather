@@ -267,4 +267,16 @@ export const id: Strings = {
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'Cahaya pertama',
   tw_solar_noon: 'Tengah hari matahari',
+
+  // ── historical explorer ──
+  hist_title: 'Riwayat',
+  hist_explore: 'Jelajahi tanggal',
+  hist_day: 'Hari',
+  hist_month: 'Bulan',
+  hist_year: 'Tahun',
+  hist_vs_today: 'Dibandingkan hari ini',
+  hist_warmer_today: '{n}° lebih hangat dari hari ini',
+  hist_cooler_today: '{n}° lebih dingin dari hari ini',
+  hist_same_today: 'Sama seperti hari ini',
+  hist_recent: 'Terakhir dijelajahi',
 };
