@@ -247,7 +247,7 @@ export const de: Strings = {
   marine_swell: 'Dünung',
   marine_sea_temp: 'Wassertemp.',
   marine_max24: 'Spitze · 24 h',
-  marine_source: 'Seegang: DWD ICON Wave via Open-Meteo',
+  marine_source: 'Seegangsdaten: DWD ICON Wave via Open-Meteo',
   marine_rising: 'steigend auf {n}',
 
 

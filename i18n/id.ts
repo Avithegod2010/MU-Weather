@@ -232,7 +232,7 @@ export const id: Strings = {
   // ── aurora solar wind ──
   aurora_wind: 'Angin surya {n} km/s',
   aurora_bz: 'Bz {n} nT',
-  aurora_bz_south: 'kuat ke selatan — aurora didukung',
+  aurora_bz_south: 'kuat ke selatan — aurora lebih mungkin',
   aurora_kp24: 'KP · 24 JAM TERAKHIR',
   aurora_updated: 'Diperbarui {time}',
 

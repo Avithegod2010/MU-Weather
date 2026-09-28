@@ -247,7 +247,7 @@ export const es: Strings = {
   marine_swell: 'Marejada',
   marine_sea_temp: 'Temp. del mar',
   marine_max24: 'Pico · 24 h',
-  marine_source: 'Marino: DWD ICON Wave vía Open-Meteo',
+  marine_source: 'Datos marinos: DWD ICON Wave vía Open-Meteo',
   marine_rising: 'subiendo a {n}',
 
 

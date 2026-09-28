@@ -247,7 +247,7 @@ export const it: Strings = {
   marine_swell: 'Moto ondoso',
   marine_sea_temp: 'Temp. mare',
   marine_max24: 'Picco · 24 h',
-  marine_source: 'Marino: DWD ICON Wave via Open-Meteo',
+  marine_source: 'Mare: DWD ICON Wave via Open-Meteo',
   marine_rising: 'in aumento a {n}',
 
 

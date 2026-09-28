@@ -247,7 +247,7 @@ export const nl: Strings = {
   marine_swell: 'Deining',
   marine_sea_temp: 'Zeetemp.',
   marine_max24: 'Piek · 24 u',
-  marine_source: 'Marien: DWD ICON Wave via Open-Meteo',
+  marine_source: 'Zeegegevens: DWD ICON Wave via Open-Meteo',
   marine_rising: 'oplopend tot {n}',
 
 
@@ -261,8 +261,8 @@ export const nl: Strings = {
   tw_darkness: 'Volledig donker',
   tw_blue_now: 'Blauwe uur nu',
   tw_blue_in: 'Blauwe uur over {n} min',
-  tw_polar_day: 'De zon gaat niet onder',
-  tw_polar_night: 'De zon komt niet op',
+  tw_polar_day: 'De zon gaat vandaag niet onder',
+  tw_polar_night: 'De zon komt vandaag niet op',
 
   // ── sun & twilight: arc + full phase rows ──
   tw_first_light: 'Eerste licht',

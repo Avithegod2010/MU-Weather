@@ -247,7 +247,7 @@ export const fr: Strings = {
   marine_swell: 'Houle',
   marine_sea_temp: 'Temp. mer',
   marine_max24: 'Pic · 24 h',
-  marine_source: 'Marin : DWD ICON Wave via Open-Meteo',
+  marine_source: 'Données marines : DWD ICON Wave via Open-Meteo',
   marine_rising: 'montant à {n}',
 
 

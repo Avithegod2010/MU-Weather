@@ -230,7 +230,7 @@ export const hu: Strings = {
   d_aqi_day_curve: 'ÓRÁNKÉNT · {day}',
 
   // ── aurora solar wind ──
-  aurora_wind: 'Napszél {n} km/s',
+  aurora_wind: 'Szoláris szél {n} km/s',
   aurora_bz: 'Bz {n} nT',
   aurora_bz_south: 'erősen délre — sarki fény valószínű',
   aurora_kp24: 'KP · ELMÚLT 24 ÓRA',
@@ -269,8 +269,8 @@ export const hu: Strings = {
   tw_solar_noon: 'Nappdéli pont',
 
   // ── historical explorer ──
-  hist_title: 'Előzmények',
-  hist_explore: 'Bármely dátum',
+  hist_title: 'Történelem',
+  hist_explore: 'Bármely dátum böngészése',
   hist_day: 'Nap',
   hist_month: 'Hónap',
   hist_year: 'Év',
