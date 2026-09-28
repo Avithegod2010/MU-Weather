@@ -235,4 +235,18 @@ export const it: Strings = {
   aurora_bz_south: 'nettamente verso sud — aurora favorita',
   aurora_kp24: 'KP · ULTIME 24 ORE',
   aurora_updated: 'Aggiornato {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'Onde',
+  marine_calm: 'Calmo',
+  marine_moderate: 'Moderato',
+  marine_rough: 'Agitato',
+  marine_period: 'Periodo',
+  marine_choppy: 'frastagliato',
+  marine_from: 'da',
+  marine_swell: 'Moto ondoso',
+  marine_sea_temp: 'Temp. mare',
+  marine_max24: 'Picco · 24 h',
+  marine_source: 'Marino: DWD ICON Wave via Open-Meteo',
+  marine_rising: 'in aumento a {n}',
 };

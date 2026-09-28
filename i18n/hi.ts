@@ -235,4 +235,18 @@ export const hi: Strings = {
   aurora_bz_south: 'तेज़ दक्षिणाभिमुख — ऑरोरा अनुकूल',
   aurora_kp24: 'KP · पिछले 24 घंटे',
   aurora_updated: 'अद्यतन {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'लहरें',
+  marine_calm: 'शांत',
+  marine_moderate: 'मध्यम',
+  marine_rough: 'उबड़-खाबड़',
+  marine_period: 'अवधि',
+  marine_choppy: 'अशांत',
+  marine_from: 'से',
+  marine_swell: 'सूजन',
+  marine_sea_temp: 'समुद्री ताप',
+  marine_max24: 'चरम · 24 घं',
+  marine_source: 'समुद्री: Open-Meteo द्वारा DWD ICON Wave',
+  marine_rising: '{n} तक बढ़ रहा',
 };

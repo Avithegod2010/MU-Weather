@@ -235,4 +235,18 @@ export const bn: Strings = {
   aurora_bz_south: 'তীব্র দক্ষিণমুখী — অরোরার অনুকূল',
   aurora_kp24: 'KP · গত ২৪ ঘণ্টা',
   aurora_updated: 'হালনাগাদ {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'ঢেউ',
+  marine_calm: 'শান্ত',
+  marine_moderate: 'মাঝারি',
+  marine_rough: 'উত্তাল',
+  marine_period: 'পর্যায়',
+  marine_choppy: 'অশান্ত',
+  marine_from: 'দিক থেকে',
+  marine_swell: 'ফুলে ওঠা',
+  marine_sea_temp: 'সাগর তাপ',
+  marine_max24: 'সর্বোচ্চ · ২৪ ঘণ্টা',
+  marine_source: 'সামুদ্রিক: Open-Meteo-এর মাধ্যমে DWD ICON Wave',
+  marine_rising: '{n} পর্যন্ত বাড়ছে',
 };

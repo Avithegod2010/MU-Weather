@@ -235,4 +235,18 @@ export const id: Strings = {
   aurora_bz_south: 'kuat ke selatan — aurora didukung',
   aurora_kp24: 'KP · 24 JAM TERAKHIR',
   aurora_updated: 'Diperbarui {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'Gelombang',
+  marine_calm: 'Tenang',
+  marine_moderate: 'Sedang',
+  marine_rough: 'Kasar',
+  marine_period: 'Periode',
+  marine_choppy: 'berombak pendek',
+  marine_from: 'dari',
+  marine_swell: 'Alun',
+  marine_sea_temp: 'Suhu laut',
+  marine_max24: 'Puncak · 24 j',
+  marine_source: 'Kelautan: DWD ICON Wave via Open-Meteo',
+  marine_rising: 'naik ke {n}',
 };

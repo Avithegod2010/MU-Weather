@@ -693,6 +693,20 @@ export const en = {
   aurora_bz_south: 'strongly southward — aurora favored',
   aurora_kp24: 'KP · LAST 24 HOURS',
   aurora_updated: 'Updated {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'Waves',
+  marine_calm: 'Calm',
+  marine_moderate: 'Moderate',
+  marine_rough: 'Rough',
+  marine_period: 'Period',
+  marine_choppy: 'choppy',
+  marine_from: 'from',
+  marine_swell: 'Swell',
+  marine_sea_temp: 'Sea temp',
+  marine_max24: 'Peak · 24 h',
+  marine_source: 'Marine: DWD ICON Wave via Open-Meteo',
+  marine_rising: 'building to {n}',
 };
 
 

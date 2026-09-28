@@ -235,4 +235,18 @@ export const nl: Strings = {
   aurora_bz_south: 'sterk zuidwaarts — poollicht begunstigd',
   aurora_kp24: 'KP · LAATSTE 24 UUR',
   aurora_updated: 'Bijgewerkt {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'Golven',
+  marine_calm: 'Kalm',
+  marine_moderate: 'Matig',
+  marine_rough: 'Ruw',
+  marine_period: 'Periode',
+  marine_choppy: 'kabbelig',
+  marine_from: 'uit',
+  marine_swell: 'Deining',
+  marine_sea_temp: 'Zeetemp.',
+  marine_max24: 'Piek · 24 u',
+  marine_source: 'Marien: DWD ICON Wave via Open-Meteo',
+  marine_rising: 'oplopend tot {n}',
 };

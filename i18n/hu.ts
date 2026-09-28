@@ -235,4 +235,18 @@ export const hu: Strings = {
   aurora_bz_south: 'erősen délre — sarki fény valószínű',
   aurora_kp24: 'KP · ELMÚLT 24 ÓRA',
   aurora_updated: 'Frissítve {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'Hullámok',
+  marine_calm: 'Nyugodt',
+  marine_moderate: 'Mérsékelt',
+  marine_rough: 'Viharos',
+  marine_period: 'Periódus',
+  marine_choppy: 'szaggatott',
+  marine_from: 'felől',
+  marine_swell: 'Hullámzás',
+  marine_sea_temp: 'Tenger hőm.',
+  marine_max24: 'Csúcs · 24 ó',
+  marine_source: 'Tengeri: DWD ICON Wave az Open-Meteo révén',
+  marine_rising: '{n}-re emelkedik',
 };

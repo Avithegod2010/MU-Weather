@@ -235,4 +235,18 @@ export const el: Strings = {
   aurora_bz_south: 'έντονα νότιο — ευνοεί το σέλας',
   aurora_kp24: 'KP · ΤΕΛΕΥΤΑΙΕΣ 24 ΩΡΕΣ',
   aurora_updated: 'Ενημερώθηκε {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'Κύματα',
+  marine_calm: 'Ήρεμη',
+  marine_moderate: 'Μέτρια',
+  marine_rough: 'Τρικυμία',
+  marine_period: 'Περίοδος',
+  marine_choppy: 'αγριεμένη',
+  marine_from: 'από',
+  marine_swell: 'Αποθαλασσία',
+  marine_sea_temp: 'Θερμ. θάλασσας',
+  marine_max24: 'Κορύφωση · 24 ω',
+  marine_source: 'Θαλάσσια: DWD ICON Wave μέσω Open-Meteo',
+  marine_rising: 'ανεβαίνει σε {n}',
 };

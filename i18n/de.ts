@@ -235,4 +235,18 @@ export const de: Strings = {
   aurora_bz_south: 'stark südwärts — Polarlicht begünstigt',
   aurora_kp24: 'KP · LETZTE 24 STUNDEN',
   aurora_updated: 'Stand {time}',
+
+  // ── marine card upgrade ──
+  marine_waves: 'Wellen',
+  marine_calm: 'Ruhig',
+  marine_moderate: 'Mäßig',
+  marine_rough: 'Rau',
+  marine_period: 'Periode',
+  marine_choppy: 'kabbelig',
+  marine_from: 'aus',
+  marine_swell: 'Dünung',
+  marine_sea_temp: 'Wassertemp.',
+  marine_max24: 'Spitze · 24 h',
+  marine_source: 'Seegang: DWD ICON Wave via Open-Meteo',
+  marine_rising: 'steigend auf {n}',
 };
