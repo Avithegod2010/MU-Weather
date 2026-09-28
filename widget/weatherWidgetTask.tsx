@@ -68,6 +68,7 @@ const NO_DATA_PROPS = {
   rainChance: '',
   precipitation: '',
   updatedLabel: '',
+  stale: false,
 };
 
 async function renderFromCache(): Promise<React.JSX.Element> {

@@ -2,10 +2,25 @@ import React from 'react';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { WeatherBundle } from '../api/types';
 import { describeWmo } from '../utils/wmo';
+import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 
 const C = {
-  dark: { bgFrom: '#0D1631', bgTo: '#22345C', text: '#FFFFFF', subtle: '#B9C6DC', chip: '#2A3C63' },
-  light: { bgFrom: '#DCE9FB', bgTo: '#F7FAFF', text: '#1C2431', subtle: '#5A6B80', chip: '#FFFFFF' },
+  dark: {
+    bgFrom: '#0D1631',
+    bgTo: '#22345C',
+    text: '#FFFFFF',
+    subtle: '#B9C6DC',
+    chip: '#2A3C63',
+    /** Amber, used only for the stale-data warning tint. */
+    stale: '#F0B429',
+  },
+  light: {
+    bgFrom: '#DCE9FB',
+    bgTo: '#F7FAFF',
+    text: '#1C2431',
+    subtle: '#5A6B80',
+    chip: '#FFFFFF',
+  },
 } as const;
 
 interface WeatherWidgetProps {
@@ -18,6 +33,8 @@ interface WeatherWidgetProps {
   updatedLabel: string;
   /** Whether data exists at all - false renders the no-data placeholder. */
   hasData: boolean;
+  /** True when the cached bundle is old enough to warn the user about. */
+  stale: boolean;
 }
 
 /**
@@ -35,6 +52,7 @@ export function WeatherWidget({
   precipitation,
   updatedLabel,
   hasData,
+  stale,
 }: WeatherWidgetProps) {
   return (
     <FlexWidget
@@ -81,7 +99,13 @@ export function WeatherWidget({
           />
           <TextWidget
             text={updatedLabel}
-            style={{ fontSize: 9, color: C.dark.subtle, marginTop: 4 }}
+            style={{
+              fontSize: 9,
+              // Stale cache: amber instead of the usual muted blue-grey, so an
+              // out-of-date reading is noticeable without shouting.
+              color: stale ? C.dark.stale : C.dark.subtle,
+              marginTop: 4,
+            }}
           />
         </>
       ) : (
@@ -101,9 +125,11 @@ export function WeatherWidget({
 export function renderWeatherWidgetFromBundle(bundle: WeatherBundle): React.JSX.Element {
   const today = bundle.daily[0];
   const { label } = describeWmo(bundle.current.weatherCode);
+  const { stale } = describeFreshness(bundle.fetchedAt);
   return (
     <WeatherWidget
       hasData
+      stale={stale}
       temperature={`${Math.round(bundle.current.temperature)}°`}
       conditionLabel={label}
       maxTemp={`${Math.round(today ? today.tMax : bundle.current.temperature)}°`}
@@ -112,10 +138,7 @@ export function renderWeatherWidgetFromBundle(bundle: WeatherBundle): React.JSX.
       precipitation={
         today && today.precipSum >= 0.1 ? `≈${today.precipSum.toFixed(1)} mm` : ''
       }
-      updatedLabel={`Updated ${new Date(bundle.fetchedAt).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      })}`}
+      updatedLabel={widgetUpdatedLabel(bundle.fetchedAt)}
     />
   );
 }
