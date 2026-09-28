@@ -223,7 +223,7 @@ Everything the app stores — settings, caches, the forecast log, alert history,
 ## 🗺️ Roadmap
 
 - [x] **Marine / wave data upgrade** — wave height, period and direction, swell height/period/direction, sea-surface temperature, sea-state bands and a 6-hour per-location cache (Open-Meteo Marine API)
-- [ ] Historical explorer — weather on any past date
+- [x] Historical explorer — weather on any past date
 - [ ] Further translation polish and additional languages
 
 ## 🤝 Contributing
