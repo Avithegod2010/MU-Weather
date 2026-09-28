@@ -2,6 +2,7 @@
   "name": "mu-weather",
   "author": "Avithegod2010 (https://github.com/Avithegod2010)",
   "version": "1.0.0",
+  "description": "MU Weather (Material You Weather) - a free, open-source, offline-friendly Android weather app built with React Native and Expo.",
   "main": "index.ts",
   "dependencies": {
     "@expo-google-fonts/outfit": "^0.4.3",

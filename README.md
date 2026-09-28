@@ -2,6 +2,8 @@
 
 A beautiful, offline-friendly weather app for Android built with React Native and Expo.
 
+**MU** stands for **Material You**. The app's look is built around Material You: rounded card surfaces, ten selectable colour themes, and a **Material You** theme option (Android 12+) that lifts its palette straight from your wallpaper — with the home-screen widgets and the notification surfaces themed to match.
+
 ## Features
 
 - **Live conditions** — current weather, feels-like, and animated condition icons
