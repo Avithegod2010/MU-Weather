@@ -74,6 +74,17 @@
               "targetCellHeight": 2,
               "resizeMode": "horizontal|vertical",
               "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "MUWeatherWidgetDashboard",
+              "label": "MU Weather Dashboard",
+              "description": "Conditions, hourly and multi-day strips with air quality",
+              "minWidth": "250dp",
+              "minHeight": "270dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 3,
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
             }
           ]
         }

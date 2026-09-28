@@ -4,11 +4,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { WeatherWidget, renderWeatherWidgetFromBundle } from '../components/WeatherWidget';
 import { WeatherWidgetLarge, renderWeatherWidgetLargeFromBundle } from '../components/WeatherWidgetLarge';
+import {
+  WeatherWidgetDashboard,
+  renderWeatherWidgetDashboardFromBundle,
+} from '../components/WeatherWidgetDashboard';
 import type { WeatherBundle } from '../api/types';
 
 export const WEATHER_WIDGET_NAME = 'MUWeatherWidget';
 
 export const WEATHER_WIDGET_NAME_LARGE = 'MUWeatherWidgetLarge';
+
+export const WEATHER_WIDGET_NAME_DASHBOARD = 'MUWeatherWidgetDashboard';
 
 const WEATHER_CACHE_KEY = '@mu_weather/last_weather_v1';
 
@@ -71,6 +77,22 @@ const NO_DATA_PROPS = {
   stale: false,
 };
 
+const DASHBOARD_NO_DATA_PROPS = {
+  hasData: false,
+  cityName: '',
+  temperature: '',
+  conditionLabel: '',
+  maxTemp: '',
+  minTemp: '',
+  rainChance: '',
+  precipitation: '',
+  updatedLabel: '',
+  clockLabel: '',
+  aqiLabel: '',
+  aqiColor: null,
+  stale: false,
+};
+
 async function renderFromCache(): Promise<React.JSX.Element> {
   const bundle = await loadCachedBundle();
   if (!bundle) {
@@ -87,6 +109,14 @@ async function renderFromCacheLarge(): Promise<React.JSX.Element> {
   return renderWeatherWidgetLargeFromBundle(bundle);
 }
 
+async function renderFromCacheDashboard(): Promise<React.JSX.Element> {
+  const bundle = await loadCachedBundle();
+  if (!bundle) {
+    return <WeatherWidgetDashboard {...DASHBOARD_NO_DATA_PROPS} hours={[]} days={[]} />;
+  }
+  return renderWeatherWidgetDashboardFromBundle(bundle);
+}
+
 if (!globalScope.__muWidgetTaskDefined) {
   globalScope.__muWidgetTaskDefined = true;
 
@@ -101,17 +131,22 @@ if (!globalScope.__muWidgetTaskDefined) {
       return;
     }
     // WIDGET_ADDED / WIDGET_UPDATE / WIDGET_RESIZED all redraw from cache.
-    // The handler is shared by both widget names - render the matching layout.
-    renderWidget(
-      await (widgetInfo.widgetName === WEATHER_WIDGET_NAME_LARGE
-        ? renderFromCacheLarge()
-        : renderFromCache())
-    );
+    // The handler is shared by all three widget names - render the matching
+    // layout for whichever one fired.
+    if (widgetInfo.widgetName === WEATHER_WIDGET_NAME_LARGE) {
+      renderWidget(await renderFromCacheLarge());
+      return;
+    }
+    if (widgetInfo.widgetName === WEATHER_WIDGET_NAME_DASHBOARD) {
+      renderWidget(await renderFromCacheDashboard());
+      return;
+    }
+    renderWidget(await renderFromCache());
   });
 }
 
 /**
- * Redraw every placed widget (2x2 and 4x2) from the cached bundle. Called
+ * Redraw every placed widget (2x2, 4x2 and 4x3) from the cached bundle. Called
  * whenever the app writes a fresh weather bundle, so the widgets always
  * mirror app data.
  */
@@ -119,6 +154,7 @@ export async function refreshWeatherWidgets(): Promise<void> {
   const updates = [
     { widgetName: WEATHER_WIDGET_NAME, renderWidget: renderFromCache },
     { widgetName: WEATHER_WIDGET_NAME_LARGE, renderWidget: renderFromCacheLarge },
+    { widgetName: WEATHER_WIDGET_NAME_DASHBOARD, renderWidget: renderFromCacheDashboard },
   ].map(async ({ widgetName, renderWidget }) => {
     try {
       await requestWidgetUpdate({ widgetName, renderWidget });
