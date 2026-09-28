@@ -244,7 +244,7 @@ export const hi: Strings = {
   marine_period: 'अवधि',
   marine_choppy: 'अशांत',
   marine_from: 'से',
-  marine_swell: 'सूजन',
+  marine_swell: 'हिलोर',
   marine_sea_temp: 'समुद्री ताप',
   marine_max24: 'चरम · 24 घं',
   marine_source: 'समुद्री: Open-Meteo द्वारा DWD ICON Wave',
