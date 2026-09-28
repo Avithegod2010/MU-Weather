@@ -228,4 +228,11 @@ export const el: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · ΕΠΟΜΕΝΕΣ 5 ΗΜΕΡΕΣ',
   d_aqi_day_curve: 'ΑΝΑ ΩΡΑ · {day}',
+
+  // ── aurora solar wind ──
+  aurora_wind: 'Ηλιακός άνεμος {n} km/s',
+  aurora_bz: 'Bz {n} nT',
+  aurora_bz_south: 'έντονα νότιο — ευνοεί το σέλας',
+  aurora_kp24: 'KP · ΤΕΛΕΥΤΑΙΕΣ 24 ΩΡΕΣ',
+  aurora_updated: 'Ενημερώθηκε {time}',
 };

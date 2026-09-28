@@ -686,6 +686,13 @@ export const en = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · NEXT 5 DAYS',
   d_aqi_day_curve: 'HOURLY · {day}',
+
+  // ── aurora solar wind ──
+  aurora_wind: 'Solar wind {n} km/s',
+  aurora_bz: 'Bz {n} nT',
+  aurora_bz_south: 'strongly southward — aurora favored',
+  aurora_kp24: 'KP · LAST 24 HOURS',
+  aurora_updated: 'Updated {time}',
 };
 
 

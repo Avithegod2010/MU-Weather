@@ -228,4 +228,11 @@ export const id: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · 5 HARI KE DEPAN',
   d_aqi_day_curve: 'PER JAM · {day}',
+
+  // ── aurora solar wind ──
+  aurora_wind: 'Angin surya {n} km/s',
+  aurora_bz: 'Bz {n} nT',
+  aurora_bz_south: 'kuat ke selatan — aurora didukung',
+  aurora_kp24: 'KP · 24 JAM TERAKHIR',
+  aurora_updated: 'Diperbarui {time}',
 };

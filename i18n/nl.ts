@@ -228,4 +228,11 @@ export const nl: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · KOMENDE 5 DAGEN',
   d_aqi_day_curve: 'PER UUR · {day}',
+
+  // ── aurora solar wind ──
+  aurora_wind: 'Zonnewind {n} km/s',
+  aurora_bz: 'Bz {n} nT',
+  aurora_bz_south: 'sterk zuidwaarts — poollicht begunstigd',
+  aurora_kp24: 'KP · LAATSTE 24 UUR',
+  aurora_updated: 'Bijgewerkt {time}',
 };

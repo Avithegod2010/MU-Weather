@@ -1,15 +1,19 @@
 import { t } from '../utils/i18n';
-import React from 'react';
+import React, { useState } from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { Star } from '../utils/uiIcons';
 import { Card } from './Card';
 import { formatHourLabel } from '../utils/format';
+import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import {
   AURORA_LATITUDE_MIN,
   auroraVisibilityChance,
   gScaleForKp,
+  type AuroraExtras,
   type AuroraForecast,
+  type KpHistory,
 } from '../utils/aurora';
 import type { AppTheme } from '../theme/palettes';
 
@@ -17,6 +21,8 @@ interface AuroraCardProps {
   theme: AppTheme;
   forecast: AuroraForecast | null;
   latitude: number | null;
+  /** Best-effort solar wind + Kp history; absent until loaded or on failure. */
+  extras?: AuroraExtras | null;
 }
 
 /** Kp → chip tint, green calm through red storm. */
@@ -27,7 +33,54 @@ function kpColor(kp: number): string {
   return '#5BC98C';
 }
 
-export function AuroraCard({ theme, forecast, latitude }: AuroraCardProps) {
+/** Bz tint: southward (negative) helps aurora; strongly southward stands out. */
+function bzColor(bz: number): string {
+  if (bz < -5) return '#E85F5F';
+  if (bz < 0) return '#F0964E';
+  return '#5BC98C';
+}
+
+const SPARK_HEIGHT = 56;
+const SPARK_PADDING = 6;
+
+/**
+ * "Kp last 24 h" sparkline: same idiom as the 30-day tMax/tMin sparkline in
+ * PastWeekCard (onLayout-measured width, smoothPath polyline, max dot).
+ * Fixed 0–9 domain — unlike temperature, Kp has an absolute scale.
+ */
+function KpSparkline({ theme, history }: { theme: AppTheme; history: KpHistory }) {
+  const [width, setWidth] = useState(0);
+
+  if (history.points.length < 2) return null;
+
+  const onLayout = (event: { nativeEvent: { layout: { width: number } } }) => {
+    const next = event.nativeEvent.layout.width;
+    if (Math.abs(next - width) > 1) setWidth(next);
+  };
+
+  const values = history.points.map((point) => point.kp);
+  const points: CurvePoint[] = values.map((value, index) => ({
+    x: width > 0 ? (index / (values.length - 1)) * (width - 2 * SPARK_PADDING) + SPARK_PADDING : 0,
+    y: scaleY(value, 0, 9, SPARK_PADDING, SPARK_HEIGHT - SPARK_PADDING),
+  }));
+  const peak = points[values.indexOf(Math.max(...values))];
+  const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
+
+  if (width <= 0) {
+    return <View style={styles.sparkSlot} onLayout={onLayout} />;
+  }
+
+  return (
+    <View style={styles.sparkSlot} onLayout={onLayout}>
+      <Svg width={width} height={SPARK_HEIGHT}>
+        <Path d={smoothPath(points)} stroke="#EFC25C" strokeWidth={2.2} fill="none" strokeLinecap="round" />
+        {peak ? <Circle cx={peak.x} cy={peak.y} r={3} fill={dotFill} stroke="#EFC25C" strokeWidth={2} /> : null}
+      </Svg>
+    </View>
+  );
+}
+
+export function AuroraCard({ theme, forecast, latitude, extras }: AuroraCardProps) {
   if (
     !forecast ||
     forecast.points.length === 0 ||
@@ -68,6 +121,30 @@ export function AuroraCard({ theme, forecast, latitude }: AuroraCardProps) {
           <Text style={[styles.source, { color: theme.textTertiary }]}>{t('aurora_source')}</Text>
         </View>
       </View>
+      {extras?.wind ? (
+        <View style={styles.swRow}>
+          <Text style={[styles.swText, { color: theme.textSecondary }]}>
+            {t('aurora_wind').replace('{n}', String(Math.round(extras.wind.speed)))}
+          </Text>
+          {extras.wind.bz !== null ? (
+            <Text style={[styles.swText, { color: bzColor(extras.wind.bz) }]}>
+              {t('aurora_bz').replace('{n}', String(Math.round(extras.wind.bz)))}
+              {extras.wind.bz < -5 ? ` · ${t('aurora_bz_south')}` : ''}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+      {extras?.history && extras.history.points.length >= 2 ? (
+        <View style={styles.sparkBlock}>
+          <Text style={[styles.forecastTitle, { color: theme.textSecondary, marginTop: 0 }]}>
+            {t('aurora_kp24')}
+          </Text>
+          <KpSparkline theme={theme} history={extras.history} />
+          <Text style={[styles.source, { color: theme.textTertiary }]}>
+            {t('aurora_updated').replace('{time}', formatHourLabel(extras.history.updatedAt ?? '', false))}
+          </Text>
+        </View>
+      ) : null}
       <Text style={[styles.forecastTitle, { color: theme.textSecondary }]}>{t('aurora_forecast')}</Text>
       <View style={styles.rows}>
         {shown.map((point) => {
@@ -134,6 +211,23 @@ const styles = StyleSheet.create({
     fontFamily: F.medium,
     marginTop: 14,
     marginBottom: 6,
+  },
+  swRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+    marginTop: 10,
+  },
+  swText: {
+    fontSize: 12,
+    fontFamily: F.medium,
+  },
+  sparkBlock: {
+    marginTop: 12,
+    gap: 4,
+  },
+  sparkSlot: {
+    height: SPARK_HEIGHT,
   },
   rows: {
     gap: 6,

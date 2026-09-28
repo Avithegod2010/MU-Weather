@@ -228,4 +228,11 @@ export const hi: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · अगले 5 दिन',
   d_aqi_day_curve: 'प्रति घंटा · {day}',
+
+  // ── aurora solar wind ──
+  aurora_wind: 'सौर पवन {n} km/s',
+  aurora_bz: 'Bz {n} nT',
+  aurora_bz_south: 'तेज़ दक्षिणाभिमुख — ऑरोरा अनुकूल',
+  aurora_kp24: 'KP · पिछले 24 घंटे',
+  aurora_updated: 'अद्यतन {time}',
 };

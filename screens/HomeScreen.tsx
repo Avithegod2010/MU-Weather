@@ -743,6 +743,7 @@ export function HomeScreen() {
                     theme={theme}
                     forecast={aurora.forecast}
                     latitude={active?.latitude ?? null}
+                    extras={aurora.extras}
                   />
                 </Reveal>
               ) : null}

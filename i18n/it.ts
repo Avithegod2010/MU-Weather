@@ -228,4 +228,11 @@ export const it: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · PROSSIMI 5 GIORNI',
   d_aqi_day_curve: 'OGNI ORA · {day}',
+
+  // ── aurora solar wind ──
+  aurora_wind: 'Vento solare {n} km/s',
+  aurora_bz: 'Bz {n} nT',
+  aurora_bz_south: 'nettamente verso sud — aurora favorita',
+  aurora_kp24: 'KP · ULTIME 24 ORE',
+  aurora_updated: 'Aggiornato {time}',
 };
