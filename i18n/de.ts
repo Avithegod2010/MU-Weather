@@ -290,4 +290,8 @@ export const de: Strings = {
   s_quiet_sub: 'Benachrichtigungen sind in diesem Zeitraum stumm — Warnungen werden trotzdem im Verlauf gespeichert',
   s_quiet_start: 'Von',
   s_quiet_end: 'Bis',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: '1 Std. später',
+  notif_action_dismiss: 'Ausblenden',
 };

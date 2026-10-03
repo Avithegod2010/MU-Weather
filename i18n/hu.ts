@@ -290,4 +290,8 @@ export const hu: Strings = {
   s_quiet_sub: 'Az értesítések némák ebben az időszakban — a riasztások továbbra is az előzményekbe kerülnek',
   s_quiet_start: 'Ettől',
   s_quiet_end: 'Eddig',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: '1 óra halasztás',
+  notif_action_dismiss: 'Elvetés',
 };

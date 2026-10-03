@@ -290,4 +290,8 @@ export const hi: Strings = {
   s_quiet_sub: 'इस विंडो में नोटिफिकेशन बंद रहते हैं — सतर्कताएँ फिर भी इतिहास में सहेजी जाती हैं',
   s_quiet_start: 'से',
   s_quiet_end: 'तक',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: '1 घंटे के लिए स्नूज़',
+  notif_action_dismiss: 'खारिज करें',
 };

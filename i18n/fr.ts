@@ -290,4 +290,8 @@ export const fr: Strings = {
   s_quiet_sub: 'Les notifications sont silencieuses pendant cette plage — les alertes restent enregistrées dans l’historique',
   s_quiet_start: 'De',
   s_quiet_end: 'À',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: 'Répéter 1 h',
+  notif_action_dismiss: 'Ignorer',
 };

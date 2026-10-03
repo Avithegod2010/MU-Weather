@@ -290,4 +290,8 @@ export const bn: Strings = {
   s_quiet_sub: 'এই সময়ে নোটিফিকেশন বন্ধ থাকে — সতর্কতা তবুও ইতিহাসে সংরক্ষিত হয়',
   s_quiet_start: 'থেকে',
   s_quiet_end: 'পর্যন্ত',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: '১ ঘণ্টার জন্য স্নুজ',
+  notif_action_dismiss: 'বাতিল করুন',
 };

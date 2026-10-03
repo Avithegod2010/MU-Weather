@@ -290,4 +290,8 @@ export const el: Strings = {
   s_quiet_sub: 'Οι ειδοποιήσεις σιωπούν σε αυτό το διάστημα — οι συναγερμοί εξακολουθούν να καταγράφονται στο ιστορικό',
   s_quiet_start: 'Από',
   s_quiet_end: 'Έως',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: 'Αναβολή 1 ώρας',
+  notif_action_dismiss: 'Απόρριψη',
 };

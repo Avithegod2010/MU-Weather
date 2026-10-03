@@ -747,6 +747,10 @@ export const en = {
   s_quiet_sub: 'Notifications are silenced in this window — alerts are still saved to history',
   s_quiet_start: 'From',
   s_quiet_end: 'Until',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: 'Snooze 1 h',
+  notif_action_dismiss: 'Dismiss',
 };
 
 export type Strings = typeof en;

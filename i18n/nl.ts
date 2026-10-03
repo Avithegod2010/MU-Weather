@@ -290,4 +290,8 @@ export const nl: Strings = {
   s_quiet_sub: 'Meldingen zijn stil in deze periode — waarschuwingen worden alsnog in de geschiedenis opgeslagen',
   s_quiet_start: 'Van',
   s_quiet_end: 'Tot',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: '1 uur uitstellen',
+  notif_action_dismiss: 'Sluiten',
 };

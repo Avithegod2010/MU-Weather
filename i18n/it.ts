@@ -290,4 +290,8 @@ export const it: Strings = {
   s_quiet_sub: 'Le notifiche sono silenziate in questa fascia — gli avvisi vengono comunque salvati nella cronologia',
   s_quiet_start: 'Dalle',
   s_quiet_end: 'Alle',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: 'Posponi 1 h',
+  notif_action_dismiss: 'Ignora',
 };

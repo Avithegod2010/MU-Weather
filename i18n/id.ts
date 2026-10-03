@@ -290,4 +290,8 @@ export const id: Strings = {
   s_quiet_sub: 'Notifikasi disenyapkan pada rentang ini — peringatan tetap disimpan ke riwayat',
   s_quiet_start: 'Dari',
   s_quiet_end: 'Hingga',
+
+  // ── notification upgrades: actions ──
+  notif_action_snooze: 'Tunda 1 jam',
+  notif_action_dismiss: 'Abaikan',
 };

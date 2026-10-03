@@ -10,11 +10,23 @@ import type { AlertExtras, AlertSettings, TriggeredAlert } from './alertRules';
 import { computeNowcast } from './nowcast';
 import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
 import { appendAlertHistory } from './alertHistory';
+import { getLanguage, t } from './i18n';
 import type { WeatherBundle } from '../api/types';
 
 export const ALERTS_STORAGE_KEY = '@mu_weather/alerts_v1';
 const FIRED_KEY = '@mu_weather/alert_fired_v1';
 export const COOLDOWN_MS = 6 * 60 * 60 * 1000;
+
+/**
+ * Notification action buttons ("Snooze 1 h" / "Dismiss"), rendered natively on
+ * Android from this category. The identifier deliberately avoids ":" and "-" -
+ * the installed SDK docs warn that categories misbehave with those characters.
+ */
+export const WEATHER_ALERT_CATEGORY = 'weather_alert';
+export const SNOOZE_ACTION = 'snooze';
+export const DISMISS_ACTION = 'dismiss';
+/** Snooze window: exactly 1 h of quiet from the tap. */
+const SNOOZE_MS = 60 * 60 * 1000;
 
 /**
  * The cooldown blob is a read-modify-write with no AsyncStorage transaction:
@@ -44,6 +56,42 @@ export async function ensureChannel(): Promise<void> {
     });
   } catch {
     // Channel creation is best-effort.
+  }
+}
+
+/**
+ * The language whose button titles are currently registered. The category is
+ * recreated whenever this drifts from the runtime language, so the buttons on
+ * the notification follow the app language - the background task restores the
+ * stored language BEFORE firing, which stamps the right titles here too.
+ */
+let categoryLanguage: string | null = null;
+
+/**
+ * Register (or re-register) the weather-alert category. Idempotent per
+ * language: a second call with the same language is a cheap no-op, and the
+ * stamp is only set on success so a failed attempt retries on the next call.
+ */
+export async function ensureWeatherAlertCategory(): Promise<void> {
+  const language = getLanguage();
+  if (categoryLanguage === language) return;
+  try {
+    await Notifications.setNotificationCategoryAsync(WEATHER_ALERT_CATEGORY, [
+      {
+        identifier: SNOOZE_ACTION,
+        buttonTitle: t('notif_action_snooze'),
+        options: { opensAppToForeground: true },
+      },
+      {
+        identifier: DISMISS_ACTION,
+        buttonTitle: t('notif_action_dismiss'),
+        options: { isDestructive: false, opensAppToForeground: true },
+      },
+    ]);
+    categoryLanguage = language;
+  } catch {
+    // Categories unsupported in this environment - alerts simply show without
+    // the action buttons. Best-effort, never crash.
   }
 }
 
@@ -115,6 +163,9 @@ export async function deliverAlerts(
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') return triggered;
   await ensureChannel();
+  // Action buttons ("Snooze 1 h" / "Dismiss"): language-aware and idempotent,
+  // so a stored-language change re-registers the category before delivering.
+  await ensureWeatherAlertCategory();
 
   // The quiet-hours settings live in the same blob every source shares, so one
   // read here covers the active city, the saved-city sweep and the background
@@ -169,6 +220,11 @@ export async function deliverAlerts(
               title: titleFormatter ? titleFormatter(alert) : alert.title,
               body: alert.message,
               sound: alert.severity === 'severe',
+              categoryIdentifier: WEATHER_ALERT_CATEGORY,
+              // The response only knows the notification identifier - the
+              // cooldown key (city prefix included) rides in `data` so the
+              // snooze action can target exactly this alert.
+              data: { alertKey: cooldownKey },
             },
             trigger: null,
           });
@@ -198,6 +254,70 @@ export async function deliverAlerts(
   });
 
   return triggered;
+}
+
+/**
+ * Snooze one alert key for ~1 hour: the next evaluation cannot re-fire it
+ * before then. The cooldown check is `now - lastFired < COOLDOWN_MS`, so the
+ * timestamp that gives exactly SNOOZE_MS of quiet from the tap is
+ * `now - COOLDOWN_MS + SNOOZE_MS` - a naive future timestamp (now + SNOOZE_MS)
+ * would instead silence the alert for ~7 h (the remaining 6 h plus the 1 h).
+ * Written through the same withFiredLock mutex as the cooldown stamps.
+ */
+export async function snoozeAlert(alertKey: string): Promise<void> {
+  await withFiredLock(async () => {
+    let fired: Record<string, number> = {};
+    try {
+      const raw = await AsyncStorage.getItem(FIRED_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') fired = parsed;
+      }
+    } catch {
+      // Corrupt cooldown map: start fresh - the snooze still applies.
+    }
+    fired[alertKey] = Date.now() - COOLDOWN_MS + SNOOZE_MS;
+    try {
+      await AsyncStorage.setItem(FIRED_KEY, JSON.stringify(fired));
+    } catch {
+      // Non-critical bookkeeping.
+    }
+  });
+}
+
+/**
+ * One tap can be surfaced twice (the live response listener and the cold-start
+ * last-response path can both see it), so each response signature is handled
+ * once per session.
+ */
+const handledResponses = new Set<string>();
+
+/**
+ * Responses to the weather-alert action buttons. The notification carries the
+ * alert's cooldown key in its `data` (the response itself only knows the
+ * notification identifier), so the snooze targets exactly that key - active
+ * city and saved cities alike, because the stored key includes the city
+ * prefix. Dismiss only acknowledges: nothing is written, the normal 6-hour
+ * cooldown already prevents an immediate re-fire.
+ */
+export function handleWeatherAlertAction(
+  actionIdentifier: string,
+  data: Record<string, unknown> | undefined,
+  notificationIdentifier: string,
+): void {
+  if (actionIdentifier !== SNOOZE_ACTION && actionIdentifier !== DISMISS_ACTION) return;
+  const signature = `${actionIdentifier}:${notificationIdentifier}`;
+  if (handledResponses.has(signature)) return;
+  handledResponses.add(signature);
+  if (handledResponses.size > 50) {
+    // Bounded: drop the oldest signature so the set cannot grow without end.
+    const oldest = handledResponses.values().next();
+    if (oldest.done !== true) handledResponses.delete(oldest.value);
+  }
+  if (actionIdentifier === SNOOZE_ACTION) {
+    const alertKey = data && typeof data.alertKey === 'string' ? data.alertKey : null;
+    if (alertKey) void snoozeAlert(alertKey);
+  }
 }
 
 export async function fireAlertNotifications(
