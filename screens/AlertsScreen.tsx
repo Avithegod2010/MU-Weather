@@ -53,11 +53,16 @@ import {
   Sunrise,
   Sunset,
   Sparkles,
+  Plus,
+  X,
 } from '../utils/uiIcons';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
 import { ALERT_DEFINITIONS } from '../utils/alertRules';
 import type { AlertKey, AlertSettings, QuietHoursSettings } from '../utils/alertRules';
+import { CUSTOM_METRIC_KEYS, formatCustomValue } from '../utils/customAlerts';
+import type { CustomMetric, CustomOp } from '../utils/customAlerts';
+import { useCustomAlerts } from '../hooks/useCustomAlerts';
 import {
   clearAlertHistory,
   loadAlertHistory,
@@ -110,16 +115,21 @@ function stepQuietMinutes(value: number, delta: number): number {
   return (((value + delta) % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
 }
 
-/** One minus / value / plus time row (the trip-planner stepper idiom, in minutes of day). */
-function QuietStepperRow({
+/** Quiet hours are minutes since midnight - shown as a clock. */
+function quietClock(minutes: number): string {
+  return formatClockParts(Math.floor(minutes / 60), minutes % 60);
+}
+
+/** One minus / value / plus row (the trip-planner stepper idiom). */
+function StepperRow({
   theme,
   label,
-  minutes,
+  value,
   onStep,
 }: {
   theme: AppTheme;
   label: string;
-  minutes: number;
+  value: string;
   onStep: (delta: number) => void;
 }) {
   return (
@@ -128,7 +138,7 @@ function QuietStepperRow({
         {label}
       </Text>
       <Pressable
-        onPress={() => onStep(-QUIET_STEP_MINUTES)}
+        onPress={() => onStep(-1)}
         hitSlop={8}
         style={({ pressed }) => [
           styles.stepperButton,
@@ -141,10 +151,10 @@ function QuietStepperRow({
         <ChevronLeft size={18} color={theme.textPrimary} strokeWidth={2.4} />
       </Pressable>
       <Text style={[styles.stepperValue, { color: theme.textPrimary }]} numberOfLines={1}>
-        {formatClockParts(Math.floor(minutes / 60), minutes % 60)}
+        {value}
       </Text>
       <Pressable
-        onPress={() => onStep(QUIET_STEP_MINUTES)}
+        onPress={() => onStep(1)}
         hitSlop={8}
         style={({ pressed }) => [
           styles.stepperButton,
@@ -156,6 +166,100 @@ function QuietStepperRow({
       >
         <ChevronRight size={18} color={theme.textPrimary} strokeWidth={2.4} />
       </Pressable>
+    </View>
+  );
+}
+
+/** Builder: metric cycle order, per-metric step/clamp and a default value. */
+const METRIC_ORDER: CustomMetric[] = [
+  'uv',
+  'wind',
+  'temp',
+  'humidity',
+  'pressure',
+  'aqi',
+  'cape',
+];
+
+const METRIC_STEPS: Record<CustomMetric, { step: number; min: number; max: number }> = {
+  uv: { step: 1, min: 0, max: 12 },
+  wind: { step: 1, min: 0, max: 200 },
+  temp: { step: 1, min: -40, max: 60 },
+  humidity: { step: 5, min: 0, max: 100 },
+  pressure: { step: 1, min: 900, max: 1100 },
+  aqi: { step: 10, min: 0, max: 500 },
+  cape: { step: 100, min: 0, max: 6000 },
+};
+
+/** Draft value when the builder opens on (or switches to) a metric. */
+const METRIC_DEFAULT_VALUES: Record<CustomMetric, number> = {
+  uv: 8,
+  wind: 40,
+  temp: 30,
+  humidity: 85,
+  pressure: 1000,
+  aqi: 150,
+  cape: 2500,
+};
+
+/** Rule-row icon per metric. */
+const CUSTOM_ICONS: Record<CustomMetric, typeof CloudRain> = {
+  uv: Sun,
+  wind: Wind,
+  temp: Thermometer,
+  humidity: Droplets,
+  pressure: Gauge,
+  aqi: Gauge,
+  cape: CloudLightning,
+};
+
+interface SegmentedOption {
+  value: string;
+  label: string;
+}
+
+/** Two-option segmented control (the SettingsSheet idiom, local copy). */
+function Segmented({
+  theme,
+  options,
+  value,
+  onChange,
+}: {
+  theme: AppTheme;
+  options: SegmentedOption[];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const activeColor = theme.isLight ? '#FFFFFF' : '#F4F6FA';
+  return (
+    <View style={[styles.segmentWrap, { backgroundColor: theme.chipBg }]}>
+      {options.map((option) => {
+        const active = option.value === value;
+        return (
+          <Pressable
+            key={option.value}
+            onPress={() => {
+              if (!active) {
+                haptics.select();
+                onChange(option.value);
+              }
+            }}
+            style={[styles.segment, active && { backgroundColor: activeColor }]}
+            accessibilityRole="button"
+            accessibilityState={{ selected: active }}
+          >
+            <Text
+              style={[
+                styles.segmentText,
+                { color: active ? '#1C2431' : theme.textSecondary },
+                active && { fontFamily: F.bold },
+              ]}
+            >
+              {option.label}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
@@ -181,6 +285,11 @@ export function AlertsScreen({
 }: AlertsScreenProps) {
   const insets = useSafeAreaInsets();
   const [history, setHistory] = useState<AlertHistoryEntry[]>([]);
+  const { rules, addRule, toggleRule, deleteRule } = useCustomAlerts();
+  const [builderOpen, setBuilderOpen] = useState(false);
+  const [draftMetric, setDraftMetric] = useState<CustomMetric>('temp');
+  const [draftOp, setDraftOp] = useState<CustomOp>('gte');
+  const [draftValue, setDraftValue] = useState<number>(30);
 
   useEffect(() => {
     if (visible) {
@@ -323,28 +432,180 @@ export function AlertsScreen({
 
         {ready && settings.quietHoursEnabled ? (
           <>
-            <QuietStepperRow
+            <StepperRow
               theme={theme}
               label={t('s_quiet_start')}
-              minutes={settings.quietStartMinutes}
+              value={quietClock(settings.quietStartMinutes)}
               onStep={(delta) =>
                 onUpdateQuiet({
-                  quietStartMinutes: stepQuietMinutes(settings.quietStartMinutes, delta),
+                  quietStartMinutes: stepQuietMinutes(
+                    settings.quietStartMinutes,
+                    delta * QUIET_STEP_MINUTES,
+                  ),
                 })
               }
             />
-            <QuietStepperRow
+            <StepperRow
               theme={theme}
               label={t('s_quiet_end')}
-              minutes={settings.quietEndMinutes}
+              value={quietClock(settings.quietEndMinutes)}
               onStep={(delta) =>
                 onUpdateQuiet({
-                  quietEndMinutes: stepQuietMinutes(settings.quietEndMinutes, delta),
+                  quietEndMinutes: stepQuietMinutes(
+                    settings.quietEndMinutes,
+                    delta * QUIET_STEP_MINUTES,
+                  ),
                 })
               }
             />
           </>
         ) : null}
+
+        <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+          <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+            <Bell size={20} color={theme.textPrimary} strokeWidth={2} />
+          </View>
+          <View style={styles.rowTexts}>
+            <Text style={[styles.rowTitle, { color: theme.textPrimary }]}>
+              {t('s_custom_alerts')}
+            </Text>
+            <Text style={[styles.rowSubtitle, { color: theme.textSecondary }]}>
+              {t('s_custom_sub')}
+            </Text>
+          </View>
+        </View>
+
+        {rules.map((rule) => {
+          const MetricIcon = CUSTOM_ICONS[rule.metric];
+          return (
+            <View
+              key={rule.id}
+              style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+            >
+              <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                <MetricIcon size={20} color={theme.textPrimary} strokeWidth={2} />
+              </View>
+              <View style={styles.rowTexts}>
+                <Text style={[styles.rowTitle, { color: theme.textPrimary }]} numberOfLines={1}>
+                  {t(CUSTOM_METRIC_KEYS[rule.metric])} {rule.op === 'gte' ? '≥' : '≤'}{' '}
+                  {formatCustomValue(rule.metric, rule.value)}
+                </Text>
+              </View>
+              <Switch
+                value={rule.enabled}
+                onValueChange={() => {
+                  if (rule.enabled) {
+                    haptics.light();
+                  } else {
+                    haptics.success();
+                  }
+                  toggleRule(rule.id);
+                }}
+                trackColor={{ true: theme.accent, false: theme.trackColor }}
+                thumbColor={rule.enabled ? '#FFFFFF' : theme.textTertiary}
+                ios_backgroundColor={theme.trackColor}
+              />
+              <Pressable
+                onPress={() => {
+                  haptics.light();
+                  deleteRule(rule.id);
+                }}
+                hitSlop={8}
+                style={styles.customDelete}
+                accessibilityRole="button"
+                accessibilityLabel={t('custom_delete')}
+              >
+                <X size={18} color={theme.textSecondary} strokeWidth={2.4} />
+              </Pressable>
+            </View>
+          );
+        })}
+
+        {builderOpen ? (
+          <View
+            style={[
+              styles.customBuilder,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+            ]}
+          >
+            <StepperRow
+              theme={theme}
+              label={t('custom_metric')}
+              value={t(CUSTOM_METRIC_KEYS[draftMetric])}
+              onStep={(delta) => {
+                const index = METRIC_ORDER.indexOf(draftMetric);
+                const next =
+                  METRIC_ORDER[(index + delta + METRIC_ORDER.length) % METRIC_ORDER.length];
+                if (next) {
+                  setDraftMetric(next);
+                  setDraftValue(METRIC_DEFAULT_VALUES[next]);
+                }
+              }}
+            />
+            <View style={styles.customSegmentRow}>
+              <Segmented
+                theme={theme}
+                options={[
+                  { value: 'gte', label: '≥' },
+                  { value: 'lte', label: '≤' },
+                ]}
+                value={draftOp}
+                onChange={(value) => setDraftOp(value as CustomOp)}
+              />
+            </View>
+            <StepperRow
+              theme={theme}
+              label={t('custom_value')}
+              value={formatCustomValue(draftMetric, draftValue)}
+              onStep={(delta) => {
+                const { step, min, max } = METRIC_STEPS[draftMetric];
+                setDraftValue(Math.min(max, Math.max(min, draftValue + delta * step)));
+              }}
+            />
+            <Pressable
+              onPress={() => {
+                haptics.success();
+                addRule(draftMetric, draftOp, draftValue);
+                setBuilderOpen(false);
+              }}
+              style={({ pressed }) => [
+                styles.customAdd,
+                { backgroundColor: theme.chipBg, borderColor: theme.accent },
+                pressed && { opacity: 0.7 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={t('custom_add_rule')}
+            >
+              <Plus size={16} color={theme.textPrimary} strokeWidth={2.4} />
+              <Text style={[styles.customAddText, { color: theme.textPrimary }]}>
+                {t('custom_add_rule')}
+              </Text>
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              setBuilderOpen(true);
+            }}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.8 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={t('custom_add_rule')}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Plus size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: theme.textPrimary }]}>
+                {t('custom_add_rule')}
+              </Text>
+            </View>
+          </Pressable>
+        )}
 
         <View style={styles.historyBlock}>
           <View style={styles.historyHeader}>
@@ -594,5 +855,54 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  customBuilder: {
+    borderRadius: 26,
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    gap: 2,
+    marginTop: 2,
+  },
+  customDelete: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  customAdd: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+  customAddText: {
+    fontSize: 13.5,
+    fontFamily: F.semibold,
+  },
+  customSegmentRow: {
+    marginTop: 4,
+    paddingHorizontal: 4,
+  },
+  segmentWrap: {
+    flexDirection: 'row',
+    borderRadius: 14,
+    padding: 3,
+  },
+  segment: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderRadius: 11,
+  },
+  segmentText: {
+    fontSize: 14,
+    fontFamily: F.medium,
   },
 });

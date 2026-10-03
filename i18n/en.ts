@@ -775,6 +775,24 @@ export const en = {
   c2_verdict: '{city} looks better this week — {wet} wet day vs {other}.',
   c2_verdict_tie: 'Evenly matched this week — both cities have the same outlook.',
   cmp_tab_metrics: 'All cities',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'Custom alerts',
+  s_custom_sub: 'Alert when a metric crosses a line you set. Up to 5 rules, each with its own notification and cooldown.',
+  custom_metric: 'Metric',
+  custom_value: 'Value',
+  custom_metric_uv: 'UV index',
+  custom_metric_wind: 'Wind speed',
+  custom_metric_temp: 'Temperature',
+  custom_metric_humidity: 'Humidity',
+  custom_metric_pressure: 'Pressure',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'Add rule',
+  custom_delete: 'Delete',
+  notif_custom_title: '{metric} alert',
+  notif_custom_gte: '{metric} is at or above {value}',
+  notif_custom_lte: '{metric} is at or below {value}',
 };
 
 export type Strings = typeof en;

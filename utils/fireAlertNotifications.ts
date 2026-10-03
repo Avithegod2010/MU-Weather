@@ -7,6 +7,7 @@ import {
   isInsideQuietWindow,
 } from './alertRules';
 import type { AlertExtras, AlertSettings, TriggeredAlert } from './alertRules';
+import { evaluateCustomRules, loadCustomAlerts } from './customAlerts';
 import { computeNowcast } from './nowcast';
 import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
 import { appendAlertHistory } from './alertHistory';
@@ -340,8 +341,11 @@ export async function fireAlertNotifications(
     data.aqi,
     extras,
   );
-  if (!triggered.length) return [];
-  return deliverAlerts(triggered, { city: data.location.name });
+  // Custom rules (the user's own thresholds) run for the active city too.
+  const customTriggered = evaluateCustomRules(await loadCustomAlerts(), data);
+  const all = [...triggered, ...customTriggered];
+  if (!all.length) return [];
+  return deliverAlerts(all, { city: data.location.name });
 }
 
 export async function loadAlertSettings(): Promise<Partial<AlertSettings>> {

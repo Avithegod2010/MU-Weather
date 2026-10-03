@@ -318,4 +318,22 @@ export const el: Strings = {
   c2_verdict: 'Η {city} φαίνεται καλύτερη αυτή την εβδομάδα — {wet} βροχερή μέρα έναντι {other}.',
   c2_verdict_tie: 'Ισορροπία αυτή την εβδομάδα — και οι δύο πόλεις έχουν τις ίδιες προοπτικές.',
   cmp_tab_metrics: 'Όλες οι πόλεις',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'Προσαρμοσμένες ειδοποιήσεις',
+  s_custom_sub: 'Ειδοποίηση όταν μια μέτρηση διασχίζει ένα όριο που ορίζετε. Έως 5 κανόνες, ο καθένας με τη δική του ειδοποίηση και αναμονή.',
+  custom_metric: 'Μέτρηση',
+  custom_value: 'Τιμή',
+  custom_metric_uv: 'Δείκτης UV',
+  custom_metric_wind: 'Ταχύτητα ανέμου',
+  custom_metric_temp: 'Θερμοκρασία',
+  custom_metric_humidity: 'Υγρασία',
+  custom_metric_pressure: 'Πίεση',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'Προσθήκη κανόνα',
+  custom_delete: 'Διαγραφή',
+  notif_custom_title: 'Ειδοποίηση {metric}',
+  notif_custom_gte: '{metric} είναι {value} ή παραπάνω',
+  notif_custom_lte: '{metric} είναι {value} ή λιγότερο',
 };

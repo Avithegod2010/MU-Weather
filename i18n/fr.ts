@@ -318,4 +318,22 @@ export const fr: Strings = {
   c2_verdict: '{city} semble meilleur cette semaine — {wet} jour(s) de pluie contre {other}.',
   c2_verdict_tie: 'Match nul cette semaine — les deux villes ont les mêmes perspectives.',
   cmp_tab_metrics: 'Toutes les villes',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'Alertes personnalisées',
+  s_custom_sub: 'Alerte quand une mesure franchit un seuil que vous fixez. Maximum 5 règles, chacune avec sa notification et son délai.',
+  custom_metric: 'Mesure',
+  custom_value: 'Valeur',
+  custom_metric_uv: 'Indice UV',
+  custom_metric_wind: 'Vitesse du vent',
+  custom_metric_temp: 'Température',
+  custom_metric_humidity: 'Humidité',
+  custom_metric_pressure: 'Pression',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'Ajouter une règle',
+  custom_delete: 'Supprimer',
+  notif_custom_title: 'Alerte {metric}',
+  notif_custom_gte: '{metric} est de {value} ou plus',
+  notif_custom_lte: '{metric} est de {value} ou moins',
 };

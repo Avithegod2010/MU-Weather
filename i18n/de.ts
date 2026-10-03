@@ -318,4 +318,22 @@ export const de: Strings = {
   c2_verdict: '{city} sieht diese Woche besser aus — {wet} nasser Tag gegenüber {other}.',
   c2_verdict_tie: 'Gleichstand diese Woche — beide Städte haben denselben Ausblick.',
   cmp_tab_metrics: 'Alle Städte',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'Eigene Warnungen',
+  s_custom_sub: 'Warnt, wenn ein Wert eine von Ihnen gesetzte Grenze überschreitet. Maximal 5 Regeln, jede mit eigener Benachrichtigung und Wartezeit.',
+  custom_metric: 'Messwert',
+  custom_value: 'Wert',
+  custom_metric_uv: 'UV-Index',
+  custom_metric_wind: 'Windgeschwindigkeit',
+  custom_metric_temp: 'Temperatur',
+  custom_metric_humidity: 'Luftfeuchtigkeit',
+  custom_metric_pressure: 'Luftdruck',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'Regel hinzufügen',
+  custom_delete: 'Entfernen',
+  notif_custom_title: '{metric}-Warnung',
+  notif_custom_gte: '{metric} liegt bei oder über {value}',
+  notif_custom_lte: '{metric} liegt bei oder unter {value}',
 };

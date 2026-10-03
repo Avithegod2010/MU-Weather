@@ -318,4 +318,22 @@ export const hu: Strings = {
   c2_verdict: '{city} jobbnak tűnik ezen a héten — {wet} esős nap {other} nappal szemben.',
   c2_verdict_tie: 'Döntetlen ezen a héten — mindkét város kilátása azonos.',
   cmp_tab_metrics: 'Minden város',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'Egyéni riasztások',
+  s_custom_sub: 'Figyelmeztet, ha egy mérőszám átlépi az Ön által beállított határt. Legfeljebb 5 szabály, mindegyik saját értesítéssel és várakozással.',
+  custom_metric: 'Mérőszám',
+  custom_value: 'Érték',
+  custom_metric_uv: 'UV-index',
+  custom_metric_wind: 'Szélsebesség',
+  custom_metric_temp: 'Hőmérséklet',
+  custom_metric_humidity: 'Páratartalom',
+  custom_metric_pressure: 'Légnyomás',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'Szabály hozzáadása',
+  custom_delete: 'Törlés',
+  notif_custom_title: '{metric} riasztás',
+  notif_custom_gte: '{metric} legalább {value}',
+  notif_custom_lte: '{metric} legfeljebb {value}',
 };

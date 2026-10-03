@@ -318,4 +318,22 @@ export const id: Strings = {
   c2_verdict: '{city} terlihat lebih baik minggu ini — {wet} hari basah dibandingkan {other}.',
   c2_verdict_tie: 'Seri minggu ini — kedua kota memiliki outlook yang sama.',
   cmp_tab_metrics: 'Semua kota',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'Peringatan khusus',
+  s_custom_sub: 'Memberi peringatan saat sebuah metrik melewati batas yang Anda tetapkan. Hingga 5 aturan, masing-masing dengan notifikasi dan masa tunggu sendiri.',
+  custom_metric: 'Metrik',
+  custom_value: 'Nilai',
+  custom_metric_uv: 'Indeks UV',
+  custom_metric_wind: 'Kecepatan angin',
+  custom_metric_temp: 'Suhu',
+  custom_metric_humidity: 'Kelembapan',
+  custom_metric_pressure: 'Tekanan',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'Tambah aturan',
+  custom_delete: 'Hapus',
+  notif_custom_title: 'Peringatan {metric}',
+  notif_custom_gte: '{metric} adalah {value} atau lebih',
+  notif_custom_lte: '{metric} adalah {value} atau kurang',
 };

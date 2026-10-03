@@ -17,6 +17,7 @@ import { refreshCitySnapshots, toCitySnapshot, saveCitySnapshot } from '../utils
 import { loadWidgetCities } from '../utils/widgetCityConfig';
 import { LANGUAGES, setLanguage } from '../utils/i18n';
 import type { LanguageKey } from '../utils/i18n';
+import { setUnits } from '../utils/format';
 
 export const BACKGROUND_ALERT_TASK = 'background-alert-task';
 
@@ -57,6 +58,24 @@ if (!globalScope.__muBgAlertTaskDefined) {
       ) {
         setLanguage(storedLanguage as LanguageKey);
       }
+
+      // The alert text converts units (wind km/h vs mph, temperature °C vs °F,
+      // custom thresholds in the user's units) - a headless start begins with
+      // the default units, so apply the stored ones BEFORE anything fires
+      // (the digest path does the same inside rescheduleDigestFromCache).
+      setUnits({
+        temp: storedSettings.tempUnit === 'fahrenheit' ? 'fahrenheit' : 'celsius',
+        wind: storedSettings.windUnit === 'mph' ? 'mph' : 'kmh',
+        precip: storedSettings.precipUnit === 'inches' ? 'inches' : 'mm',
+        time: storedSettings.timeFormat === '24h' ? '24h' : '12h',
+        pressure:
+          storedSettings.pressureUnit === 'mmHg'
+            ? 'mmHg'
+            : storedSettings.pressureUnit === 'inHg'
+              ? 'inHg'
+              : 'hPa',
+        beaufort: storedSettings.windBeaufort === true,
+      });
 
       const data = await fetchWeather(location);
       if (anyAlertEnabled) {

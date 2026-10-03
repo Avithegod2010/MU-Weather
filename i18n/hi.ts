@@ -318,4 +318,22 @@ export const hi: Strings = {
   c2_verdict: 'इस सप्ताह {city} बेहतर लगता है — {wet} गीला दिन बनाम {other}।',
   c2_verdict_tie: 'इस सप्ताह दोनों बराबर हैं — दोनों शहरों का अनुमान एक जैसा है।',
   cmp_tab_metrics: 'सभी शहर',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'कस्टम सतर्कताएँ',
+  s_custom_sub: 'जब कोई माप आपके तय किए स्तर को पार करे तब सतर्क करें। अधिकतम 5 नियम, हर एक की अपनी सूचना और कूलडाउन।',
+  custom_metric: 'माप',
+  custom_value: 'मान',
+  custom_metric_uv: 'UV सूचक',
+  custom_metric_wind: 'हवा की गति',
+  custom_metric_temp: 'तापमान',
+  custom_metric_humidity: 'आर्द्रता',
+  custom_metric_pressure: 'वायुदाब',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'नियम जोड़ें',
+  custom_delete: 'हटाएँ',
+  notif_custom_title: '{metric} सतर्कता',
+  notif_custom_gte: '{metric} {value} या उससे अधिक है',
+  notif_custom_lte: '{metric} {value} या उससे कम है',
 };

@@ -59,8 +59,15 @@ export const ALERT_DEFINITIONS: AlertDefinition[] = [
 
 export type AlertSeverity = 'info' | 'warning' | 'severe';
 
+/**
+ * TriggeredAlert keys: the built-in rule keys plus the custom rules'
+ * `custom:<id>` namespace (one cooldown slot per custom rule). A separate type
+ * so AlertSettings' Record over the built-in keys stays untouched.
+ */
+export type TriggeredAlertKey = AlertKey | `custom:${string}`;
+
 export interface TriggeredAlert {
-  key: AlertKey;
+  key: TriggeredAlertKey;
   title: string;
   message: string;
   severity: AlertSeverity;

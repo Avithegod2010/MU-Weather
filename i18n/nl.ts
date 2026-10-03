@@ -318,4 +318,22 @@ export const nl: Strings = {
   c2_verdict: '{city} lijkt deze week beter — {wet} natte dag tegen {other}.',
   c2_verdict_tie: 'Gelijkspel deze week — beide steden hebben hetzelfde vooruitzicht.',
   cmp_tab_metrics: 'Alle steden',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'Eigen waarschuwingen',
+  s_custom_sub: 'Waarschuwt wanneer een meting een door jou ingestelde grens passeert. Maximaal 5 regels, elk met eigen melding en wachttijd.',
+  custom_metric: 'Meting',
+  custom_value: 'Waarde',
+  custom_metric_uv: 'UV-index',
+  custom_metric_wind: 'Windsnelheid',
+  custom_metric_temp: 'Temperatuur',
+  custom_metric_humidity: 'Luchtvochtigheid',
+  custom_metric_pressure: 'Luchtdruk',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'Regel toevoegen',
+  custom_delete: 'Verwijderen',
+  notif_custom_title: '{metric}-waarschuwing',
+  notif_custom_gte: '{metric} is op of boven {value}',
+  notif_custom_lte: '{metric} is op of onder {value}',
 };

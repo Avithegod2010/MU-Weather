@@ -318,4 +318,22 @@ export const bn: Strings = {
   c2_verdict: 'এই সপ্তাহে {city} ভালো মনে হচ্ছে — {wet} ভেজা দিন বনাম {other}।',
   c2_verdict_tie: 'এই সপ্তাহে দুটিই সমান — দুই শহরের পূর্বাভাস একই।',
   cmp_tab_metrics: 'সব শহর',
+
+  // ── notification upgrades: custom alerts ──
+  s_custom_alerts: 'কাস্টম সতর্কতা',
+  s_custom_sub: 'যখন কোনো মাপ আপনার নির্ধারিত স্তর অতিক্রম করবে তখন সতর্ক করুন। সর্বোচ্চ ৫টি নিয়ম, প্রতিটির নিজস্ব নোটিফিকেশন ও কুলডাউন।',
+  custom_metric: 'মাপ',
+  custom_value: 'মান',
+  custom_metric_uv: 'UV সূচক',
+  custom_metric_wind: 'বাতাসের গতি',
+  custom_metric_temp: 'তাপমাত্রা',
+  custom_metric_humidity: 'আর্দ্রতা',
+  custom_metric_pressure: 'বায়ুচাপ',
+  custom_metric_aqi: 'AQI',
+  custom_metric_cape: 'CAPE',
+  custom_add_rule: 'নিয়ম যোগ করুন',
+  custom_delete: 'মুছুন',
+  notif_custom_title: '{metric} সতর্কতা',
+  notif_custom_gte: '{metric} {value} বা তার বেশি',
+  notif_custom_lte: '{metric} {value} বা তার কম',
 };

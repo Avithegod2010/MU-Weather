@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchWeather } from '../api/openMeteo';
 import { evaluateAlerts } from './alertRules';
 import type { AlertSettings, TriggeredAlert } from './alertRules';
+import { evaluateCustomRules, loadCustomAlerts } from './customAlerts';
 import { buildAlertExtras, deliverAlerts, COOLDOWN_MS } from './fireAlertNotifications';
 import { loadFavorites } from './favoritesStore';
 import { t } from './i18n';
@@ -124,6 +125,9 @@ export async function fireFavoriteCityAlerts(
 
   const citySettings: AlertSettings = { ...settings, aurora: false };
   const allTriggered: TriggeredAlert[] = [];
+  // Custom rules run for saved cities too - the quieter per-city cooldown
+  // (12 h) keeps background cities quieter than the active one.
+  const customRules = await loadCustomAlerts();
 
   for (const city of picks) {
     try {
@@ -137,9 +141,11 @@ export async function fireFavoriteCityAlerts(
         data.aqi,
         extras,
       );
-      if (triggered.length === 0) continue;
-      allTriggered.push(...triggered);
-      await deliverAlerts(triggered, {
+      const customTriggered = evaluateCustomRules(customRules, data);
+      const cityTriggered = [...triggered, ...customTriggered];
+      if (cityTriggered.length === 0) continue;
+      allTriggered.push(...cityTriggered);
+      await deliverAlerts(cityTriggered, {
         city: city.name,
         cooldownPrefix: `${city.id}|`,
         cooldownMs: FAVORITE_COOLDOWN_MS,
