@@ -284,4 +284,10 @@ export const hi: Strings = {
   wcfg_sub: 'चुनें कि यह विजेट कौन-सी सहेजी गई शहर दिखाए।',
   wcfg_loading: 'सहेजे गए शहर लोड हो रहे हैं…',
   wcfg_cancel: 'रद्द करें',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'शांत घंटे',
+  s_quiet_sub: 'इस विंडो में नोटिफिकेशन बंद रहते हैं — सतर्कताएँ फिर भी इतिहास में सहेजी जाती हैं',
+  s_quiet_start: 'से',
+  s_quiet_end: 'तक',
 };

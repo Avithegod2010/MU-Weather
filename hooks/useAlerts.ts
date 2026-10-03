@@ -4,8 +4,10 @@ import * as Notifications from '../utils/notifications';
 import type { WeatherBundle } from '../api/types';
 import {
   DEFAULT_ALERT_SETTINGS,
+  isAnyRuleEnabled,
   type AlertKey,
   type AlertSettings,
+  type QuietHoursSettings,
   type TriggeredAlert,
 } from '../utils/alertRules';
 import {
@@ -60,6 +62,11 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
     }
   }, []);
 
+  /** Quiet-hours toggle + start/end steppers (Alerts screen). */
+  const updateQuietHours = useCallback((patch: Partial<QuietHoursSettings>) => {
+    setSettings((previous) => ({ ...previous, ...patch }));
+  }, []);
+
   useEffect(() => {
     if (!ready) return;
     void AsyncStorage.setItem(ALERTS_STORAGE_KEY, JSON.stringify(settings)).catch(() => {});
@@ -80,7 +87,7 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
 
   useEffect(() => {
     if (!ready) return;
-    const anyAlertEnabled = Object.values(settings).some(Boolean);
+    const anyAlertEnabled = isAnyRuleEnabled(settings);
     const shouldRegister = backgroundEnabled && anyAlertEnabled;
     if (shouldRegister) {
       void registerBackgroundAlerts();
@@ -89,5 +96,5 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
     }
   }, [backgroundEnabled, settings, ready]);
 
-  return { settings, toggleAlert, activeAlerts, ready };
+  return { settings, toggleAlert, updateQuietHours, activeAlerts, ready };
 }

@@ -284,4 +284,10 @@ export const es: Strings = {
   wcfg_sub: 'Elige qué ciudad guardada muestra este widget.',
   wcfg_loading: 'Cargando ciudades guardadas…',
   wcfg_cancel: 'Cancelar',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'Horas de silencio',
+  s_quiet_sub: 'Las notificaciones se silencian en esta franja — las alertas igualmente se guardan en el historial',
+  s_quiet_start: 'Desde',
+  s_quiet_end: 'Hasta',
 };

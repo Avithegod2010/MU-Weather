@@ -867,6 +867,7 @@ export function HomeScreen() {
         onClose={() => setAlertsOpen(false)}
         settings={alertState.settings}
         onToggle={alertState.toggleAlert}
+        onUpdateQuiet={alertState.updateQuietHours}
         ready={alertState.ready}
       />
 

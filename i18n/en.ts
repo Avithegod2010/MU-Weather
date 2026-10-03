@@ -741,6 +741,12 @@ export const en = {
   wcfg_sub: 'Choose which saved city this widget shows.',
   wcfg_loading: 'Loading saved cities…',
   wcfg_cancel: 'Cancel',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'Quiet hours',
+  s_quiet_sub: 'Notifications are silenced in this window — alerts are still saved to history',
+  s_quiet_start: 'From',
+  s_quiet_end: 'Until',
 };
 
 export type Strings = typeof en;

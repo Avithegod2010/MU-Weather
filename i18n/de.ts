@@ -284,4 +284,10 @@ export const de: Strings = {
   wcfg_sub: 'Wähle, welche gespeicherte Stadt dieses Widget anzeigt.',
   wcfg_loading: 'Gespeicherte Städte werden geladen…',
   wcfg_cancel: 'Abbrechen',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'Ruhezeiten',
+  s_quiet_sub: 'Benachrichtigungen sind in diesem Zeitraum stumm — Warnungen werden trotzdem im Verlauf gespeichert',
+  s_quiet_start: 'Von',
+  s_quiet_end: 'Bis',
 };

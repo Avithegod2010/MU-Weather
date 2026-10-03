@@ -66,7 +66,50 @@ export interface TriggeredAlert {
   severity: AlertSeverity;
 }
 
-export type AlertSettings = Record<AlertKey, boolean>;
+/**
+ * Quiet hours: while the device clock sits inside [start, end), alert
+ * notifications are silenced but the alerts themselves still fire and append
+ * to the history (utils/alertHistory) - quiet means no notification, not no
+ * alert. Times are minutes since midnight on the DEVICE clock; the window may
+ * span midnight (1320 -> 420 = 22:00 -> 07:00) and start === end disables the
+ * feature. Stored in the same alert-settings blob as the rule toggles.
+ */
+export interface QuietHoursSettings {
+  quietHoursEnabled: boolean;
+  quietStartMinutes: number;
+  quietEndMinutes: number;
+}
+
+export type AlertSettings = Record<AlertKey, boolean> & QuietHoursSettings;
+
+/** Default window: 22:00 -> 07:00. */
+export const DEFAULT_QUIET_START_MINUTES = 22 * 60;
+export const DEFAULT_QUIET_END_MINUTES = 7 * 60;
+
+/**
+ * Is a minute-of-day inside the quiet window? The window may span midnight
+ * (22:00 -> 07:00 wraps through 00:00) and start === end means no quiet hours.
+ */
+export function isInsideQuietWindow(
+  minutesOfDay: number,
+  startMinutes: number,
+  endMinutes: number,
+): boolean {
+  if (startMinutes === endMinutes) return false;
+  if (startMinutes < endMinutes) {
+    return minutesOfDay >= startMinutes && minutesOfDay < endMinutes;
+  }
+  return minutesOfDay >= startMinutes || minutesOfDay < endMinutes;
+}
+
+/**
+ * True when at least one RULE is on. The quiet-hours fields share the settings
+ * blob but are not rules - a numeric minute value must never count as "an
+ * alert is enabled" and wake the background task on its own.
+ */
+export function isAnyRuleEnabled(settings: AlertSettings): boolean {
+  return ALERT_DEFINITIONS.some((definition) => settings[definition.key] === true);
+}
 
 export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   rain: true,
@@ -89,6 +132,10 @@ export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   raineasing: false,
   // ── bot1: saved-city alerts ──
   favorites: false,
+  // ── notification upgrades: quiet hours ──
+  quietHoursEnabled: false,
+  quietStartMinutes: DEFAULT_QUIET_START_MINUTES,
+  quietEndMinutes: DEFAULT_QUIET_END_MINUTES,
 };
 
 /**

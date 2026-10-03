@@ -10,7 +10,7 @@ import {
   fireAlertNotifications,
   ALERTS_STORAGE_KEY,
 } from '../utils/fireAlertNotifications';
-import { DEFAULT_ALERT_SETTINGS } from '../utils/alertRules';
+import { DEFAULT_ALERT_SETTINGS, isAnyRuleEnabled } from '../utils/alertRules';
 import { rescheduleDigestFromCache, SETTINGS_KEY } from '../hooks/useDigest';
 import { fireFavoriteCityAlerts } from '../utils/favoriteCityAlerts';
 import { refreshCitySnapshots, toCitySnapshot, saveCitySnapshot } from '../utils/citySnapshots';
@@ -33,7 +33,7 @@ if (!globalScope.__muBgAlertTaskDefined) {
 
       const raw = await AsyncStorage.getItem(ALERTS_STORAGE_KEY);
       const settings = { ...DEFAULT_ALERT_SETTINGS, ...(raw ? JSON.parse(raw) : {}) };
-      const anyAlertEnabled = Object.values(settings).some(Boolean);
+      const anyAlertEnabled = isAnyRuleEnabled(settings);
       // Same settings blob the digest path reads (SETTINGS_KEY from useDigest).
       const settingsRaw = await AsyncStorage.getItem(SETTINGS_KEY);
       const storedSettings: Record<string, unknown> = settingsRaw ? JSON.parse(settingsRaw) : {};

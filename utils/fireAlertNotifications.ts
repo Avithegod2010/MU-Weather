@@ -1,6 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from './notifications';
-import { evaluateAlerts } from './alertRules';
+import {
+  DEFAULT_QUIET_END_MINUTES,
+  DEFAULT_QUIET_START_MINUTES,
+  evaluateAlerts,
+  isInsideQuietWindow,
+} from './alertRules';
 import type { AlertExtras, AlertSettings, TriggeredAlert } from './alertRules';
 import { computeNowcast } from './nowcast';
 import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
@@ -91,6 +96,12 @@ export interface DeliverAlertsOptions {
  * saved-city sweep): notification-permission gate, per-alert 6-hour cooldown,
  * local notification, and an entry in the in-app history (utils/alertHistory).
  *
+ * Quiet hours (alert-settings blob) skip the NOTIFICATION while the device
+ * clock is inside the window - the alert itself is still stamped in the
+ * cooldown map and appended to the history, so quiet means no notification,
+ * not no alert. The daily digest (hooks/useDigest) schedules its own
+ * notification on a separate path and is deliberately not gated here.
+ *
  * Returns the alerts it was handed - callers use that for in-app banners - so
  * the delivery outcome never changes what the UI reports as active.
  */
@@ -104,6 +115,27 @@ export async function deliverAlerts(
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') return triggered;
   await ensureChannel();
+
+  // The quiet-hours settings live in the same blob every source shares, so one
+  // read here covers the active city, the saved-city sweep and the background
+  // task without new plumbing through DeliverAlertsOptions.
+  const stored = await loadAlertSettings();
+  const quietStart =
+    typeof stored.quietStartMinutes === 'number'
+      ? stored.quietStartMinutes
+      : DEFAULT_QUIET_START_MINUTES;
+  const quietEnd =
+    typeof stored.quietEndMinutes === 'number'
+      ? stored.quietEndMinutes
+      : DEFAULT_QUIET_END_MINUTES;
+  const localNow = new Date();
+  const inQuietHours =
+    stored.quietHoursEnabled === true &&
+    isInsideQuietWindow(
+      localNow.getHours() * 60 + localNow.getMinutes(),
+      quietStart,
+      quietEnd,
+    );
 
   await withFiredLock(async () => {
     let fired: Record<string, number> = {};
@@ -127,17 +159,22 @@ export async function deliverAlerts(
       fired[cooldownKey] = now;
       changed = true;
       delivered.push(alert);
-      try {
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: titleFormatter ? titleFormatter(alert) : alert.title,
-            body: alert.message,
-            sound: alert.severity === 'severe',
-          },
-          trigger: null,
-        });
-      } catch {
-        // Delivery is best-effort.
+      // Quiet hours silence the notification only - the cooldown stamp and the
+      // history row below still happen, so a suppressed alert is never
+      // re-recorded on the next refresh and stays visible in the Alerts screen.
+      if (!inQuietHours) {
+        try {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: titleFormatter ? titleFormatter(alert) : alert.title,
+              body: alert.message,
+              sound: alert.severity === 'severe',
+            },
+            trigger: null,
+          });
+        } catch {
+          // Delivery is best-effort.
+        }
       }
     }
 

@@ -284,4 +284,10 @@ export const id: Strings = {
   wcfg_sub: 'Pilih kota tersimpan yang ditampilkan widget ini.',
   wcfg_loading: 'Memuat kota tersimpan…',
   wcfg_cancel: 'Batal',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'Jam tenang',
+  s_quiet_sub: 'Notifikasi disenyapkan pada rentang ini — peringatan tetap disimpan ke riwayat',
+  s_quiet_start: 'Dari',
+  s_quiet_end: 'Hingga',
 };

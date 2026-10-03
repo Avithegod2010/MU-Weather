@@ -284,4 +284,10 @@ export const nl: Strings = {
   wcfg_sub: 'Kies welke opgeslagen stad deze widget toont.',
   wcfg_loading: 'Opgeslagen steden laden…',
   wcfg_cancel: 'Annuleren',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'Stille uren',
+  s_quiet_sub: 'Meldingen zijn stil in deze periode — waarschuwingen worden alsnog in de geschiedenis opgeslagen',
+  s_quiet_start: 'Van',
+  s_quiet_end: 'Tot',
 };

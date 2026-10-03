@@ -284,4 +284,10 @@ export const bn: Strings = {
   wcfg_sub: 'ঠিক করুন এই উইজেট কোন সংরক্ষিত শহর দেখাবে।',
   wcfg_loading: 'সংরক্ষিত শহর লোড হচ্ছে…',
   wcfg_cancel: 'বাতিল',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'শান্ত সময়',
+  s_quiet_sub: 'এই সময়ে নোটিফিকেশন বন্ধ থাকে — সতর্কতা তবুও ইতিহাসে সংরক্ষিত হয়',
+  s_quiet_start: 'থেকে',
+  s_quiet_end: 'পর্যন্ত',
 };

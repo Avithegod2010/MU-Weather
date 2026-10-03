@@ -284,4 +284,10 @@ export const el: Strings = {
   wcfg_sub: 'Επιλέξτε ποια αποθηκευμένη πόλη δείχνει αυτό το γραμμοφόρο.',
   wcfg_loading: 'Φόρτωση αποθηκευμένων πόλεων…',
   wcfg_cancel: 'Ακύρωση',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'Ώρες ησυχίας',
+  s_quiet_sub: 'Οι ειδοποιήσεις σιωπούν σε αυτό το διάστημα — οι συναγερμοί εξακολουθούν να καταγράφονται στο ιστορικό',
+  s_quiet_start: 'Από',
+  s_quiet_end: 'Έως',
 };

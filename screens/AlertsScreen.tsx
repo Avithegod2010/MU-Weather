@@ -57,7 +57,7 @@ import {
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
 import { ALERT_DEFINITIONS } from '../utils/alertRules';
-import type { AlertKey } from '../utils/alertRules';
+import type { AlertKey, AlertSettings, QuietHoursSettings } from '../utils/alertRules';
 import {
   clearAlertHistory,
   loadAlertHistory,
@@ -102,12 +102,71 @@ function historyStamp(at: number): string {
   return `${day} · ${formatClockParts(date.getHours(), date.getMinutes())}`;
 }
 
+/** Quiet-hour steppers step in 30-minute jumps and wrap through midnight. */
+const QUIET_STEP_MINUTES = 30;
+const MINUTES_PER_DAY = 24 * 60;
+
+function stepQuietMinutes(value: number, delta: number): number {
+  return (((value + delta) % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+}
+
+/** One minus / value / plus time row (the trip-planner stepper idiom, in minutes of day). */
+function QuietStepperRow({
+  theme,
+  label,
+  minutes,
+  onStep,
+}: {
+  theme: AppTheme;
+  label: string;
+  minutes: number;
+  onStep: (delta: number) => void;
+}) {
+  return (
+    <View style={styles.stepperRow}>
+      <Text style={[styles.stepperLabel, { color: theme.textSecondary }]} numberOfLines={1}>
+        {label}
+      </Text>
+      <Pressable
+        onPress={() => onStep(-QUIET_STEP_MINUTES)}
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.stepperButton,
+          { backgroundColor: theme.chipBg },
+          pressed && { opacity: 0.7 },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={t('a11y_decrease')}
+      >
+        <ChevronLeft size={18} color={theme.textPrimary} strokeWidth={2.4} />
+      </Pressable>
+      <Text style={[styles.stepperValue, { color: theme.textPrimary }]} numberOfLines={1}>
+        {formatClockParts(Math.floor(minutes / 60), minutes % 60)}
+      </Text>
+      <Pressable
+        onPress={() => onStep(QUIET_STEP_MINUTES)}
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.stepperButton,
+          { backgroundColor: theme.chipBg },
+          pressed && { opacity: 0.7 },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={t('a11y_increase')}
+      >
+        <ChevronRight size={18} color={theme.textPrimary} strokeWidth={2.4} />
+      </Pressable>
+    </View>
+  );
+}
+
 interface AlertsScreenProps {
   theme: AppTheme;
   visible: boolean;
   onClose: () => void;
-  settings: Record<AlertKey, boolean>;
+  settings: AlertSettings;
   onToggle: (key: AlertKey) => void;
+  onUpdateQuiet: (patch: Partial<QuietHoursSettings>) => void;
   ready: boolean;
 }
 
@@ -117,6 +176,7 @@ export function AlertsScreen({
   onClose,
   settings,
   onToggle,
+  onUpdateQuiet,
   ready,
 }: AlertsScreenProps) {
   const insets = useSafeAreaInsets();
@@ -232,6 +292,59 @@ export function AlertsScreen({
             </Pressable>
           );
         })}
+
+        <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+          <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+            <Moon size={20} color={theme.textPrimary} strokeWidth={2} />
+          </View>
+          <View style={styles.rowTexts}>
+            <Text style={[styles.rowTitle, { color: theme.textPrimary }]}>
+              {t('s_quiet_hours')}
+            </Text>
+            <Text style={[styles.rowSubtitle, { color: theme.textSecondary }]}>
+              {t('s_quiet_sub')}
+            </Text>
+          </View>
+          <Switch
+            value={ready ? settings.quietHoursEnabled : false}
+            onValueChange={(value) => {
+              if (value) {
+                haptics.success();
+              } else {
+                haptics.light();
+              }
+              onUpdateQuiet({ quietHoursEnabled: value });
+            }}
+            trackColor={{ true: theme.accent, false: theme.trackColor }}
+            thumbColor={settings.quietHoursEnabled ? '#FFFFFF' : theme.textTertiary}
+            ios_backgroundColor={theme.trackColor}
+          />
+        </View>
+
+        {ready && settings.quietHoursEnabled ? (
+          <>
+            <QuietStepperRow
+              theme={theme}
+              label={t('s_quiet_start')}
+              minutes={settings.quietStartMinutes}
+              onStep={(delta) =>
+                onUpdateQuiet({
+                  quietStartMinutes: stepQuietMinutes(settings.quietStartMinutes, delta),
+                })
+              }
+            />
+            <QuietStepperRow
+              theme={theme}
+              label={t('s_quiet_end')}
+              minutes={settings.quietEndMinutes}
+              onStep={(delta) =>
+                onUpdateQuiet({
+                  quietEndMinutes: stepQuietMinutes(settings.quietEndMinutes, delta),
+                })
+              }
+            />
+          </>
+        ) : null}
 
         <View style={styles.historyBlock}>
           <View style={styles.historyHeader}>
@@ -456,5 +569,30 @@ const styles = StyleSheet.create({
     width: 9,
     height: 9,
     borderRadius: 5,
+  },
+  stepperRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 7,
+    paddingHorizontal: 4,
+  },
+  stepperLabel: {
+    flex: 1,
+    fontSize: 13.5,
+    fontFamily: F.medium,
+  },
+  stepperValue: {
+    fontSize: 14,
+    fontFamily: F.semibold,
+    minWidth: 64,
+    textAlign: 'center',
+  },
+  stepperButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

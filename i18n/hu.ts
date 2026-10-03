@@ -284,4 +284,10 @@ export const hu: Strings = {
   wcfg_sub: 'Válaszd ki, mely mentett várost mutatja ez a widgetet.',
   wcfg_loading: 'Mentett városok betöltése…',
   wcfg_cancel: 'Mégse',
+
+  // ── notification upgrades: quiet hours ──
+  s_quiet_hours: 'Csendes órák',
+  s_quiet_sub: 'Az értesítések némák ebben az időszakban — a riasztások továbbra is az előzményekbe kerülnek',
+  s_quiet_start: 'Ettől',
+  s_quiet_end: 'Eddig',
 };
