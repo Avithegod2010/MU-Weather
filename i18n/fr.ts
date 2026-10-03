@@ -294,4 +294,28 @@ export const fr: Strings = {
   // ── notification upgrades: actions ──
   notif_action_snooze: 'Répéter 1 h',
   notif_action_dismiss: 'Ignorer',
+
+  // ── two-city comparison ──
+  c2_tab: 'Deux villes',
+  c2_title: 'Ville contre ville',
+  c2_slot: 'Ville {n}',
+  c2_pick_city: 'Choisissez une ville',
+  c2_cycle_hint: 'Touchez deux fois pour passer à la ville enregistrée suivante',
+  c2_loading: 'Chargement des deux villes…',
+  c2_needs_two: 'Enregistrez d’abord deux villes',
+  c2_needs_two_msg: 'Enregistrez au moins deux villes, puis ouvrez Comparer pour les voir côte à côte.',
+  c2_high: 'Max',
+  c2_low: 'Min',
+  c2_rain_chance: 'Pluie',
+  c2_precip: 'Précip',
+  c2_wind: 'Vent',
+  c2_uv: 'UV',
+  c2_humidity: 'Humidité',
+  c2_best: 'meilleur',
+  c2_week_title: '{n} PROCHAINS JOURS',
+  c2_no_days: 'Pas encore de prévision journalière.',
+  c2_caption: 'Meilleure valeur marquée d’un * · données en direct',
+  c2_verdict: '{city} semble meilleur cette semaine — {wet} jour(s) de pluie contre {other}.',
+  c2_verdict_tie: 'Match nul cette semaine — les deux villes ont les mêmes perspectives.',
+  cmp_tab_metrics: 'Toutes les villes',
 };

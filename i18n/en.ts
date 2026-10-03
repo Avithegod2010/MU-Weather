@@ -751,6 +751,30 @@ export const en = {
   // ── notification upgrades: actions ──
   notif_action_snooze: 'Snooze 1 h',
   notif_action_dismiss: 'Dismiss',
+
+  // ── two-city comparison ──
+  c2_tab: 'Two cities',
+  c2_title: 'City vs city',
+  c2_slot: 'City {n}',
+  c2_pick_city: 'Choose a city',
+  c2_cycle_hint: 'Double tap to switch to the next saved city',
+  c2_loading: 'Loading both cities…',
+  c2_needs_two: 'Save two cities first',
+  c2_needs_two_msg: 'Save at least two cities, then open Compare to see them side by side.',
+  c2_high: 'High',
+  c2_low: 'Low',
+  c2_rain_chance: 'Rain',
+  c2_precip: 'Precip',
+  c2_wind: 'Wind',
+  c2_uv: 'UV',
+  c2_humidity: 'Humidity',
+  c2_best: 'better',
+  c2_week_title: 'NEXT {n} DAYS',
+  c2_no_days: 'No daily forecast available yet.',
+  c2_caption: 'Better value per row marked with * · live data',
+  c2_verdict: '{city} looks better this week — {wet} wet day vs {other}.',
+  c2_verdict_tie: 'Evenly matched this week — both cities have the same outlook.',
+  cmp_tab_metrics: 'All cities',
 };
 
 export type Strings = typeof en;

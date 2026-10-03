@@ -294,4 +294,28 @@ export const id: Strings = {
   // ── notification upgrades: actions ──
   notif_action_snooze: 'Tunda 1 jam',
   notif_action_dismiss: 'Abaikan',
+
+  // ── two-city comparison ──
+  c2_tab: 'Dua kota',
+  c2_title: 'Kota versus kota',
+  c2_slot: 'Kota {n}',
+  c2_pick_city: 'Pilih kota',
+  c2_cycle_hint: 'Ketuk dua kali untuk ke kota tersimpan berikutnya',
+  c2_loading: 'Memuat kedua kota…',
+  c2_needs_two: 'Simpan dulu dua kota',
+  c2_needs_two_msg: 'Simpan minimal dua kota, lalu buka Bandingkan untuk melihatnya berdampingan.',
+  c2_high: 'Tertinggi',
+  c2_low: 'Terendah',
+  c2_rain_chance: 'Hujan',
+  c2_precip: 'Presipitasi',
+  c2_wind: 'Angin',
+  c2_uv: 'UV',
+  c2_humidity: 'Kelembapan',
+  c2_best: 'lebih baik',
+  c2_week_title: '{n} HARI KE DEPAN',
+  c2_no_days: 'Belum ada prakiraan harian.',
+  c2_caption: 'Nilai terbaik ditandai * · data langsung',
+  c2_verdict: '{city} terlihat lebih baik minggu ini — {wet} hari basah dibandingkan {other}.',
+  c2_verdict_tie: 'Seri minggu ini — kedua kota memiliki outlook yang sama.',
+  cmp_tab_metrics: 'Semua kota',
 };

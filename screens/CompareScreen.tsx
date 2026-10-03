@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { t } from '../utils/i18n';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from '../utils/uiIcons';
 import { F } from '../theme/typography';
 import { WeatherIcon } from '../components/WeatherIcon';
 import { AnimatedBackground } from '../components/AnimatedBackground';
+import { TwoCityComparePanel } from '../components/TwoCityComparePanel';
 import { formatTemp, convertWind, windUnitLabel } from '../utils/format';
 import { describeWmo } from '../utils/wmo';
 import type { AppTheme } from '../theme/palettes';
+import type { GeoLocation } from '../api/types';
 import type { ComparisonEntry } from '../hooks/useCityComparison';
 
 interface CompareScreenProps {
@@ -18,7 +20,13 @@ interface CompareScreenProps {
   onClose: () => void;
   entries: ComparisonEntry[];
   status: 'idle' | 'loading' | 'ready';
+  /** Saved cities, for the two-city picker. */
+  favorites: GeoLocation[];
+  /** Re-run the comparison fetch (used by the two-city column retry). */
+  onRetry?: () => void;
 }
+
+type CompareTab = 'metrics' | 'two';
 
 const LABEL_WIDTH = 92;
 const COL_WIDTH = 104;
@@ -30,9 +38,50 @@ interface Metric {
   better: 'low' | 'high';
 }
 
-export function CompareScreen({ theme, visible, onClose, entries, status }: CompareScreenProps) {
+export function CompareScreen({ theme, visible, onClose, entries, status, favorites, onRetry }: CompareScreenProps) {
   const insets = useSafeAreaInsets();
   const valid = entries.filter((entry) => entry.data !== null);
+
+  // Two-city pair, held locally: the picker is view state, not fetched data, so
+  // it must not re-trigger the comparison hook. Default to the first two saved
+  // cities, and keep the pair valid when a city is removed from favorites.
+  const [tab, setTab] = useState<CompareTab>('metrics');
+  const [selection, setSelection] = useState<[string | null, string | null]>([null, null]);
+  useEffect(() => {
+    if (!visible) return;
+    setSelection((current) => {
+      const ids = favorites.map((city) => city.id);
+      const nextA = current[0] && ids.includes(current[0]) ? current[0] : ids[0] ?? null;
+      // Never let both columns show the same city.
+      const nextB =
+        current[1] && ids.includes(current[1]) && current[1] !== nextA
+          ? current[1]
+          : ids.find((id) => id !== nextA) ?? null;
+      if (nextA === current[0] && nextB === current[1]) return current;
+      return [nextA, nextB];
+    });
+  }, [visible, favorites]);
+
+  const handleSelect = (slot: 0 | 1, cityId: string) => {
+    setSelection((current) => {
+      const next: [string | null, string | null] = [current[0], current[1]];
+      next[slot] = cityId;
+      // Swapping to a city the other column already shows moves the other one
+      // along, so the user can never end up comparing a city with itself.
+      const other = slot === 0 ? 1 : 0;
+      if (next[0] !== null && next[0] === next[1]) {
+        next[other] = current[slot];
+      }
+      return next;
+    });
+  };
+
+  // The hook already fetched every saved city, so the two-city tab just picks
+  // two of those results rather than fetching again.
+  const pairEntries: [ComparisonEntry | null, ComparisonEntry | null] = [
+    entries.find((entry) => entry.city.id === selection[0]) ?? null,
+    entries.find((entry) => entry.city.id === selection[1]) ?? null,
+  ];
 
   const metrics: Metric[] = [
     {
@@ -103,13 +152,59 @@ export function CompareScreen({ theme, visible, onClose, entries, status }: Comp
       <View style={styles.header}>
         <View style={styles.headerTexts}>
           <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>{t('cmp_eyebrow')}</Text>
-          <Text style={[styles.title, { color: theme.textPrimary }]}>{t('cmp_title')}</Text>
+          <Text style={[styles.title, { color: theme.textPrimary }]}>
+            {tab === 'two' ? t('c2_title') : t('cmp_title')}
+          </Text>
         </View>
         <Text style={[styles.count, { color: theme.textTertiary }]}>
-          {t('cmp_live').replace('{n}', String(valid.length))}
+          {t('cmp_live').split('{n}').join(String(valid.length))}
         </Text>
       </View>
 
+      {/* Tabs: the original all-cities metrics table, plus the new two-city view. */}
+      <View style={[styles.tabBar, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+        {(['metrics', 'two'] as CompareTab[]).map((key) => {
+          const active = tab === key;
+          return (
+            <Pressable
+              key={key}
+              onPress={() => setTab(key)}
+              style={[styles.tab, active && { backgroundColor: theme.chipBg }]}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: active }}
+              accessibilityLabel={key === 'metrics' ? t('cmp_tab_metrics') : t('c2_tab')}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  { color: active ? theme.textPrimary : theme.textTertiary },
+                ]}
+              >
+                {key === 'metrics' ? t('cmp_tab_metrics') : t('c2_tab')}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      {tab === 'two' ? (
+        <ScrollView
+          style={styles.twoCityScroll}
+          contentContainerStyle={styles.twoCityContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <TwoCityComparePanel
+            theme={theme}
+            favorites={favorites}
+            selection={selection}
+            onSelect={handleSelect}
+            entries={pairEntries}
+            status={status}
+            onRetry={() => onRetry?.()}
+          />
+        </ScrollView>
+      ) : (
+      <>
       {status === 'loading' ? (
         <View style={styles.loadingWrap}>
           <ActivityIndicator size="large" color={theme.textPrimary} />
@@ -206,11 +301,32 @@ export function CompareScreen({ theme, visible, onClose, entries, status }: Comp
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
         Best value per row highlighted · live data
       </Text>
+      </>
+      )}
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
+  tabBar: {
+    flexDirection: 'row',
+    gap: 6,
+    borderRadius: 999,
+    padding: 4,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignSelf: 'center',
+  },
+  tab: {
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    borderRadius: 999,
+  },
+  tabText: {
+    fontSize: 13,
+    fontFamily: F.semibold,
+  },
+  twoCityScroll: { flexGrow: 0 },
+  twoCityContent: { paddingBottom: 8 },
   container: {
     position: 'absolute',
     top: 0,

@@ -294,4 +294,28 @@ export const nl: Strings = {
   // ── notification upgrades: actions ──
   notif_action_snooze: '1 uur uitstellen',
   notif_action_dismiss: 'Sluiten',
+
+  // ── two-city comparison ──
+  c2_tab: 'Twee steden',
+  c2_title: 'Stad tegen stad',
+  c2_slot: 'Stad {n}',
+  c2_pick_city: 'Kies een stad',
+  c2_cycle_hint: 'Dubbeltik om naar de volgende opgeslagen stad te gaan',
+  c2_loading: 'Beide steden laden…',
+  c2_needs_two: 'Bewaar eerst twee steden',
+  c2_needs_two_msg: 'Bewaar minstens twee steden en open Vergelijken om ze naast elkaar te zien.',
+  c2_high: 'Max',
+  c2_low: 'Min',
+  c2_rain_chance: 'Regen',
+  c2_precip: 'Neerslag',
+  c2_wind: 'Wind',
+  c2_uv: 'UV',
+  c2_humidity: 'Luchtvochtigheid',
+  c2_best: 'beter',
+  c2_week_title: 'VOLGENDE {n} DAGEN',
+  c2_no_days: 'Nog geen dagvoorspelling beschikbaar.',
+  c2_caption: 'Beste waarde gemarkeerd met * · live data',
+  c2_verdict: '{city} lijkt deze week beter — {wet} natte dag tegen {other}.',
+  c2_verdict_tie: 'Gelijkspel deze week — beide steden hebben hetzelfde vooruitzicht.',
+  cmp_tab_metrics: 'Alle steden',
 };

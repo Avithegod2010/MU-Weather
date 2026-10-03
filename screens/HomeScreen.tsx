@@ -925,6 +925,8 @@ export function HomeScreen() {
         onClose={() => setCompareOpen(false)}
         entries={comparison.results}
         status={comparison.status}
+        favorites={favoritesState.favorites}
+        onRetry={comparison.reload}
       />
 
       <ModelComparisonScreen

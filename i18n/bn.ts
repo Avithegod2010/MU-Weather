@@ -294,4 +294,28 @@ export const bn: Strings = {
   // ── notification upgrades: actions ──
   notif_action_snooze: '১ ঘণ্টার জন্য স্নুজ',
   notif_action_dismiss: 'বাতিল করুন',
+
+  // ── two-city comparison ──
+  c2_tab: 'দুটি শহর',
+  c2_title: 'শহর বনাম শহর',
+  c2_slot: 'শহর {n}',
+  c2_pick_city: 'একটি শহর বাছুন',
+  c2_cycle_hint: 'পরবর্তী সংরক্ষিত শহরে যেতে দুইবার চাপুন',
+  c2_loading: 'দুটি শহরই লোড হচ্ছে…',
+  c2_needs_two: 'প্রথমে দুটি শহর সংরক্ষণ করুন',
+  c2_needs_two_msg: 'অন্তত দুটি শহর সংরক্ষণ করুন, তারপর পাশাপাশি দেখতে তুলনা খুলুন।',
+  c2_high: 'সর্বোচ্চ',
+  c2_low: 'সর্বনিম্ন',
+  c2_rain_chance: 'বৃষ্টি',
+  c2_precip: 'বৃষ্টিপাত',
+  c2_wind: 'বাতাস',
+  c2_uv: 'ইউভি',
+  c2_humidity: 'আর্দ্রতা',
+  c2_best: 'ভালো',
+  c2_week_title: 'পরবর্তী {n} দিন',
+  c2_no_days: 'এখনও দৈনিক পূর্বাভাস নেই।',
+  c2_caption: 'ভালো মান * দিয়ে চিহ্নিত · লাইভ ডেটা',
+  c2_verdict: 'এই সপ্তাহে {city} ভালো মনে হচ্ছে — {wet} ভেজা দিন বনাম {other}।',
+  c2_verdict_tie: 'এই সপ্তাহে দুটিই সমান — দুই শহরের পূর্বাভাস একই।',
+  cmp_tab_metrics: 'সব শহর',
 };

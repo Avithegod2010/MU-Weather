@@ -294,4 +294,28 @@ export const hi: Strings = {
   // ── notification upgrades: actions ──
   notif_action_snooze: '1 घंटे के लिए स्नूज़',
   notif_action_dismiss: 'खारिज करें',
+
+  // ── two-city comparison ──
+  c2_tab: 'दो शहर',
+  c2_title: 'शहर बनाम शहर',
+  c2_slot: 'शहर {n}',
+  c2_pick_city: 'शहर चुनें',
+  c2_cycle_hint: 'अगले सहेजे गए शहर पर जाने के लिए दो बार टैप करें',
+  c2_loading: 'दोनों शहर लोड हो रहे हैं…',
+  c2_needs_two: 'पहले दो शहर सेव करें',
+  c2_needs_two_msg: 'कम से कम दो शहर सेव करें, फिर उन्हें साथ-साथ देखने के लिए तुलना खोलें।',
+  c2_high: 'अधिकतम',
+  c2_low: 'न्यूनतम',
+  c2_rain_chance: 'बारिश',
+  c2_precip: 'वर्षा',
+  c2_wind: 'हवा',
+  c2_uv: 'यूवी',
+  c2_humidity: 'नमी',
+  c2_best: 'बेहतर',
+  c2_week_title: 'अगले {n} दिन',
+  c2_no_days: 'अभी दैनिक अनुमान उपलब्ध नहीं है।',
+  c2_caption: 'बेहतर मान * से चिह्नित · लाइव डेटा',
+  c2_verdict: 'इस सप्ताह {city} बेहतर लगता है — {wet} गीला दिन बनाम {other}।',
+  c2_verdict_tie: 'इस सप्ताह दोनों बराबर हैं — दोनों शहरों का अनुमान एक जैसा है।',
+  cmp_tab_metrics: 'सभी शहर',
 };

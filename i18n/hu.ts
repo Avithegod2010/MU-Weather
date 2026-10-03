@@ -294,4 +294,28 @@ export const hu: Strings = {
   // ── notification upgrades: actions ──
   notif_action_snooze: '1 óra halasztás',
   notif_action_dismiss: 'Elvetés',
+
+  // ── two-city comparison ──
+  c2_tab: 'Két város',
+  c2_title: 'Város kontra város',
+  c2_slot: '{n}. város',
+  c2_pick_city: 'Válasszon várost',
+  c2_cycle_hint: 'Koppintson duplán a következő mentett városra',
+  c2_loading: 'Mindkét város betöltése…',
+  c2_needs_two: 'Először mentsen el két várost',
+  c2_needs_two_msg: 'Mentsen el legalább két várost, majd nyissa meg az Összehasonlítást.',
+  c2_high: 'Max',
+  c2_low: 'Min',
+  c2_rain_chance: 'Eső',
+  c2_precip: 'Csapadék',
+  c2_wind: 'Szél',
+  c2_uv: 'UV',
+  c2_humidity: 'Páratartalom',
+  c2_best: 'jobb',
+  c2_week_title: 'KÖVETKEZŐ {n} NAP',
+  c2_no_days: 'Még nincs napi előrejelzés.',
+  c2_caption: 'A jobb értéket * jelöli · élő adatok',
+  c2_verdict: '{city} jobbnak tűnik ezen a héten — {wet} esős nap {other} nappal szemben.',
+  c2_verdict_tie: 'Döntetlen ezen a héten — mindkét város kilátása azonos.',
+  cmp_tab_metrics: 'Minden város',
 };
