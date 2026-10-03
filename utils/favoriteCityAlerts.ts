@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchWeather } from '../api/openMeteo';
 import { evaluateAlerts } from './alertRules';
 import type { AlertSettings, TriggeredAlert } from './alertRules';
-import { buildAlertExtras, deliverAlerts } from './fireAlertNotifications';
+import { buildAlertExtras, deliverAlerts, COOLDOWN_MS } from './fireAlertNotifications';
 import { loadFavorites } from './favoritesStore';
 import { t } from './i18n';
 import type { GeoLocation, WeatherBundle } from '../api/types';
@@ -11,6 +11,8 @@ import type { GeoLocation, WeatherBundle } from '../api/types';
 export const MAX_FAVORITE_CHECKS = 3;
 /** One sweep every 20 minutes; both the app refresh path and the background task call in. */
 const SWEEP_TTL_MS = 20 * 60 * 1000;
+/** Saved cities are quieter than the active location: 12 h per alert, not 6 h. */
+const FAVORITE_COOLDOWN_MS = 2 * COOLDOWN_MS;
 const SWEEP_STAMP_KEY = '@mu_weather/fav_alert_sweep_v1';
 
 /**
@@ -87,8 +89,9 @@ async function saveSweepState(state: SweepState): Promise<void> {
  * stretches that further.
  *
  * Delivered alerts get a per-city cooldown namespace, so an alert for one city
- * can never silence the same alert for another, and the notification title
- * carries the city name.
+ * can never silence the same alert for another, a 12-hour cooldown (2x the
+ * active location's) so background cities stay quieter, and the notification
+ * title carries the city name.
  *
  * Aurora is deliberately skipped for saved cities: whether you can see aurora
  * depends on the sky above *you*, not on the saved city's latitude.
@@ -139,6 +142,7 @@ export async function fireFavoriteCityAlerts(
       await deliverAlerts(triggered, {
         city: city.name,
         cooldownPrefix: `${city.id}|`,
+        cooldownMs: FAVORITE_COOLDOWN_MS,
         titleFormatter: (alert) =>
           t('alert_city_title')
             .split('{city}')

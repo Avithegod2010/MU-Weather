@@ -137,12 +137,19 @@ export interface DeliverAlertsOptions {
    * separately, so the city is never written twice.
    */
   titleFormatter?: (alert: TriggeredAlert) => string;
+  /**
+   * Cooldown override for this call (default COOLDOWN_MS = 6 h). The
+   * saved-city sweep passes 12 h so background cities stay quieter than the
+   * active location.
+   */
+  cooldownMs?: number;
 }
 
 /**
  * Shared delivery path for every alert source (the active location and the
- * saved-city sweep): notification-permission gate, per-alert 6-hour cooldown,
- * local notification, and an entry in the in-app history (utils/alertHistory).
+ * saved-city sweep): notification-permission gate, per-alert cooldown (6 h by
+ * default, overridable per call), local notification, and an entry in the
+ * in-app history (utils/alertHistory).
  *
  * Quiet hours (alert-settings blob) skip the NOTIFICATION while the device
  * clock is inside the window - the alert itself is still stamped in the
@@ -158,7 +165,7 @@ export async function deliverAlerts(
   options: DeliverAlertsOptions = {},
 ): Promise<TriggeredAlert[]> {
   if (!triggered.length) return [];
-  const { city, cooldownPrefix = '', titleFormatter } = options;
+  const { city, cooldownPrefix = '', titleFormatter, cooldownMs = COOLDOWN_MS } = options;
 
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') return triggered;
@@ -206,7 +213,7 @@ export async function deliverAlerts(
     for (const alert of triggered) {
       const cooldownKey = `${cooldownPrefix}${alert.key}`;
       const lastFired = fired[cooldownKey] ?? 0;
-      if (now - lastFired < COOLDOWN_MS) continue;
+      if (now - lastFired < cooldownMs) continue;
       fired[cooldownKey] = now;
       changed = true;
       delivered.push(alert);
