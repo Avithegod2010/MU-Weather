@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { t, getLanguage } from '../utils/i18n';
 import { formatClockParts } from '../utils/format';
 import { F } from '../theme/typography';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -60,7 +60,7 @@ import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
 import { ALERT_DEFINITIONS } from '../utils/alertRules';
 import type { AlertKey, AlertSettings, QuietHoursSettings } from '../utils/alertRules';
-import { CUSTOM_METRIC_KEYS, formatCustomValue } from '../utils/customAlerts';
+import { CUSTOM_METRIC_KEYS, formatCustomValue, MAX_NOTE_LENGTH } from '../utils/customAlerts';
 import type { CustomMetric, CustomOp } from '../utils/customAlerts';
 import { useCustomAlerts } from '../hooks/useCustomAlerts';
 import {
@@ -285,11 +285,15 @@ export function AlertsScreen({
 }: AlertsScreenProps) {
   const insets = useSafeAreaInsets();
   const [history, setHistory] = useState<AlertHistoryEntry[]>([]);
-  const { rules, addRule, toggleRule, deleteRule } = useCustomAlerts();
+  const { rules, addRule, toggleRule, deleteRule, setNote } = useCustomAlerts();
   const [builderOpen, setBuilderOpen] = useState(false);
   const [draftMetric, setDraftMetric] = useState<CustomMetric>('temp');
   const [draftOp, setDraftOp] = useState<CustomOp>('gte');
   const [draftValue, setDraftValue] = useState<number>(30);
+  /** Optional note drafted in the builder / while editing a rule's note. */
+  const [draftNote, setDraftNote] = useState('');
+  /** Which rule row is showing its note editor, if any. */
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -490,6 +494,40 @@ export function AlertsScreen({
                   {t(CUSTOM_METRIC_KEYS[rule.metric])} {rule.op === 'gte' ? '≥' : '≤'}{' '}
                   {formatCustomValue(rule.metric, rule.value)}
                 </Text>
+                {editingNoteId === rule.id ? (
+                  <TextInput
+                    value={draftNote}
+                    onChangeText={setDraftNote}
+                    onBlur={() => {
+                      setNote(rule.id, draftNote);
+                      setEditingNoteId(null);
+                    }}
+                    onSubmitEditing={() => {
+                      setNote(rule.id, draftNote);
+                      setEditingNoteId(null);
+                    }}
+                    autoFocus
+                    maxLength={MAX_NOTE_LENGTH}
+                    style={[styles.customNoteInput, { backgroundColor: theme.chipBg, color: theme.textPrimary, borderColor: theme.cardBorder }]}
+                    placeholder={t('custom_note')}
+                    placeholderTextColor={theme.textTertiary}
+                    accessibilityLabel={t('custom_note')}
+                  />
+                ) : rule.note ? (
+                  <Pressable
+                    onPress={() => {
+                      haptics.select();
+                      setDraftNote(rule.note ?? '');
+                      setEditingNoteId(rule.id);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${t('custom_note')}: ${rule.note}`}
+                  >
+                    <Text style={[styles.customNote, { color: theme.textTertiary }]} numberOfLines={1}>
+                      {rule.note}
+                    </Text>
+                  </Pressable>
+                ) : null}
               </View>
               <Switch
                 value={rule.enabled}
@@ -562,10 +600,23 @@ export function AlertsScreen({
                 setDraftValue(Math.min(max, Math.max(min, draftValue + delta * step)));
               }}
             />
+            <TextInput
+              value={draftNote}
+              onChangeText={setDraftNote}
+              maxLength={MAX_NOTE_LENGTH}
+              style={[
+                styles.customNoteInput,
+                { backgroundColor: theme.chipBg, color: theme.textPrimary, borderColor: theme.cardBorder },
+              ]}
+              placeholder={t('custom_note')}
+              placeholderTextColor={theme.textTertiary}
+              accessibilityLabel={t('custom_note')}
+            />
             <Pressable
               onPress={() => {
                 haptics.success();
-                addRule(draftMetric, draftOp, draftValue);
+                addRule(draftMetric, draftOp, draftValue, draftNote);
+                setDraftNote('');
                 setBuilderOpen(false);
               }}
               style={({ pressed }) => [
@@ -885,6 +936,21 @@ const styles = StyleSheet.create({
   customAddText: {
     fontSize: 13.5,
     fontFamily: F.semibold,
+  },
+  customNoteInput: {
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    marginTop: 6,
+    fontSize: 13.5,
+    fontFamily: F.medium,
+  },
+  customNote: {
+    fontSize: 12.5,
+    fontFamily: F.medium,
+    marginTop: 2,
+    fontStyle: 'italic',
   },
   customSegmentRow: {
     marginTop: 4,

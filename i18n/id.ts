@@ -354,4 +354,10 @@ export const id: Strings = {
 
   // ── share card ──
   share_dialog_title: 'Bagikan cuaca',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'Pengingat',
+  custom_note: 'Tambah catatan (opsional)',
+  wind_rose: 'Mawar angin',
+  wind_rose_a11y: 'Arah dominan {dir}, tercepat {n}',
 };

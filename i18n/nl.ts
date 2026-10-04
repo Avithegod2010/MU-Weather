@@ -354,4 +354,10 @@ export const nl: Strings = {
 
   // ── share card ──
   share_dialog_title: 'Het weer delen',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'Herinnering',
+  custom_note: 'Notitie toevoegen (optioneel)',
+  wind_rose: 'Windroos',
+  wind_rose_a11y: 'Dominante richting {dir}, snelste {n}',
 };

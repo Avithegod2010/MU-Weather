@@ -354,4 +354,10 @@ export const hi: Strings = {
 
   // ── share card ──
   share_dialog_title: 'मौसम साझा करें',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'रिमाइंडर',
+  custom_note: 'एक नोट जोडें (वैकल्पिक)',
+  wind_rose: 'पवन गुलाब',
+  wind_rose_a11y: 'प्रमुख दिशा {dir}, सबसे तेज़ {n}',
 };

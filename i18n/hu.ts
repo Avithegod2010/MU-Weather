@@ -354,4 +354,10 @@ export const hu: Strings = {
 
   // ── share card ──
   share_dialog_title: 'Időjárás megosztása',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'Emlékeztető',
+  custom_note: 'Jegyzet hozzáadása (nem kötelező)',
+  wind_rose: 'Szélrózsa',
+  wind_rose_a11y: 'Uralkodó irány {dir}, leggyorsabb {n}',
 };

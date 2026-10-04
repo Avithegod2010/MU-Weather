@@ -354,4 +354,10 @@ export const bn: Strings = {
 
   // ── share card ──
   share_dialog_title: 'আবহাওয়া শেয়ার করুন',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'रিमাইন্ডার',
+  custom_note: 'একটি নোট যোগ করুন (ঝচ্ছিক)',
+  wind_rose: 'বাতাসের গোলাপ',
+  wind_rose_a11y: 'প্রধান দিক {dir}, দ্রুততম {n}',
 };

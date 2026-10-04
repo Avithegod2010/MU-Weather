@@ -10,6 +10,8 @@ import type { DayPoint, WeatherBundle } from '../api/types';
 export const CUSTOM_ALERTS_STORAGE_KEY = '@mu_weather/custom_alerts_v1';
 /** At most 5 rules - adding past the cap evicts the oldest (first created). */
 export const MAX_CUSTOM_ALERTS = 5;
+/** Optional user note: capped so a reminder stays one notification line. */
+export const MAX_NOTE_LENGTH = 80;
 
 export type CustomMetric = 'uv' | 'wind' | 'temp' | 'humidity' | 'pressure' | 'aqi' | 'cape';
 export type CustomOp = 'gte' | 'lte';
@@ -25,6 +27,12 @@ export interface CustomAlertRule {
    */
   value: number;
   enabled: boolean;
+  /**
+   * Optional user-authored reminder ("close the windows"). Shown VERBATIM in
+   * the notification when present - never translated, it is the user's own
+   * words. Absent/empty means the generic metric template is used.
+   */
+  note?: string;
 }
 
 const METRICS: readonly CustomMetric[] = [
@@ -91,6 +99,25 @@ export function newCustomRuleId(): string {
   return `custom-${Date.now().toString(36)}`;
 }
 
+/**
+ * Normalizes the optional note: non-string/blank -> undefined, whitespace
+ * collapsed, capped at MAX_NOTE_LENGTH. A corrupt note never invalidates the
+ * rule itself - it just falls back to the generic template.
+ */
+function sanitizeRule(rule: CustomAlertRule): CustomAlertRule {
+  if (rule.note === undefined) return rule;
+  if (typeof rule.note !== 'string') {
+    const { note: _dropped, ...rest } = rule;
+    return rest;
+  }
+  const note = rule.note.trim().replace(/\s+/g, ' ').slice(0, MAX_NOTE_LENGTH);
+  if (!note) {
+    const { note: _dropped, ...rest } = rule;
+    return rest;
+  }
+  return { ...rule, note };
+}
+
 /** Stored rules (oldest first), fully validated. Corrupt storage is treated absent. */
 export async function loadCustomAlerts(): Promise<CustomAlertRule[]> {
   try {
@@ -98,7 +125,7 @@ export async function loadCustomAlerts(): Promise<CustomAlertRule[]> {
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isValidRule);
+    return parsed.filter(isValidRule).map(sanitizeRule);
   } catch {
     return [];
   }
@@ -107,7 +134,7 @@ export async function loadCustomAlerts(): Promise<CustomAlertRule[]> {
 /** Validate, cap at MAX_CUSTOM_ALERTS (oldest evicted) and persist. Never throws. */
 export async function saveCustomAlerts(rules: CustomAlertRule[]): Promise<void> {
   try {
-    const valid = rules.filter(isValidRule).slice(-MAX_CUSTOM_ALERTS);
+    const valid = rules.filter(isValidRule).map(sanitizeRule).slice(-MAX_CUSTOM_ALERTS);
     await AsyncStorage.setItem(CUSTOM_ALERTS_STORAGE_KEY, JSON.stringify(valid));
   } catch {
     // Non-critical: the in-memory state still drives this session.
@@ -225,8 +252,10 @@ export function evaluateCustomRules(
         : t('notif_custom_lte').split('{metric}').join(metricName).split('{value}').join(valueText);
     triggered.push({
       key: `custom:${rule.id}`,
-      title: t('notif_custom_title').split('{metric}').join(metricName),
-      message: body,
+      // With a note, the notification carries the user's own words verbatim
+      // (title = "Reminder", body = the note); the condition still fires it.
+      title: rule.note ? t('custom_reminder') : t('notif_custom_title').split('{metric}').join(metricName),
+      message: rule.note ?? body,
       severity: METRIC_SEVERITY[rule.metric],
     });
   }

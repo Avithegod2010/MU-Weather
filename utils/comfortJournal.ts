@@ -40,7 +40,8 @@ export interface ComfortJournalEntry {
   at: number;
 }
 
-function isValidEntry(value: unknown): value is ComfortJournalEntry {
+/** Exported for the backup/restore (utils/backup.ts) — reused, not duplicated. */
+export function isValidEntry(value: unknown): value is ComfortJournalEntry {
   if (!value || typeof value !== 'object') return false;
   const entry = value as Partial<ComfortJournalEntry>;
   return (

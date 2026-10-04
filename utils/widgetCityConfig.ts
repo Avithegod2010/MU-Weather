@@ -20,7 +20,8 @@ export interface WidgetCityConfig {
   city: GeoLocation;
 }
 
-function isValidEntry(value: unknown): value is WidgetCityConfig {
+/** Exported for the backup/restore (utils/backup.ts) — reused, not duplicated. */
+export function isValidEntry(value: unknown): value is WidgetCityConfig {
   if (!value || typeof value !== 'object') return false;
   const entry = value as Partial<WidgetCityConfig>;
   const city = entry.city as Partial<GeoLocation> | undefined;

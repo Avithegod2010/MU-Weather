@@ -1,7 +1,7 @@
 import { t } from '../utils/i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle, Line, Path } from 'react-native-svg';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -433,6 +433,7 @@ export function TileDetailScreen({
   let aqiForecast: React.ReactNode = null;
   let scaleToggle: React.ReactNode = null;
   let dewChart: React.ReactNode = null;
+let windRose: React.ReactNode = null;
   let explorer: React.ReactNode = null;
   let factRows: Array<{ label: string; value: string }> = [];
   let bars: Array<{ label: string; value: string; fraction: number; color: string }> | null = null;
@@ -476,6 +477,76 @@ export function TileDetailScreen({
       },
     ];
     about = t('about_wind');
+    // 16-sector wind rose over the same 24h the chart above uses: each spoke's
+    // length = that sector's fastest hour vs the 24h max; the dominant sector
+    // (most hours, tie broken by speed) is accented. compassLabel's own
+    // rounding defines the sector boundaries, so labels always agree with it.
+    {
+      const sectorCount = new Array<number>(16).fill(0);
+      const sectorMax = new Array<number>(16).fill(0);
+      for (const hour of next24) {
+        const deg = hour.windDirection;
+        if (deg === null || Number.isNaN(deg)) continue;
+        const index = Math.round((((deg % 360) + 360) % 360) / 22.5) % 16;
+        sectorCount[index] += 1;
+        sectorMax[index] = Math.max(sectorMax[index], hour.windSpeed);
+      }
+      const globalMax = Math.max(...sectorMax);
+      if (globalMax > 0) {
+        let dominant = 0;
+        for (let index = 1; index < 16; index += 1) {
+          const beats =
+            sectorCount[index] > sectorCount[dominant] ||
+            (sectorCount[index] === sectorCount[dominant] && sectorMax[index] > sectorMax[dominant]);
+          if (beats) dominant = index;
+        }
+        const size = 150;
+        const center = size / 2;
+        const radius = 56;
+        const dominantLabel = compassLabel(dominant * 22.5);
+        const fastest = Math.round(convertWind(globalMax));
+        windRose = (
+          <View
+            style={styles.roseWrap}
+            accessible
+            accessibilityRole="image"
+            accessibilityLabel={t('wind_rose_a11y')
+              .replace('{dir}', dominantLabel)
+              .replace('{n}', `${fastest} ${windUnitLabel()}`)}
+          >
+            <View style={{ width: size, height: size }}>
+              <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+                <Circle cx={center} cy={center} r={radius + 8} stroke={theme.trackColor} strokeWidth={1} fill="none" />
+                <Circle cx={center} cy={center} r={radius / 2} stroke={theme.trackColor} strokeWidth={1} fill="none" />
+                <Circle cx={center} cy={center} r={2.5} fill={theme.textTertiary} />
+                {sectorMax.map((maxSpeed, index) => {
+                  if (maxSpeed <= 0) return null;
+                  const angle = ((index * 22.5 - 90) * Math.PI) / 180;
+                  const length = (maxSpeed / globalMax) * radius;
+                  const isDominant = index === dominant;
+                  return (
+                    <Line
+                      key={index}
+                      x1={center}
+                      y1={center}
+                      x2={center + Math.cos(angle) * length}
+                      y2={center + Math.sin(angle) * length}
+                      stroke={isDominant ? '#8FD0B8' : theme.textTertiary}
+                      strokeWidth={isDominant ? 4 : 2}
+                      strokeLinecap="round"
+                    />
+                  );
+                })}
+              </Svg>
+              <Text style={[styles.roseN, { color: theme.textTertiary }]}>N</Text>
+            </View>
+            <Text style={[styles.roseCaption, { color: theme.textSecondary }]}>
+              {dominantLabel} · {fastest} {windUnitLabel()}
+            </Text>
+          </View>
+        );
+      }
+    }
   } else if (view.topic === 'uv') {
     const uvNow = hours[0]?.uvIndex ?? null;
     const band = uvBandFor(uvNow);
@@ -893,6 +964,7 @@ export function TileDetailScreen({
   const pollutantOrder = pollutantChart ? order++ : -1;
   const aqiForecastOrder = aqiForecast ? order++ : -1;
   const dewOrder = dewChart ? order++ : -1;
+  const windRoseOrder = windRose ? order++ : -1;
   const barsOrder = bars ? order++ : -1;
   const progressOrder = progress ? order++ : -1;
   const factsOrder = factRows.length ? order++ : -1;
@@ -977,6 +1049,12 @@ export function TileDetailScreen({
         {dewChart ? (
           <SectionCard theme={theme} animStyle={animStyle} title={t('d_dew24')} order={dewOrder}>
             {dewChart}
+          </SectionCard>
+        ) : null}
+
+        {windRose ? (
+          <SectionCard theme={theme} animStyle={animStyle} title={t('wind_rose')} order={windRoseOrder}>
+            {windRose}
           </SectionCard>
         ) : null}
 
@@ -1242,6 +1320,23 @@ const styles = StyleSheet.create({
     fontFamily: F.medium,
     textAlign: 'right',
     flexShrink: 1,
+  },
+  roseWrap: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    gap: 6,
+    paddingVertical: 4,
+  },
+  roseN: {
+    position: 'absolute',
+    top: 0,
+    alignSelf: 'center',
+    fontSize: 9,
+    fontFamily: F.semibold,
+  },
+  roseCaption: {
+    fontSize: 12.5,
+    fontFamily: F.medium,
   },
   aqiDaysWrap: {
     gap: 8,

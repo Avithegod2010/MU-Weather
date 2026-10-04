@@ -31,10 +31,29 @@ export function useCustomAlerts() {
   }, []);
 
   const addRule = useCallback(
-    (metric: CustomMetric, op: CustomOp, value: number) => {
+    (metric: CustomMetric, op: CustomOp, value: number, note?: string) => {
       const rule: CustomAlertRule = { id: newCustomRuleId(), metric, op, value, enabled: true };
+      if (note && note.trim()) rule.note = note.trim();
       // Cap: adding past MAX_CUSTOM_ALERTS evicts the OLDEST (first created).
       const next = [...rules, rule].slice(-MAX_CUSTOM_ALERTS);
+      setRules(next);
+      void saveCustomAlerts(next);
+    },
+    [rules],
+  );
+
+  const setNote = useCallback(
+    (id: string, note: string) => {
+      const next = rules.map((rule) => {
+        if (rule.id !== id) return rule;
+        const trimmed = note.trim();
+        // Empty note = back to the generic template (field removed, not blank).
+        if (!trimmed) {
+          const { note: _dropped, ...rest } = rule;
+          return rest;
+        }
+        return { ...rule, note: trimmed };
+      });
       setRules(next);
       void saveCustomAlerts(next);
     },
@@ -61,5 +80,5 @@ export function useCustomAlerts() {
     [rules],
   );
 
-  return { rules, ready, addRule, toggleRule, deleteRule };
+  return { rules, ready, addRule, toggleRule, deleteRule, setNote };
 }

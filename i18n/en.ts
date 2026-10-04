@@ -811,6 +811,12 @@ export const en = {
 
   // ── share card ──
   share_dialog_title: 'Share the weather',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'Reminder',
+  custom_note: 'Add a note (optional)',
+  wind_rose: 'Wind rose',
+  wind_rose_a11y: 'Prevailing direction {dir}, fastest {n}',
 };
 
 export type Strings = typeof en;

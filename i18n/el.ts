@@ -354,4 +354,10 @@ export const el: Strings = {
 
   // ── share card ──
   share_dialog_title: 'Κοινή χρήση του καιρού',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'Υπενθύμιση',
+  custom_note: 'Προσθήκη σημείωσης (προαιρετικό)',
+  wind_rose: 'Ρόδα των ανέμων',
+  wind_rose_a11y: 'Κυρίαρχη κατεύθυνση {dir}, μεγαλύτερη {n}',
 };

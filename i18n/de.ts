@@ -354,4 +354,10 @@ export const de: Strings = {
 
   // ── share card ──
   share_dialog_title: 'Wetter teilen',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'Erinnerung',
+  custom_note: 'Notiz hinzufügen (optional)',
+  wind_rose: 'Windrose',
+  wind_rose_a11y: 'Vorherrschende Richtung {dir}, schnellste {n}',
 };

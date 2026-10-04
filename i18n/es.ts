@@ -354,4 +354,10 @@ export const es: Strings = {
 
   // ── share card ──
   share_dialog_title: 'Compartir el tiempo',
+
+  // ── backup + reminders + wind rose ──
+  custom_reminder: 'Recordatorio',
+  custom_note: 'Añadir una nota (opcional)',
+  wind_rose: 'Rosa de los vientos',
+  wind_rose_a11y: 'Dirección dominante {dir}, máxima {n}',
 };
