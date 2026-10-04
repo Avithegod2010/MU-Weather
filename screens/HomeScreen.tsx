@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import { applyWeatherAccent } from '../utils/weatherAccent';
+import { OfflineBanner } from '../components/OfflineBanner';
 import * as Sharing from 'expo-sharing';
 import * as Linking from 'expo-linking';
 import Animated, {
@@ -557,6 +558,16 @@ export function HomeScreen() {
               </Surface>
             </View>
           </View>
+
+          <OfflineBanner
+            theme={theme}
+            fetchedAt={weather.data?.fetchedAt ?? null}
+            offline={weather.offline}
+            onRetry={() => {
+              haptics.light();
+              weather.refresh();
+            }}
+          />
 
           {locationError ? (
             <Animated.View entering={FadeIn.duration(500)} style={styles.noticeWrap}>

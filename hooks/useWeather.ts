@@ -16,6 +16,8 @@ export function useWeather(location: GeoLocation | null) {
   const [data, setData] = useState<WeatherBundle | null>(null);
   const [status, setStatus] = useState<WeatherStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  /** True once a network-kind failure hit, cleared by the next successful fetch. */
+  const [offline, setOffline] = useState(false);
   const requestId = useRef(0);
   /** True once a live fetch has landed for the current location round. */
   const freshRef = useRef(false);
@@ -35,6 +37,7 @@ export function useWeather(location: GeoLocation | null) {
         freshRef.current = true;
         setData(bundle);
         setStatus('success');
+        setOffline(false);
         // Non-critical: persist for the next cold start, record the daily
         // predictions for forecast-vs-actual, and redraw the home-screen widget.
         void saveLastWeather(bundle);
@@ -44,10 +47,13 @@ export function useWeather(location: GeoLocation | null) {
         if (requestId.current !== id) return;
         if (error instanceof ApiError && error.kind === 'network') {
           setErrorMessage('No internet connection. Check your network and try again.');
+          setOffline(true);
         } else if (error instanceof ApiError && error.kind === 'server') {
           setErrorMessage('The weather service is having trouble right now.');
+          setOffline(false);
         } else {
           setErrorMessage('Could not load the weather. Please try again.');
+          setOffline(false);
         }
         setStatus('error');
       }
@@ -81,5 +87,5 @@ export function useWeather(location: GeoLocation | null) {
 
   const hasData = data !== null;
 
-  return { data, status, errorMessage, refresh, hasStaleData: hasData };
+  return { data, status, errorMessage, refresh, offline, hasStaleData: hasData };
 }

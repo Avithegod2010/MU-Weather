@@ -371,4 +371,14 @@ export const hu: Strings = {
   // ── weather-tinted accent ──
   s_weather_accent: 'Időjáráshoz igazodó kiemelés',
   s_weather_accent_sub: 'A gombok az aktuális időjárás színét veszik fel',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'Nincs internet',
+  offline_banner_stale: 'Régebbi adatok',
+  offline_banner_age: 'Utolsó frissítés',
+  offline_banner_no_data: 'Nincs még elmentett adat ehhez a városhoz',
+  age_now: 'épp most',
+  age_min: '{n} perce',
+  age_hour: '{n} órája',
+  age_day: '{n} napja',
 };

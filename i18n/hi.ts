@@ -371,4 +371,14 @@ export const hi: Strings = {
   // ── weather-tinted accent ──
   s_weather_accent: 'मौसम-आधारित एक्सेंट',
   s_weather_accent_sub: 'चिप्स और बटन वर्तमान मौसम का रंग लें',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'ओफलाइन',
+  offline_banner_stale: 'पुराना डेटा',
+  offline_banner_age: 'अंतिम अद्यतन',
+  offline_banner_no_data: 'इस शहर के लिए अभी कोई सहेजा गया डेटा नहीं',
+  age_now: 'अभी',
+  age_min: '{n} मिनिट पहले',
+  age_hour: '{n} घंटे पहले',
+  age_day: '{n} दिन पहले',
 };

@@ -371,4 +371,14 @@ export const it: Strings = {
   // ── weather-tinted accent ──
   s_weather_accent: 'Accento in base al meteo',
   s_weather_accent_sub: 'Chip e pulsanti assumono il colore del tempo attuale',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'Offline',
+  offline_banner_stale: 'Dati vecchi',
+  offline_banner_age: 'Aggiornato',
+  offline_banner_no_data: 'Nessun dato salvato per questa città',
+  age_now: 'adesso',
+  age_min: '{n} min fa',
+  age_hour: '{n} h fa',
+  age_day: '{n} g fa',
 };

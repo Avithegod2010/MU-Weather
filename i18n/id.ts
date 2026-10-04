@@ -371,4 +371,14 @@ export const id: Strings = {
   // ── weather-tinted accent ──
   s_weather_accent: 'Aksen sesuai cuaca',
   s_weather_accent_sub: 'Chip dan tombol mengambil warna cuaca saat ini',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'Luring',
+  offline_banner_stale: 'Data lama',
+  offline_banner_age: 'Terakhir diperbarui',
+  offline_banner_no_data: 'Belum ada data tersimpan untuk kota ini',
+  age_now: 'baru saja',
+  age_min: '{n} mnt lalu',
+  age_hour: '{n} jam lalu',
+  age_day: '{n} hr lalu',
 };

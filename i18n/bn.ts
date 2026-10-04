@@ -371,4 +371,14 @@ export const bn: Strings = {
   // ── weather-tinted accent ──
   s_weather_accent: 'আবহাওয়াভিত্তিক অ্যাকসেন্ট',
   s_weather_accent_sub: 'চিপ ও বাটন বর্তমান আবহাওয়ার রং নেয়',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'অফলাইন',
+  offline_banner_stale: 'পুরনো ডেটা',
+  offline_banner_age: 'সর্বশেষ হালনাগাদ',
+  offline_banner_no_data: 'এই শহরের জন্য এখনও কোনো সংরক্ষিত ডেটা নেই',
+  age_now: 'এইমাত্র',
+  age_min: '{n} মিনিট আগে',
+  age_hour: '{n} ঘণ্টা আগে',
+  age_day: '{n} দিন আগে',
 };

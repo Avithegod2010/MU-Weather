@@ -828,6 +828,16 @@ export const en = {
   // ── weather-tinted accent ──
   s_weather_accent: 'Weather-tinted accent',
   s_weather_accent_sub: 'Chips and buttons take the colour of current conditions',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'Offline',
+  offline_banner_stale: 'Older data',
+  offline_banner_age: 'Last updated',
+  offline_banner_no_data: 'No saved data for this city yet',
+  age_now: 'just now',
+  age_min: '{n} min ago',
+  age_hour: '{n} h ago',
+  age_day: '{n} d ago',
 };
 
 export type Strings = typeof en;

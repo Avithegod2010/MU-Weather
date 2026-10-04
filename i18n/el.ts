@@ -371,4 +371,14 @@ export const el: Strings = {
   // ── weather-tinted accent ──
   s_weather_accent: 'Τόνος ανάλογα με τον καιρό',
   s_weather_accent_sub: 'Τα στοιχεία και τα κουμπιά παίρνουν το χρώμα του τρέχοντος καιρού',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'Εκτός σύνδεσης',
+  offline_banner_stale: 'Παλιότερα δεδομένα',
+  offline_banner_age: 'Τελευταία ενημέρωση',
+  offline_banner_no_data: 'Δεν υπάρχουν ακόμη αποथηκευμένα δεδομένα για αυτή την πόλη',
+  age_now: 'μόλις τώρα',
+  age_min: 'πριν από {n} λ.',
+  age_hour: 'πριν από {n} ώ.',
+  age_day: 'πριν από {n} ημ.',
 };

@@ -371,4 +371,14 @@ export const nl: Strings = {
   // ── weather-tinted accent ──
   s_weather_accent: 'Weerafhankelijk accent',
   s_weather_accent_sub: 'Chips en knoppen nemen de kleur van het huidige weer',
+
+  // ── offline / cache-age banner ──
+  offline_banner_offline: 'Offline',
+  offline_banner_stale: 'Oudere gegevens',
+  offline_banner_age: 'Bijgewerkt',
+  offline_banner_no_data: 'Nog geen opgeslagen gegevens voor deze stad',
+  age_now: 'zojuist',
+  age_min: '{n} min geleden',
+  age_hour: '{n} u geleden',
+  age_day: '{n} d geleden',
 };
