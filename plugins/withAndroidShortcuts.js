@@ -3,7 +3,9 @@
  *
  * Expo SDK 57 has no native `android.shortcuts` app.json field, so this plugin
  * writes everything into the prebuilt android project on every EAS build:
- *   - res/xml/shortcuts.xml          (3 shortcuts: radar / search / favorites)
+ *   - res/xml/shortcuts.xml          (4 shortcuts: radar / search / favorites / compare —
+ *                                     Android hard-caps static shortcuts at 4; the journal
+ *                                     route muweather://journal still works as a deep link)
  *   - res/values/shortcuts_strings.xml + one values-XX/ per app language
  *   - <meta-data android:name="android.app.shortcuts" .../> on MainActivity
  *
@@ -35,6 +37,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Search city',
       shortcut_favorites: 'Favorites',
       shortcut_favorites_long: 'My favorites',
+      shortcut_compare: 'Compare',
+      shortcut_compare_long: 'Compare cities',
     },
   },
   {
@@ -46,6 +50,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'शहर खोजें',
       shortcut_favorites: 'पसंदीदा',
       shortcut_favorites_long: 'मेरे पसंदीदा',
+      shortcut_compare: 'तुलना',
+      shortcut_compare_long: 'शहरों की तुलना',
     },
   },
   {
@@ -57,6 +63,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'শহর অনুসন্ধান',
       shortcut_favorites: 'প্রিয়',
       shortcut_favorites_long: 'আমার প্রিয়',
+      shortcut_compare: 'তুলনা',
+      shortcut_compare_long: 'শহর তুলনা',
     },
   },
   {
@@ -68,6 +76,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Buscar ciudad',
       shortcut_favorites: 'Favoritos',
       shortcut_favorites_long: 'Mis favoritos',
+      shortcut_compare: 'Comparar',
+      shortcut_compare_long: 'Comparar ciudades',
     },
   },
   {
@@ -79,6 +89,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Rechercher une ville',
       shortcut_favorites: 'Favoris',
       shortcut_favorites_long: 'Mes favoris',
+      shortcut_compare: 'Comparer',
+      shortcut_compare_long: 'Comparer les villes',
     },
   },
   {
@@ -90,6 +102,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Stadt suchen',
       shortcut_favorites: 'Favoriten',
       shortcut_favorites_long: 'Meine Favoriten',
+      shortcut_compare: 'Vergleichen',
+      shortcut_compare_long: 'Städte vergleichen',
     },
   },
   {
@@ -101,6 +115,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Stad zoeken',
       shortcut_favorites: 'Favorieten',
       shortcut_favorites_long: 'Mijn favorieten',
+      shortcut_compare: 'Vergelijken',
+      shortcut_compare_long: 'Steden vergelijken',
     },
   },
   {
@@ -112,6 +128,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Αναζήτηση πόλης',
       shortcut_favorites: 'Αγαπημένα',
       shortcut_favorites_long: 'Τα αγαπημένα μου',
+      shortcut_compare: 'Σύγκριση',
+      shortcut_compare_long: 'Σύγκριση πόλεων',
     },
   },
   {
@@ -123,6 +141,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Város keresése',
       shortcut_favorites: 'Kedvencek',
       shortcut_favorites_long: 'Kedvenceim',
+      shortcut_compare: 'Összehasonlítás',
+      shortcut_compare_long: 'Városok összehasonlítása',
     },
   },
   {
@@ -134,6 +154,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Cari kota',
       shortcut_favorites: 'Favorit',
       shortcut_favorites_long: 'Favorit saya',
+      shortcut_compare: 'Bandingkan',
+      shortcut_compare_long: 'Bandingkan kota',
     },
   },
   {
@@ -145,6 +167,8 @@ const LOCALE_STRINGS = [
       shortcut_search_long: 'Cerca città',
       shortcut_favorites: 'Preferiti',
       shortcut_favorites_long: 'I miei preferiti',
+      shortcut_compare: 'Confronta',
+      shortcut_compare_long: 'Confronta città',
     },
   },
 ];
@@ -157,6 +181,12 @@ const SHORTCUTS = [
     data: 'muweather://favorites',
     short: 'shortcut_favorites',
     long: 'shortcut_favorites_long',
+  },
+  {
+    id: 'compare',
+    data: 'muweather://compare',
+    short: 'shortcut_compare',
+    long: 'shortcut_compare_long',
   },
 ];
 

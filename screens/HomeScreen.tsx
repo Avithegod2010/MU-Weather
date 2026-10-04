@@ -9,6 +9,8 @@ import {
   StyleSheet,
   Text,
   View,
+  findNodeHandle,
+  type ScrollView as ScrollViewInstance,
 } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
@@ -197,11 +199,31 @@ export function HomeScreen() {
     return () => subscription.remove();
   }, [settings.colorTheme, materialYouPalette]);
   // Android static app shortcuts (long-press app icon) deep-link in via
-  // muweather://radar | search | favorites, and the 4x2 widget's hour cells
+  // muweather://radar | search | favorites | compare, the journal card via
+  // muweather://journal, and the 4x2 widget's hour cells
   // via muweather://hour/<ISO>. Registered only in real builds - Expo Go
   // cannot receive launcher shortcut or widget-click intents.
   const [hourFocus, setHourFocus] = useState<HourFocusTarget | null>(null);
   const hourFocusSeq = useRef(0);
+  const scrollRef = useRef<ScrollViewInstance>(null);
+  const journalWrapRef = useRef<View>(null);
+  // Best-effort scroll-to-card for muweather://journal: measure the card
+  // against the scroller and bring it into view (silent no-op when the
+  // journal tile is hidden or the native measure fails).
+  const scrollToJournal = () => {
+    const view = journalWrapRef.current;
+    const scroller = scrollRef.current;
+    if (!view || !scroller) return;
+    const node = findNodeHandle(scroller);
+    if (node === null) return;
+    view.measureLayout(
+      node,
+      (_x, y) => {
+        scroller.scrollTo({ y: Math.max(0, y - 96), animated: true });
+      },
+      () => {},
+    );
+  };
   useEffect(() => {
     const openShortcut = (url: string | null) => {
       if (!url) return;
@@ -229,6 +251,8 @@ export function HomeScreen() {
       if (target === 'radar') setRadarOpen(true);
       else if (target === 'search') setSearchOpen(true);
       else if (target === 'favorites') setFavoritesOpen(true);
+      else if (target === 'compare') setCompareOpen(true);
+      else if (target === 'journal') scrollToJournal();
     };
     Linking.getInitialURL().then(openShortcut).catch(() => {});
     const subscription = Linking.addEventListener('url', (event) => openShortcut(event.url));
@@ -436,6 +460,7 @@ export function HomeScreen() {
       {active ? (
         <ScrollYProvider value={scrollY}>
         <Animated.ScrollView
+          ref={scrollRef}
           contentContainerStyle={[
             styles.content,
             theme.density === 'compact' && styles.contentCompact,
@@ -616,22 +641,24 @@ export function HomeScreen() {
               {/* Weather journal: "How did today feel?" - only prompts for today,
                   and its answer calibrates the wear line above. */}
               {showSection('journal') ? (
-                <ComfortJournalCard
-                  theme={theme}
-                  today={comfort.today}
-                  total={comfort.total}
-                  onRate={(rating) => {
-                    const data = weather.data;
-                    comfort.rate(rating, {
-                      tApparent: data ? data.current.apparentTemperature : null,
-                      humidity: data ? data.current.humidity : null,
-                      wind: data ? data.current.windSpeed : null,
-                      tMax: data && data.daily[0] ? data.daily[0].tMax : (data ? data.current.temperature : 0),
-                      tMin: data && data.daily[0] ? data.daily[0].tMin : (data ? data.current.temperature : 0),
-                    });
-                  }}
-                  revealDelay={100}
-                />
+                <View ref={journalWrapRef} collapsable={false}>
+                  <ComfortJournalCard
+                    theme={theme}
+                    today={comfort.today}
+                    total={comfort.total}
+                    onRate={(rating) => {
+                      const data = weather.data;
+                      comfort.rate(rating, {
+                        tApparent: data ? data.current.apparentTemperature : null,
+                        humidity: data ? data.current.humidity : null,
+                        wind: data ? data.current.windSpeed : null,
+                        tMax: data && data.daily[0] ? data.daily[0].tMax : (data ? data.current.temperature : 0),
+                        tMin: data && data.daily[0] ? data.daily[0].tMin : (data ? data.current.temperature : 0),
+                      });
+                    }}
+                    revealDelay={100}
+                  />
+                </View>
               ) : null}
 
               {showSection('nowcast') ? (
