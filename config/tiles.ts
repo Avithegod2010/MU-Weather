@@ -66,6 +66,7 @@ export const TILE_GROUPS: TileGroup[] = [
       { key: 'calendar', label: 'Calendar weather' },
       { key: 'marine', label: 'Marine forecast' },
       { key: 'bestWindow', label: 'Best time outdoors' },
+      { key: 'records', label: 'Records' },
       { key: 'aurora', label: 'Aurora' },
     ],
   },

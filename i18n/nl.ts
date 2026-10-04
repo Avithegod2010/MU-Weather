@@ -417,4 +417,13 @@ export const nl: Strings = {
   yr_fair_days: 'Heldere dagen',
   yr_coverage: 'Op basis van {n} dagen die op dit apparaat zijn vastgelegd',
   tile_yearreview: 'Jaaroverzicht',
+
+  // ── record breakers ──
+  rec_title: 'Records',
+  rec_empty: 'Archiefrecords voor deze stad worden verzameld...',
+  rec_hottest: 'Warmste dag',
+  rec_wettest: 'Natste dag',
+  rec_windiest: 'Sterkste wind',
+  rec_window: 'Archief sinds {from} · {n} dagen doorzocht',
+  tile_records: 'Records',
 };

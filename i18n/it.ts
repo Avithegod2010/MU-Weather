@@ -417,4 +417,13 @@ export const it: Strings = {
   yr_fair_days: 'Giorni sereni',
   yr_coverage: 'Dati {n} giorni registrati su questo dispositivo',
   tile_yearreview: 'Riepilogo dell’anno',
+
+  // ── record breakers ──
+  rec_title: 'Record',
+  rec_empty: 'Raccolta dei record d’archivio per questa città...',
+  rec_hottest: 'Giorno più caldo',
+  rec_wettest: 'Giorno più piovoso',
+  rec_windiest: 'Vento più forte',
+  rec_window: 'Archivio dal {from} · {n} giorni esaminati',
+  tile_records: 'Record',
 };

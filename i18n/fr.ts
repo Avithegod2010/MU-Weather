@@ -417,4 +417,13 @@ export const fr: Strings = {
   yr_fair_days: 'Jours dégagés',
   yr_coverage: 'D’après {n} jours enregistrés sur cet appareil',
   tile_yearreview: 'Bilan de l’année',
+
+  // ── record breakers ──
+  rec_title: 'Records',
+  rec_empty: 'Collecte des records d’archive pour cette ville...',
+  rec_hottest: 'Jour le plus chaud',
+  rec_wettest: 'Jour le plus pluvieux',
+  rec_windiest: 'Vent le plus fort',
+  rec_window: 'Archives depuis {from} · {n} jours examinés',
+  tile_records: 'Records',
 };

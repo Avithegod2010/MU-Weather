@@ -118,6 +118,58 @@ async function requestArchiveWindow(
 }
 
 /**
+ * Records are searched from this date. Five-plus years of ERA5 archive keeps
+ * the answer meaningful (a 2020-to-date window survives most single storms)
+ * while still costing a single request.
+ */
+export const RECORD_WINDOW_START = '2020-01-01';
+
+/** One archive day reduced to the three record-breaking fields. */
+export interface RecordDay {
+  date: string;
+  tMax: number;
+  precipSum: number;
+  /** Daily maximum 10 m wind km/h, null when the archive row has none. */
+  windMax: number | null;
+}
+
+export interface LocationRecords {
+  /** First date covered, `YYYY-MM-DD`. */
+  from: string;
+  /** Last date covered, `YYYY-MM-DD`. */
+  to: string;
+  rows: RecordDay[];
+}
+
+/**
+ * Every archive day from RECORD_WINDOW_START to yesterday for one location, in
+ * ONE ranged request. The same requestArchiveWindow helper the 30-day view and
+ * the historical explorer use, just over a much wider window (~2 400 daily
+ * rows, a few hundred kB) - which is far cheaper than paging per year and
+ * keeps the record search exhaustive. Returns null on any failure so the card
+ * simply stays hidden.
+ */
+export async function fetchLocationRecords(
+  lat: number,
+  lon: number,
+): Promise<LocationRecords | null> {
+  const end = isoDaysAgo(1);
+  try {
+    const days = await requestArchiveWindow(lat, lon, RECORD_WINDOW_START, end);
+    if (days.length === 0) return null;
+    const rows: RecordDay[] = days.map((day) => ({
+      date: day.date,
+      tMax: day.tMax,
+      precipSum: day.precipSum,
+      windMax: typeof day.windMax === 'number' ? day.windMax : null,
+    }));
+    return { from: RECORD_WINDOW_START, to: end, rows };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Actual observed weather for the past `days` days (default 7) from the
  * Open-Meteo Archive API: today-(days+1) .. today-1. The archive era
  * sometimes lags just behind the live era, so a failed or empty recent

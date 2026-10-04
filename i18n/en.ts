@@ -874,6 +874,15 @@ export const en = {
   yr_fair_days: 'Clear days',
   yr_coverage: 'From {n} days recorded on this device',
   tile_yearreview: 'Year in review',
+
+  // ── record breakers ──
+  rec_title: 'Records',
+  rec_empty: 'Gathering archive records for this city...',
+  rec_hottest: 'Hottest day',
+  rec_wettest: 'Wettest day',
+  rec_windiest: 'Strongest wind',
+  rec_window: 'Archive since {from} · {n} days searched',
+  tile_records: 'Records',
 };
 
 export type Strings = typeof en;

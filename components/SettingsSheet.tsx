@@ -49,6 +49,7 @@ import {
   FileSpreadsheet,
   Braces,
   Sunrise,
+  Star,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import appJson from '../app.json';
@@ -87,6 +88,7 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   marine: 'tile_marine',
   aurora: 'tile_aurora',
   bestWindow: 'tile_best_window',
+  records: 'tile_records',
 };
 
 /**
@@ -178,6 +180,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   warnings: TriangleAlert,
   journal: Thermometer,
   yearReview: CalendarDays,
+  records: Star,
 };
 
 interface SegmentedOption {

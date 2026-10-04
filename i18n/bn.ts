@@ -417,4 +417,13 @@ export const bn: Strings = {
   yr_fair_days: 'পরিষ্কার দিন',
   yr_coverage: 'এই ডিভাইসে রেকার্ড করা {n} দিন থেকে',
   tile_yearreview: 'বহরের পর্যালোচনা',
+
+  // ── record breakers ──
+  rec_title: 'স্টারীক রেকহর্ड',
+  rec_empty: 'ই শহরের আর্চাইভ রেকহর্ड নির্যার ডাক্ছে।',
+  rec_hottest: 'সবচেয়ে গরম দিন',
+  rec_wettest: 'সবচেয়ে ভেজা দিন',
+  rec_windiest: 'সবচেয়ে বাতাস রস',
+  rec_window: '{from} থেকে আর্চাইভ রেকহর্ड · {n} দিন ছাড়ে',
+  tile_records: 'রেকহর্ड',
 };

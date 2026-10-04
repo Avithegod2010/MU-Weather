@@ -417,4 +417,13 @@ export const el: Strings = {
   yr_fair_days: 'Καθαρές μέρες',
   yr_coverage: 'Από {n} ημέρες που καταγράφηκαν σε αυτή τη συσκευή',
   tile_yearreview: 'Απολογισμός χρονιάς',
+
+  // ── record breakers ──
+  rec_title: 'Ρεκόρδ',
+  rec_empty: 'Συγλέγονται ρεκόρδ αρχείου για την πόλη...',
+  rec_hottest: 'Η θερμότερη μέρα',
+  rec_wettest: 'Η πιο βρεγμένη μάρα',
+  rec_windiest: 'Ο ισχυρότερος ανεμος',
+  rec_window: 'Αρχείο από {from} · {n} ήμερες διερεχημένες',
+  tile_records: 'Ρεκόρδ',
 };

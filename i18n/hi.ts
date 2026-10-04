@@ -417,4 +417,13 @@ export const hi: Strings = {
   yr_fair_days: 'साफ़ दिन',
   yr_coverage: 'इस डिवाइस पर दर्ज {n} दिनों से',
   tile_yearreview: 'वर्ष की समीक्षा',
+
+  // ── record breakers ──
+  rec_title: 'सटारीक रेकॉर्ड',
+  rec_empty: 'इस शहर के आर्चाइव रेकॉर्ड जुटा रहे हैं।',
+  rec_hottest: 'सबसे गर्म दिन',
+  rec_wettest: 'सबसे भिगोब दिन',
+  rec_windiest: 'सबसे तेज हवा',
+  rec_window: '{from} से आर्चाइव रेकॉर्ड · {n} दिन जाँचे',
+  tile_records: 'रेकॉर्ड',
 };

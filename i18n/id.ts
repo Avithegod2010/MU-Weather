@@ -417,4 +417,13 @@ export const id: Strings = {
   yr_fair_days: 'Hari cerah',
   yr_coverage: 'Berdasarkan {n} hari yang tercatat di perangkat ini',
   tile_yearreview: 'Ringkasan tahun',
+
+  // ── record breakers ──
+  rec_title: 'Rekor',
+  rec_empty: 'Mengumpulkan rekor arsip untuk kota ini...',
+  rec_hottest: 'Hari terpanas',
+  rec_wettest: 'Hari terbasah',
+  rec_windiest: 'Angin terkuat',
+  rec_window: 'Arsip sejak {from} · {n} hari ditelusuri',
+  tile_records: 'Rekor',
 };

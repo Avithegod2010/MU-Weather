@@ -417,4 +417,13 @@ export const hu: Strings = {
   yr_fair_days: 'Tiszta napok',
   yr_coverage: '{n} ezen az eszközön rögzített nap alapján',
   tile_yearreview: 'Éves visszatekintés',
+
+  // ── record breakers ──
+  rec_title: 'Rekordok',
+  rec_empty: 'Archívumi rekordok gyŷjtöse ehhez a városhoz...',
+  rec_hottest: 'Legmelegebb nap',
+  rec_wettest: 'Legesősebb nap',
+  rec_windiest: 'Legerősebb szél',
+  rec_window: 'Archívum {from} óta · {n} nap átkeresve',
+  tile_records: 'Rekordok',
 };

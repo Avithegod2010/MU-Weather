@@ -19,6 +19,8 @@ import { useSunriseAlarm } from '../hooks/useSunriseAlarm';
 import { useRainOngoing } from '../hooks/useRainOngoing';
 import { useYearReview } from '../hooks/useYearReview';
 import { YearReviewCard } from '../components/YearReviewCard';
+import { RecordCard } from '../components/RecordCard';
+import { useRecords } from '../hooks/useRecords';
 import * as Sharing from 'expo-sharing';
 import * as Linking from 'expo-linking';
 import Animated, {
@@ -308,6 +310,8 @@ export function HomeScreen() {
   const yearAgo = useYearAgo(active);
   // Year in review: on-device stats fed by the past-days archive fetch.
   const yearReview = useYearReview(active);
+  // Record breakers: one ranged archive fetch, cached for a day.
+  const records = useRecords(active);
   useDigest(settings.digestEnabled, settings.digestHour, weather.data, ensemble.spread);
   useGoldenHour(settings.goldenHourEnabled, weather.data);
   useRainAlert(settings.rainAlertEnabled, weather.data);
@@ -696,6 +700,10 @@ export function HomeScreen() {
 
               {showSection('yearReview') ? (
                 <YearReviewCard theme={theme} rows={yearReview.rows} revealDelay={140} />
+              ) : null}
+
+              {showSection('records') ? (
+                <RecordCard theme={theme} records={records.records} revealDelay={180} />
               ) : null}
 
               {showSection('nowcast') ? (
