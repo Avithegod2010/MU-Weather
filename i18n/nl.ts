@@ -367,4 +367,8 @@ export const nl: Strings = {
   preset_metric: 'Metrisch',
   preset_us: 'VS',
   preset_uk: 'VK',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'Weerafhankelijk accent',
+  s_weather_accent_sub: 'Chips en knoppen nemen de kleur van het huidige weer',
 };

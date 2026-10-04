@@ -367,4 +367,8 @@ export const bn: Strings = {
   preset_metric: 'মেট্রিক',
   preset_us: 'US',
   preset_uk: 'UK',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'আবহাওয়াভিত্তিক অ্যাকসেন্ট',
+  s_weather_accent_sub: 'চিপ ও বাটন বর্তমান আবহাওয়ার রং নেয়',
 };

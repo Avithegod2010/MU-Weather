@@ -367,4 +367,8 @@ export const id: Strings = {
   preset_metric: 'Metrik',
   preset_us: 'AS',
   preset_uk: 'Inggris',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'Aksen sesuai cuaca',
+  s_weather_accent_sub: 'Chip dan tombol mengambil warna cuaca saat ini',
 };

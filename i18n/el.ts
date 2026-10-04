@@ -367,4 +367,8 @@ export const el: Strings = {
   preset_metric: 'Μετρικό',
   preset_us: 'ΗΠΥ',
   preset_uk: 'Η̖',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'Τόνος ανάλογα με τον καιρό',
+  s_weather_accent_sub: 'Τα στοιχεία και τα κουμπιά παίρνουν το χρώμα του τρέχοντος καιρού',
 };

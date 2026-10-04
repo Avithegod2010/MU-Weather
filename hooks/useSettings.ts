@@ -59,6 +59,12 @@ export interface AppSettings {
   pastDaysRange: 7 | 30 | 'accuracy';
   /** Home card spacing - 'compact' tightens paddings and hero typography */
   layoutDensity: LayoutDensity;
+  /**
+   * Tint chips, switches and active rings with the current conditions
+   * (home screen only). Ignored while the Material You theme is active -
+   * the wallpaper-derived palette stays authoritative there.
+   */
+  weatherAccentEnabled: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -86,6 +92,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   hiddenTiles: [],
   pastDaysRange: 7,
   layoutDensity: 'comfortable',
+  weatherAccentEnabled: false,
   /** Default comparison model shown first in the model-comparison screen — can be
    *  changed in Settings → "Model comparison". Does not affect the home forecast
    *  (that always uses the primary ECMWF model); only gates the comparison screen

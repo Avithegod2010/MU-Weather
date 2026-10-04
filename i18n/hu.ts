@@ -367,4 +367,8 @@ export const hu: Strings = {
   preset_metric: 'Metrikus',
   preset_us: 'USA',
   preset_uk: 'UK',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'Időjáráshoz igazodó kiemelés',
+  s_weather_accent_sub: 'A gombok az aktuális időjárás színét veszik fel',
 };

@@ -13,6 +13,7 @@ import {
   type ScrollView as ScrollViewInstance,
 } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
+import { applyWeatherAccent } from '../utils/weatherAccent';
 import * as Sharing from 'expo-sharing';
 import * as Linking from 'expo-linking';
 import Animated, {
@@ -258,20 +259,29 @@ export function HomeScreen() {
     const subscription = Linking.addEventListener('url', (event) => openShortcut(event.url));
     return () => subscription.remove();
   }, []);
+  // The condition drives the optional weather-tinted accent below, so it has to
+  // be read before the theme memo.
+  const { condition, conditionLabel } = weatherThemeResult;
   const theme = useMemo(
     () =>
-      applyDensity(
-        applyColorTheme(
-          applyHomeBackground(
-            weatherThemeResult.theme,
-            settings.homeBackground,
+      applyWeatherAccent(
+        applyDensity(
+          applyColorTheme(
+            applyHomeBackground(
+              weatherThemeResult.theme,
+              settings.homeBackground,
+              settings.styleMode,
+            ),
+            settings.colorTheme,
             settings.styleMode,
+            materialYouPalette,
           ),
-          settings.colorTheme,
-          settings.styleMode,
-          materialYouPalette,
+          settings.layoutDensity,
         ),
-        settings.layoutDensity,
+        // Material You is deliberately left alone: the wallpaper palette is
+        // already dynamic and stays authoritative there.
+        settings.weatherAccentEnabled && settings.colorTheme !== 'materialyou',
+        condition,
       ),
     [
       weatherThemeResult.theme,
@@ -279,10 +289,11 @@ export function HomeScreen() {
       settings.colorTheme,
       settings.styleMode,
       settings.layoutDensity,
+      settings.weatherAccentEnabled,
+      condition,
       materialYouPalette,
     ],
   );
-  const { condition, conditionLabel } = weatherThemeResult;
   const alertState = useAlerts(weather.data, FEATURES.backgroundAlerts && settings.backgroundAlerts);
   const providerStatus = useProviderStatus(
     active,

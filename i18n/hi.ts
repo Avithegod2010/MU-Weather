@@ -367,4 +367,8 @@ export const hi: Strings = {
   preset_metric: 'मीट्रिक',
   preset_us: 'US',
   preset_uk: 'UK',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'मौसम-आधारित एक्सेंट',
+  s_weather_accent_sub: 'चिप्स और बटन वर्तमान मौसम का रंग लें',
 };

@@ -469,6 +469,28 @@ export function SettingsSheet({
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Palette size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_weather_accent')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_weather_accent_sub')}
+              </Text>
+            </View>
+            <Switch
+              value={settings.weatherAccentEnabled}
+              onValueChange={(value) => {
+                haptics.select();
+                onUpdate({ weatherAccentEnabled: value });
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.weatherAccentEnabled ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>

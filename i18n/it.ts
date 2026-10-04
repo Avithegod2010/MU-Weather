@@ -367,4 +367,8 @@ export const it: Strings = {
   preset_metric: 'Metrico',
   preset_us: 'USA',
   preset_uk: 'UK',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'Accento in base al meteo',
+  s_weather_accent_sub: 'Chip e pulsanti assumono il colore del tempo attuale',
 };

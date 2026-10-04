@@ -824,6 +824,10 @@ export const en = {
   preset_metric: 'Metric',
   preset_us: 'US',
   preset_uk: 'UK',
+
+  // ── weather-tinted accent ──
+  s_weather_accent: 'Weather-tinted accent',
+  s_weather_accent_sub: 'Chips and buttons take the colour of current conditions',
 };
 
 export type Strings = typeof en;
