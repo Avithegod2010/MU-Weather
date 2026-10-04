@@ -16,6 +16,7 @@ import {
   ALERTS_STORAGE_KEY,
 } from '../utils/fireAlertNotifications';
 import { fireFavoriteCityAlerts } from '../utils/favoriteCityAlerts';
+import { areWidgetsInUse } from '../utils/widgetPresence';
 import {
   registerBackgroundAlerts,
   unregisterBackgroundAlerts,
@@ -88,12 +89,26 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
   useEffect(() => {
     if (!ready) return;
     const anyAlertEnabled = isAnyRuleEnabled(settings);
-    const shouldRegister = backgroundEnabled && anyAlertEnabled;
-    if (shouldRegister) {
+    if (backgroundEnabled && anyAlertEnabled) {
       void registerBackgroundAlerts();
-    } else {
-      void unregisterBackgroundAlerts();
+      return;
     }
+    // Widget-only users: a placed widget promises 30-minute freshness (its own
+    // updatePeriodMillis), so the background task keeps the bundle fresh for it
+    // too - roughly one weather fetch per 30 minutes while a widget is placed.
+    // The master background toggle still wins: off means no background work.
+    let cancelled = false;
+    void areWidgetsInUse().then((inUse) => {
+      if (cancelled) return;
+      if (backgroundEnabled && inUse) {
+        void registerBackgroundAlerts();
+      } else {
+        void unregisterBackgroundAlerts();
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [backgroundEnabled, settings, ready]);
 
   return { settings, toggleAlert, updateQuietHours, activeAlerts, ready };

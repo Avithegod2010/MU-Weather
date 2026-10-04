@@ -14,7 +14,7 @@ import { DEFAULT_ALERT_SETTINGS, isAnyRuleEnabled } from '../utils/alertRules';
 import { rescheduleDigestFromCache, SETTINGS_KEY } from '../hooks/useDigest';
 import { fireFavoriteCityAlerts } from '../utils/favoriteCityAlerts';
 import { refreshCitySnapshots, toCitySnapshot, saveCitySnapshot } from '../utils/citySnapshots';
-import { loadWidgetCities } from '../utils/widgetCityConfig';
+import { areWidgetsInUse } from '../utils/widgetPresence';
 import { LANGUAGES, setLanguage } from '../utils/i18n';
 import type { LanguageKey } from '../utils/i18n';
 import { setUnits } from '../utils/format';
@@ -39,12 +39,12 @@ if (!globalScope.__muBgAlertTaskDefined) {
       const settingsRaw = await AsyncStorage.getItem(SETTINGS_KEY);
       const storedSettings: Record<string, unknown> = settingsRaw ? JSON.parse(settingsRaw) : {};
       const digestEnabled = storedSettings.digestEnabled === true;
-      // A placed multi-city widget needs this task to run too, or its city
-      // snapshots would never refresh while the app is closed. (The two
-      // built-in widgets have the same pre-existing gap - they are only fed
-      // when an alert or the digest is on.)
-      const cityWidgetConfigured = (await loadWidgetCities()).length > 0;
-      if (!anyAlertEnabled && !digestEnabled && !cityWidgetConfigured) {
+      // A placed widget needs this task to run, or it would never refresh while
+      // the app is closed - the system's own 30-minute redraw re-renders the
+      // SAME stale cache. Multi-city widgets are tracked explicitly; built-in
+      // widgets by a recent handler stamp (see utils/widgetPresence).
+      const widgetsInUse = await areWidgetsInUse();
+      if (!anyAlertEnabled && !digestEnabled && !widgetsInUse) {
         return BackgroundTask.BackgroundTaskResult.Success;
       }
 

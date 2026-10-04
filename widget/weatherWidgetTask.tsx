@@ -14,6 +14,7 @@ import {
   renderCityWidgetUnconfigured,
 } from '../components/WeatherWidgetCity';
 import { loadCitySnapshot } from '../utils/citySnapshots';
+import { stampWidgetRendered } from '../utils/widgetPresence';
 import { loadWidgetCity, loadWidgetCities } from '../utils/widgetCityConfig';
 import type { WeatherBundle } from '../api/types';
 
@@ -156,6 +157,11 @@ if (!globalScope.__muWidgetTaskDefined) {
     // WIDGET_ADDED / WIDGET_UPDATE / WIDGET_RESIZED all redraw from cache.
     // The handler is shared by all three widget names - render the matching
     // layout for whichever one fired.
+    // Stamp "a widget rendered" first: the SYSTEM only invokes this handler
+    // while a widget is placed, so a recent stamp is the app's only signal
+    // (the library exposes no placed-widget state) that widgets are in use
+    // and the background task should keep the bundle fresh for them.
+    void stampWidgetRendered(widgetInfo.widgetName);
     if (widgetInfo.widgetName === WEATHER_WIDGET_NAME_LARGE) {
       renderWidget(await renderFromCacheLarge());
       return;
