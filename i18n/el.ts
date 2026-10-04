@@ -365,8 +365,8 @@ export const el: Strings = {
   s_unit_presets: 'Προεπιλογές μονάδων',
   s_unit_presets_sub: 'Ρύθμιση θερμοκρασίας, ανέμου, πίεσης και βροχής με ένα πάτημα',
   preset_metric: 'Μετρικό',
-  preset_us: 'ΗΠΥ',
-  preset_uk: 'Η̖',
+  preset_us: 'ΗΠΑ',
+  preset_uk: 'ΗΒ',
 
   // ── weather-tinted accent ──
   s_weather_accent: 'Τόνος ανάλογα με τον καιρό',
@@ -376,7 +376,7 @@ export const el: Strings = {
   offline_banner_offline: 'Εκτός σύνδεσης',
   offline_banner_stale: 'Παλιότερα δεδομένα',
   offline_banner_age: 'Τελευταία ενημέρωση',
-  offline_banner_no_data: 'Δεν υπάρχουν ακόμη αποथηκευμένα δεδομένα για αυτή την πόλη',
+  offline_banner_no_data: 'Δεν υπάρχουν ακόμη αποθηκευμένα δεδομένα για αυτή την πόλη',
   age_now: 'μόλις τώρα',
   age_min: 'πριν από {n} λ.',
   age_hour: 'πριν από {n} ώ.',
@@ -384,32 +384,32 @@ export const el: Strings = {
 
   // ── per-metric model leaderboard ──
   acc_metric_temp: 'Μέγιστη θερμ.',
-  acc_metric_wind: 'Ανεμος',
+  acc_metric_wind: 'Άνεμος',
   acc_metric_rain: 'Βροχή',
   acc_models_empty_hint: 'Ο άνεμος και η βροχή χρειάζονται λίγες ημέρες καταγεγραμμένες με τα νέα μοντέλα.',
 
   // ── sunrise alarm ──
-  s_sunrise_alarm: 'ασυδεριμσλήρος ήλιου',
-  s_sunrise_alarm_sub: 'χτυπάει πριν ανατολή σε αυτήν ανατολή σε αυτήν πόλη, και με την εφαρμένη εφαρμογή',
+  s_sunrise_alarm: 'Αφυπνιστήριο ήλιου',
+  s_sunrise_alarm_sub: 'Χτυπάει πριν την ανατολή του ήλιου σε αυτή την πόλη, ακόμα και με την εφαρμογή κλειστή',
   sunrise_alarm_at: 'Στην ανατολή',
   sunrise_alarm_opt: '{n} λ.',
-  notif_sunrise_title: 'Ηόρα ήλιος',
-  notif_sunrise_body: 'ο ήλιος ανατελεί σε περίπου {n} λεπτά',
-  notif_sunrise_body_now: 'Ο ήλιος ανατελγι',
+  notif_sunrise_title: 'Ώρα ήλιου',
+  notif_sunrise_body: 'ο ήλιος ανατέλλει σε περίπου {n} λεπτά',
+  notif_sunrise_body_now: 'Ο ήλιος ανατέλλει',
 
   // ── rain status notification ──
-  s_rain_ongoing: 'Στήση βροχής',
-  s_rain_ongoing_sub: 'Κρατάει μία ειδοποίηση όχο βροχήζει ή γίνεται',
-  notif_rain_ongoing_title: 'Βροχή μόπος',
-  notif_rain_ongoing_now: 'Βροχήζει στην {city}',
+  s_rain_ongoing: 'Κατάσταση βροχής',
+  s_rain_ongoing_sub: 'Κρατάει μία ειδοποίηση όσο βρέχει ή πρόκειται να βρέξει',
+  notif_rain_ongoing_title: 'Βροχή έρχεται',
+  notif_rain_ongoing_now: 'Βρέχει στην {city}',
   notif_rain_ongoing_soon: 'Βροχή σε ~{n} λεπτά στην {city}',
-  notif_rain_ongoing_later: 'Οικοί βροχή τις επόμενες ώρες στην {city}',
+  notif_rain_ongoing_later: 'Πιθανή βροχή τις επόμενες ώρες στην {city}',
 
   // ── year in review ──
   yr_title: 'Απολογισμός χρονιάς',
-  yr_empty: 'ΐνοίξτε την εφαρμογή για λίγες ακόμα μέρες και θα γεμίσει μόνο του.',
+  yr_empty: 'Άνοιξτε την εφαρμογή για λίγες ακόμα μέρες και θα γεμίσει μόνο του.',
   yr_hottest: 'Η θερμότερη μέρα',
-  yr_coldest: 'Η ψυρότερη μέρα',
+  yr_coldest: 'Η ψυχρότερη μέρα',
   yr_avg_high: 'Μέση μέγιστη',
   yr_avg_low: 'Μέση ελάχιστη',
   yr_total_rain: 'Συνολική βροχή',
@@ -422,8 +422,8 @@ export const el: Strings = {
   rec_title: 'Ρεκόρδ',
   rec_empty: 'Συγλέγονται ρεκόρδ αρχείου για την πόλη...',
   rec_hottest: 'Η θερμότερη μέρα',
-  rec_wettest: 'Η πιο βρεγμένη μάρα',
-  rec_windiest: 'Ο ισχυρότερος ανεμος',
-  rec_window: 'Αρχείο από {from} · {n} ήμερες διερεχημένες',
+  rec_wettest: 'Η πιο βρεγμένη μέρα',
+  rec_windiest: 'Ο ισχυρότερος άνεμος',
+  rec_window: 'Αρχείο από {from} · {n} ημέρες που εξετάστηκαν',
   tile_records: 'Ρεκόρδ',
 };

@@ -386,11 +386,11 @@ export const hu: Strings = {
   acc_metric_temp: 'Legmag. hőm.',
   acc_metric_wind: 'Szél',
   acc_metric_rain: 'Eső',
-  acc_models_empty_hint: 'A szélhez és az esőhöz néhány nap szükséges van az új modellekkel.',
+  acc_models_empty_hint: 'A szélhez és az esőhöz néhány, az új modellekkel rögzített nap szükséges.',
 
   // ── sunrise alarm ──
   s_sunrise_alarm: 'Napkelte ébresztő',
-  s_sunrise_alarm_sub: 'Cseng a napkelte előtt ebben a városban, aképpen zárva az alkalmazással',
+  s_sunrise_alarm_sub: 'Cseng a napkelte előtt ebben a városban, akkor is, ha az alkalmazás zárva van',
   sunrise_alarm_at: 'Napkeltekor',
   sunrise_alarm_opt: '{n} perc',
   notif_sunrise_title: 'Hamarosan napkel',
@@ -402,7 +402,7 @@ export const hu: Strings = {
   s_rain_ongoing_sub: 'Egy értesítést tart fenn, amíg esik vagy esni fog',
   notif_rain_ongoing_title: 'Eső jön',
   notif_rain_ongoing_now: 'Esik {city}-ban',
-  notif_rain_ongoing_soon: 'Eső várt várt kb. {n} perc mülva {city}-ban',
+  notif_rain_ongoing_soon: 'Eső várható kb. {n} perc mülva {city}-ban',
   notif_rain_ongoing_later: 'Valószínél eső a következő órákban {city}-ban',
 
   // ── year in review ──
@@ -420,7 +420,7 @@ export const hu: Strings = {
 
   // ── record breakers ──
   rec_title: 'Rekordok',
-  rec_empty: 'Archívumi rekordok gyŷjtöse ehhez a városhoz...',
+  rec_empty: 'Archívumi rekordok gyűjtése ehhez a városhoz...',
   rec_hottest: 'Legmelegebb nap',
   rec_wettest: 'Legesősebb nap',
   rec_windiest: 'Legerősebb szél',
