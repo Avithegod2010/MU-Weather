@@ -387,4 +387,13 @@ export const hi: Strings = {
   acc_metric_wind: 'हवा',
   acc_metric_rain: 'बारिश',
   acc_models_empty_hint: 'हवा और बारिश के लिए नएं मॉडल के साथ कुछ दिन दर्ज होने चाहिएं।',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'सूर्योदय अलारम',
+  s_sunrise_alarm_sub: 'इस शहर में सूर्योदय से पहले, अअप बंद होने परे बजा लए',
+  sunrise_alarm_at: 'सूर्योदय समय मात्र पर',
+  sunrise_alarm_opt: '{n} मिनिट',
+  notif_sunrise_title: 'सूर्योदय जलदी',
+  notif_sunrise_body: 'सूर्योदय जलें टाणी ट्रो मिनिट',
+  notif_sunrise_body_now: 'सूर्योदय हो रहा है',
 };

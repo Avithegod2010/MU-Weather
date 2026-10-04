@@ -387,4 +387,13 @@ export const bn: Strings = {
   acc_metric_wind: 'বাতাস',
   acc_metric_rain: 'বৃষ্টি',
   acc_models_empty_hint: 'বাতাস ও বৃষ্টির জন্য নতুন মডেল দিয় কয়েকটি দিন লগ করা দরকে।',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'সূর্যোদয অঅলারম',
+  s_sunrise_alarm_sub: 'ই শহরে সূর্যোদযর আগে, অপ্যার ক বন্ধ রাখের আগে',
+  sunrise_alarm_at: 'সূর্যোদযর সময সমযর',
+  sunrise_alarm_opt: '{n} মিনিট',
+  notif_sunrise_title: 'সূর্যোদয সম্পনে',
+  notif_sunrise_body: 'সূর্যোদয বন্ধে আপৈ টাণি মিনিট',
+  notif_sunrise_body_now: 'সূর্যোদয রর্ধে ইহ্ছে',
 };

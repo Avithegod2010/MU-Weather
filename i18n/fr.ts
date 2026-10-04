@@ -387,4 +387,13 @@ export const fr: Strings = {
   acc_metric_wind: 'Vent',
   acc_metric_rain: 'Pluie',
   acc_models_empty_hint: 'Le vent et la pluie nécessitent quelques jours enregistrés avec les nouveaux modèles.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'Alarme du lever du soleil',
+  s_sunrise_alarm_sub: 'Sonne avant le lever du soleil dans cette ville, même l’app fermée',
+  sunrise_alarm_at: 'Au lever',
+  sunrise_alarm_opt: '{n} min',
+  notif_sunrise_title: 'Lever du soleil imminent',
+  notif_sunrise_body: 'Le soleil se lève dans environ {n} minutes',
+  notif_sunrise_body_now: 'Le soleil se lève',
 };

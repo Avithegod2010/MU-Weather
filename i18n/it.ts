@@ -387,4 +387,13 @@ export const it: Strings = {
   acc_metric_wind: 'Vento',
   acc_metric_rain: 'Pioggia',
   acc_models_empty_hint: 'Vento e pioggia richiedono qualche giorno registrato con i nuovi modelli.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'Sveglia all’alba',
+  s_sunrise_alarm_sub: 'Suona prima dell’alba in questa città, anche con l’app chiusa',
+  sunrise_alarm_at: 'All’alba',
+  sunrise_alarm_opt: '{n} min',
+  notif_sunrise_title: 'L’alba è vicina',
+  notif_sunrise_body: 'Il sole sorge tra circa {n} minuti',
+  notif_sunrise_body_now: 'Il sole sta sorgendo',
 };

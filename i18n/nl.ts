@@ -387,4 +387,13 @@ export const nl: Strings = {
   acc_metric_wind: 'Wind',
   acc_metric_rain: 'Regen',
   acc_models_empty_hint: 'Wind en regen hebben een paar dagen nodig die met de nieuwe modellen zijn vastgelegd.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'Zonsopgang-alarm',
+  s_sunrise_alarm_sub: 'Ringt voor zonsopgang in deze stad, ook met de app gesloten',
+  sunrise_alarm_at: 'Bij zonsopgang',
+  sunrise_alarm_opt: '{n} min',
+  notif_sunrise_title: 'Zonsopgang nadert',
+  notif_sunrise_body: 'De zon komt over ongeveer {n} minuten op',
+  notif_sunrise_body_now: 'De zon komt op',
 };

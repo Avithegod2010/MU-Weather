@@ -387,4 +387,13 @@ export const id: Strings = {
   acc_metric_wind: 'Angin',
   acc_metric_rain: 'Hujan',
   acc_models_empty_hint: 'Angin dan hujan butuh beberapa hari yang dicatat dengan model baru.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'Alarm matahari terbit',
+  s_sunrise_alarm_sub: 'Berbunyi sebelum matahari terbit di kota ini, bahkan saat aplikasi ditutup',
+  sunrise_alarm_at: 'Saat terbit',
+  sunrise_alarm_opt: '{n} mnt',
+  notif_sunrise_title: 'Matahari terbit sebentar lagi',
+  notif_sunrise_body: 'Matahari terbit dalam sekitar {n} menit',
+  notif_sunrise_body_now: 'Matahari sedang terbit',
 };

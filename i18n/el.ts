@@ -387,4 +387,13 @@ export const el: Strings = {
   acc_metric_wind: 'Ανεμος',
   acc_metric_rain: 'Βροχή',
   acc_models_empty_hint: 'Ο άνεμος και η βροχή χρειάζονται λίγες ημέρες καταγεγραμμένες με τα νέα μοντέλα.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'ασυδεριμσλήρος ήλιου',
+  s_sunrise_alarm_sub: 'χτυπάει πριν ανατολή σε αυτήν ανατολή σε αυτήν πόλη, και με την εφαρμένη εφαρμογή',
+  sunrise_alarm_at: 'Στην ανατολή',
+  sunrise_alarm_opt: '{n} λ.',
+  notif_sunrise_title: 'Ηόρα ήλιος',
+  notif_sunrise_body: 'ο ήλιος ανατελεί σε περίπου {n} λεπτά',
+  notif_sunrise_body_now: 'Ο ήλιος ανατελγι',
 };

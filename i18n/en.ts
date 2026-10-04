@@ -844,6 +844,15 @@ export const en = {
   acc_metric_wind: 'Wind',
   acc_metric_rain: 'Rain',
   acc_models_empty_hint: 'Wind and rain need a few days logged with the newer models.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'Sunrise alarm',
+  s_sunrise_alarm_sub: 'Ring before sunrise in this city, even with the app closed',
+  sunrise_alarm_at: 'At sunrise',
+  sunrise_alarm_opt: '{n} min',
+  notif_sunrise_title: 'Sunrise soon',
+  notif_sunrise_body: 'The sun rises in about {n} minutes',
+  notif_sunrise_body_now: 'The sun is rising',
 };
 
 export type Strings = typeof en;

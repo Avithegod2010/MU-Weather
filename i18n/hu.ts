@@ -387,4 +387,13 @@ export const hu: Strings = {
   acc_metric_wind: 'Szél',
   acc_metric_rain: 'Eső',
   acc_models_empty_hint: 'A szélhez és az esőhöz néhány nap szükséges van az új modellekkel.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'Napkelte ébresztő',
+  s_sunrise_alarm_sub: 'Cseng a napkelte előtt ebben a városban, aképpen zárva az alkalmazással',
+  sunrise_alarm_at: 'Napkeltekor',
+  sunrise_alarm_opt: '{n} perc',
+  notif_sunrise_title: 'Hamarosan napkel',
+  notif_sunrise_body: 'A nap kb. {n} perc mülva kel',
+  notif_sunrise_body_now: 'A nap most kel',
 };

@@ -99,6 +99,9 @@ const UNIT_PRESETS: Record<string, Partial<AppSettings>> = {
   // The UK mix: Celsius + mm/hPa with miles-per-hour wind.
   uk: { tempUnit: 'celsius', windUnit: 'mph', pressureUnit: 'hPa', precipUnit: 'mm' },
 };
+
+/** Lead times offered by the sunrise alarm picker (minutes before sunrise). */
+const SUNRISE_ALARM_OFFSETS = [0, 15, 30, 60, 90];
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
 import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
@@ -835,6 +838,51 @@ export function SettingsSheet({
               ios_backgroundColor={theme.trackColor}
             />
           </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sunrise size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_sunrise_alarm')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_sunrise_alarm_sub')}
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.sunriseAlarmEnabled : false}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                  void ensureNotificationPermission().then((granted) => {
+                    onUpdate({ sunriseAlarmEnabled: granted });
+                  });
+                } else {
+                  haptics.light();
+                  onUpdate({ sunriseAlarmEnabled: false });
+                }
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.sunriseAlarmEnabled ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+          {ready && settings.sunriseAlarmEnabled ? (
+            <View style={styles.segmentRow}>
+              <Segmented
+                theme={theme}
+                options={SUNRISE_ALARM_OFFSETS.map((minutes) => ({
+                  value: String(minutes),
+                  label:
+                    minutes === 0
+                      ? t('sunrise_alarm_at')
+                      : t('sunrise_alarm_opt').replace('{n}', String(minutes)),
+                }))}
+                value={String(settings.sunriseAlarmOffsetMin)}
+                onChange={(value) => onUpdate({ sunriseAlarmOffsetMin: Number(value) })}
+              />
+            </View>
+          ) : null}
 
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_general')}</Text>
           <Pressable

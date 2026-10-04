@@ -65,6 +65,14 @@ export interface AppSettings {
    * the wallpaper-derived palette stays authoritative there.
    */
   weatherAccentEnabled: boolean;
+  /**
+   * Ring a scheduled notification `sunriseAlarmOffsetMin` minutes before
+   * sunrise in the active city. Queued as an OS date trigger, so it fires
+   * with the app closed, and it ignores quiet hours by design.
+   */
+  sunriseAlarmEnabled: boolean;
+  /** Minutes before sunrise; one of 0, 15, 30, 60, 90 (the picker in Settings). */
+  sunriseAlarmOffsetMin: number;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -93,6 +101,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   pastDaysRange: 7,
   layoutDensity: 'comfortable',
   weatherAccentEnabled: false,
+  sunriseAlarmEnabled: false,
+  sunriseAlarmOffsetMin: 30,
   /** Default comparison model shown first in the model-comparison screen — can be
    *  changed in Settings → "Model comparison". Does not affect the home forecast
    *  (that always uses the primary ECMWF model); only gates the comparison screen

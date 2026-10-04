@@ -387,4 +387,13 @@ export const de: Strings = {
   acc_metric_wind: 'Wind',
   acc_metric_rain: 'Regen',
   acc_models_empty_hint: 'Wind und Regen brauchen ein paar Tage, die mit den neuen Modellen aufgezeichnet wurden.',
+
+  // ── sunrise alarm ──
+  s_sunrise_alarm: 'Sonnenaufgang-Wecker',
+  s_sunrise_alarm_sub: 'Klingelt vor Sonnenaufgang in dieser Stadt, auch bei geschlossener App',
+  sunrise_alarm_at: 'Beim Aufgang',
+  sunrise_alarm_opt: '{n} Min.',
+  notif_sunrise_title: 'Sonnenaufgang bald',
+  notif_sunrise_body: 'Die Sonne geht in etwa {n} Minuten auf',
+  notif_sunrise_body_now: 'Die Sonne geht auf',
 };
