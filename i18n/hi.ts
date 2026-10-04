@@ -351,4 +351,7 @@ export const hi: Strings = {
   journal_a11y_ok: 'आज को ठीक ठीक रेट करें',
   journal_a11y_hot: 'आज को गर्म रेट करें',
   wear_tuned: 'आपकी अनुभूति के अनुसार',
+
+  // ── share card ──
+  share_dialog_title: 'मौसम साझा करें',
 };

@@ -28,7 +28,6 @@ import {
   MapPin,
   Bell,
   Settings as SettingsIcon,
-  Share as ShareIcon,
   TriangleAlert,
   Navigation2,
   Sun,
@@ -372,7 +371,7 @@ export function HomeScreen() {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, {
           mimeType: 'image/png',
-          dialogTitle: 'Share the weather',
+          dialogTitle: t('share_dialog_title'),
         });
       }
     } catch {
@@ -592,6 +591,10 @@ export function HomeScreen() {
                   today={weather.data.daily[0] ?? null}
                   conditionLabel={conditionLabel}
                   commentary={commentary}
+                  onShare={() => {
+                    void shareWeather();
+                  }}
+                  sharing={sharing}
                 />
               </Reveal>
 
@@ -809,21 +812,6 @@ export function HomeScreen() {
 
               <Reveal delay={100}>
                 <View style={styles.footerRow}>
-                  <Pressable
-                    onPress={() => {
-                      void shareWeather();
-                    }}
-                    style={({ pressed }) => [
-                      styles.shareButton,
-                      { backgroundColor: theme.chipBg },
-                      pressed && { opacity: 0.7 },
-                    ]}
-                  >
-                    <ShareIcon size={16} color={theme.textPrimary} strokeWidth={2.3} />
-                    <Text style={[styles.shareButtonText, { color: theme.textPrimary }]}>
-                      {sharing ? 'Preparing...' : 'Share weather'}
-                    </Text>
-                  </Pressable>
                   <Text style={[styles.credit, { color: theme.textTertiary }]}>
                     Updated{' '}
                     {new Date(weather.data.fetchedAt).toLocaleTimeString([], {
@@ -1116,20 +1104,8 @@ const styles = StyleSheet.create({
   footerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     gap: 12,
-  },
-  shareButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 7,
-    borderRadius: 999,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-  },
-  shareButtonText: {
-    fontSize: 13.5,
-    fontFamily: F.semibold,
   },
   noLocation: {
     flex: 1,

@@ -351,4 +351,7 @@ export const de: Strings = {
   journal_a11y_ok: 'Heute als genau richtig bewerten',
   journal_a11y_hot: 'Heute als heiß bewerten',
   wear_tuned: 'auf dein Gefühl abgestimmt',
+
+  // ── share card ──
+  share_dialog_title: 'Wetter teilen',
 };

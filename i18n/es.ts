@@ -351,4 +351,7 @@ export const es: Strings = {
   journal_a11y_ok: 'Valorar hoy como justo',
   journal_a11y_hot: 'Valorar hoy como calor',
   wear_tuned: 'ajustado a cómo te sientes',
+
+  // ── share card ──
+  share_dialog_title: 'Compartir el tiempo',
 };

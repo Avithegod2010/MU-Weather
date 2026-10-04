@@ -351,4 +351,7 @@ export const bn: Strings = {
   journal_a11y_ok: 'আজকে ঠিক ঠিক রেট করুন',
   journal_a11y_hot: 'আজকে গরম রেট করুন',
   wear_tuned: 'আপনার অনুভূতি অনুযায়ী',
+
+  // ── share card ──
+  share_dialog_title: 'আবহাওয়া শেয়ার করুন',
 };

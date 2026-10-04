@@ -351,4 +351,7 @@ export const nl: Strings = {
   journal_a11y_ok: 'Vandaag als precies goed beoordelen',
   journal_a11y_hot: 'Vandaag als warm beoordelen',
   wear_tuned: 'afgestemd op hoe je je voelt',
+
+  // ── share card ──
+  share_dialog_title: 'Het weer delen',
 };

@@ -351,4 +351,7 @@ export const it: Strings = {
   journal_a11y_ok: 'Valuta oggi come proprio bene',
   journal_a11y_hot: 'Valuta oggi come caldo',
   wear_tuned: 'tarato su come ti senti',
+
+  // ── share card ──
+  share_dialog_title: 'Condividi il meteo',
 };

@@ -351,4 +351,7 @@ export const hu: Strings = {
   journal_a11y_ok: 'Ma pont jónak értékelje',
   journal_a11y_hot: 'Ma melegnek értékelje',
   wear_tuned: 'ahhoz igazítva, ahogy érzi',
+
+  // ── share card ──
+  share_dialog_title: 'Időjárás megosztása',
 };

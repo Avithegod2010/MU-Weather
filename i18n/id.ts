@@ -351,4 +351,7 @@ export const id: Strings = {
   journal_a11y_ok: 'Nilai hari ini sebagai tepat',
   journal_a11y_hot: 'Nilai hari ini sebagai panas',
   wear_tuned: 'disesuaikan dengan perasaan Anda',
+
+  // ── share card ──
+  share_dialog_title: 'Bagikan cuaca',
 };

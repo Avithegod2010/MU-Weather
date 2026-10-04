@@ -808,6 +808,9 @@ export const en = {
   journal_a11y_ok: 'Rate today as just right',
   journal_a11y_hot: 'Rate today as hot',
   wear_tuned: 'tuned to how you feel',
+
+  // ── share card ──
+  share_dialog_title: 'Share the weather',
 };
 
 export type Strings = typeof en;

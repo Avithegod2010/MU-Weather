@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MapPin } from '../utils/uiIcons';
 import { WeatherIcon } from './WeatherIcon';
-import { formatTemp, formatHourLabel, compassLabel, windUnitLabel } from '../utils/format';
+import { formatTemp, formatHourLabel, formatDayLabel, compassLabel, windUnitLabel } from '../utils/format';
 import { moonPhase } from '../utils/moon';
 import type { AppTheme } from '../theme/palettes';
 import type { WeatherBundle } from '../api/types';
@@ -80,6 +80,23 @@ export function ShareCard({ theme, data, conditionLabel, cardRef }: ShareCardPro
                   <Text style={styles.hourTime}>{formatHourLabel(hour.time, index === 0)}</Text>
                   <WeatherIcon code={hour.weatherCode} isDay={hour.isDay} size={20} themeColor="#FFFFFF" />
                   <Text style={styles.hourTemp}>{formatTemp(hour.temperature)}</Text>
+                </View>
+              );
+            })}
+          </View>
+        ) : null}
+
+        {data.daily.length ? (
+          <View style={styles.daysRow}>
+            {data.daily.slice(0, 3).map((day, index) => {
+              return (
+                <View key={day.date} style={styles.dayCol}>
+                  <Text style={styles.dayName}>{formatDayLabel(day.date, index)}</Text>
+                  <WeatherIcon code={day.weatherCode} isDay size={20} themeColor="#FFFFFF" />
+                  <Text style={styles.dayTemps}>
+                    {formatTemp(day.tMax)}
+                    <Text style={styles.dayTempsLow}>{` / ${formatTemp(day.tMin)}`}</Text>
+                  </Text>
                 </View>
               );
             })}
@@ -196,6 +213,34 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontFamily: F.semibold,
+  },
+  daysRow: {
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    justifyContent: 'space-evenly',
+    marginTop: 16,
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    borderRadius: 24,
+    paddingVertical: 14,
+  },
+  dayCol: {
+    alignItems: 'center',
+    gap: 6,
+  },
+  dayName: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 11,
+    fontFamily: F.medium,
+  },
+  dayTemps: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: F.semibold,
+  },
+  dayTempsLow: {
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: 12.5,
+    fontFamily: F.medium,
   },
   credit: {
     color: 'rgba(255,255,255,0.55)',

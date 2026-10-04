@@ -351,4 +351,7 @@ export const el: Strings = {
   journal_a11y_ok: 'Αξιολογήστε σήμερα ως ακριβώς',
   journal_a11y_hot: 'Αξιολογήστε σήμερα ως ζέστη',
   wear_tuned: 'ρυθμισμένο στο πώς νιώθετε',
+
+  // ── share card ──
+  share_dialog_title: 'Κοινή χρήση του καιρού',
 };

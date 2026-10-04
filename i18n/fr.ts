@@ -351,4 +351,7 @@ export const fr: Strings = {
   journal_a11y_ok: 'Noter aujourd’hui comme juste',
   journal_a11y_hot: 'Noter aujourd’hui comme chaud',
   wear_tuned: 'ajusté à vos sensations',
+
+  // ── share card ──
+  share_dialog_title: 'Partager la météo',
 };

@@ -57,6 +57,7 @@ import {
   Sunset,
   Volume2,
   Square,
+  Share,
 } from '../utils/uiIcons';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
@@ -74,9 +75,13 @@ interface CurrentWeatherProps {
   today: DayPoint | null;
   conditionLabel: string;
   commentary?: string | null;
+  /** Opens the share sheet with the captured weather-card image. */
+  onShare?: () => void;
+  /** True while the capture/share is in flight - the share chip dims. */
+  sharing?: boolean;
 }
 
-export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary }: CurrentWeatherProps) {
+export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary, onShare, sharing }: CurrentWeatherProps) {
   const compact = theme.density === 'compact';
   const [speaking, setSpeaking] = useState(false);
 
@@ -190,19 +195,32 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
         </View>
       ) : null}
     </View>
-    <Pressable
-      onPress={toggleSpeech}
-      onPressIn={() => haptics.select()}
-      accessibilityRole="button"
-      accessibilityLabel={t(speaking ? 'stop_speech' : 'speak_weather')}
-      style={[styles.speechButton, { backgroundColor: theme.chipBg }]}
-    >
-      {speaking ? (
-        <Square size={18} color={theme.textPrimary} strokeWidth={2.4} />
-      ) : (
-        <Volume2 size={18} color={theme.textPrimary} strokeWidth={2.2} />
-      )}
-    </Pressable>
+    <View style={styles.heroActions}>
+      <Pressable
+        onPress={toggleSpeech}
+        onPressIn={() => haptics.select()}
+        accessibilityRole="button"
+        accessibilityLabel={t(speaking ? 'stop_speech' : 'speak_weather')}
+        style={[styles.speechButton, { backgroundColor: theme.chipBg }]}
+      >
+        {speaking ? (
+          <Square size={18} color={theme.textPrimary} strokeWidth={2.4} />
+        ) : (
+          <Volume2 size={18} color={theme.textPrimary} strokeWidth={2.2} />
+        )}
+      </Pressable>
+      {onShare ? (
+        <Pressable
+          onPress={onShare}
+          accessibilityRole="button"
+          accessibilityLabel={t('share_dialog_title')}
+          accessibilityState={{ busy: !!sharing }}
+          style={[styles.shareChip, { backgroundColor: theme.chipBg }, sharing && { opacity: 0.5 }]}
+        >
+          <Share size={18} color={theme.textPrimary} strokeWidth={2.2} />
+        </Pressable>
+      ) : null}
+    </View>
     </>
   );
 }
@@ -287,12 +305,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   speechButton: {
-    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     width: 36,
     height: 36,
     borderRadius: 18,
+  },
+  shareChip: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  heroActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 14,
     marginTop: 10,
   },
 });
