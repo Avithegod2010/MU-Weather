@@ -37,9 +37,10 @@ interface WeatherWidgetLargeProps {
  * strip for the next few hours, rendered through RemoteViews by the
  * react-native-android-widget task handler. All styling goes through the
  * `style` prop (fontSize/color/backgroundColor are style keys in this
- * library, not top-level props). Tapping the background opens the app; each
- * hour cell sends an `openHour` click (with the hour's ISO time) to the task
- * handler, which launches the app focused on that hour.
+ * library, not top-level props). Tapping the background opens the app; the
+ * rain chip opens the precipitation deep-dive (`openTile`); each hour cell
+ * sends an `openHour` click (with the hour's ISO time) to the task handler,
+ * which launches the app focused on that hour.
  */
 export function WeatherWidgetLarge({
   temperature,
@@ -77,6 +78,9 @@ export function WeatherWidgetLarge({
                 paddingHorizontal: 8,
                 paddingVertical: 2,
               }}
+              clickAction="openTile"
+              clickActionData={{ tile: 'precipitation' }}
+              accessibilityLabel={`Rain ${rainChance}${precipitation ? `, ${precipitation}` : ''}`}
             >
               <TextWidget
                 text={`${rainChance}${precipitation ? ` · ${precipitation}` : ''}`}

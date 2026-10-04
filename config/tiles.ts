@@ -1,14 +1,22 @@
-export type TopicKey =
-  | 'wind'
-  | 'aqi'
-  | 'uv'
-  | 'humidity'
-  | 'visibility'
-  | 'pressure'
-  | 'precipitation'
-  | 'moon'
-  | 'pollen'
-  | 'graphs';
+/**
+ * The deep-dive screens a tile row can open. Kept as a runtime array (not just
+ * a type) because the home-screen deep links validate against it and the
+ * widget task builds its intent URIs from it - one list, no drift.
+ */
+export const TOPIC_KEYS = [
+  'wind',
+  'aqi',
+  'uv',
+  'humidity',
+  'visibility',
+  'pressure',
+  'precipitation',
+  'moon',
+  'pollen',
+  'graphs',
+] as const;
+
+export type TopicKey = (typeof TOPIC_KEYS)[number];
 
 export interface DetailTileOption {
   key: string;

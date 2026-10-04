@@ -16,6 +16,7 @@ import {
 import { loadCitySnapshot } from '../utils/citySnapshots';
 import { stampWidgetRendered } from '../utils/widgetPresence';
 import { loadWidgetCity, loadWidgetCities } from '../utils/widgetCityConfig';
+import { TOPIC_KEYS } from '../config/tiles';
 import type { WeatherBundle } from '../api/types';
 
 export const WEATHER_WIDGET_NAME = 'MUWeatherWidget';
@@ -38,17 +39,23 @@ const APP_PACKAGE = 'com.avithegod.muweather';
 const FLAG_ACTIVITY_NEW_TASK = 0x10000000;
 
 /**
- * Widget hour-cell taps arrive here as a `WIDGET_CLICK` with clickAction
- * `openHour` and data {time}. We launch MainActivity explicitly (same pattern
- * as the static app shortcuts - no intent-filter needed in the manifest) with
- * a muweather://hour/<ISO> data URI; HomeScreen parses it and focuses the
- * matching hour in the hourly forecast.
+ * Widget taps arrive as a `WIDGET_CLICK` with a clickAction. We launch
+ * MainActivity explicitly (same pattern as the static app shortcuts - no
+ * intent-filter needed in the manifest) with a muweather:// data URI that
+ * HomeScreen parses:
+ *   - `openHour` -> muweather://hour/<ISO>  focuses that hour
+ *   - `openTile` -> muweather://tile/<key>  opens that tile's deep-dive
+ * Every path is validated here before it reaches the intent: a malformed value
+ * would otherwise launch the app into nothing (or, worse, an unexpected route).
  */
-async function openHourDeepLink(time: unknown): Promise<void> {
-  if (typeof time !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time)) return;
+
+/** Deep-dive keys the app can open; single source: config/tiles.ts. */
+const TILE_DEEP_LINK_KEYS: readonly string[] = TOPIC_KEYS;
+
+async function launchDeepLink(uri: string): Promise<void> {
   try {
     await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-      data: `muweather://hour/${time}`,
+      data: uri,
       packageName: APP_PACKAGE,
       className: `${APP_PACKAGE}.MainActivity`,
       flags: FLAG_ACTIVITY_NEW_TASK,
@@ -56,6 +63,17 @@ async function openHourDeepLink(time: unknown): Promise<void> {
   } catch {
     // App launch failure is non-critical - the widget stays usable.
   }
+}
+
+async function openHourDeepLink(time: unknown): Promise<void> {
+  if (typeof time !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time)) return;
+  await launchDeepLink(`muweather://hour/${time}`);
+}
+
+async function openTileDeepLink(tile: unknown): Promise<void> {
+  if (typeof tile !== 'string') return;
+  if (!TILE_DEEP_LINK_KEYS.includes(tile)) return;
+  await launchDeepLink(`muweather://tile/${tile}`);
 }
 
 // Guard against duplicate registration during Fast Refresh.
@@ -151,6 +169,11 @@ if (!globalScope.__muWidgetTaskDefined) {
     if (widgetAction === 'WIDGET_CLICK') {
       if (clickAction === 'openHour') {
         void openHourDeepLink(clickActionData?.time);
+        return;
+      }
+      // Tappable rows (the rain chip, the AQI chip) open their deep-dive.
+      if (clickAction === 'openTile') {
+        void openTileDeepLink(clickActionData?.tile);
       }
       return;
     }

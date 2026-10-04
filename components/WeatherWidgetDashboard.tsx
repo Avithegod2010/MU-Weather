@@ -122,6 +122,9 @@ export function WeatherWidgetDashboard({
                     paddingVertical: 2,
                     marginRight: 4,
                   }}
+                  clickAction="openTile"
+                  clickActionData={{ tile: 'aqi' }}
+                  accessibilityLabel={`Air quality ${aqiLabel}`}
                 >
                   <TextWidget text={aqiLabel} style={{ fontSize: 10, color: aqiColor ?? C.text }} />
                 </FlexWidget>
@@ -133,6 +136,9 @@ export function WeatherWidgetDashboard({
                   paddingHorizontal: 8,
                   paddingVertical: 2,
                 }}
+                clickAction="openTile"
+                clickActionData={{ tile: 'precipitation' }}
+                accessibilityLabel={`Rain ${rainChance}${precipitation ? `, ${precipitation}` : ''}`}
               >
                 <TextWidget
                   text={`${rainChance}${precipitation ? ` · ${precipitation}` : ''}`}

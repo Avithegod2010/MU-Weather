@@ -20,6 +20,7 @@ import { useRainOngoing } from '../hooks/useRainOngoing';
 import { useYearReview } from '../hooks/useYearReview';
 import { YearReviewCard } from '../components/YearReviewCard';
 import { RecordCard } from '../components/RecordCard';
+import { TOPIC_KEYS } from '../config/tiles';
 import { useRecords } from '../hooks/useRecords';
 import * as Sharing from 'expo-sharing';
 import * as Linking from 'expo-linking';
@@ -261,6 +262,15 @@ export function HomeScreen() {
       else if (target === 'favorites') setFavoritesOpen(true);
       else if (target === 'compare') setCompareOpen(true);
       else if (target === 'journal') scrollToJournal();
+      // Widget rows deep-link into a tile's screen: muweather://tile/<key>.
+      else if (hostname === 'tile' && typeof path === 'string') {
+        const key = path.replace(/^\//, '');
+        // Only real deep-dive topics, so a stale widget build cannot open
+        // something the home screen does not have.
+        if ((TOPIC_KEYS as readonly string[]).includes(key)) {
+          setDetailTopic(key as TopicKey);
+        }
+      }
     };
     Linking.getInitialURL().then(openShortcut).catch(() => {});
     const subscription = Linking.addEventListener('url', (event) => openShortcut(event.url));
