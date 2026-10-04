@@ -381,4 +381,10 @@ export const id: Strings = {
   age_min: '{n} mnt lalu',
   age_hour: '{n} jam lalu',
   age_day: '{n} hr lalu',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'Suhu maks',
+  acc_metric_wind: 'Angin',
+  acc_metric_rain: 'Hujan',
+  acc_models_empty_hint: 'Angin dan hujan butuh beberapa hari yang dicatat dengan model baru.',
 };

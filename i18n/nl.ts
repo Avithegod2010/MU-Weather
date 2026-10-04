@@ -381,4 +381,10 @@ export const nl: Strings = {
   age_min: '{n} min geleden',
   age_hour: '{n} u geleden',
   age_day: '{n} d geleden',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'Max. temp',
+  acc_metric_wind: 'Wind',
+  acc_metric_rain: 'Regen',
+  acc_models_empty_hint: 'Wind en regen hebben een paar dagen nodig die met de nieuwe modellen zijn vastgelegd.',
 };

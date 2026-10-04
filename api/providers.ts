@@ -57,6 +57,7 @@ interface ArchiveDailyPayload {
   temperature_2m_min?: Array<number | null>;
   precipitation_sum?: Array<number | null>;
   weather_code?: Array<number | null>;
+  wind_speed_10m_max?: Array<number | null>;
 }
 
 function isoDaysAgo(offset: number): string {
@@ -79,7 +80,8 @@ async function requestArchiveWindow(
     longitude: lon.toFixed(4),
     start_date: start,
     end_date: end,
-    daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code',
+    daily:
+      'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,wind_speed_10m_max',
     timezone: 'auto',
   }).toString();
 
@@ -99,12 +101,14 @@ async function requestArchiveWindow(
       const tMin = daily.temperature_2m_min?.[i];
       // Skip lagging days with incomplete rows instead of inventing values.
       if (typeof tMax !== 'number' || typeof tMin !== 'number') continue;
+      const wind = daily.wind_speed_10m_max?.[i];
       days.push({
         date: daily.time[i] as string,
         tMax,
         tMin,
         precipSum: daily.precipitation_sum?.[i] ?? 0,
         weatherCode: daily.weather_code?.[i] ?? 3,
+        windMax: typeof wind === 'number' ? wind : null,
       });
     }
     return days;
@@ -463,6 +467,10 @@ export interface ModelForecastDay {
   tMax: number;
   tMin: number;
   precipProb: number | null;
+  /** Daily precipitation total (mm) - the rain-accuracy metric. */
+  precipSum: number | null;
+  /** Daily maximum 10 m wind (km/h) - the wind-accuracy metric. */
+  windMax: number | null;
   weatherCode: number;
 }
 
@@ -487,7 +495,7 @@ export async function fetchModelForecast(lat: number, lon: number): Promise<Mode
     latitude: lat.toFixed(4),
     longitude: lon.toFixed(4),
     daily:
-      'temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code',
+      'temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max,weather_code',
     forecast_days: '7',
     timezone: 'auto',
     models: MODEL_KEYS.join(','),
@@ -511,17 +519,23 @@ export async function fetchModelForecast(lat: number, lon: number): Promise<Mode
       const mins = daily[`temperature_2m_min_${model}`];
       if (!Array.isArray(maxes) || !Array.isArray(mins)) continue; // region-unsupported model
       const probs = daily[`precipitation_probability_max_${model}`];
+      const sums = daily[`precipitation_sum_${model}`];
+      const winds = daily[`wind_speed_10m_max_${model}`];
       const codes = daily[`weather_code_${model}`];
       const days: ModelForecastDay[] = [];
       for (let i = 0; i < times.length; i++) {
         const tMax = maxes[i];
         const tMin = mins[i];
         if (typeof tMax !== 'number' || typeof tMin !== 'number') continue;
+        const sum = Array.isArray(sums) ? sums[i] : undefined;
+        const wind = Array.isArray(winds) ? winds[i] : undefined;
         days.push({
           date: times[i],
           tMax,
           tMin,
           precipProb: Array.isArray(probs) && typeof probs[i] === 'number' ? (probs[i] as number) : null,
+          precipSum: typeof sum === 'number' ? sum : null,
+          windMax: typeof wind === 'number' ? wind : null,
           weatherCode: Array.isArray(codes) && typeof codes[i] === 'number' ? (codes[i] as number) : 3,
         });
       }

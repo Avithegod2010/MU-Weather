@@ -381,4 +381,10 @@ export const bn: Strings = {
   age_min: '{n} মিনিট আগে',
   age_hour: '{n} ঘণ্টা আগে',
   age_day: '{n} দিন আগে',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'সর্বোচ্চ তাপমাত্রা',
+  acc_metric_wind: 'বাতাস',
+  acc_metric_rain: 'বৃষ্টি',
+  acc_models_empty_hint: 'বাতাস ও বৃষ্টির জন্য নতুন মডেল দিয় কয়েকটি দিন লগ করা দরকে।',
 };

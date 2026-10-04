@@ -381,4 +381,10 @@ export const it: Strings = {
   age_min: '{n} min fa',
   age_hour: '{n} h fa',
   age_day: '{n} g fa',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'Temp. max',
+  acc_metric_wind: 'Vento',
+  acc_metric_rain: 'Pioggia',
+  acc_models_empty_hint: 'Vento e pioggia richiedono qualche giorno registrato con i nuovi modelli.',
 };

@@ -1,4 +1,4 @@
-import { t, tDay, getLanguage } from '../utils/i18n';
+import { t, tDay, getLanguage, type StringKey } from '../utils/i18n';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -6,10 +6,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, Clock3 as History } from '../utils/uiIcons';
 import { Card } from './Card';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
-import { formatPrecip, formatPrecipValue, tempColor, getUnits } from '../utils/format';
+import { formatPrecip, formatPrecipValue, tempColor, getUnits, convertWind, windUnitLabel } from '../utils/format';
 import { loadForecastLog, type ForecastLogEntry } from '../utils/forecastLog';
 import { loadModelLog, type ModelLogEntry } from '../utils/modelAccuracyLog';
-import { computeAccuracy, computeModelAccuracy } from '../utils/accuracy';
+import {
+  computeAccuracy,
+  computeModelMetricAccuracy,
+  MODEL_METRICS,
+  type ModelMetric,
+} from '../utils/accuracy';
 import { MODEL_LABELS } from '../api/providers';
 import { haptics } from '../utils/haptics';
 import { F } from '../theme/typography';
@@ -358,6 +363,13 @@ function hitColor(rate: number): string {
   return BAD_DELTA;
 }
 
+/** Switcher labels for the per-metric model leaderboard. */
+const METRIC_LABEL_KEYS: Record<ModelMetric, StringKey> = {
+  temp: 'acc_metric_temp',
+  wind: 'acc_metric_wind',
+  rain: 'acc_metric_rain',
+};
+
 function ModelLeaderboard({
   theme,
   days,
@@ -369,51 +381,105 @@ function ModelLeaderboard({
   modelLog: ModelLogEntry[];
   location: GeoLocation | null;
 }) {
-  const { rows, comparedDays } = computeModelAccuracy(modelLog, days, location);
+  const [metric, setMetric] = useState<ModelMetric>('temp');
+  const { rows, comparedDays } = computeModelMetricAccuracy(modelLog, days, location, metric);
 
-  if (rows.length === 0) {
-    return (
-      <Text style={[styles.footnote, { color: theme.textTertiary }]}>
-        {t('acc_models_empty')}
-      </Text>
-    );
-  }
+  // The switcher stays visible even with nothing scored yet, so the user can
+  // tell the other two metrics apart from a missing-data bug.
+  const metricPicker = (
+    <View style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}>
+      {MODEL_METRICS.map((option) => {
+        const label = t(METRIC_LABEL_KEYS[option]);
+        const active = metric === option;
+        return (
+          <Pressable
+            key={option}
+            onPress={() => {
+              if (!active) {
+                haptics.select();
+                setMetric(option);
+              }
+            }}
+            style={[
+              styles.rangeOption,
+              active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' },
+            ]}
+            accessibilityRole="button"
+            accessibilityState={{ selected: active }}
+            accessibilityLabel={label}
+          >
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.75}
+              style={[styles.rangeText, { color: active ? theme.textPrimary : theme.textTertiary }]}
+            >
+              {label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
 
   return (
     <View style={styles.modelBlock}>
       <Text style={[styles.accHeadline, { color: theme.textSecondary }]}>
         {t('acc_models_title')}
       </Text>
-      <View style={styles.accRows}>
-        {rows.map((row) => {
-          const hitPct = Math.round(row.hitRate * 100);
-          return (
-            <View key={row.model} style={styles.modelRow}>
-              <View style={styles.modelTexts}>
-                <Text style={[styles.modelName, { color: theme.textPrimary }]} numberOfLines={1}>
-                  {MODEL_LABELS[row.model]}
-                </Text>
-                <Text style={[styles.modelSub, { color: theme.textTertiary }]} numberOfLines={1}>
-                  {t('accuracy_high')}: ±{deltaDisplay(row.maeHigh)}° ·{' '}
-                  {t('trip_days').replace('{n}', String(row.compared))}
-                </Text>
-              </View>
-              <View style={[styles.modelTrack, { backgroundColor: theme.chipBg }]}>
-                <View
-                  style={[
-                    styles.modelFill,
-                    { width: `${hitPct}%`, backgroundColor: hitColor(row.hitRate) },
-                  ]}
-                />
-              </View>
-              <Text style={[styles.modelHit, { color: theme.textPrimary }]}>{hitPct}%</Text>
-            </View>
-          );
-        })}
-      </View>
-      <Text style={[styles.footnote, { color: theme.textTertiary }]}>
-        {t('acc_models_caption').split('{n}').join(String(comparedDays))}
-      </Text>
+      {metricPicker}
+      {rows.length === 0 ? (
+        <>
+          <Text style={[styles.footnote, { color: theme.textTertiary }]}>
+            {t('acc_models_empty')}
+          </Text>
+          {metric !== 'temp' ? (
+            <Text style={[styles.footnote, { color: theme.textTertiary }]}>
+              {t('acc_models_empty_hint')}
+            </Text>
+          ) : null}
+        </>
+      ) : (
+        <>
+          <View style={styles.accRows}>
+            {rows.map((row) => {
+              const hitPct = Math.round(row.hitRate * 100);
+              // Wind is stored in km/h and rain in mm, so each metric formats its
+              // own mean error through the unit helpers.
+              const error =
+                metric === 'temp'
+                  ? `${t('accuracy_high')}: ±${deltaDisplay(row.mae)}°`
+                  : metric === 'wind'
+                    ? `${t('acc_metric_wind')}: ±${deltaDisplay(convertWind(row.mae))} ${windUnitLabel()}`
+                    : `${t('acc_metric_rain')}: ±${formatPrecip(row.mae)}`;
+              return (
+                <View key={row.model} style={styles.modelRow}>
+                  <View style={styles.modelTexts}>
+                    <Text style={[styles.modelName, { color: theme.textPrimary }]} numberOfLines={1}>
+                      {MODEL_LABELS[row.model]}
+                    </Text>
+                    <Text style={[styles.modelSub, { color: theme.textTertiary }]} numberOfLines={1}>
+                      {error} · {t('trip_days').replace('{n}', String(row.compared))}
+                    </Text>
+                  </View>
+                  <View style={[styles.modelTrack, { backgroundColor: theme.chipBg }]}>
+                    <View
+                      style={[
+                        styles.modelFill,
+                        { width: `${hitPct}%`, backgroundColor: hitColor(row.hitRate) },
+                      ]}
+                    />
+                  </View>
+                  <Text style={[styles.modelHit, { color: theme.textPrimary }]}>{hitPct}%</Text>
+                </View>
+              );
+            })}
+          </View>
+          <Text style={[styles.footnote, { color: theme.textTertiary }]}>
+            {t('acc_models_caption').split('{n}').join(String(comparedDays))}
+          </Text>
+        </>
+      )}
     </View>
   );
 }

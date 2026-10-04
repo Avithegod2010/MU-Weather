@@ -838,6 +838,12 @@ export const en = {
   age_min: '{n} min ago',
   age_hour: '{n} h ago',
   age_day: '{n} d ago',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'High temp',
+  acc_metric_wind: 'Wind',
+  acc_metric_rain: 'Rain',
+  acc_models_empty_hint: 'Wind and rain need a few days logged with the newer models.',
 };
 
 export type Strings = typeof en;

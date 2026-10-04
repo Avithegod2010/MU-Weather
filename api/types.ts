@@ -132,6 +132,12 @@ export interface PastDayActual {
   tMin: number;
   precipSum: number;
   weatherCode: number;
+  /**
+   * Daily maximum 10 m wind in km/h, used by the per-metric model leaderboard.
+   * Optional so archive snapshots persisted before the variable was requested
+   * still validate; null when the archive row has no value.
+   */
+  windMax?: number | null;
 }
 
 /** One month of 1991-2020 climate normals (JSON-safe), month 1-12. */

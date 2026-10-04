@@ -75,11 +75,21 @@ export function computeAccuracy(
 }
 
 /* ------------------------------------------------------------------ */
-/* Per-model leaderboard (multi-model accuracy)                        */
+/* Per-metric model leaderboard                                        */
 /* ------------------------------------------------------------------ */
+
+/** The metrics a model can be ranked on, in switcher order. */
+export const MODEL_METRICS = ['temp', 'wind', 'rain'] as const;
+export type ModelMetric = (typeof MODEL_METRICS)[number];
 
 /** A day counts as a hit when a model's high lands within this many °C of reality. */
 export const MODEL_HIT_TOLERANCE_C = 2;
+/**
+ * Same idea for the daily maximum wind (km/h). Wind is far noisier than
+ * temperature, so the tolerance is deliberately wide - a model within 8 km/h
+ * on the daily maximum has genuinely called the day.
+ */
+export const MODEL_WIND_TOLERANCE_KMH = 8;
 
 /**
  * A model cannot be ranked from a single scored day - one lucky (or unlucky)
@@ -88,43 +98,102 @@ export const MODEL_HIT_TOLERANCE_C = 2;
  */
 export const MIN_MODEL_COMPARED_DAYS = 2;
 
-export interface ModelAccuracyRow {
+export interface ModelMetricRow {
   model: ModelKey;
   /** Days where this model had both a logged prediction and a real observation */
   compared: number;
-  /** Share of `compared` days within MODEL_HIT_TOLERANCE_C of the observed high (0-1) */
+  /** Share of `compared` days the model called right (0-1) */
   hitRate: number;
-  /** Mean |actual.tMax - model.tMax| in raw °C */
-  maeHigh: number;
+  /** Mean |actual - predicted| in the metric's raw unit (°C, km/h, mm) */
+  mae: number;
 }
 
-export interface ModelAccuracySummary {
-  /** Ranked models, best first. Empty until at least one model has enough days. */
-  rows: ModelAccuracyRow[];
-  /** Distinct dates on which at least one model was scored - the "last {n} days". */
+export interface ModelMetricSummary {
+  /** Ranked models, best first. Empty until a model has enough scored days. */
+  rows: ModelMetricRow[];
+  /** Distinct dates scored for this metric - the "last {n} days" caption. */
   comparedDays: number;
 }
 
+/** One scored day: the two numbers compared and whether the model called it. */
+interface MetricPair {
+  predicted: number;
+  actual: number;
+  hit: boolean;
+}
+
+/** Daily high: a plain absolute-error comparison in °C. */
+function scoreTemp(entry: ModelLogEntry, actual: PastDayActual): MetricPair | null {
+  return {
+    predicted: entry.tMax,
+    actual: actual.tMax,
+    hit: Math.abs(actual.tMax - entry.tMax) <= MODEL_HIT_TOLERANCE_C,
+  };
+}
+
 /**
- * Rank the comparison models by how often their daily high landed within
- * MODEL_HIT_TOLERANCE_C of what actually happened, counting only the days this
- * device logged for that model AT THE ACTIVE LOCATION (utils/modelAccuracyLog
- * stores the coordinates with every entry, so a Paris prediction is never
- * scored against London observations), and only models with at least
- * MIN_MODEL_COMPARED_DAYS scored days. Ties break on the mean error, then on
- * the number of compared days. An empty `rows` means "keep collecting".
+ * Daily maximum wind. Both sides can be absent (entries logged before the
+ * variable existed, archive rows with no value) - such days are simply not
+ * scored, so the wind leaderboard starts empty instead of showing zeroes.
  */
-export function computeModelAccuracy(
+function scoreWind(entry: ModelLogEntry, actual: PastDayActual): MetricPair | null {
+  const predicted = entry.windMax;
+  const observed = actual.windMax;
+  if (typeof predicted !== 'number' || typeof observed !== 'number') return null;
+  if (!Number.isFinite(predicted) || !Number.isFinite(observed)) return null;
+  return {
+    predicted,
+    actual: observed,
+    hit: Math.abs(observed - predicted) <= MODEL_WIND_TOLERANCE_KMH,
+  };
+}
+
+/**
+ * Daily rain total (mm). The hit test is wet/dry AGREEMENT rather than
+ * "called rain": ranking on the rarer correct-rain call alone would crown the
+ * wettest-forecasting model, not the most accurate one. The mean error still
+ * shows how far off the totals run.
+ */
+function scoreRain(entry: ModelLogEntry, actual: PastDayActual): MetricPair | null {
+  const predicted = entry.precipSum;
+  if (typeof predicted !== 'number' || !Number.isFinite(predicted)) return null;
+  return {
+    predicted,
+    actual: actual.precipSum,
+    hit: (predicted >= RAIN_DAY_MM) === (actual.precipSum >= RAIN_DAY_MM),
+  };
+}
+
+const METRIC_SCORERS: Record<
+  ModelMetric,
+  (entry: ModelLogEntry, actual: PastDayActual) => MetricPair | null
+> = {
+  temp: scoreTemp,
+  wind: scoreWind,
+  rain: scoreRain,
+};
+
+/**
+ * Rank the comparison models for one metric, counting only days this device
+ * logged for that model AT THE ACTIVE LOCATION (utils/modelAccuracyLog stores
+ * the coordinates with every entry, so a Paris prediction is never scored
+ * against London observations), and only models with at least
+ * MIN_MODEL_COMPARED_DAYS scored days. Ties break on the mean error, then on
+ * the number of scored days. An empty `rows` means "keep collecting".
+ */
+export function computeModelMetricAccuracy(
   log: ModelLogEntry[],
   actuals: PastDayActual[],
   location: LocationAnchor | null,
-): ModelAccuracySummary {
+  metric: ModelMetric,
+): ModelMetricSummary {
   if (!location || log.length === 0 || actuals.length === 0) {
     return { rows: [], comparedDays: 0 };
   }
 
   const lat = roundedCoord(location.latitude);
   const lon = roundedCoord(location.longitude);
+  const scorer = METRIC_SCORERS[metric];
   const actualByDate = new Map(actuals.map((actual) => [actual.date, actual]));
   const byModel = new Map<ModelKey, { compared: number; hits: number; errorSum: number }>();
   const comparedDates = new Set<string>();
@@ -133,27 +202,48 @@ export function computeModelAccuracy(
     if (roundedCoord(entry.lat) !== lat || roundedCoord(entry.lon) !== lon) continue;
     const actual = actualByDate.get(entry.date);
     if (!actual) continue;
+    const pair = scorer(entry, actual);
+    if (!pair) continue;
     comparedDates.add(entry.date);
     const bucket = byModel.get(entry.model) ?? { compared: 0, hits: 0, errorSum: 0 };
-    const error = Math.abs(actual.tMax - entry.tMax);
     bucket.compared += 1;
-    bucket.errorSum += error;
-    if (error <= MODEL_HIT_TOLERANCE_C) bucket.hits += 1;
+    bucket.errorSum += Math.abs(pair.actual - pair.predicted);
+    if (pair.hit) bucket.hits += 1;
     byModel.set(entry.model, bucket);
   }
 
-  const rows: ModelAccuracyRow[] = [];
+  const rows: ModelMetricRow[] = [];
   for (const [model, bucket] of byModel) {
     if (bucket.compared < MIN_MODEL_COMPARED_DAYS) continue;
     rows.push({
       model,
       compared: bucket.compared,
       hitRate: bucket.hits / bucket.compared,
-      maeHigh: bucket.errorSum / bucket.compared,
+      mae: bucket.errorSum / bucket.compared,
     });
   }
-  rows.sort(
-    (a, b) => b.hitRate - a.hitRate || a.maeHigh - b.maeHigh || b.compared - a.compared,
-  );
+  rows.sort((a, b) => b.hitRate - a.hitRate || a.mae - b.mae || b.compared - a.compared);
   return { rows, comparedDays: comparedDates.size };
+}
+
+/** The original temperature leaderboard shape, kept for existing callers. */
+export interface ModelAccuracyRow extends ModelMetricRow {
+  /** Mean |actual.tMax - model.tMax| in raw °C (alias of `mae`). */
+  maeHigh: number;
+}
+
+/**
+ * Temperature leaderboard, unchanged in behaviour - the metric-generalised
+ * scorer above reduced to its temperature case.
+ */
+export function computeModelAccuracy(
+  log: ModelLogEntry[],
+  actuals: PastDayActual[],
+  location: LocationAnchor | null,
+): { rows: ModelAccuracyRow[]; comparedDays: number } {
+  const summary = computeModelMetricAccuracy(log, actuals, location, 'temp');
+  return {
+    rows: summary.rows.map((row) => ({ ...row, maeHigh: row.mae })),
+    comparedDays: summary.comparedDays,
+  };
 }

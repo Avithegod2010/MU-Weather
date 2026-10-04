@@ -381,4 +381,10 @@ export const hu: Strings = {
   age_min: '{n} perce',
   age_hour: '{n} órája',
   age_day: '{n} napja',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'Legmag. hőm.',
+  acc_metric_wind: 'Szél',
+  acc_metric_rain: 'Eső',
+  acc_models_empty_hint: 'A szélhez és az esőhöz néhány nap szükséges van az új modellekkel.',
 };

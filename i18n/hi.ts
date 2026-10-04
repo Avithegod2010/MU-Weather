@@ -381,4 +381,10 @@ export const hi: Strings = {
   age_min: '{n} मिनिट पहले',
   age_hour: '{n} घंटे पहले',
   age_day: '{n} दिन पहले',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'अधिकतम तापमात्रण',
+  acc_metric_wind: 'हवा',
+  acc_metric_rain: 'बारिश',
+  acc_models_empty_hint: 'हवा और बारिश के लिए नएं मॉडल के साथ कुछ दिन दर्ज होने चाहिएं।',
 };

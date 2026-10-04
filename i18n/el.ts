@@ -381,4 +381,10 @@ export const el: Strings = {
   age_min: 'πριν από {n} λ.',
   age_hour: 'πριν από {n} ώ.',
   age_day: 'πριν από {n} ημ.',
+
+  // ── per-metric model leaderboard ──
+  acc_metric_temp: 'Μέγιστη θερμ.',
+  acc_metric_wind: 'Ανεμος',
+  acc_metric_rain: 'Βροχή',
+  acc_models_empty_hint: 'Ο άνεμος και η βροχή χρειάζονται λίγες ημέρες καταγεγραμμένες με τα νέα μοντέλα.',
 };

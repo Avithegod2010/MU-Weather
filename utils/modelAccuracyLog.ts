@@ -16,6 +16,14 @@ export interface ModelLogEntry {
   lon: number;
   tMax: number;
   tMin: number;
+  /**
+   * Daily precipitation total (mm) and maximum wind (km/h) as the model saw
+   * them. Both are OPTIONAL: entries logged before these variables were
+   * requested simply do not carry them, and the wind/rain leaderboards only
+   * score days where both sides of the comparison exist.
+   */
+  precipSum?: number | null;
+  windMax?: number | null;
 }
 
 /** Any `{ latitude, longitude }` pair - the log and scorer only need coordinates. */
@@ -109,6 +117,8 @@ export async function logModelPredictions(
           lon,
           tMax: day.tMax,
           tMin: day.tMin,
+          precipSum: day.precipSum,
+          windMax: day.windMax,
         });
       }
     }
