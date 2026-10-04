@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import * as Notifications from '../utils/notifications';
 import { computeNowcast } from '../utils/nowcast';
+import { isInQuietHoursNow } from '../utils/fireAlertNotifications';
 import { t } from '../utils/i18n';
 import type { WeatherBundle } from '../api/types';
 
@@ -38,6 +39,9 @@ export function useRainAlert(enabled: boolean, data: WeatherBundle | null): void
     (async () => {
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== 'granted') return;
+      // Quiet hours: skip the notification and leave the dedup/cooldown state
+      // untouched, so the same rain event can still fire once the window ends.
+      if (await isInQuietHoursNow()) return;
       try {
         await Notifications.scheduleNotificationAsync({
           content: {

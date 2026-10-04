@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import * as Notifications from '../utils/notifications';
+import { isInQuietHoursNow } from '../utils/fireAlertNotifications';
 import { t } from '../utils/i18n';
 import { findGoldenBlueHours } from '../utils/sunCalc';
 import { wasNotifiedToday, markNotifiedToday } from './useDigest';
@@ -35,6 +36,9 @@ export function useGoldenHour(enabled: boolean, data: WeatherBundle | null): voi
       if (await wasNotifiedToday(dayKey)) return;
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== 'granted') return;
+      // Quiet hours: the golden hour is window-bound - skip silently and leave
+      // the day-key unmarked; the short lead window expires on its own.
+      if (await isInQuietHoursNow()) return;
       const minutes = Math.round((upcoming.start.getTime() - now) / 60000);
       try {
         await Notifications.scheduleNotificationAsync({

@@ -97,6 +97,36 @@ export async function ensureWeatherAlertCategory(): Promise<void> {
 }
 
 /**
+ * Is the device clock inside the user's quiet window right now? Reads the same
+ * alert-settings blob every notification path shares, so the alert pipeline,
+ * the rain-nowcast hook and the golden-hour hook all obey one gate. Reuses
+ * isInsideQuietWindow (the window may span midnight; start === end disables).
+ * A failed read must never silence notifications.
+ */
+export async function isInQuietHoursNow(): Promise<boolean> {
+  try {
+    const stored = await loadAlertSettings();
+    if (stored.quietHoursEnabled !== true) return false;
+    const quietStart =
+      typeof stored.quietStartMinutes === 'number'
+        ? stored.quietStartMinutes
+        : DEFAULT_QUIET_START_MINUTES;
+    const quietEnd =
+      typeof stored.quietEndMinutes === 'number'
+        ? stored.quietEndMinutes
+        : DEFAULT_QUIET_END_MINUTES;
+    const localNow = new Date();
+    return isInsideQuietWindow(
+      localNow.getHours() * 60 + localNow.getMinutes(),
+      quietStart,
+      quietEnd,
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Evaluate alert rules against fresh weather data and fire notifications for
  * anything whose cooldown has expired. Shared by the in-app refresh flow AND
  * the background task so both behave identically.
@@ -175,26 +205,11 @@ export async function deliverAlerts(
   // so a stored-language change re-registers the category before delivering.
   await ensureWeatherAlertCategory();
 
-  // The quiet-hours settings live in the same blob every source shares, so one
-  // read here covers the active city, the saved-city sweep and the background
-  // task without new plumbing through DeliverAlertsOptions.
-  const stored = await loadAlertSettings();
-  const quietStart =
-    typeof stored.quietStartMinutes === 'number'
-      ? stored.quietStartMinutes
-      : DEFAULT_QUIET_START_MINUTES;
-  const quietEnd =
-    typeof stored.quietEndMinutes === 'number'
-      ? stored.quietEndMinutes
-      : DEFAULT_QUIET_END_MINUTES;
-  const localNow = new Date();
-  const inQuietHours =
-    stored.quietHoursEnabled === true &&
-    isInsideQuietWindow(
-      localNow.getHours() * 60 + localNow.getMinutes(),
-      quietStart,
-      quietEnd,
-    );
+  // Quiet hours: one gate shared by every notification path (the alert
+  // pipeline, the rain-nowcast hook and the golden-hour hook). The DAILY
+  // DIGEST is a separate path (hooks/useDigest schedules its own notification)
+  // and is deliberately not gated here.
+  const inQuietHours = await isInQuietHoursNow();
 
   await withFiredLock(async () => {
     let fired: Record<string, number> = {};
