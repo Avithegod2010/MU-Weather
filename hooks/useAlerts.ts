@@ -21,6 +21,7 @@ import {
   registerBackgroundAlerts,
   unregisterBackgroundAlerts,
 } from '../tasks/backgroundAlertTask';
+import { SETTINGS_KEY } from './useDigest';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -88,24 +89,40 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
 
   useEffect(() => {
     if (!ready) return;
-    const anyAlertEnabled = isAnyRuleEnabled(settings);
-    if (backgroundEnabled && anyAlertEnabled) {
-      void registerBackgroundAlerts();
-      return;
-    }
-    // Widget-only users: a placed widget promises 30-minute freshness (its own
-    // updatePeriodMillis), so the background task keeps the bundle fresh for it
-    // too - roughly one weather fetch per 30 minutes while a widget is placed.
-    // The master background toggle still wins: off means no background work.
     let cancelled = false;
-    void areWidgetsInUse().then((inUse) => {
+    void (async () => {
+      // The digest shares the SETTINGS_KEY blob (hooks/useDigest). A digest-only
+      // user - background on, digest on, no alert rules, no widgets - still
+      // needs the task: without it the daily digest fires with a body captured
+      // whenever the app was last open. The task's own early return already
+      // passes for the digest, so registration is the whole fix.
+      let digestOn = false;
+      try {
+        const raw = await AsyncStorage.getItem(SETTINGS_KEY);
+        const stored = raw ? (JSON.parse(raw) as { digestEnabled?: boolean }) : null;
+        digestOn = stored?.digestEnabled === true;
+      } catch {
+        // Corrupt settings: treat as off rather than blocking registration.
+      }
+      if (cancelled) return;
+
+      const anyAlertEnabled = isAnyRuleEnabled(settings);
+      if (backgroundEnabled && (anyAlertEnabled || digestOn)) {
+        void registerBackgroundAlerts();
+        return;
+      }
+      // Widget-only users: a placed widget promises 30-minute freshness (its own
+      // updatePeriodMillis), so the background task keeps the bundle fresh for it
+      // too - roughly one weather fetch per 30 minutes while a widget is placed.
+      // The master background toggle still wins: off means no background work.
+      const inUse = await areWidgetsInUse();
       if (cancelled) return;
       if (backgroundEnabled && inUse) {
         void registerBackgroundAlerts();
       } else {
         void unregisterBackgroundAlerts();
       }
-    });
+    })();
     return () => {
       cancelled = true;
     };

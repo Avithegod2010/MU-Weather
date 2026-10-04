@@ -426,4 +426,7 @@ export const hi: Strings = {
   rec_windiest: 'सबसे तेज हवा',
   rec_window: '{from} से आर्काइव · {n} दिन खंगाले गए',
   tile_records: 'रिकॉर्ड',
+
+  // ── compare screen labels ──
+  cmp_sky: 'आकाश',
 };

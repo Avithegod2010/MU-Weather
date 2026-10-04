@@ -426,4 +426,7 @@ export const es: Strings = {
   rec_windiest: 'Viento más fuerte',
   rec_window: 'Archivo desde {from} · {n} días revisados',
   tile_records: 'Récords',
+
+  // ── compare screen labels ──
+  cmp_sky: 'Cielo',
 };

@@ -9,11 +9,11 @@ import type { GeoLocation } from '../api/types';
 const ALARM_IDS_KEY = '@mu_weather/sunrise_alarm_v1';
 /**
  * How many upcoming sunrises are queued per reschedule. Android fires a DATE
- * trigger once and forgets it, so queueing a few days means the alarm still
- * rings when the app has not been opened for a couple of days; every app start
- * (or location / offset change) cancels the old ones and queues a fresh set.
+ * trigger once and forgets it, so queueing a week means the alarm still rings
+ * when the app has not been opened for several days; every app start (or
+ * location / offset change) cancels the old ones and queues a fresh set.
  */
-const HORIZON_DAYS = 3;
+const HORIZON_DAYS = 7;
 
 /** Cancel every alarm this hook previously scheduled. Never throws. */
 async function clearScheduledAlarms(): Promise<void> {

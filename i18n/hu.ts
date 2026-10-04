@@ -426,4 +426,7 @@ export const hu: Strings = {
   rec_windiest: 'Legerősebb szél',
   rec_window: 'Archívum {from} óta · {n} nap átkeresve',
   tile_records: 'Rekordok',
+
+  // ── compare screen labels ──
+  cmp_sky: 'Ég',
 };

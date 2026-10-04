@@ -883,6 +883,9 @@ export const en = {
   rec_windiest: 'Strongest wind',
   rec_window: 'Archive since {from} · {n} days searched',
   tile_records: 'Records',
+
+  // ── compare screen labels ──
+  cmp_sky: 'Sky',
 };
 
 export type Strings = typeof en;

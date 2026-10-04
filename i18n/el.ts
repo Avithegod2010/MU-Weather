@@ -426,4 +426,7 @@ export const el: Strings = {
   rec_windiest: 'Ο ισχυρότερος άνεμος',
   rec_window: 'Αρχείο από {from} · {n} ημέρες που εξετάστηκαν',
   tile_records: 'Ρεκόρδ',
+
+  // ── compare screen labels ──
+  cmp_sky: 'Ουρανός',
 };

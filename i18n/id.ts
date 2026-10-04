@@ -426,4 +426,7 @@ export const id: Strings = {
   rec_windiest: 'Angin terkuat',
   rec_window: 'Arsip sejak {from} · {n} hari ditelusuri',
   tile_records: 'Rekor',
+
+  // ── compare screen labels ──
+  cmp_sky: 'Langit',
 };

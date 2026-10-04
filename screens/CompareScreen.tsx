@@ -280,7 +280,7 @@ export function CompareScreen({ theme, visible, onClose, entries, status, favori
 
             <View style={[styles.metricRow, { borderTopColor: theme.trackColor }]}>
               <View style={[styles.labelCell, { width: LABEL_WIDTH }]}>
-                <Text style={[styles.metricLabel, { color: theme.textTertiary }]}>Sky</Text>
+                <Text style={[styles.metricLabel, { color: theme.textTertiary }]}>{t('cmp_sky')}</Text>
               </View>
               {entries.map((entry) => {
                 const code = entry.data?.current.weatherCode;

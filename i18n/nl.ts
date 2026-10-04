@@ -426,4 +426,7 @@ export const nl: Strings = {
   rec_windiest: 'Sterkste wind',
   rec_window: 'Archief sinds {from} · {n} dagen doorzocht',
   tile_records: 'Records',
+
+  // ── compare screen labels ──
+  cmp_sky: 'Hemel',
 };

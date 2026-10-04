@@ -426,4 +426,7 @@ export const de: Strings = {
   rec_windiest: 'Stärkster Wind',
   rec_window: 'Archiv seit {from} · {n} Tage durchsucht',
   tile_records: 'Rekorde',
+
+  // ── compare screen labels ──
+  cmp_sky: 'Himmel',
 };

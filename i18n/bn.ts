@@ -426,4 +426,7 @@ export const bn: Strings = {
   rec_windiest: 'সবচেয়ে জোরালো বাতাস',
   rec_window: '{from} থেকে আর্কাইভ · {n} দিন অনুসন্ধান করা হয়েছে',
   tile_records: 'রেকর্ড',
+
+  // ── compare screen labels ──
+  cmp_sky: 'আকাশ',
 };
