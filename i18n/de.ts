@@ -404,4 +404,17 @@ export const de: Strings = {
   notif_rain_ongoing_now: 'Es regnet in {city}',
   notif_rain_ongoing_soon: 'Regen in etwa {n} Min. in {city}',
   notif_rain_ongoing_later: 'Regen wahrscheinlich in den nächsten Stunden in {city}',
+
+  // ── year in review ──
+  yr_title: 'Jahresrückblick',
+  yr_empty: 'Öffne die App an ein paar weiteren Tagen, dann füllt sich das von selbst.',
+  yr_hottest: 'Wärmster Tag',
+  yr_coldest: 'Kältester Tag',
+  yr_avg_high: 'Ø Höchstwert',
+  yr_avg_low: 'Ø Tiefstwert',
+  yr_total_rain: 'Regen gesamt',
+  yr_wettest_day: 'Nassester Tag',
+  yr_fair_days: 'Klare Tage',
+  yr_coverage: 'Aus {n} auf diesem Gerät erfassten Tagen',
+  tile_yearreview: 'Jahresrückblick',
 };

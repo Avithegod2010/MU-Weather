@@ -404,4 +404,17 @@ export const nl: Strings = {
   notif_rain_ongoing_now: 'Het regent in {city}',
   notif_rain_ongoing_soon: 'Regen verwacht over ongeveer {n} min in {city}',
   notif_rain_ongoing_later: 'Waarschijnlijk regen de komende uren in {city}',
+
+  // ── year in review ──
+  yr_title: 'Jaaroverzicht',
+  yr_empty: 'Open de app nog een paar dagen en dit vult zichzelf aan.',
+  yr_hottest: 'Warmste dag',
+  yr_coldest: 'Koudste dag',
+  yr_avg_high: 'Gem. maximum',
+  yr_avg_low: 'Gem. minimum',
+  yr_total_rain: 'Regen totaal',
+  yr_wettest_day: 'Natste dag',
+  yr_fair_days: 'Heldere dagen',
+  yr_coverage: 'Op basis van {n} dagen die op dit apparaat zijn vastgelegd',
+  tile_yearreview: 'Jaaroverzicht',
 };

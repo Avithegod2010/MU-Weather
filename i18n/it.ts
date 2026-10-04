@@ -404,4 +404,17 @@ export const it: Strings = {
   notif_rain_ongoing_now: 'Sta piovendo a {city}',
   notif_rain_ongoing_soon: 'Pioggia prevista tra circa {n} min a {city}',
   notif_rain_ongoing_later: 'Pioggia probabile nelle prossime ore a {city}',
+
+  // ── year in review ──
+  yr_title: 'Riepilogo dell’anno',
+  yr_empty: 'Apri l’app per altri giorni e si riempirà da solo.',
+  yr_hottest: 'Giorno più caldo',
+  yr_coldest: 'Giorno più freddo',
+  yr_avg_high: 'Massima media',
+  yr_avg_low: 'Minima media',
+  yr_total_rain: 'Pioggia totale',
+  yr_wettest_day: 'Giorno più piovoso',
+  yr_fair_days: 'Giorni sereni',
+  yr_coverage: 'Dati {n} giorni registrati su questo dispositivo',
+  tile_yearreview: 'Riepilogo dell’anno',
 };

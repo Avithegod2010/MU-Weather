@@ -404,4 +404,17 @@ export const hu: Strings = {
   notif_rain_ongoing_now: 'Esik {city}-ban',
   notif_rain_ongoing_soon: 'Eső várt várt kb. {n} perc mülva {city}-ban',
   notif_rain_ongoing_later: 'Valószínél eső a következő órákban {city}-ban',
+
+  // ── year in review ──
+  yr_title: 'Éves visszatekintés',
+  yr_empty: 'Nyisd meg az alkalmazást még néhány napon, és ez magától feltöltődik.',
+  yr_hottest: 'Legmelegebb nap',
+  yr_coldest: 'Leghidegebb nap',
+  yr_avg_high: 'Átlagos maximum',
+  yr_avg_low: 'Átlagos minimum',
+  yr_total_rain: 'Összes csapadék',
+  yr_wettest_day: 'Legesősebb nap',
+  yr_fair_days: 'Tiszta napok',
+  yr_coverage: '{n} ezen az eszközön rögzített nap alapján',
+  tile_yearreview: 'Éves visszatekintés',
 };

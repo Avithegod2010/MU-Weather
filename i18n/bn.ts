@@ -404,4 +404,17 @@ export const bn: Strings = {
   notif_rain_ongoing_now: '{city}-e বৃষ্টি পুরধু',
   notif_rain_ongoing_soon: '{city}-e আপৈ টাণি বৃষ্টি ({n} মিনিট)',
   notif_rain_ongoing_later: '{city}-e ডুমিবার কাহিনরতা বৃষ্টির সঢ৆য় হয়',
+
+  // ── year in review ──
+  yr_title: 'বহরের পর্যালোচনা',
+  yr_empty: 'অ্যাপটি আরো কয়েকদিন খুললে এটি নিজেথে থেকেপর্যার হবে।',
+  yr_hottest: 'সবচেয়ে গরম দিন',
+  yr_coldest: 'সবচেয়ে ঠান্দা দিন',
+  yr_avg_high: 'গড়র সর্বোচ্চ',
+  yr_avg_low: 'গড়র সর্বনিম্ন',
+  yr_total_rain: 'মোট বৃষ্টি',
+  yr_wettest_day: 'সবচেয়ে ভেজা দিন',
+  yr_fair_days: 'পরিষ্কার দিন',
+  yr_coverage: 'এই ডিভাইসে রেকার্ড করা {n} দিন থেকে',
+  tile_yearreview: 'বহরের পর্যালোচনা',
 };

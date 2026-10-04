@@ -404,4 +404,17 @@ export const fr: Strings = {
   notif_rain_ongoing_now: 'Il pleut à {city}',
   notif_rain_ongoing_soon: 'Pluie attendue dans environ {n} min à {city}',
   notif_rain_ongoing_later: 'Pluie probable dans les prochaines heures à {city}',
+
+  // ── year in review ──
+  yr_title: 'Bilan de l’année',
+  yr_empty: 'Ouvrez l’application quelques jours de plus et ceci se remplira tout seul.',
+  yr_hottest: 'Jour le plus chaud',
+  yr_coldest: 'Jour le plus froid',
+  yr_avg_high: 'Maximum moyen',
+  yr_avg_low: 'Minimum moyen',
+  yr_total_rain: 'Pluie totale',
+  yr_wettest_day: 'Jour le plus pluvieux',
+  yr_fair_days: 'Jours dégagés',
+  yr_coverage: 'D’après {n} jours enregistrés sur cet appareil',
+  tile_yearreview: 'Bilan de l’année',
 };

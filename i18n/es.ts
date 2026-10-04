@@ -404,4 +404,17 @@ export const es: Strings = {
   notif_rain_ongoing_now: 'Está lloviendo en {city}',
   notif_rain_ongoing_soon: 'Se espera lluvia en unos {n} min en {city}',
   notif_rain_ongoing_later: 'Probable lluvia en las próximas horas en {city}',
+
+  // ── year in review ──
+  yr_title: 'Resumen del año',
+  yr_empty: 'Abre la app unos días más y esto se rellenará solo.',
+  yr_hottest: 'Día más cálido',
+  yr_coldest: 'Día más frío',
+  yr_avg_high: 'Máxima media',
+  yr_avg_low: 'Mínima media',
+  yr_total_rain: 'Lluvia total',
+  yr_wettest_day: 'Día más lluvioso',
+  yr_fair_days: 'Días despejados',
+  yr_coverage: 'A partir de {n} días registrados en este dispositivo',
+  tile_yearreview: 'Resumen del año',
 };

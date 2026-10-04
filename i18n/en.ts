@@ -861,6 +861,19 @@ export const en = {
   notif_rain_ongoing_now: 'Rain is falling in {city}',
   notif_rain_ongoing_soon: 'Rain expected in about {n} min in {city}',
   notif_rain_ongoing_later: 'Rain likely within the next few hours in {city}',
+
+  // ── year in review ──
+  yr_title: 'Year in review',
+  yr_empty: 'Open the app on a few more days and this fills up automatically.',
+  yr_hottest: 'Hottest day',
+  yr_coldest: 'Coldest day',
+  yr_avg_high: 'Average high',
+  yr_avg_low: 'Average low',
+  yr_total_rain: 'Rain total',
+  yr_wettest_day: 'Wettest day',
+  yr_fair_days: 'Clear days',
+  yr_coverage: 'From {n} days recorded on this device',
+  tile_yearreview: 'Year in review',
 };
 
 export type Strings = typeof en;

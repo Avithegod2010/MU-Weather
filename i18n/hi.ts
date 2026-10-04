@@ -404,4 +404,17 @@ export const hi: Strings = {
   notif_rain_ongoing_now: '{city} में बारिश हो रही है',
   notif_rain_ongoing_soon: '{city} में जलदी में टणी टाणी बारिश ({n} मिनिट)',
   notif_rain_ongoing_later: '{city} में अगली मिनटों में बारिश का संदाआ है',
+
+  // ── year in review ──
+  yr_title: 'वर्ष की समीक्षा',
+  yr_empty: 'एउप को कुछ आर दिनों तक खोलें, यह अपने आप भर जाएग।',
+  yr_hottest: 'सबसे गर्म दिन',
+  yr_coldest: 'सबसे ठंडा दिन',
+  yr_avg_high: 'औसत अधिकतम',
+  yr_avg_low: 'औसत न्यूनतम',
+  yr_total_rain: 'कुत वर्षा',
+  yr_wettest_day: 'सबसे अधिक वर्षा वाला दिन',
+  yr_fair_days: 'साफ़ दिन',
+  yr_coverage: 'इस डिवाइस पर दर्ज {n} दिनों से',
+  tile_yearreview: 'वर्ष की समीक्षा',
 };

@@ -404,4 +404,17 @@ export const el: Strings = {
   notif_rain_ongoing_now: 'Βροχήζει στην {city}',
   notif_rain_ongoing_soon: 'Βροχή σε ~{n} λεπτά στην {city}',
   notif_rain_ongoing_later: 'Οικοί βροχή τις επόμενες ώρες στην {city}',
+
+  // ── year in review ──
+  yr_title: 'Απολογισμός χρονιάς',
+  yr_empty: 'ΐνοίξτε την εφαρμογή για λίγες ακόμα μέρες και θα γεμίσει μόνο του.',
+  yr_hottest: 'Η θερμότερη μέρα',
+  yr_coldest: 'Η ψυρότερη μέρα',
+  yr_avg_high: 'Μέση μέγιστη',
+  yr_avg_low: 'Μέση ελάχιστη',
+  yr_total_rain: 'Συνολική βροχή',
+  yr_wettest_day: 'Η πιο βρεγμένη μέρα',
+  yr_fair_days: 'Καθαρές μέρες',
+  yr_coverage: 'Από {n} ημέρες που καταγράφηκαν σε αυτή τη συσκευή',
+  tile_yearreview: 'Απολογισμός χρονιάς',
 };

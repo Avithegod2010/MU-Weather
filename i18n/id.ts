@@ -404,4 +404,17 @@ export const id: Strings = {
   notif_rain_ongoing_now: 'Hujan turun di {city}',
   notif_rain_ongoing_soon: 'Hujan diperkirakan dalam {n} mnt di {city}',
   notif_rain_ongoing_later: 'Kemungkinan hujan dalam beberapa jam di {city}',
+
+  // ── year in review ──
+  yr_title: 'Ringkasan tahun',
+  yr_empty: 'Buka aplikasi beberapa hari lagi dan ini akan terisi sendiri.',
+  yr_hottest: 'Hari terpanas',
+  yr_coldest: 'Hari terdingin',
+  yr_avg_high: 'Rata-rata maksimum',
+  yr_avg_low: 'Rata-rata minimum',
+  yr_total_rain: 'Total hujan',
+  yr_wettest_day: 'Hari terbasah',
+  yr_fair_days: 'Hari cerah',
+  yr_coverage: 'Berdasarkan {n} hari yang tercatat di perangkat ini',
+  tile_yearreview: 'Ringkasan tahun',
 };

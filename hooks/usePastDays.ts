@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchPastDays } from '../api/providers';
 import { loadPastDaysCache, savePastDaysCache, localDateStamp, utcDaysAgoStamp } from '../utils/pastDaysCache';
+import { recordYearActuals } from '../utils/yearLog';
 import type { GeoLocation, PastDayActual } from '../api/types';
 
 /** One ranged Archive request covers both the 7-day and 30-day views. */
@@ -47,6 +48,8 @@ export function usePastDays(location: GeoLocation | null): PastDaysState {
         if (cancelled) return;
         if (days.length > 0) {
           void savePastDaysCache(lat, lon, days);
+          // Same rows feed the year in review (utils/yearLog) - storage only.
+          void recordYearActuals(days, lat, lon);
           setState({ status: 'ok', days });
         } else if (!cached || cached.days.length === 0) {
           setState({ status: 'error', days: [] });
