@@ -817,6 +817,13 @@ export const en = {
   custom_note: 'Add a note (optional)',
   wind_rose: 'Wind rose',
   wind_rose_a11y: 'Prevailing direction {dir}, fastest {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'Unit presets',
+  s_unit_presets_sub: 'Set temperature, wind, pressure and rain units in one tap',
+  preset_metric: 'Metric',
+  preset_us: 'US',
+  preset_uk: 'UK',
 };
 
 export type Strings = typeof en;

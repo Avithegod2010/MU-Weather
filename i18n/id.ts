@@ -360,4 +360,11 @@ export const id: Strings = {
   custom_note: 'Tambah catatan (opsional)',
   wind_rose: 'Mawar angin',
   wind_rose_a11y: 'Arah dominan {dir}, tercepat {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'Preset satuan',
+  s_unit_presets_sub: 'Atur suhu, angin, tekanan, dan hujan dalam satu ketukan',
+  preset_metric: 'Metrik',
+  preset_us: 'AS',
+  preset_uk: 'Inggris',
 };

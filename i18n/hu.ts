@@ -360,4 +360,11 @@ export const hu: Strings = {
   custom_note: 'Jegyzet hozzáadása (nem kötelező)',
   wind_rose: 'Szélrózsa',
   wind_rose_a11y: 'Uralkodó irány {dir}, leggyorsabb {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'Egység-előbeállítások',
+  s_unit_presets_sub: 'Hőmérséklet, szél, nyomás és eső beállítása egyetlen koppintással',
+  preset_metric: 'Metrikus',
+  preset_us: 'USA',
+  preset_uk: 'UK',
 };

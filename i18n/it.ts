@@ -360,4 +360,11 @@ export const it: Strings = {
   custom_note: 'Aggiungi una nota (facoltativo)',
   wind_rose: 'Rosa dei venti',
   wind_rose_a11y: 'Direzione prevalente {dir}, più veloce {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'Preimpostazioni unità',
+  s_unit_presets_sub: 'Imposta temperatura, vento, pressione e pioggia con un tocco',
+  preset_metric: 'Metrico',
+  preset_us: 'USA',
+  preset_uk: 'UK',
 };

@@ -360,4 +360,11 @@ export const hi: Strings = {
   custom_note: 'एक नोट जोडें (वैकल्पिक)',
   wind_rose: 'पवन गुलाब',
   wind_rose_a11y: 'प्रमुख दिशा {dir}, सबसे तेज़ {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'इकाई प्रीसेट',
+  s_unit_presets_sub: 'तापमान, हवा, दबाव और बारिश की इकाईएँ एक टैप में सेट करें',
+  preset_metric: 'मीट्रिक',
+  preset_us: 'US',
+  preset_uk: 'UK',
 };

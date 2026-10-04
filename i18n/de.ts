@@ -360,4 +360,11 @@ export const de: Strings = {
   custom_note: 'Notiz hinzufügen (optional)',
   wind_rose: 'Windrose',
   wind_rose_a11y: 'Vorherrschende Richtung {dir}, schnellste {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'Einheiten-Voreinstellungen',
+  s_unit_presets_sub: 'Temperatur, Wind, Druck und Regen mit einem Tipp setzen',
+  preset_metric: 'Metrisch',
+  preset_us: 'US',
+  preset_uk: 'UK',
 };

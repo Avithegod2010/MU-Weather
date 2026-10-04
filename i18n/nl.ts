@@ -360,4 +360,11 @@ export const nl: Strings = {
   custom_note: 'Notitie toevoegen (optioneel)',
   wind_rose: 'Windroos',
   wind_rose_a11y: 'Dominante richting {dir}, snelste {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'Eenheden-voorinstellingen',
+  s_unit_presets_sub: 'Temperatuur, wind, druk en regen in één tik instellen',
+  preset_metric: 'Metrisch',
+  preset_us: 'VS',
+  preset_uk: 'VK',
 };

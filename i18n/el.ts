@@ -360,4 +360,11 @@ export const el: Strings = {
   custom_note: 'Προσθήκη σημείωσης (προαιρετικό)',
   wind_rose: 'Ρόδα των ανέμων',
   wind_rose_a11y: 'Κυρίαρχη κατεύθυνση {dir}, μεγαλύτερη {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'Προεπιλογές μονάδων',
+  s_unit_presets_sub: 'Ρύθμιση θερμοκρασίας, ανέμου, πίεσης και βροχής με ένα πάτημα',
+  preset_metric: 'Μετρικό',
+  preset_us: 'ΗΠΥ',
+  preset_uk: 'Η̖',
 };

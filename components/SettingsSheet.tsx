@@ -87,6 +87,18 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   aurora: 'tile_aurora',
   bestWindow: 'tile_best_window',
 };
+
+/**
+ * One-tap unit profiles for Settings -> Units. The individual toggles below
+ * stay exactly as they are - a preset just writes all four unit fields at
+ * once; the active chip highlights only when all four match.
+ */
+const UNIT_PRESETS: Record<string, Partial<AppSettings>> = {
+  metric: { tempUnit: 'celsius', windUnit: 'kmh', pressureUnit: 'hPa', precipUnit: 'mm' },
+  us: { tempUnit: 'fahrenheit', windUnit: 'mph', pressureUnit: 'inHg', precipUnit: 'inches' },
+  // The UK mix: Celsius + mm/hPa with miles-per-hour wind.
+  uk: { tempUnit: 'celsius', windUnit: 'mph', pressureUnit: 'hPa', precipUnit: 'mm' },
+};
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
 import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
@@ -245,6 +257,17 @@ export function SettingsSheet({
     setBackupMsg(message);
     setTimeout(() => setBackupMsg(null), 4000);
   };
+  /** Which unit preset (if any) the current settings fully match. '' = mixed. */
+  const activeUnitPreset =
+    Object.keys(UNIT_PRESETS).find((key) => {
+      const patch = UNIT_PRESETS[key];
+      return (
+        patch !== undefined &&
+        (Object.keys(patch) as Array<keyof AppSettings>).every(
+          (field) => settings[field] === patch[field],
+        )
+      );
+    }) ?? '';
   const onExportBackup = async () => {
     haptics.select();
     try {
@@ -814,6 +837,33 @@ export function SettingsSheet({
             </View>
             <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
           </Pressable>
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Gauge size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_unit_presets')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_unit_presets_sub')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.segmentRow}>
+            <Segmented
+              theme={theme}
+              options={[
+                { value: 'metric', label: t('preset_metric') },
+                { value: 'us', label: t('preset_us') },
+                { value: 'uk', label: t('preset_uk') },
+              ]}
+              value={activeUnitPreset}
+              onChange={(value) => {
+                haptics.select();
+                const patch = UNIT_PRESETS[value];
+                if (patch) onUpdate(patch);
+              }}
+            />
+          </View>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Thermometer size={20} color={theme.textPrimary} strokeWidth={2} />

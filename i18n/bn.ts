@@ -360,4 +360,11 @@ export const bn: Strings = {
   custom_note: 'একটি নোট যোগ করুন (ঝচ্ছিক)',
   wind_rose: 'বাতাসের গোলাপ',
   wind_rose_a11y: 'প্রধান দিক {dir}, দ্রুততম {n}',
+
+  // ── unit presets ──
+  s_unit_presets: 'একক প্रিসেট',
+  s_unit_presets_sub: 'তাপমাত্रা, বাতাস, চাপ औর বৃষ্টির একক ট্যাপে সেট করুন',
+  preset_metric: 'মেট্রিক',
+  preset_us: 'US',
+  preset_uk: 'UK',
 };
