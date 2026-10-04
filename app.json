@@ -65,6 +65,17 @@
               "updatePeriodMillis": 1800000
             },
             {
+              "name": "MUWeatherWidgetSun",
+              "label": "MU Weather Sunrise",
+              "description": "Countdown to the next sunrise or sunset",
+              "minWidth": "180dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
               "name": "MUWeatherWidgetLarge",
               "label": "MU Weather Large",
               "description": "Conditions with an hourly forecast strip",

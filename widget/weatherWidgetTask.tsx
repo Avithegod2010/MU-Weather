@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { WeatherWidget, renderWeatherWidgetFromBundle } from '../components/WeatherWidget';
 import { WeatherWidgetLarge, renderWeatherWidgetLargeFromBundle } from '../components/WeatherWidgetLarge';
+import { WeatherWidgetSun, renderWeatherWidgetSunFromBundle } from '../components/WeatherWidgetSun';
 import {
   WeatherWidgetDashboard,
   renderWeatherWidgetDashboardFromBundle,
@@ -26,6 +27,8 @@ export const WEATHER_WIDGET_NAME_LARGE = 'MUWeatherWidgetLarge';
 export const WEATHER_WIDGET_NAME_DASHBOARD = 'MUWeatherWidgetDashboard';
 
 export const WEATHER_WIDGET_NAME_CITY = 'MUWeatherWidgetCity';
+
+export const WEATHER_WIDGET_NAME_SUN = 'MUWeatherWidgetSun';
 
 const WEATHER_CACHE_KEY = '@mu_weather/last_weather_v1';
 
@@ -129,6 +132,26 @@ async function renderFromCache(): Promise<React.JSX.Element> {
   return renderWeatherWidgetFromBundle(bundle);
 }
 
+const SUN_NO_DATA_PROPS = {
+  hasData: false,
+  cityName: '',
+  eventLabel: '',
+  eventTime: '',
+  countdown: '',
+  otherLine: '',
+  polarNote: '',
+  updatedLabel: '',
+  stale: false,
+};
+
+async function renderFromCacheSun(): Promise<React.JSX.Element> {
+  const bundle = await loadCachedBundle();
+  if (!bundle) {
+    return <WeatherWidgetSun {...SUN_NO_DATA_PROPS} />;
+  }
+  return renderWeatherWidgetSunFromBundle(bundle);
+}
+
 async function renderFromCacheLarge(): Promise<React.JSX.Element> {
   const bundle = await loadCachedBundle();
   if (!bundle) {
@@ -189,6 +212,10 @@ if (!globalScope.__muWidgetTaskDefined) {
       renderWidget(await renderFromCacheLarge());
       return;
     }
+    if (widgetInfo.widgetName === WEATHER_WIDGET_NAME_SUN) {
+      renderWidget(await renderFromCacheSun());
+      return;
+    }
     if (widgetInfo.widgetName === WEATHER_WIDGET_NAME_DASHBOARD) {
       renderWidget(await renderFromCacheDashboard());
       return;
@@ -214,6 +241,7 @@ export async function refreshWeatherWidgets(): Promise<void> {
     { widgetName: WEATHER_WIDGET_NAME, renderWidget: renderFromCache },
     { widgetName: WEATHER_WIDGET_NAME_LARGE, renderWidget: renderFromCacheLarge },
     { widgetName: WEATHER_WIDGET_NAME_DASHBOARD, renderWidget: renderFromCacheDashboard },
+    { widgetName: WEATHER_WIDGET_NAME_SUN, renderWidget: renderFromCacheSun },
   ].map(async ({ widgetName, renderWidget }) => {
     try {
       await requestWidgetUpdate({ widgetName, renderWidget });
