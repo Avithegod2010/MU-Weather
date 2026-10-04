@@ -31,6 +31,7 @@ export const DETAIL_TILES: DetailTileOption[] = [
   { key: 'snow', label: 'Snow' },
   { key: 'graphs', label: 'Graphs' },
   { key: 'sunTwilight', label: 'Sun & Twilight' },
+  { key: 'journal', label: 'Comfort journal' },
 ];
 
 export interface HideableTile {

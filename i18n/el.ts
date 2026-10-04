@@ -336,4 +336,19 @@ export const el: Strings = {
   notif_custom_title: 'Ειδοποίηση {metric}',
   notif_custom_gte: '{metric} είναι {value} ή παραπάνω',
   notif_custom_lte: '{metric} είναι {value} ή λιγότερο',
+
+  // ── weather journal ──
+  tile_journal: 'Ημερολόγιο άνεσης',
+  journal_title: 'Ημερολόγιο καιρού',
+  journal_prompt: 'Πώς ένιωσε η σήμερα;',
+  journal_saved: 'Σήμερα ένιωσα {rating}',
+  journal_change: 'Πατήστε άλλη επιλογή για αλλαγή',
+  journal_progress: '{n} ημέρες αξιολογημένες · μόνο σε αυτή τη συσκευή',
+  journal_rating_cold: 'Κρύος',
+  journal_rating_ok: 'Ακριβώς',
+  journal_rating_hot: 'Ζέστη',
+  journal_a11y_cold: 'Αξιολογήστε σήμερα ως κρύος',
+  journal_a11y_ok: 'Αξιολογήστε σήμερα ως ακριβώς',
+  journal_a11y_hot: 'Αξιολογήστε σήμερα ως ζέστη',
+  wear_tuned: 'ρυθμισμένο στο πώς νιώθετε',
 };

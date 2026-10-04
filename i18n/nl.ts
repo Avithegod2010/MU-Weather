@@ -336,4 +336,19 @@ export const nl: Strings = {
   notif_custom_title: '{metric}-waarschuwing',
   notif_custom_gte: '{metric} is op of boven {value}',
   notif_custom_lte: '{metric} is op of onder {value}',
+
+  // ── weather journal ──
+  tile_journal: 'Comfortdagboek',
+  journal_title: 'Weerdagboek',
+  journal_prompt: 'Hoe voelde het vandaag?',
+  journal_saved: 'Vandaag voelde {rating}',
+  journal_change: 'Tik op een ander om te wijzigen',
+  journal_progress: '{n} dagen beoordeeld · alleen op dit apparaat',
+  journal_rating_cold: 'Koud',
+  journal_rating_ok: 'Precies goed',
+  journal_rating_hot: 'Warm',
+  journal_a11y_cold: 'Vandaag als koud beoordelen',
+  journal_a11y_ok: 'Vandaag als precies goed beoordelen',
+  journal_a11y_hot: 'Vandaag als warm beoordelen',
+  wear_tuned: 'afgestemd op hoe je je voelt',
 };

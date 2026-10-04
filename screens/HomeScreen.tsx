@@ -84,6 +84,8 @@ import { AuroraCard } from '../components/AuroraCard';
 import { BestWindowCard } from '../components/BestWindowCard';
 import { computeBestWindow, bestWindowLine } from '../utils/bestWindow';
 import { computeWearLine } from '../utils/whatToWear';
+import { useComfortJournal } from '../hooks/useComfortJournal';
+import { ComfortJournalCard } from '../components/ComfortJournalCard';
 import { TileDetailScreen, type TopicKey } from '../components/TileDetailScreen';
 import { DayDetailScreen } from '../components/DayDetailScreen';
 import { HistoricalExplorerScreen } from '../components/HistoricalExplorerScreen';
@@ -165,6 +167,7 @@ export function HomeScreen() {
 
   const favoritesState = useFavorites();
   const weather = useWeather(active);
+  const comfort = useComfortJournal();
   const pastDays = usePastDays(active);
   const climateNormals = useClimateNormals(active);
   const onThisDay = useOnThisDay(active);
@@ -329,8 +332,10 @@ export function HomeScreen() {
   const bestWindowLabel = bestWindow ? bestWindowLine(bestWindow) : null;
   const wearLine = useMemo(
     () =>
-      weather.data ? computeWearLine(weather.data.current, weather.data.daily[0] ?? null) : null,
-    [weather.data],
+      weather.data
+        ? computeWearLine(weather.data.current, weather.data.daily[0] ?? null, comfort.calibration)
+        : null,
+    [weather.data, comfort.calibration],
   );
   const commentary = useMemo(
     () => (settings.snarkMode && weather.data ? getSnarkComment(weather.data) : null),
@@ -603,6 +608,27 @@ export function HomeScreen() {
                 <Reveal delay={60}>
                   <HighlightsCard theme={theme} highlights={highlights} />
                 </Reveal>
+              ) : null}
+
+              {/* Weather journal: "How did today feel?" - only prompts for today,
+                  and its answer calibrates the wear line above. */}
+              {showSection('journal') ? (
+                <ComfortJournalCard
+                  theme={theme}
+                  today={comfort.today}
+                  total={comfort.total}
+                  onRate={(rating) => {
+                    const data = weather.data;
+                    comfort.rate(rating, {
+                      tApparent: data ? data.current.apparentTemperature : null,
+                      humidity: data ? data.current.humidity : null,
+                      wind: data ? data.current.windSpeed : null,
+                      tMax: data && data.daily[0] ? data.daily[0].tMax : (data ? data.current.temperature : 0),
+                      tMin: data && data.daily[0] ? data.daily[0].tMin : (data ? data.current.temperature : 0),
+                    });
+                  }}
+                  revealDelay={100}
+                />
               ) : null}
 
               {showSection('nowcast') ? (

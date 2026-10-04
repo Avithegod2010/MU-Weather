@@ -336,4 +336,19 @@ export const de: Strings = {
   notif_custom_title: '{metric}-Warnung',
   notif_custom_gte: '{metric} liegt bei oder über {value}',
   notif_custom_lte: '{metric} liegt bei oder unter {value}',
+
+  // ── weather journal ──
+  tile_journal: 'Komfort-Tagebuch',
+  journal_title: 'Wetter-Tagebuch',
+  journal_prompt: 'Wie hat sich der Tag angefühlt?',
+  journal_saved: 'Heute {rating}',
+  journal_change: 'Für eine Änderung andere wählen',
+  journal_progress: '{n} Tage bewertet · nur auf diesem Gerät',
+  journal_rating_cold: 'Kalt',
+  journal_rating_ok: 'Genau richtig',
+  journal_rating_hot: 'Heiß',
+  journal_a11y_cold: 'Heute als kalt bewerten',
+  journal_a11y_ok: 'Heute als genau richtig bewerten',
+  journal_a11y_hot: 'Heute als heiß bewerten',
+  wear_tuned: 'auf dein Gefühl abgestimmt',
 };

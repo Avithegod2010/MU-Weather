@@ -69,6 +69,7 @@ const TILE_LABEL_KEYS: Record<string, StringKey> = {
   snow: 'tile_snow',
   graphs: 'tile_graphs',
   sunTwilight: 'tile_sun_twilight',
+  journal: 'tile_journal',
   highlights: 'tile_highlights',
   nowcast: 'tile_nowcast',
   rainChart: 'tile_rainchart',
@@ -159,6 +160,7 @@ const TILE_ICONS: Record<string, LucideIcon> = {
   climate: Thermometer,
   onThisDay: CalendarDays,
   warnings: TriangleAlert,
+  journal: Thermometer,
 };
 
 interface SegmentedOption {

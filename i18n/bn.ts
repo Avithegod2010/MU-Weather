@@ -336,4 +336,19 @@ export const bn: Strings = {
   notif_custom_title: '{metric} সতর্কতা',
   notif_custom_gte: '{metric} {value} বা তার বেশি',
   notif_custom_lte: '{metric} {value} বা তার কম',
+
+  // ── weather journal ──
+  tile_journal: 'আরাম জার্নাল',
+  journal_title: 'আবহাওয়া জার্নাল',
+  journal_prompt: 'আজ কেমন লাগল?',
+  journal_saved: 'আজ {rating} লেগেছে',
+  journal_change: 'বদলাতে অন্যটি চাপুন',
+  journal_progress: '{n} দিন রেট করা · শুধু এই ডিভাইসে',
+  journal_rating_cold: 'ঠান্ডা',
+  journal_rating_ok: 'ঠিক ঠিক',
+  journal_rating_hot: 'গরম',
+  journal_a11y_cold: 'আজকে ঠান্ডা রেট করুন',
+  journal_a11y_ok: 'আজকে ঠিক ঠিক রেট করুন',
+  journal_a11y_hot: 'আজকে গরম রেট করুন',
+  wear_tuned: 'আপনার অনুভূতি অনুযায়ী',
 };

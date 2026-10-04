@@ -793,6 +793,21 @@ export const en = {
   notif_custom_title: '{metric} alert',
   notif_custom_gte: '{metric} is at or above {value}',
   notif_custom_lte: '{metric} is at or below {value}',
+
+  // ── weather journal ──
+  tile_journal: 'Comfort journal',
+  journal_title: 'Weather journal',
+  journal_prompt: 'How did today feel?',
+  journal_saved: 'Today felt {rating}',
+  journal_change: 'Tap another to change it',
+  journal_progress: '{n} days rated · on this device only',
+  journal_rating_cold: 'Cold',
+  journal_rating_ok: 'Just right',
+  journal_rating_hot: 'Hot',
+  journal_a11y_cold: 'Rate today as cold',
+  journal_a11y_ok: 'Rate today as just right',
+  journal_a11y_hot: 'Rate today as hot',
+  wear_tuned: 'tuned to how you feel',
 };
 
 export type Strings = typeof en;

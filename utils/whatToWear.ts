@@ -1,5 +1,7 @@
 import { t } from './i18n';
 import { formatTemp } from './format';
+import { MAX_COMFORT_OFFSET_C, DEFAULT_COLD_BOUNDARY_C, DEFAULT_HOT_BOUNDARY_C } from './comfortJournal';
+import type { ComfortOffset } from './comfortJournal';
 import type { CurrentConditions, DayPoint } from '../api/types';
 
 export interface WearLine {
@@ -21,8 +23,20 @@ const WINDY_KMH = 25;
  *
  * The temperature goes through formatTemp so a Fahrenheit user reads their own
  * unit — the thresholds stay in Celsius internally, matching the API.
+ *
+ * `calibration` is the personal comfort offset from the weather journal
+ * (utils/comfortJournal.ts). Omitting it — or passing null, which is what the
+ * journal returns until there is enough signal — keeps the default boundaries
+ * and the line byte-identical to the uncalibrated output. When active, both
+ * boundaries shift by the offset so someone who runs cold reaches "jacket"
+ * earlier, and the shift is made visible with a short localized hint appended
+ * through the same middot idiom as the other extras.
  */
-export function computeWearLine(current: CurrentConditions, today: DayPoint | null): WearLine {
+export function computeWearLine(
+  current: CurrentConditions,
+  today: DayPoint | null,
+  calibration?: ComfortOffset | null,
+): WearLine {
   const feels = current.apparentTemperature;
   const extras: string[] = [];
   // Rain already falling is treated as a high probability, not as dry.
@@ -34,8 +48,24 @@ export function computeWearLine(current: CurrentConditions, today: DayPoint | nu
   if ((today?.uvIndexMax ?? 0) >= UV_SUNSCREEN_THRESHOLD) extras.push(t('wear_sunscreen'));
   if (current.windGusts >= GUSTY_KMH || current.windSpeed >= WINDY_KMH) extras.push(t('wear_windy'));
 
+  // The offset shifts BOTH boundaries by the same amount, so the span between
+  // the jacket and the shorts threshold stays the default 14 degrees. Clamped
+  // here too (comfortOffset already clamps), so a corrupted offset can never
+  // push the boundaries apart or invert them.
+  const clampedOffset =
+    calibration && Number.isFinite(calibration.offsetC)
+      ? Math.max(-MAX_COMFORT_OFFSET_C, Math.min(MAX_COMFORT_OFFSET_C, calibration.offsetC))
+      : 0;
+  const coldBoundary = DEFAULT_COLD_BOUNDARY_C + clampedOffset;
+  const hotBoundary = DEFAULT_HOT_BOUNDARY_C + clampedOffset;
+
   const base =
-    feels < 12 ? t('wear_jacket') : feels > 26 ? t('wear_shorts') : t('wear_shirt');
+    feels < coldBoundary ? t('wear_jacket') : feels > hotBoundary ? t('wear_shorts') : t('wear_shirt');
+  if (clampedOffset !== 0) {
+    extras.push(t('wear_tuned'));
+  }
   const suffix = extras.length ? EXTRA_SEPARATOR + extras.join(', ') : '';
+  // The displayed feels-like stays the REAL apparent temperature: the offset
+  // shifts the boundaries, it never falsifies the temperature itself.
   return { text: base.replace('{n}', formatTemp(feels)) + suffix };
 }

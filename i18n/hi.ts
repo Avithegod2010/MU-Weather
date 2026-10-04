@@ -336,4 +336,19 @@ export const hi: Strings = {
   notif_custom_title: '{metric} सतर्कता',
   notif_custom_gte: '{metric} {value} या उससे अधिक है',
   notif_custom_lte: '{metric} {value} या उससे कम है',
+
+  // ── weather journal ──
+  tile_journal: 'आराम जर्नल',
+  journal_title: 'मौसम जर्नल',
+  journal_prompt: 'आज कैसा लगा?',
+  journal_saved: 'आज {rating} लगा',
+  journal_change: 'बदलने के लिए दूसरा चुनें',
+  journal_progress: '{n} दिन रेट किए · केवल इस डिवाइस पर',
+  journal_rating_cold: 'ठंडा',
+  journal_rating_ok: 'ठीक ठीक',
+  journal_rating_hot: 'गर्म',
+  journal_a11y_cold: 'आज को ठंडा रेट करें',
+  journal_a11y_ok: 'आज को ठीक ठीक रेट करें',
+  journal_a11y_hot: 'आज को गर्म रेट करें',
+  wear_tuned: 'आपकी अनुभूति के अनुसार',
 };

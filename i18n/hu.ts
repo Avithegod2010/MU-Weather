@@ -336,4 +336,19 @@ export const hu: Strings = {
   notif_custom_title: '{metric} riasztás',
   notif_custom_gte: '{metric} legalább {value}',
   notif_custom_lte: '{metric} legfeljebb {value}',
+
+  // ── weather journal ──
+  tile_journal: 'Kényelmi napló',
+  journal_title: 'Időjárási napló',
+  journal_prompt: 'Hogy érezte ma a napot?',
+  journal_saved: 'Ma {rating} érzés',
+  journal_change: 'Változtatáshoz válasszon másikat',
+  journal_progress: '{n} nap értékelve · csak ezen az eszközön',
+  journal_rating_cold: 'Hideg',
+  journal_rating_ok: 'Pont jó',
+  journal_rating_hot: 'Meleg',
+  journal_a11y_cold: 'Ma hidegnek értékelje',
+  journal_a11y_ok: 'Ma pont jónak értékelje',
+  journal_a11y_hot: 'Ma melegnek értékelje',
+  wear_tuned: 'ahhoz igazítva, ahogy érzi',
 };

@@ -336,4 +336,19 @@ export const id: Strings = {
   notif_custom_title: 'Peringatan {metric}',
   notif_custom_gte: '{metric} adalah {value} atau lebih',
   notif_custom_lte: '{metric} adalah {value} atau kurang',
+
+  // ── weather journal ──
+  tile_journal: 'Jurnal kenyamanan',
+  journal_title: 'Jurnal cuaca',
+  journal_prompt: 'Bagaimana perasaan hari ini?',
+  journal_saved: 'Hari ini terasa {rating}',
+  journal_change: 'Ketuk pilihan lain untuk mengubahnya',
+  journal_progress: '{n} hari dinilai · hanya di perangkat ini',
+  journal_rating_cold: 'Dingin',
+  journal_rating_ok: 'Tepat',
+  journal_rating_hot: 'Panas',
+  journal_a11y_cold: 'Nilai hari ini sebagai dingin',
+  journal_a11y_ok: 'Nilai hari ini sebagai tepat',
+  journal_a11y_hot: 'Nilai hari ini sebagai panas',
+  wear_tuned: 'disesuaikan dengan perasaan Anda',
 };
