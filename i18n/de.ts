@@ -396,4 +396,12 @@ export const de: Strings = {
   notif_sunrise_title: 'Sonnenaufgang bald',
   notif_sunrise_body: 'Die Sonne geht in etwa {n} Minuten auf',
   notif_sunrise_body_now: 'Die Sonne geht auf',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'Regenstatus',
+  s_rain_ongoing_sub: 'Hält eine Benachrichtigung aktiv, während es regnet oder regnen wird',
+  notif_rain_ongoing_title: 'Regen kommt',
+  notif_rain_ongoing_now: 'Es regnet in {city}',
+  notif_rain_ongoing_soon: 'Regen in etwa {n} Min. in {city}',
+  notif_rain_ongoing_later: 'Regen wahrscheinlich in den nächsten Stunden in {city}',
 };

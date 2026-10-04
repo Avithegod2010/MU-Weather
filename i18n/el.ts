@@ -396,4 +396,12 @@ export const el: Strings = {
   notif_sunrise_title: 'Ηόρα ήλιος',
   notif_sunrise_body: 'ο ήλιος ανατελεί σε περίπου {n} λεπτά',
   notif_sunrise_body_now: 'Ο ήλιος ανατελγι',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'Στήση βροχής',
+  s_rain_ongoing_sub: 'Κρατάει μία ειδοποίηση όχο βροχήζει ή γίνεται',
+  notif_rain_ongoing_title: 'Βροχή μόπος',
+  notif_rain_ongoing_now: 'Βροχήζει στην {city}',
+  notif_rain_ongoing_soon: 'Βροχή σε ~{n} λεπτά στην {city}',
+  notif_rain_ongoing_later: 'Οικοί βροχή τις επόμενες ώρες στην {city}',
 };

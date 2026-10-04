@@ -396,4 +396,12 @@ export const nl: Strings = {
   notif_sunrise_title: 'Zonsopgang nadert',
   notif_sunrise_body: 'De zon komt over ongeveer {n} minuten op',
   notif_sunrise_body_now: 'De zon komt op',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'Regenstatus',
+  s_rain_ongoing_sub: 'Houdt één melding actief zolang het regent of gaat regenen',
+  notif_rain_ongoing_title: 'Regen op komst',
+  notif_rain_ongoing_now: 'Het regent in {city}',
+  notif_rain_ongoing_soon: 'Regen verwacht over ongeveer {n} min in {city}',
+  notif_rain_ongoing_later: 'Waarschijnlijk regen de komende uren in {city}',
 };

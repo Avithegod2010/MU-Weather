@@ -853,6 +853,14 @@ export const en = {
   notif_sunrise_title: 'Sunrise soon',
   notif_sunrise_body: 'The sun rises in about {n} minutes',
   notif_sunrise_body_now: 'The sun is rising',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'Rain status',
+  s_rain_ongoing_sub: 'Keep one notification while rain is here or on the way',
+  notif_rain_ongoing_title: 'Rain on the way',
+  notif_rain_ongoing_now: 'Rain is falling in {city}',
+  notif_rain_ongoing_soon: 'Rain expected in about {n} min in {city}',
+  notif_rain_ongoing_later: 'Rain likely within the next few hours in {city}',
 };
 
 export type Strings = typeof en;

@@ -396,4 +396,12 @@ export const id: Strings = {
   notif_sunrise_title: 'Matahari terbit sebentar lagi',
   notif_sunrise_body: 'Matahari terbit dalam sekitar {n} menit',
   notif_sunrise_body_now: 'Matahari sedang terbit',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'Status hujan',
+  s_rain_ongoing_sub: 'Menjaga satu notifikasi selama hujan turun atau akan turun',
+  notif_rain_ongoing_title: 'Hujan akan datang',
+  notif_rain_ongoing_now: 'Hujan turun di {city}',
+  notif_rain_ongoing_soon: 'Hujan diperkirakan dalam {n} mnt di {city}',
+  notif_rain_ongoing_later: 'Kemungkinan hujan dalam beberapa jam di {city}',
 };

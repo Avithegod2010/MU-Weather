@@ -16,6 +16,7 @@ import { captureRef } from 'react-native-view-shot';
 import { applyWeatherAccent } from '../utils/weatherAccent';
 import { OfflineBanner } from '../components/OfflineBanner';
 import { useSunriseAlarm } from '../hooks/useSunriseAlarm';
+import { useRainOngoing } from '../hooks/useRainOngoing';
 import * as Sharing from 'expo-sharing';
 import * as Linking from 'expo-linking';
 import Animated, {
@@ -309,6 +310,8 @@ export function HomeScreen() {
   // Sunrise alarm: OS date triggers, re-queued whenever the city or lead time
   // changes (and once per app start, so a few days stay covered).
   useSunriseAlarm(settings.sunriseAlarmEnabled, settings.sunriseAlarmOffsetMin, active);
+  // Rain status notification: one updating entry while rain is here or coming.
+  useRainOngoing(settings.rainOngoingEnabled, weather.data);
   // Digest notification's "Read my forecast" action: register the category in
   // the app language, and keep the spoken-forecast source fresh so a tap on
   // the action can speak the current forecast.

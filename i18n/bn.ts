@@ -396,4 +396,12 @@ export const bn: Strings = {
   notif_sunrise_title: 'সূর্যোদয সম্পনে',
   notif_sunrise_body: 'সূর্যোদয বন্ধে আপৈ টাণি মিনিট',
   notif_sunrise_body_now: 'সূর্যোদয রর্ধে ইহ্ছে',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'বৃষ্টি স্ট্যাট঑স',
+  s_rain_ongoing_sub: 'বৃষ্টি ডুমিবার থবे বা বৃষ্টি বারতা টাকা একয়শঠ সত্রমন রাখুন',
+  notif_rain_ongoing_title: 'বৃষ্টি ডুমিসে',
+  notif_rain_ongoing_now: '{city}-e বৃষ্টি পুরধু',
+  notif_rain_ongoing_soon: '{city}-e আপৈ টাণি বৃষ্টি ({n} মিনিট)',
+  notif_rain_ongoing_later: '{city}-e ডুমিবার কাহিনরতা বৃষ্টির সঢ৆য় হয়',
 };

@@ -841,6 +841,35 @@ export function SettingsSheet({
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <CloudRain size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_rain_ongoing')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_rain_ongoing_sub')}
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.rainOngoingEnabled : false}
+              onValueChange={(value) => {
+                if (value) {
+                  haptics.success();
+                  void ensureNotificationPermission().then((granted) => {
+                    onUpdate({ rainOngoingEnabled: granted });
+                  });
+                } else {
+                  haptics.light();
+                  onUpdate({ rainOngoingEnabled: false });
+                }
+              }}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.rainOngoingEnabled ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Sunrise size={20} color={theme.textPrimary} strokeWidth={2} />
             </View>
             <View style={styles.rowTexts}>

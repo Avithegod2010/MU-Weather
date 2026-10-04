@@ -396,4 +396,12 @@ export const hi: Strings = {
   notif_sunrise_title: 'सूर्योदय जलदी',
   notif_sunrise_body: 'सूर्योदय जलें टाणी ट्रो मिनिट',
   notif_sunrise_body_now: 'सूर्योदय हो रहा है',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'बारिश स्टेटस',
+  s_rain_ongoing_sub: 'बारिश चालु हो या आने होने तक एक सूचना निष्टि रहिए',
+  notif_rain_ongoing_title: 'बारिश आने वाला',
+  notif_rain_ongoing_now: '{city} में बारिश हो रही है',
+  notif_rain_ongoing_soon: '{city} में जलदी में टणी टाणी बारिश ({n} मिनिट)',
+  notif_rain_ongoing_later: '{city} में अगली मिनटों में बारिश का संदाआ है',
 };

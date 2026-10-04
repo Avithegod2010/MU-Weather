@@ -396,4 +396,12 @@ export const it: Strings = {
   notif_sunrise_title: 'L’alba è vicina',
   notif_sunrise_body: 'Il sole sorge tra circa {n} minuti',
   notif_sunrise_body_now: 'Il sole sta sorgendo',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'Stato della pioggia',
+  s_rain_ongoing_sub: 'Mantiene una notifica mentre piove o sta per piovere',
+  notif_rain_ongoing_title: 'Pioggia in arrivo',
+  notif_rain_ongoing_now: 'Sta piovendo a {city}',
+  notif_rain_ongoing_soon: 'Pioggia prevista tra circa {n} min a {city}',
+  notif_rain_ongoing_later: 'Pioggia probabile nelle prossime ore a {city}',
 };

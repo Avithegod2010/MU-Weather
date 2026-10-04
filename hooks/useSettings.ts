@@ -73,6 +73,11 @@ export interface AppSettings {
   sunriseAlarmEnabled: boolean;
   /** Minutes before sunrise; one of 0, 15, 30, 60, 90 (the picker in Settings). */
   sunriseAlarmOffsetMin: number;
+  /**
+   * Keep one live notification while rain is falling or on the way, updated in
+   * place and cancelled automatically when the rain is over.
+   */
+  rainOngoingEnabled: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -103,6 +108,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   weatherAccentEnabled: false,
   sunriseAlarmEnabled: false,
   sunriseAlarmOffsetMin: 30,
+  rainOngoingEnabled: false,
   /** Default comparison model shown first in the model-comparison screen — can be
    *  changed in Settings → "Model comparison". Does not affect the home forecast
    *  (that always uses the primary ECMWF model); only gates the comparison screen

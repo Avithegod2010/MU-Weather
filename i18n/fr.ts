@@ -396,4 +396,12 @@ export const fr: Strings = {
   notif_sunrise_title: 'Lever du soleil imminent',
   notif_sunrise_body: 'Le soleil se lève dans environ {n} minutes',
   notif_sunrise_body_now: 'Le soleil se lève',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'État de la pluie',
+  s_rain_ongoing_sub: 'Garde une notification tant qu’il pleut ou va pleuvoir',
+  notif_rain_ongoing_title: 'Pluie en approche',
+  notif_rain_ongoing_now: 'Il pleut à {city}',
+  notif_rain_ongoing_soon: 'Pluie attendue dans environ {n} min à {city}',
+  notif_rain_ongoing_later: 'Pluie probable dans les prochaines heures à {city}',
 };

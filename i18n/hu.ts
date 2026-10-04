@@ -396,4 +396,12 @@ export const hu: Strings = {
   notif_sunrise_title: 'Hamarosan napkel',
   notif_sunrise_body: 'A nap kb. {n} perc mülva kel',
   notif_sunrise_body_now: 'A nap most kel',
+
+  // ── rain status notification ──
+  s_rain_ongoing: 'Esőállapot',
+  s_rain_ongoing_sub: 'Egy értesítést tart fenn, amíg esik vagy esni fog',
+  notif_rain_ongoing_title: 'Eső jön',
+  notif_rain_ongoing_now: 'Esik {city}-ban',
+  notif_rain_ongoing_soon: 'Eső várt várt kb. {n} perc mülva {city}-ban',
+  notif_rain_ongoing_later: 'Valószínél eső a következő órákban {city}-ban',
 };
