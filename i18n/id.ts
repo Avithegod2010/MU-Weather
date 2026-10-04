@@ -429,4 +429,8 @@ export const id: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'Langit',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'Laporan diagnostik',
+  diagnostics_report_sub: 'Bagikan berkas teks untuk dilampirkan ke laporan bug',
 };

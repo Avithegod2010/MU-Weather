@@ -429,4 +429,8 @@ export const de: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'Himmel',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'Diagnosebericht',
+  diagnostics_report_sub: 'Teile eine Textdatei, um sie an einen Fehlerbericht anzuhängen',
 };

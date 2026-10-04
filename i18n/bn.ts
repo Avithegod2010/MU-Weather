@@ -429,4 +429,8 @@ export const bn: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'আকাশ',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'ডায়াগনস্টিক রিপোর্ট',
+  diagnostics_report_sub: 'বাগ রিপোর্টের সাথে যুক্ত করতে একটি টেক্সট ফাইল শেয়ার করুন',
 };

@@ -118,6 +118,7 @@ import { MODEL_KEYS, MODEL_LABELS } from '../api/providers';
 import { formatClockParts } from '../utils/format';
 import { exportSettings, importSettings } from '../utils/backup';
 import { writeForecastLogExport, type DataExportFormat } from '../utils/dataExport';
+import { writeDiagnosticsReport } from '../utils/debugBundle';
 import type { ProviderCheck } from '../api/providers';
 import type { AppTheme } from '../theme/palettes';
 
@@ -323,6 +324,21 @@ export function SettingsSheet({
       await Sharing.shareAsync(result.uri, {
         mimeType: format === 'csv' ? 'text/csv' : 'application/json',
       });
+      showBackupMsg(t('backup_exported'));
+    } catch {
+      showBackupMsg(t('backup_error'));
+    }
+  };
+
+  const onExportDiagnostics = async () => {
+    haptics.select();
+    try {
+      const uri = await writeDiagnosticsReport();
+      if (!uri) {
+        showBackupMsg(t('data_export_failed'));
+        return;
+      }
+      await Sharing.shareAsync(uri, { mimeType: 'text/plain' });
       showBackupMsg(t('backup_exported'));
     } catch {
       showBackupMsg(t('backup_error'));
@@ -1269,6 +1285,27 @@ export function SettingsSheet({
             <View style={styles.rowTexts}>
               <Text style={[styles.rowTitle, { color: inputColor }]}>
                 {t('data_export_json')}
+              </Text>
+            </View>
+          </Pressable>
+
+          <Pressable
+            onPress={() => void onExportDiagnostics()}
+            style={({ pressed }) => [
+              styles.row,
+              { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <FileSpreadsheet size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>
+                {t('diagnostics_report')}
+              </Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('diagnostics_report_sub')}
               </Text>
             </View>
           </Pressable>

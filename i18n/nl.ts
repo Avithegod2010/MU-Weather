@@ -429,4 +429,8 @@ export const nl: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'Hemel',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'Diagnostisch rapport',
+  diagnostics_report_sub: 'Deel een tekstbestand om het aan een bugmelding toe te voegen',
 };

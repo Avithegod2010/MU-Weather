@@ -886,6 +886,10 @@ export const en = {
 
   // ── compare screen labels ──
   cmp_sky: 'Sky',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'Diagnostics report',
+  diagnostics_report_sub: 'Share a text file to attach to a bug report',
 };
 
 export type Strings = typeof en;

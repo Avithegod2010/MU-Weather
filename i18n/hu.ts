@@ -429,4 +429,8 @@ export const hu: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'Ég',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'Diagnosztikai jelentés',
+  diagnostics_report_sub: 'Oszszon meg egy szöveges fájlt, hogy csatolhassa egy hibajegyhez',
 };

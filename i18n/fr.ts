@@ -429,4 +429,8 @@ export const fr: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'Ciel',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'Rapport de diagnostic',
+  diagnostics_report_sub: 'Partagez un fichier texte à joindre à un rapport de bug',
 };

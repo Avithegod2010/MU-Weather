@@ -429,4 +429,8 @@ export const el: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'Ουρανός',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'Αναφορά διαγνωστικής',
+  diagnostics_report_sub: 'Μοιραστείτε ένα αρχείο κειμένου για να το επισυνάψετε σε αναφορά σφάλματος',
 };

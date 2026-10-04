@@ -429,4 +429,8 @@ export const hi: Strings = {
 
   // ── compare screen labels ──
   cmp_sky: 'आकाश',
+
+  // ── diagnostics report ──
+  diagnostics_report: 'निदान रिपोर्ट',
+  diagnostics_report_sub: 'बग रिपोर्ट के साथ संलग्न करने के लिए टेक्स्ट फ़ाइल साझा करें',
 };
