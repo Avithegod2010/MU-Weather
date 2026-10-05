@@ -197,6 +197,19 @@ const LOCALE_STRINGS = [
       shortcut_compare_long: 'Porównaj miasta',
     },
   },
+  {
+    dir: 'values-tr',
+    strings: {
+      shortcut_radar: 'Radar',
+      shortcut_radar_long: 'Radarı aç',
+      shortcut_search: 'Ara',
+      shortcut_search_long: 'Şehir ara',
+      shortcut_favorites: 'Favoriler',
+      shortcut_favorites_long: 'Favorilerim',
+      shortcut_compare: 'Karşılaştır',
+      shortcut_compare_long: 'Şehirleri karşılaştır',
+    },
+  },
 ];
 
 const SHORTCUTS = [

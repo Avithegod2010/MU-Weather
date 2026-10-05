@@ -11,10 +11,11 @@ import { id } from '../i18n/id';
 import { it } from '../i18n/it';
 import { pt } from '../i18n/pt';
 import { pl } from '../i18n/pl';
+import { tr } from '../i18n/tr';
 
 export type { Strings } from '../i18n/en';
 
-export type LanguageKey = 'en' | 'hi' | 'bn' | 'es' | 'fr' | 'de' | 'nl' | 'el' | 'hu' | 'id' | 'it' | 'pt' | 'pl';
+export type LanguageKey = 'en' | 'hi' | 'bn' | 'es' | 'fr' | 'de' | 'nl' | 'el' | 'hu' | 'id' | 'it' | 'pt' | 'pl' | 'tr';
 
 export interface LanguageOption {
   key: LanguageKey;
@@ -36,6 +37,7 @@ export const LANGUAGES: LanguageOption[] = [
   { key: 'es', name: 'Spanish', native: 'Español' },
   { key: 'pt', name: 'Portuguese', native: 'Português' },
   { key: 'pl', name: 'Polish', native: 'Polski' },
+  { key: 'tr', name: 'Turkish', native: 'Türkçe' },
 ];
 
 /** Every valid catalog key, derived from the English dictionary. */
@@ -51,7 +53,7 @@ export type HealthAdviceKey = Extract<StringKey, `health_advice_${string}`>;
 
 type Dict = Partial<typeof en>;
 
-const DICTS: Record<LanguageKey, Dict> = { en, hi, bn, es, fr, de, nl, el, hu, id, it, pt, pl };
+const DICTS: Record<LanguageKey, Dict> = { en, hi, bn, es, fr, de, nl, el, hu, id, it, pt, pl, tr };
 
 let currentLang: LanguageKey = 'en';
 let current: Dict = en;
