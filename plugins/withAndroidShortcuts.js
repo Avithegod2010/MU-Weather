@@ -171,6 +171,19 @@ const LOCALE_STRINGS = [
       shortcut_compare_long: 'Confronta città',
     },
   },
+  {
+    dir: 'values-pt',
+    strings: {
+      shortcut_radar: 'Radar',
+      shortcut_radar_long: 'Abrir radar',
+      shortcut_search: 'Buscar',
+      shortcut_search_long: 'Buscar cidade',
+      shortcut_favorites: 'Favoritos',
+      shortcut_favorites_long: 'Meus favoritos',
+      shortcut_compare: 'Comparar',
+      shortcut_compare_long: 'Comparar cidades',
+    },
+  },
 ];
 
 const SHORTCUTS = [
