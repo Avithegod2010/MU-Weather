@@ -224,7 +224,7 @@ Everything the app stores — settings, caches, the forecast log, alert history,
 
 - [x] **Marine / wave data upgrade** — wave height, period and direction, swell height/period/direction, sea-surface temperature, sea-state bands and a 6-hour per-location cache (Open-Meteo Marine API)
 - [x] Historical explorer — weather on any past date
-- [ ] Further translation polish and additional languages
+- [x] Further translation polish and additional languages — Polish and Turkish join the catalog (14 languages)
 
 ## 🤝 Contributing
 
