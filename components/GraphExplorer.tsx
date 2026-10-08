@@ -1,8 +1,9 @@
 import { SlidingGroup, SlidingItem } from './Sliding';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
-import { Canvas } from '@shopify/react-native-skia';
-import { SvgPath, SvgDot } from './SkiaShapes';
+import { Canvas, Circle, DashPathEffect, Group, LinearGradient, Path, Skia, vec, type SkPath } from '@shopify/react-native-skia';
+import { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useReducedMotion } from '../utils/reduceMotion';
 import { getLanguage, t, type StringKey } from '../utils/i18n';
 import { haptics } from '../utils/haptics';
 import { F } from '../theme/typography';
@@ -66,6 +67,19 @@ interface ActiveView {
 const PAD = 14;
 const CHART_HEIGHT = 130;
 const PLOT_TOP = 14;
+const DRAW_MS = 900;
+
+/** A colour at a given alpha, for the hex series colours used here. */
+function fadeGradient(color: string, alpha: number): string {
+  const hex = /^#([0-9a-fA-F]{6})$/.exec(color);
+  if (!hex) return color;
+  const value = parseInt(hex[1], 16);
+  return `rgba(${(value >> 16) & 255},${(value >> 8) & 255},${value & 255},${alpha})`;
+}
+
+function pathFrom(d: string): SkPath {
+  return Skia.Path.MakeFromSVGString(d) ?? Skia.Path.Make();
+}
 /** Same bottom inset DetailChart uses: 130 - 14 - 16. */
 const PLOT_BOTTOM = CHART_HEIGHT - 14 - 16;
 const AXIS_LABEL_WIDTH = 46;
@@ -153,6 +167,17 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
   const [metric, setMetric] = useState('temperature');
   const [selIdx, setSelIdx] = useState(0);
   const [plotWidth, setPlotWidth] = useState(0);
+  const drawKey = `${range}|${metric}`;
+  const reduced = useReducedMotion();
+  const draw = useSharedValue(reduced ? 1 : 0);
+  useEffect(() => {
+    if (reduced) {
+      draw.value = 1;
+      return;
+    }
+    draw.value = 0;
+    draw.value = withTiming(1, { duration: DRAW_MS, easing: Easing.out(Easing.cubic) });
+  }, [drawKey, reduced, draw]);
 
   const slice = useMemo(() => {
     if (range === '30d') return [];
@@ -301,6 +326,15 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
     });
     return points.length >= 2 ? smoothPath(points) : '';
   });
+  // The first series gets a gradient fill down to the axis, from its first point to its last.
+  const firstSeriesPoints: CurvePoint[] = [];
+  view.series[0]?.values.forEach((value, index) => {
+    if (value !== null) firstSeriesPoints.push({ x: xAt(index), y: yAt(value) });
+  });
+  const fillPath =
+    firstSeriesPoints.length >= 2 && paths[0]
+      ? `${paths[0]} L ${firstSeriesPoints[firstSeriesPoints.length - 1].x.toFixed(1)} ${CHART_HEIGHT - 6} L ${firstSeriesPoints[0].x.toFixed(1)} ${CHART_HEIGHT - 6} Z`
+      : '';
 
   const scrubTo = (x: number) => {
     if (n < 2) return;
@@ -372,17 +406,42 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
         importantForAccessibility="no-hide-descendants"
       >
         <Canvas style={{ width: plotWidth, height: CHART_HEIGHT }}>
+          {fillPath ? (
+            <Group opacity={draw}>
+              <Path path={pathFrom(fillPath)}>
+                <LinearGradient
+                  start={vec(0, PLOT_TOP)}
+                  end={vec(0, CHART_HEIGHT - 6)}
+                  colors={[fadeGradient(view.series[0].color, 0.3), fadeGradient(view.series[0].color, 0)]}
+                />
+              </Path>
+            </Group>
+          ) : null}
           {paths.map((path, index) =>
             path ? (
-              <SvgPath key={`line-${index}`} d={path} color={view.series[index].color} strokeWidth={2.5} />
+              <Path
+                key={`line-${index}`}
+                path={pathFrom(path)}
+                style="stroke"
+                strokeWidth={2.5}
+                strokeCap="round"
+                color={view.series[index].color}
+                start={0}
+                end={draw}
+              />
             ) : null,
           )}
-          <SvgPath d={`M ${xSel} ${PLOT_TOP - 6} L ${xSel} ${CHART_HEIGHT - 6}`} color={theme.textTertiary} strokeWidth={1} dash={[4, 4]} opacity={0.6} />
+          <Path path={pathFrom(`M ${xSel} ${PLOT_TOP - 6} L ${xSel} ${CHART_HEIGHT - 6}`)} style="stroke" strokeWidth={1} color={theme.textTertiary} opacity={0.6}>
+            <DashPathEffect intervals={[4, 4]} />
+          </Path>
           {view.series.map((series, index) => {
             const value = series.values[sel];
             if (value === null) return null;
             return (
-              <SvgDot key={`dot-${index}`} cx={xSel} cy={yAt(value)} r={5} fill={theme.isLight ? '#FFFFFF' : '#F6F9FD'} stroke={series.color} strokeWidth={2.5} />
+              <React.Fragment key={`dot-${index}`}>
+                <Circle cx={xSel} cy={yAt(value)} r={5} color={theme.isLight ? '#FFFFFF' : '#F6F9FD'} />
+                <Circle cx={xSel} cy={yAt(value)} r={5} color={series.color} style="stroke" strokeWidth={2.5} />
+              </React.Fragment>
             );
           })}
         </Canvas>

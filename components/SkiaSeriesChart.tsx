@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { PanResponder, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { PanResponder, StyleSheet, Text, View } from "react-native";
 import {
   Canvas,
   Circle,
+  DashPathEffect,
   Group,
   Line,
   LinearGradient,
@@ -10,15 +11,20 @@ import {
   Skia,
   vec,
   type SkPath,
-} from '@shopify/react-native-skia';
-import { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
-import { smoothPath, type CurvePoint } from '../utils/curve';
-import { useReducedMotion } from '../utils/reduceMotion';
-import type { AppTheme } from '../theme/palettes';
+} from "@shopify/react-native-skia";
+import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
+import { smoothPath, type CurvePoint } from "../utils/curve";
+import { useReducedMotion } from "../utils/reduceMotion";
+import { parseColor } from "../utils/color";
+import type { AppTheme } from "../theme/palettes";
 
 export interface ChartSeries {
   color: string;
   points: CurvePoint[];
+  /** Dash intervals for the line, for a secondary series such as wind. */
+  dash?: number[];
+  /** Indexes of the points that get a dot. Left out, every point gets one. */
+  markers?: number[];
 }
 
 /** One column per hour: its x, the first series' y (null when missing), and the value text for the scrub tag. */
@@ -35,6 +41,9 @@ interface SkiaSeriesChartProps {
   series: ChartSeries[];
   /** Ensemble band as SVG path data, drawn behind the series. */
   bandPath?: string;
+  bandColor?: string;
+  /** Scrub cursor on touch and drag. Turn off when the chart sits in a horizontal scroller. */
+  scrub?: boolean;
   columns: ChartColumn[];
   dotFill: string;
   /** Changes when the data changes; the line draws again from zero. */
@@ -42,6 +51,13 @@ interface SkiaSeriesChartProps {
 }
 
 const DRAW_MS = 900;
+
+/** The colour at a given alpha, for hex and rgba() inputs alike. */
+function fadeColor(color: string, alpha: number): string {
+  const parsed = parseColor(color);
+  if (!parsed) return color;
+  return `rgba(${parsed.r},${parsed.g},${parsed.b},${alpha})`;
+}
 
 function pathFrom(d: string): SkPath {
   return Skia.Path.MakeFromSVGString(d) ?? Skia.Path.Make();
@@ -58,9 +74,11 @@ export function SkiaSeriesChart({
   height,
   series,
   bandPath,
+  bandColor,
   columns,
   dotFill,
   dataKey,
+  scrub = true,
 }: SkiaSeriesChartProps) {
   const reduced = useReducedMotion();
   const progress = useSharedValue(reduced ? 1 : 0);
@@ -72,7 +90,10 @@ export function SkiaSeriesChart({
       return;
     }
     progress.value = 0;
-    progress.value = withTiming(1, { duration: DRAW_MS, easing: Easing.out(Easing.cubic) });
+    progress.value = withTiming(1, {
+      duration: DRAW_MS,
+      easing: Easing.out(Easing.cubic),
+    });
   }, [dataKey, reduced, progress]);
 
   const built = useMemo(() => {
@@ -109,24 +130,40 @@ export function SkiaSeriesChart({
     };
     return PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_event, gesture) => Math.abs(gesture.dx) > Math.abs(gesture.dy),
-      onPanResponderGrant: (event) => setScrubIndex(indexAt(event.nativeEvent.locationX)),
-      onPanResponderMove: (event) => setScrubIndex(indexAt(event.nativeEvent.locationX)),
+      onMoveShouldSetPanResponder: (_event, gesture) =>
+        Math.abs(gesture.dx) > Math.abs(gesture.dy),
+      onPanResponderGrant: (event) =>
+        setScrubIndex(indexAt(event.nativeEvent.locationX)),
+      onPanResponderMove: (event) =>
+        setScrubIndex(indexAt(event.nativeEvent.locationX)),
       onPanResponderRelease: () => setScrubIndex(null),
       onPanResponderTerminate: () => setScrubIndex(null),
     });
   }, []);
 
-  const cursor = scrubIndex !== null ? columns[scrubIndex] : undefined;
+  const cursor = scrub && scrubIndex !== null ? columns[scrubIndex] : undefined;
   const tagWidth = 76;
-  const tagLeft = cursor ? Math.min(Math.max(cursor.x - tagWidth / 2, 0), Math.max(width - tagWidth, 0)) : 0;
+  const tagLeft = cursor
+    ? Math.min(
+        Math.max(cursor.x - tagWidth / 2, 0),
+        Math.max(width - tagWidth, 0),
+      )
+    : 0;
 
   return (
-    <View style={{ width, height }} {...responder.panHandlers}>
+    <View style={{ width, height }} {...(scrub ? responder.panHandlers : {})}>
       <Canvas style={{ width, height }}>
         {built.band ? (
           <Group opacity={progress}>
-            <Path path={built.band} color={theme.isLight ? 'rgba(245,169,98,0.16)' : 'rgba(245,169,98,0.22)'} />
+            <Path
+              path={built.band}
+              color={
+                bandColor ??
+                (theme.isLight
+                  ? "rgba(245,169,98,0.16)"
+                  : "rgba(245,169,98,0.22)")
+              }
+            />
           </Group>
         ) : null}
         {series.map((entry, index) => (
@@ -137,7 +174,7 @@ export function SkiaSeriesChart({
                   <LinearGradient
                     start={vec(0, 0)}
                     end={vec(0, height)}
-                    colors={[`${entry.color}66`, `${entry.color}00`]}
+                    colors={[fadeColor(entry.color, 0.4), fadeColor(entry.color, 0)]}
                   />
                 </Path>
               </Group>
@@ -151,32 +188,53 @@ export function SkiaSeriesChart({
                 color={entry.color}
                 start={0}
                 end={progress}
-              />
+              >
+                {entry.dash ? <DashPathEffect intervals={entry.dash} /> : null}
+              </Path>
             ) : null}
             <Group opacity={progress}>
-              {entry.points.map((point, pointIndex) => (
-                <React.Fragment key={`dot-${index}-${pointIndex}`}>
-                  <Circle cx={point.x} cy={point.y} r={pointIndex === 0 ? 5 : 3.5} color={dotFill} />
-                  <Circle
-                    cx={point.x}
-                    cy={point.y}
-                    r={pointIndex === 0 ? 5 : 3.5}
-                    color={entry.color}
-                    style="stroke"
-                    strokeWidth={2}
-                  />
-                </React.Fragment>
-              ))}
+              {entry.points.map((point, pointIndex) =>
+                entry.markers && !entry.markers.includes(pointIndex) ? null : (
+                  <React.Fragment key={`dot-${index}-${pointIndex}`}>
+                    <Circle
+                      cx={point.x}
+                      cy={point.y}
+                      r={pointIndex === 0 ? 5 : 3.5}
+                      color={dotFill}
+                    />
+                    <Circle
+                      cx={point.x}
+                      cy={point.y}
+                      r={pointIndex === 0 ? 5 : 3.5}
+                      color={entry.color}
+                      style="stroke"
+                      strokeWidth={2}
+                    />
+                  </React.Fragment>
+                ),
+              )}
             </Group>
           </React.Fragment>
         ))}
         {cursor ? (
           <Group>
-            <Line p1={vec(cursor.x, 0)} p2={vec(cursor.x, height)} color={theme.textSecondary} strokeWidth={1} />
+            <Line
+              p1={vec(cursor.x, 0)}
+              p2={vec(cursor.x, height)}
+              color={theme.textSecondary}
+              strokeWidth={1}
+            />
             {cursor.y0 !== null ? (
               <>
                 <Circle cx={cursor.x} cy={cursor.y0} r={6} color={dotFill} />
-                <Circle cx={cursor.x} cy={cursor.y0} r={6} color={series[0]?.color ?? theme.accent} style="stroke" strokeWidth={2.5} />
+                <Circle
+                  cx={cursor.x}
+                  cy={cursor.y0}
+                  r={6}
+                  color={series[0]?.color ?? theme.accent}
+                  style="stroke"
+                  strokeWidth={2.5}
+                />
               </>
             ) : null}
           </Group>
@@ -185,9 +243,19 @@ export function SkiaSeriesChart({
       {cursor ? (
         <View
           pointerEvents="none"
-          style={[styles.tag, { left: tagLeft, backgroundColor: theme.chipBg, borderColor: theme.cardBorder }]}
+          style={[
+            styles.tag,
+            {
+              left: tagLeft,
+              backgroundColor: theme.chipBg,
+              borderColor: theme.cardBorder,
+            },
+          ]}
         >
-          <Text style={[styles.tagText, { color: theme.textPrimary }]} numberOfLines={1}>
+          <Text
+            style={[styles.tagText, { color: theme.textPrimary }]}
+            numberOfLines={1}
+          >
             {cursor.label}
           </Text>
         </View>
@@ -198,18 +266,18 @@ export function SkiaSeriesChart({
 
 const styles = StyleSheet.create({
   tag: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     width: 76,
     borderRadius: 10,
     borderWidth: StyleSheet.hairlineWidth,
     paddingVertical: 3,
     paddingHorizontal: 6,
-    alignItems: 'center',
+    alignItems: "center",
   },
   tagText: {
     fontSize: 12,
-    fontWeight: '600',
-    fontVariant: ['tabular-nums'],
+    fontWeight: "600",
+    fontVariant: ["tabular-nums"],
   },
 });

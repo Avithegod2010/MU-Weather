@@ -1,14 +1,17 @@
 {
   "shots": [
-    "scripts/visual/results/detail-storm/home-rain-probability.png",
-    "scripts/visual/results/detail-storm/home-hourly-forecast.png",
-    "scripts/visual/results/detail-storm/home-trend.png",
-    "scripts/visual/results/detail-storm/home-moon.png",
-    "scripts/visual/results/detail-storm/day-detail-top.png",
-    "scripts/visual/results/detail-storm/day-detail-temperature.png",
-    "scripts/visual/results/detail-storm/storm-counting-start.png",
-    "scripts/visual/results/detail-storm/storm-counting-mid.png",
-    "scripts/visual/results/detail-storm/storm-result.png"
+    "results/detail-storm/glass-slider-rest.png",
+    "results/detail-storm/glass-slider-moved.png",
+    "results/detail-storm/sun-twilight-card.png",
+    "results/detail-storm/home-rain-probability.png",
+    "results/detail-storm/home-hourly-forecast.png",
+    "results/detail-storm/home-trend.png",
+    "results/detail-storm/home-moon.png",
+    "results/detail-storm/day-detail-top.png",
+    "results/detail-storm/day-detail-temperature.png",
+    "results/detail-storm/storm-counting-start.png",
+    "results/detail-storm/storm-counting-mid.png",
+    "results/detail-storm/storm-result.png"
   ],
   "missing": [],
   "pageErrors": [

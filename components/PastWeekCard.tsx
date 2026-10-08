@@ -2,12 +2,11 @@ import { SlidingGroup, SlidingItem } from './Sliding';
 import { t, tDay, getLanguage, type StringKey } from '../utils/i18n';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Canvas } from '@shopify/react-native-skia';
-import { SvgPath, SvgDot } from './SkiaShapes';
+import { SkiaSeriesChart } from './SkiaSeriesChart';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, Clock3 as History } from '../utils/uiIcons';
 import { Card } from './Card';
-import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
+import { scaleY, type CurvePoint } from '../utils/curve';
 import { formatPrecip, formatPrecipValue, tempColor, getUnits, convertWind, windUnitLabel } from '../utils/format';
 import { loadForecastLog, type ForecastLogEntry } from '../utils/forecastLog';
 import { loadModelLog, type ModelLogEntry } from '../utils/modelAccuracyLog';
@@ -561,8 +560,8 @@ function TempTrendSparkline({ theme, days }: { theme: AppTheme; days: PastDayAct
 
   const maxPoints = toPoints(tempsMax);
   const minPoints = toPoints(tempsMin);
-  const hottest = maxPoints[tempsMax.indexOf(Math.max(...tempsMax))];
-  const coldest = minPoints[tempsMin.indexOf(Math.min(...tempsMin))];
+  const hotIndex = tempsMax.indexOf(Math.max(...tempsMax));
+  const coldIndex = tempsMin.indexOf(Math.min(...tempsMin));
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
   if (width <= 0) {
@@ -571,13 +570,21 @@ function TempTrendSparkline({ theme, days }: { theme: AppTheme; days: PastDayAct
 
   return (
     <View style={styles.sparkSlot} onLayout={onLayout}>
-      <Canvas style={{ width: width, height: SPARK_HEIGHT }}>
-        <SvgPath d={bandPath(maxPoints, minPoints)} color={MAX_LINE_COLOR} filled opacity={0.1} />
-        <SvgPath d={smoothPath(minPoints)} color={MIN_LINE_COLOR} strokeWidth={2} />
-        <SvgPath d={smoothPath(maxPoints)} color={MAX_LINE_COLOR} strokeWidth={2.4} />
-        <SvgDot cx={hottest.x} cy={hottest.y} r={3} fill={dotFill} stroke={MAX_LINE_COLOR} strokeWidth={2} />
-        <SvgDot cx={coldest.x} cy={coldest.y} r={3} fill={dotFill} stroke={MIN_LINE_COLOR} strokeWidth={2} />
-      </Canvas>
+      <SkiaSeriesChart
+        theme={theme}
+        width={width}
+        height={SPARK_HEIGHT}
+        series={[
+          { color: MAX_LINE_COLOR, points: maxPoints, markers: [hotIndex] },
+          { color: MIN_LINE_COLOR, points: minPoints, markers: [coldIndex] },
+        ]}
+        bandPath={bandPath(maxPoints, minPoints)}
+        bandColor="rgba(245,169,98,0.1)"
+        columns={[]}
+        dotFill={dotFill}
+        dataKey={`past|${tempsMax.join(',')}|${tempsMin.join(',')}|${width}`}
+        scrub={false}
+      />
     </View>
   );
 }

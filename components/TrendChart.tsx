@@ -1,8 +1,7 @@
 import { t } from '../utils/i18n';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Canvas } from '@shopify/react-native-skia';
-import { SvgPath, SvgDot } from './SkiaShapes';
+import { SkiaSeriesChart } from './SkiaSeriesChart';
 import { TrendingUp } from '../utils/uiIcons';
 import { Card } from './Card';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
@@ -58,10 +57,6 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
       y: scaleY(value, min, max, top, bottom),
     }));
 
-  const tempPath = smoothPath(toPoints(temps, tempMin, tempMax));
-  const dewPath = smoothPath(toPoints(dews, tempMin, tempMax));
-  const windPath = smoothPath(toPoints(winds, 0, windMax));
-
   // Ensemble confidence band: smoothed P90 upper edge forward, P10 lower edge
   // reversed, closed into one filled polygon. Drawn behind the line paths.
   let bandPath = '';
@@ -114,19 +109,26 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
         <View style={{ width }}>
-          <Canvas style={{ width: width, height: CHART_HEIGHT }} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants">
-            {bandPath ? (
-              <SvgPath d={bandPath} color={TEMP_COLOR} filled opacity={theme.isLight ? 0.16 : 0.22} />
-            ) : null}
-            <SvgPath d={windPath} color={WIND_COLOR} strokeWidth={2} dash={[5, 5]} opacity={0.9} />
-            <SvgPath d={dewPath} color={DEW_COLOR} strokeWidth={2} />
-            <SvgPath d={tempPath} color={TEMP_COLOR} strokeWidth={2.6} />
-            {toPoints(temps, tempMin, tempMax)
-              .filter((_, index) => index % 6 === 0)
-              .map((point) => (
-                <SvgDot key={`dt-${point.x}`} cx={point.x} cy={point.y} r={3} fill={dotFill} stroke={TEMP_COLOR} strokeWidth={2} />
-              ))}
-          </Canvas>
+          <SkiaSeriesChart
+            theme={theme}
+            width={width}
+            height={CHART_HEIGHT}
+            series={[
+              {
+                color: TEMP_COLOR,
+                points: toPoints(temps, tempMin, tempMax),
+                markers: temps.map((_, index) => index).filter((index) => index % 6 === 0),
+              },
+              { color: DEW_COLOR, points: toPoints(dews, tempMin, tempMax), markers: [] },
+              { color: WIND_COLOR, points: toPoints(winds, 0, windMax), dash: [5, 5], markers: [] },
+            ]}
+            bandPath={bandPath || undefined}
+            bandColor={theme.isLight ? 'rgba(245,169,98,0.16)' : 'rgba(245,169,98,0.22)'}
+            columns={[]}
+            dotFill={dotFill}
+            dataKey={`trend|${slice[0].time}|${temps.join(',')}|${dews.join(',')}|${winds.join(',')}|${bandPath}`}
+            scrub={false}
+          />
           <View style={[styles.timeRow, { width }]}>
             {slice.map((hour, index) =>
               index % 8 === 0 ? (

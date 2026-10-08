@@ -9,13 +9,12 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { Canvas } from '@shopify/react-native-skia';
-import { SvgPath, SvgDot } from './SkiaShapes';
+import { SkiaSeriesChart } from './SkiaSeriesChart';
 import Animated from 'react-native-reanimated';
 import { Clock, Thermometer, Umbrella, Wind, X } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
-import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
+import { scaleY, type CurvePoint } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
 import {
@@ -131,7 +130,6 @@ export function HourlyForecast({ theme, hours, focus }: HourlyForecastProps) {
     formatValue = (hour) => formatTemp(hour.temperature);
   }
 
-  const path = smoothPath(points);
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
   const toggleIcons: Array<{ key: HourView; icon: typeof Wind }> = [
@@ -266,12 +264,16 @@ export function HourlyForecast({ theme, hours, focus }: HourlyForecastProps) {
             importantForAccessibility="no-hide-descendants"
             accessibilityElementsHidden
           >
-            <Canvas style={{ width: contentWidth, height: CURVE_HEIGHT }}>
-              <SvgPath d={path} color={lineColor} strokeWidth={2.5} />
-              {points.map((point, index) => (
-                <SvgDot key={`d-${slice[index].time}`} cx={point.x} cy={point.y} r={slice[index].isNow ? 5.5 : 4} fill={dotFill} stroke={lineColor} strokeWidth={2} />
-              ))}
-            </Canvas>
+            <SkiaSeriesChart
+              theme={theme}
+              width={contentWidth}
+              height={CURVE_HEIGHT}
+              series={[{ color: lineColor, points }]}
+              columns={[]}
+              dotFill={dotFill}
+              dataKey={`hourly|${points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ')}|${lineColor}`}
+              scrub={false}
+            />
           </View>
 
           <View style={[styles.row, styles.tempRow]}>

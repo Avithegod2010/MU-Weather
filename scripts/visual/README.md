@@ -34,3 +34,18 @@ environment, so no performance improvement is claimed. The `pageErrors: 1` entry
 - `frames-before-optimise.json` / `frames-after-glow-cache.json`: the sun glow is cached as an offscreen
   image. Clear-day mean frame time 22.7 ms to 13.9 ms, clear-night 21.6 ms to 13.7 ms, in software Chromium.
   Single runs. Still slower than the SVG sky on web (6.0 ms clear-day), and no device measurement.
+
+## Completion pass
+
+- `results/halo-audit.json`: now measured with the hero scrim (see `DECISIONS.md`). Worst halo 4.31:1,
+  4 of 120 targets still below 4.5:1, all the 17 px "London" label on Sunset and Ocean skies.
+- `results/frames-after-charts.json`: frame times on the build with the converted charts. Clear-day mean 14.41 ms
+  (glow-cache run: 13.93 ms), within run-to-run noise. Software Chromium only, not a device. This replaces the
+  lost `/tmp/vout/frames-after.json`, which no longer existed.
+- Page errors: each frames scenario logs one pageerror. In the glass probe it is
+  `ExpoNotifications.getLastNotificationResponse is not available on web`, a pre-existing web-only call from the
+  notifications code, not the sky or the charts.
+- `results/detail/` and `results/detail-storm/`: regenerated on the new build. All 12 steps captured in both sets,
+  including the storm flash tap. The earlier flash-click timeout came from the older build.
+- `glass_check.py`: loads Home in glass style, records page errors and a screenshot in `results/glass/`.
+- Android frame times: not measured here. No device run happened in this environment.

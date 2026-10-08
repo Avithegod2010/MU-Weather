@@ -13,6 +13,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { BlurMask, Canvas, Circle } from '@shopify/react-native-skia';
+import { LinearGradient } from 'expo-linear-gradient';
 import { withAlpha } from '../utils/color';
 import {
   ArrowUp,
@@ -64,6 +65,18 @@ function heroTextShadow(theme: AppTheme) {
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
   };
+}
+
+/**
+ * Scrim behind the hero text, for the mid-tone skies where a halo alone stays under 4.5:1 (see
+ * DECISIONS.md, and scripts/visual/halo_audit.py). Its tone is opposite the ink, like the
+ * halo, and it fades out at both ends so it reads as light on the sky, not as a panel.
+ */
+function heroScrimColors(theme: AppTheme): [string, string, string, string] {
+  const ink = parseColor(theme.textPrimary);
+  const darkInk = ink ? luminance([ink.r, ink.g, ink.b]) < 0.4 : theme.isLight;
+  const tone = darkInk ? 'rgba(255,255,255,0.46)' : 'rgba(0,0,0,0.42)';
+  return ['rgba(0,0,0,0)', tone, tone, 'rgba(0,0,0,0)'];
 }
 
 export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary, onShare, sharing }: CurrentWeatherProps) {
@@ -165,6 +178,14 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
       accessibilityRole="text"
       accessibilityLabel={heroLabel}
     >
+      <LinearGradient
+        pointerEvents="none"
+        colors={heroScrimColors(theme)}
+        locations={[0, 0.22, 0.78, 1]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={styles.heroScrim}
+      />
       <View
         style={[styles.locationRow, compact && styles.locationRowCompact]}
         importantForAccessibility="no-hide-descendants"
@@ -266,6 +287,14 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
 }
 
 const styles = StyleSheet.create({
+  heroScrim: {
+    position: 'absolute',
+    top: -12,
+    bottom: -12,
+    left: -24,
+    right: -24,
+    borderRadius: 32,
+  },
   container: {
     alignItems: 'center',
     paddingVertical: 18,
