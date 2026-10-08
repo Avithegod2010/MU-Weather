@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
-import { StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { BlurMask, Canvas, Circle, DashPathEffect, Group, Path, Skia, vec } from '@shopify/react-native-skia';
 import {
   Sun,
   Moon,
@@ -81,6 +81,12 @@ export function SunArc({ theme, sunrise, sunset, utcOffsetSeconds }: SunArcProps
   progress = Math.min(1, Math.max(0, progress));
   const isDaytime = progress > 0 && progress < 1;
 
+  const [canvasWidth, setCanvasWidth] = useState(0);
+  const arcPath = useMemo(() => {
+    const path = Skia.Path.MakeFromSVGString(`M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`);
+    return path ?? Skia.Path.Make();
+  }, []);
+
   const angle = Math.PI * (1 - progress);
   const sunX = CX - R * Math.cos(Math.PI - angle);
   const sunY = CY - R * Math.sin(angle);
@@ -95,31 +101,34 @@ export function SunArc({ theme, sunrise, sunset, utcOffsetSeconds }: SunArcProps
 
   return (
     <View>
-      <Svg
-        width="100%"
-        height={HEIGHT}
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      <Canvas
+        style={{ width: '100%', height: HEIGHT }}
+        onLayout={(event: LayoutChangeEvent) => setCanvasWidth(event.nativeEvent.layout.width)}
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
       >
-        <Path
-          d={`M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`}
-          stroke={theme.trackColor}
-          strokeWidth={3}
-          fill="none"
-          strokeDasharray="1 9"
-          strokeLinecap="round"
-        />
-        <Path
-          d={`M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`}
-          stroke={theme.accent}
-          strokeWidth={3.5}
-          fill="none"
-          strokeDasharray={`${progress * ARC_LENGTH} ${ARC_LENGTH}`}
-          strokeLinecap="round"
-        />
-        <Circle cx={sunX} cy={sunY} r={isDaytime ? 7 : 4} fill={theme.accent} opacity={isDaytime ? 1 : 0.45} />
-      </Svg>
+        {/* Drawn in the 280-wide design space, then scaled to the real width. */}
+        <Group transform={[{ scale: canvasWidth > 0 ? canvasWidth / WIDTH : 1 }]} origin={vec(0, 0)}>
+          <Path path={arcPath} style="stroke" strokeWidth={3} strokeCap="round" color={theme.trackColor}>
+            <DashPathEffect intervals={[1, 9]} />
+          </Path>
+          <Path
+            path={arcPath}
+            style="stroke"
+            strokeWidth={3.5}
+            strokeCap="round"
+            color={theme.accent}
+            start={0}
+            end={progress}
+          />
+          {isDaytime ? (
+            <Circle cx={sunX} cy={sunY} r={16} color={theme.accent}>
+              <BlurMask blur={9} style="normal" />
+            </Circle>
+          ) : null}
+          <Circle cx={sunX} cy={sunY} r={isDaytime ? 7 : 4} color={theme.accent} opacity={isDaytime ? 1 : 0.45} />
+        </Group>
+      </Canvas>
 
       <View style={styles.timesRow}>
         <View style={styles.timeBlock}>

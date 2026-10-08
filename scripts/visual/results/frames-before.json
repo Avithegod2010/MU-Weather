@@ -1,0 +1,97 @@
+{
+  "label": "before-svg",
+  "durationSeconds": 4,
+  "scenarios": {
+    "clear-day": {
+      "frames": 663,
+      "meanMs": 6.04,
+      "medianMs": 6,
+      "p95Ms": 8.1,
+      "maxMs": 13.7,
+      "over33ms": 0,
+      "fpsApprox": 165.5,
+      "domNodes": 1637,
+      "svgNodes": 113,
+      "canvasNodes": 0,
+      "pageErrors": 1
+    },
+    "clear-night": {
+      "frames": 693,
+      "meanMs": 5.79,
+      "medianMs": 5.8,
+      "p95Ms": 8.1,
+      "maxMs": 12,
+      "over33ms": 0,
+      "fpsApprox": 172.8,
+      "domNodes": 1621,
+      "svgNodes": 113,
+      "canvasNodes": 0,
+      "pageErrors": 1
+    },
+    "cloudy-day": {
+      "frames": 1363,
+      "meanMs": 2.93,
+      "medianMs": 3,
+      "p95Ms": 4.2,
+      "maxMs": 17.3,
+      "over33ms": 0,
+      "fpsApprox": 340.7,
+      "domNodes": 1451,
+      "svgNodes": 116,
+      "canvasNodes": 0,
+      "pageErrors": 1
+    },
+    "fog-day": {
+      "frames": 605,
+      "meanMs": 6.61,
+      "medianMs": 7,
+      "p95Ms": 8.1,
+      "maxMs": 10.1,
+      "over33ms": 0,
+      "fpsApprox": 151.2,
+      "domNodes": 1522,
+      "svgNodes": 113,
+      "canvasNodes": 0,
+      "pageErrors": 1
+    },
+    "rain-night": {
+      "frames": 852,
+      "meanMs": 4.7,
+      "medianMs": 4.8,
+      "p95Ms": 6.6,
+      "maxMs": 10.5,
+      "over33ms": 0,
+      "fpsApprox": 212.7,
+      "domNodes": 1598,
+      "svgNodes": 116,
+      "canvasNodes": 0,
+      "pageErrors": 1
+    },
+    "snow-day": {
+      "frames": 904,
+      "meanMs": 4.43,
+      "medianMs": 4.7,
+      "p95Ms": 6.4,
+      "maxMs": 21.8,
+      "over33ms": 0,
+      "fpsApprox": 225.9,
+      "domNodes": 1738,
+      "svgNodes": 115,
+      "canvasNodes": 0,
+      "pageErrors": 1
+    },
+    "thunder-night": {
+      "frames": 758,
+      "meanMs": 5.28,
+      "medianMs": 5.4,
+      "p95Ms": 8.2,
+      "maxMs": 11.7,
+      "over33ms": 0,
+      "fpsApprox": 189.3,
+      "domNodes": 1550,
+      "svgNodes": 120,
+      "canvasNodes": 0,
+      "pageErrors": 1
+    }
+  }
+}

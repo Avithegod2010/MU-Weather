@@ -1,19 +1,31 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Circle, Defs, G, Line, RadialGradient, Rect, Stop } from 'react-native-svg';
+import {
+  BlurMask,
+  Canvas,
+  Circle,
+  Group,
+  LinearGradient as SkiaLinearGradient,
+  Path,
+  Points,
+  Rect,
+  Skia,
+  vec,
+  type SkPath,
+} from '@shopify/react-native-skia';
 import Animated, {
   Easing,
-  cancelAnimation,
   useAnimatedStyle,
+  useDerivedValue,
+  useFrameCallback,
   useSharedValue,
-  withDelay,
-  withRepeat,
-  withSequence,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated';
-import { WeatherParticles, type ParticleKind } from './WeatherParticles';
+import { ParticleLayer, type ParticleKind } from './WeatherParticles';
 import { useReducedMotion } from '../utils/reduceMotion';
+import { hasSkia } from '../utils/skiaWeb';
 import type { WeatherCondition } from '../theme/palettes';
 
 interface AnimatedBackgroundProps {
@@ -45,17 +57,38 @@ const CLOUD_COUNT: Partial<Record<WeatherCondition, number>> = {
   thunder: 6,
 };
 
+/** One lightning cycle, in ms. The flash fires at FLASH_AT inside each cycle. */
+const LIGHTNING_PERIOD_MS = 5200;
+const LIGHTNING_FLASH_AT_MS = 3200;
+
 function sameColors(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((color, index) => color === b[index]);
 }
 
 /** Small deterministic PRNG so the sky layout is identical on every render. */
-function seeded(seed: number): () => number {
+export function seeded(seed: number): () => number {
   let state = seed >>> 0;
   return () => {
     state = (state * 1664525 + 1013904223) >>> 0;
     return state / 4294967296;
   };
+}
+
+/**
+ * The single clock for the whole sky. One frame callback advances it, and every
+ * element in the canvas derives its position or opacity from it on the UI thread.
+ * When inactive, the clock stays put and the sky is drawn once, still.
+ */
+export function useSkyClock(active: boolean): SharedValue<number> {
+  const clock = useSharedValue(0);
+  const frame = useFrameCallback((info) => {
+    'worklet';
+    clock.value = info.timeSinceFirstFrame;
+  }, false);
+  useEffect(() => {
+    frame.setActive(active);
+  }, [active, frame]);
+  return clock;
 }
 
 export function AnimatedBackground({
@@ -97,30 +130,9 @@ export function AnimatedBackground({
   const styleA = useAnimatedStyle(() => ({ opacity: opacityA.value }));
   const styleB = useAnimatedStyle(() => ({ opacity: opacityB.value }));
 
-  // Fallback orbs for screens that do not pass a condition.
-  const orbDriftX = useSharedValue(0);
-  const orbDriftY = useSharedValue(0);
-
-  useEffect(() => {
-    if (reducedMotion || condition) return;
-    orbDriftX.value = withRepeat(
-      withTiming(-26, { duration: 9000, easing: Easing.inOut(Easing.sin) }),
-      -1,
-      true,
-    );
-    orbDriftY.value = withRepeat(
-      withTiming(18, { duration: 7000, easing: Easing.inOut(Easing.sin) }),
-      -1,
-      true,
-    );
-  }, [orbDriftX, orbDriftY, reducedMotion, condition]);
-
-  const orbOneStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: orbDriftX.value }, { translateY: orbDriftY.value }],
-  }));
-  const orbTwoStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: orbDriftY.value }, { translateY: orbDriftX.value }],
-  }));
+  // Skipped entirely when still: the clock never starts, so the canvas draws one frame.
+  const clock = useSkyClock(!reducedMotion);
+  const skiaReady = hasSkia();
 
   return (
     <View
@@ -149,22 +161,30 @@ export function AnimatedBackground({
           />
         </Animated.View>
       ) : null}
-      {condition ? (
-        <SkyEffects
-          condition={condition}
-          isDay={isDay}
-          width={width}
-          height={height}
-          reducedMotion={reducedMotion}
-        />
-      ) : (
-        <>
-          <Animated.View style={[styles.abs, styles.orb, styles.orbOne, orbOneStyle]} />
-          <Animated.View style={[styles.abs, styles.orb, styles.orbTwo, orbTwoStyle]} />
-        </>
-      )}
-      {particles && !reducedMotion ? (
-        <WeatherParticles kind={particles.kind} intensity={particles.intensity} />
+      {skiaReady ? (
+        <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
+          {condition ? (
+            <SkyEffects
+              condition={condition}
+              isDay={isDay}
+              width={width}
+              height={height}
+              clock={clock}
+              reducedMotion={reducedMotion}
+            />
+          ) : (
+            <Orbs width={width} height={height} clock={clock} reducedMotion={reducedMotion} />
+          )}
+          {particles && !reducedMotion ? (
+            <ParticleLayer
+              kind={particles.kind}
+              intensity={particles.intensity}
+              width={width}
+              height={height}
+              clock={clock}
+            />
+          ) : null}
+        </Canvas>
       ) : null}
     </View>
   );
@@ -173,7 +193,14 @@ export function AnimatedBackground({
 interface LayerProps {
   width: number;
   height: number;
+  clock: SharedValue<number>;
   reducedMotion: boolean;
+}
+
+/** Time the effects read from: frozen at 0 when still, so the layout is the same every frame. */
+function timeOf(clock: SharedValue<number>, reducedMotion: boolean): number {
+  'worklet';
+  return reducedMotion ? 0 : clock.value;
 }
 
 function SkyEffects({
@@ -181,6 +208,7 @@ function SkyEffects({
   isDay,
   width,
   height,
+  clock,
   reducedMotion,
 }: LayerProps & { condition: WeatherCondition; isDay: boolean }) {
   const clearSky = condition === 'clear' || condition === 'partlyCloudy';
@@ -188,132 +216,85 @@ function SkyEffects({
   return (
     <>
       {clearSky && isDay ? (
-        <SunLayer width={width} height={height} reducedMotion={reducedMotion} />
+        <SunLayer width={width} height={height} clock={clock} reducedMotion={reducedMotion} />
       ) : null}
       {clearSky && !isDay ? (
-        <StarLayer width={width} height={height} reducedMotion={reducedMotion} />
+        <StarLayer width={width} height={height} clock={clock} reducedMotion={reducedMotion} />
       ) : null}
       {cloudCount > 0 ? (
-        <CloudLayer count={cloudCount} width={width} height={height} reducedMotion={reducedMotion} />
+        <CloudLayer
+          count={cloudCount}
+          width={width}
+          height={height}
+          clock={clock}
+          reducedMotion={reducedMotion}
+        />
       ) : null}
       {condition === 'fog' ? (
-        <FogLayer width={width} height={height} reducedMotion={reducedMotion} />
+        <FogLayer width={width} height={height} clock={clock} reducedMotion={reducedMotion} />
       ) : null}
-      {condition === 'thunder' ? <LightningLayer reducedMotion={reducedMotion} /> : null}
+      {condition === 'thunder' ? (
+        <Lightning width={width} height={height} clock={clock} reducedMotion={reducedMotion} />
+      ) : null}
     </>
   );
 }
 
-/** Warm sun glow in the upper right with slowly turning rays. */
-function SunLayer({ width, height, reducedMotion }: LayerProps) {
-  const breathe = useSharedValue(0);
-  const spin = useSharedValue(0);
-
-  useEffect(() => {
-    if (reducedMotion) return;
-    breathe.value = withRepeat(
-      withTiming(1, { duration: 4200, easing: Easing.inOut(Easing.sin) }),
-      -1,
-      true,
-    );
-    spin.value = withRepeat(withTiming(1, { duration: 90000, easing: Easing.linear }), -1, false);
-    return () => {
-      cancelAnimation(breathe);
-      cancelAnimation(spin);
-    };
-  }, [breathe, spin, reducedMotion]);
-
-  const glowStyle = useAnimatedStyle(() => ({
-    opacity: 0.82 + breathe.value * 0.18,
-    transform: [{ scale: 0.97 + breathe.value * 0.06 }],
-  }));
-  const raysStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${spin.value * 360}deg` }],
-  }));
-
+/** Warm sun glow in the upper right, blurred with a Skia mask, with slowly turning rays. */
+function SunLayer({ width, height, clock, reducedMotion }: LayerProps) {
   const extent = Math.max(width, height);
-  const glowSize = extent * 0.9;
-  const raySize = extent * 0.8;
+  const glowRadius = extent * 0.45;
+  const rayInner = extent * 0.8 * 0.2;
   const centerX = width * 0.8;
   const centerY = height * 0.12;
-  const rays = useMemo(
-    () =>
-      Array.from({ length: 16 }, (_, index) => {
-        const angle = (index / 16) * Math.PI * 2;
-        const inner = raySize * 0.2;
-        const outer = raySize * (index % 2 === 0 ? 0.5 : 0.42);
-        return {
-          x1: raySize / 2 + Math.cos(angle) * inner,
-          y1: raySize / 2 + Math.sin(angle) * inner,
-          x2: raySize / 2 + Math.cos(angle) * outer,
-          y2: raySize / 2 + Math.sin(angle) * outer,
-        };
-      }),
-    [raySize],
-  );
+
+  // Breathing glow: 0.82 to 1.0 over an 8.4 s cycle.
+  const glowOpacity = useDerivedValue(() => {
+    const breathe = 0.5 - 0.5 * Math.cos((2 * Math.PI * timeOf(clock, reducedMotion)) / 8400);
+    return 0.82 + breathe * 0.18;
+  });
+  // One full turn every 90 s.
+  const rayTransform = useDerivedValue(() => [
+    { rotate: ((timeOf(clock, reducedMotion) / 90000) % 1) * Math.PI * 2 },
+  ]);
+
+  const rays = useMemo(() => {
+    const even: Array<{ x: number; y: number }> = [];
+    const odd: Array<{ x: number; y: number }> = [];
+    const outerFor = (index: number) => extent * 0.8 * (index % 2 === 0 ? 0.5 : 0.42);
+    for (let index = 0; index < 16; index++) {
+      const angle = (index / 16) * Math.PI * 2;
+      const target = index % 2 === 0 ? even : odd;
+      const outer = outerFor(index);
+      target.push(
+        { x: centerX + Math.cos(angle) * rayInner, y: centerY + Math.sin(angle) * rayInner },
+        { x: centerX + Math.cos(angle) * outer, y: centerY + Math.sin(angle) * outer },
+      );
+    }
+    return { even, odd };
+  }, [extent, centerX, centerY, rayInner]);
 
   return (
     <>
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          styles.abs,
-          {
-            width: glowSize,
-            height: glowSize,
-            left: centerX - glowSize / 2,
-            top: centerY - glowSize / 2,
-          },
-          glowStyle,
-        ]}
-      >
-        <Svg width={glowSize} height={glowSize}>
-          <Defs>
-            <RadialGradient id="muSunGlow" cx="50%" cy="50%" rx="50%" ry="50%">
-              <Stop offset="0" stopColor="#FFFFFF" stopOpacity="0.6" />
-              <Stop offset="0.3" stopColor="#FFF4D6" stopOpacity="0.22" />
-              <Stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
-            </RadialGradient>
-          </Defs>
-          <Circle cx={glowSize / 2} cy={glowSize / 2} r={glowSize / 2} fill="url(#muSunGlow)" />
-        </Svg>
-      </Animated.View>
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          styles.abs,
-          {
-            width: raySize,
-            height: raySize,
-            left: centerX - raySize / 2,
-            top: centerY - raySize / 2,
-          },
-          raysStyle,
-        ]}
-      >
-        <Svg width={raySize} height={raySize}>
-          <G>
-            {rays.map((ray, index) => (
-              <Line
-                key={index}
-                x1={ray.x1}
-                y1={ray.y1}
-                x2={ray.x2}
-                y2={ray.y2}
-                stroke="rgba(255,255,255,0.17)"
-                strokeWidth={index % 2 === 0 ? 3 : 2}
-                strokeLinecap="round"
-              />
-            ))}
-          </G>
-        </Svg>
-      </Animated.View>
+      <Group opacity={glowOpacity}>
+        {/* Blur masks replace the old SVG radial gradient: a soft disc, then a brighter core. */}
+        <Circle cx={centerX} cy={centerY} r={glowRadius * 0.55} color="rgba(255,244,214,0.42)">
+          <BlurMask blur={glowRadius * 0.32} style="normal" />
+        </Circle>
+        <Circle cx={centerX} cy={centerY} r={glowRadius * 0.16} color="rgba(255,255,255,0.55)">
+          <BlurMask blur={glowRadius * 0.08} style="normal" />
+        </Circle>
+      </Group>
+      <Group origin={vec(centerX, centerY)} transform={rayTransform}>
+        <Points points={rays.even} mode="lines" color="rgba(255,255,255,0.17)" style="stroke" strokeWidth={3} strokeCap="round" />
+        <Points points={rays.odd} mode="lines" color="rgba(255,255,255,0.17)" style="stroke" strokeWidth={2} strokeCap="round" />
+      </Group>
     </>
   );
 }
 
 /** Night sky: stars that twinkle at their own pace. */
-function StarLayer({ width, height, reducedMotion }: LayerProps) {
+function StarLayer({ width, height, clock, reducedMotion }: LayerProps) {
   const stars = useMemo(() => {
     const random = seeded(7);
     return Array.from({ length: 28 }, () => ({
@@ -326,11 +307,11 @@ function StarLayer({ width, height, reducedMotion }: LayerProps) {
   }, [width, height]);
 
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <>
       {stars.map((star, index) => (
-        <Star key={index} {...star} reducedMotion={reducedMotion} />
+        <Star key={index} {...star} clock={clock} reducedMotion={reducedMotion} />
       ))}
-    </View>
+    </>
   );
 }
 
@@ -340,35 +321,27 @@ function Star({
   size,
   duration,
   delay,
+  clock,
   reducedMotion,
-}: { x: number; y: number; size: number; duration: number; delay: number } & { reducedMotion: boolean }) {
-  const twinkle = useSharedValue(reducedMotion ? 0.8 : 0.25);
-
-  useEffect(() => {
-    if (reducedMotion) return;
-    twinkle.value = withDelay(
-      delay,
-      withRepeat(withTiming(1, { duration, easing: Easing.inOut(Easing.sin) }), -1, true),
-    );
-    return () => cancelAnimation(twinkle);
-  }, [twinkle, duration, delay, reducedMotion]);
-
-  const style = useAnimatedStyle(() => ({ opacity: twinkle.value }));
+}: { x: number; y: number; size: number; duration: number; delay: number } & Pick<LayerProps, 'clock' | 'reducedMotion'>) {
+  // Ping-pong between 0.25 and 1, starting after the star's own delay.
+  const opacity = useDerivedValue(() => {
+    if (reducedMotion) return 0.8;
+    const elapsed = clock.value - delay;
+    if (elapsed <= 0) return 0.25;
+    const phase = (elapsed % (duration * 2)) / duration;
+    const ease = phase <= 1 ? phase : 2 - phase;
+    return 0.25 + 0.75 * (0.5 - 0.5 * Math.cos(Math.PI * ease));
+  });
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        styles.abs,
-        styles.star,
-        { left: x, top: y, width: size, height: size, borderRadius: size / 2 },
-        style,
-      ]}
-    />
+    <Group opacity={opacity}>
+      <Circle cx={x + size / 2} cy={y + size / 2} r={size / 2} color="#FFFFFF" />
+    </Group>
   );
 }
 
 /** Soft cloud banks that drift left to right, each at its own speed. */
-function CloudLayer({ count, width, height, reducedMotion }: LayerProps & { count: number }) {
+function CloudLayer({ count, width, height, clock, reducedMotion }: LayerProps & { count: number }) {
   const clouds = useMemo(() => {
     const random = seeded(count * 131 + 17);
     return Array.from({ length: count }, (_, index) => ({
@@ -381,12 +354,22 @@ function CloudLayer({ count, width, height, reducedMotion }: LayerProps & { coun
   }, [count, height]);
 
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <>
       {clouds.map((cloud, index) => (
-        <Cloud key={index} {...cloud} width={width} reducedMotion={reducedMotion} />
+        <Cloud key={index} {...cloud} width={width} clock={clock} reducedMotion={reducedMotion} />
       ))}
-    </View>
+    </>
   );
+}
+
+/** Four overlapping circles and a base bar, unioned into one path in local coordinates. */
+function cloudPath(scale: number): SkPath {
+  const path = Skia.Path.Make();
+  path.addCircle(62 * scale, 52 * scale, 24 * scale);
+  path.addCircle(100 * scale, 40 * scale, 32 * scale);
+  path.addCircle(142 * scale, 52 * scale, 26 * scale);
+  path.addRRect(Skia.RRectXY(Skia.XYWHRect(36 * scale, 50 * scale, 132 * scale, 26 * scale), 13 * scale, 13 * scale));
+  return path;
 }
 
 function Cloud({
@@ -396,56 +379,38 @@ function Cloud({
   phase,
   opacity,
   width,
+  clock,
   reducedMotion,
-}: { y: number; scale: number; duration: number; phase: number; opacity: number } & Pick<LayerProps, 'width' | 'reducedMotion'>) {
-  const travel = useSharedValue(reducedMotion ? phase : 0);
+}: { y: number; scale: number; duration: number; phase: number; opacity: number } & Pick<LayerProps, 'clock' | 'reducedMotion'> & { width: number }) {
   const cloudWidth = 200 * scale;
-  const cloudHeight = 84 * scale;
-
-  useEffect(() => {
-    if (reducedMotion) return;
-    // First lap starts from the cloud's phase; later laps restart off-screen left.
-    travel.value = withSequence(
-      withTiming(1, { duration: duration * (1 - phase), easing: Easing.linear }),
-      withTiming(0, { duration: 0 }),
-      withRepeat(withTiming(1, { duration, easing: Easing.linear }), -1, false),
-    );
-    return () => cancelAnimation(travel);
-  }, [travel, duration, phase, reducedMotion]);
-
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateX: -cloudWidth + travel.value * (width + cloudWidth * 2) }],
-  }));
-
+  const path = useMemo(() => cloudPath(scale), [scale]);
+  const transform = useDerivedValue(() => {
+    // Start each cloud at its own phase, then wrap off-screen left.
+    const fraction = (phase + timeOf(clock, reducedMotion) / duration) % 1;
+    return [{ translateX: -cloudWidth + fraction * (width + cloudWidth * 2) }, { translateY: y }];
+  });
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[styles.abs, { top: y, left: 0, width: cloudWidth, height: cloudHeight, opacity }, style]}
-    >
-      <Svg width={cloudWidth} height={cloudHeight} viewBox="0 0 200 84">
-        <Circle cx={62} cy={52} r={24} fill="#FFFFFF" />
-        <Circle cx={100} cy={40} r={32} fill="#FFFFFF" />
-        <Circle cx={142} cy={52} r={26} fill="#FFFFFF" />
-        <Rect x={36} y={50} width={132} height={26} rx={13} fill="#FFFFFF" />
-      </Svg>
-    </Animated.View>
+    <Group transform={transform}>
+      <Path path={path} color={`rgba(255,255,255,${opacity.toFixed(3)})`} />
+    </Group>
   );
 }
 
 /** Two slow fog banks that sway back and forth across the sky. */
-function FogLayer({ width, height, reducedMotion }: LayerProps) {
+function FogLayer({ width, height, clock, reducedMotion }: LayerProps) {
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <>
       {[0.2, 0.45, 0.7].map((fraction, index) => (
         <FogBand
           key={index}
           top={height * fraction}
           width={width}
           index={index}
+          clock={clock}
           reducedMotion={reducedMotion}
         />
       ))}
-    </View>
+    </>
   );
 }
 
@@ -453,93 +418,91 @@ function FogBand({
   top,
   width,
   index,
+  clock,
   reducedMotion,
-}: { top: number; index: number } & Pick<LayerProps, 'width' | 'reducedMotion'>) {
-  const drift = useSharedValue(0);
-
-  useEffect(() => {
-    if (reducedMotion) return;
-    drift.value = withRepeat(
-      withTiming(1, { duration: 11000 + index * 2600, easing: Easing.inOut(Easing.sin) }),
-      -1,
-      true,
-    );
-    return () => cancelAnimation(drift);
-  }, [drift, index, reducedMotion]);
-
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateX: -width * 0.12 + drift.value * width * 0.12 }],
-  }));
-
+}: { top: number; index: number } & Pick<LayerProps, 'clock' | 'reducedMotion'> & { width: number }) {
+  const period = 11000 + index * 2600;
+  const bandWidth = width * 1.4;
+  const transform = useDerivedValue(() => {
+    // Ping-pong sway over one period, from -12% to 0 of the width.
+    const t = timeOf(clock, reducedMotion) / period;
+    const pingPong = 0.5 - 0.5 * Math.cos(Math.PI * (t % 2));
+    return [{ translateX: -width * 0.12 + pingPong * width * 0.12 }];
+  });
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[styles.abs, { top, left: -width * 0.2, width: width * 1.4, height: 150 }, style]}
-    >
-      <LinearGradient
-        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.22)', 'rgba(255,255,255,0)']}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={StyleSheet.absoluteFill}
-      />
-    </Animated.View>
+    <Group transform={transform}>
+      <Rect x={-width * 0.2} y={top} width={bandWidth} height={150}>
+        <SkiaLinearGradient
+          start={vec(-width * 0.2, 0)}
+          end={vec(-width * 0.2 + bandWidth, 0)}
+          colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.22)', 'rgba(255,255,255,0)']}
+          positions={[0, 0.5, 1]}
+        />
+      </Rect>
+    </Group>
   );
+}
+
+/** Piecewise-linear flash envelope: sharp rise, dip, second rise, then fade. */
+const FLASH_KEYS: Array<[number, number]> = [
+  [0, 0],
+  [60, 0.32],
+  [150, 0.05],
+  [220, 0.22],
+  [600, 0],
+];
+
+function flashEnvelope(localMs: number): number {
+  'worklet';
+  if (localMs < 0) return 0;
+  for (let i = 0; i < FLASH_KEYS.length - 1; i++) {
+    const [t0, v0] = FLASH_KEYS[i];
+    const [t1, v1] = FLASH_KEYS[i + 1];
+    if (localMs <= t1) return v0 + ((localMs - t0) / (t1 - t0)) * (v1 - v0);
+  }
+  return 0;
 }
 
 /** Occasional white flashes for thunderstorms. */
-function LightningLayer({ reducedMotion }: { reducedMotion: boolean }) {
-  const flash = useSharedValue(0);
-
-  useEffect(() => {
-    if (reducedMotion) return;
-    flash.value = withRepeat(
-      withSequence(
-        withDelay(3200 + Math.random() * 2200, withTiming(0, { duration: 0 })),
-        withTiming(0.32, { duration: 60 }),
-        withTiming(0.05, { duration: 90 }),
-        withTiming(0.22, { duration: 70 }),
-        withTiming(0, { duration: 380 }),
-      ),
-      -1,
-      false,
-    );
-    return () => cancelAnimation(flash);
-  }, [flash, reducedMotion]);
-
-  const style = useAnimatedStyle(() => ({ opacity: flash.value }));
+function Lightning({ width, height, clock, reducedMotion }: LayerProps) {
+  const opacity = useDerivedValue(() => {
+    if (reducedMotion) return 0;
+    const inCycle = clock.value % LIGHTNING_PERIOD_MS;
+    return flashEnvelope(inCycle - LIGHTNING_FLASH_AT_MS);
+  });
   return (
-    <Animated.View
-      pointerEvents="none"
-      style={[StyleSheet.absoluteFill, styles.flash, style]}
-    />
+    <Rect x={0} y={0} width={width} height={height} color="#FFFFFF" opacity={opacity} />
   );
 }
 
-const styles = StyleSheet.create({
-  abs: {
-    position: 'absolute',
-  },
-  star: {
-    backgroundColor: '#FFFFFF',
-  },
-  flash: {
-    backgroundColor: '#FFFFFF',
-  },
-  orb: {
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.06)',
-  },
-  orbOne: {
-    width: 320,
-    height: 320,
-    top: '12%',
-    right: -110,
-  },
-  orbTwo: {
-    width: 260,
-    height: 260,
-    bottom: '8%',
-    left: -100,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-  },
-});
+/** Fallback orbs for screens that do not pass a condition. */
+function Orbs({ width, height, clock, reducedMotion }: LayerProps) {
+  const orbOneX = width - 50;
+  const orbOneY = height * 0.12 + 160;
+  const orbTwoX = 30;
+  const orbTwoY = height * 0.92 - 130;
+
+  // Drift: x ping-pongs over 9 s, y over 7 s. The second orb swaps the axes.
+  const driftX = useDerivedValue(() => {
+    const t = timeOf(clock, reducedMotion) / 9000;
+    return -26 * (0.5 - 0.5 * Math.cos(Math.PI * (t % 2)));
+  });
+  const driftY = useDerivedValue(() => {
+    const t = timeOf(clock, reducedMotion) / 7000;
+    return 18 * (0.5 - 0.5 * Math.cos(Math.PI * (t % 2)));
+  });
+  const orbOneTransform = useDerivedValue(() => [{ translateX: driftX.value }, { translateY: driftY.value }]);
+  const orbTwoTransform = useDerivedValue(() => [{ translateX: driftY.value }, { translateY: driftX.value }]);
+
+  return (
+    <>
+      <Group transform={orbOneTransform}>
+        <Circle cx={orbOneX} cy={orbOneY} r={160} color="rgba(255,255,255,0.06)" />
+      </Group>
+      <Group transform={orbTwoTransform}>
+        <Circle cx={orbTwoX} cy={orbTwoY} r={130} color="rgba(255,255,255,0.05)" />
+      </Group>
+    </>
+  );
+}
+

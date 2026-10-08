@@ -12,7 +12,8 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { BlurMask, Canvas, Circle } from '@shopify/react-native-skia';
+import { withAlpha } from '../utils/color';
 import {
   ArrowUp,
   ArrowDown,
@@ -170,16 +171,15 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
             haloStyle,
           ]}
         >
-          <Svg width={haloSize} height={haloSize}>
-            <Defs>
-              <RadialGradient id="muHeroHalo" cx="50%" cy="50%" rx="50%" ry="50%">
-                <Stop offset="0" stopColor={theme.accent} stopOpacity="0.5" />
-                <Stop offset="0.45" stopColor={theme.accent} stopOpacity="0.16" />
-                <Stop offset="1" stopColor={theme.accent} stopOpacity="0" />
-              </RadialGradient>
-            </Defs>
-            <Circle cx={haloSize / 2} cy={haloSize / 2} r={haloSize / 2} fill="url(#muHeroHalo)" />
-          </Svg>
+          {/* Skia blur mask instead of an SVG radial gradient: a soft accent glow. */}
+          <Canvas style={{ width: haloSize, height: haloSize }}>
+            <Circle cx={haloSize / 2} cy={haloSize / 2} r={haloSize * 0.3} color={withAlpha(theme.accent, 0.42)}>
+              <BlurMask blur={haloSize * 0.16} style="normal" />
+            </Circle>
+            <Circle cx={haloSize / 2} cy={haloSize / 2} r={haloSize * 0.12} color={withAlpha(theme.accent, 0.3)}>
+              <BlurMask blur={haloSize * 0.06} style="normal" />
+            </Circle>
+          </Canvas>
         </Animated.View>
         <WeatherIcon
           code={current.weatherCode}

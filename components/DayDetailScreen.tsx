@@ -181,6 +181,7 @@ export function DayDetailScreen({
             theme={theme}
             hours={dayHours}
             seriesList={[{ pick: (hour) => hour.temperature, color: '#F5A962' }]}
+            formatValue={formatTemp}
             band={ensemble ?? null}
           />
           {ensemble && ensemble.length > 0 ? (
@@ -195,6 +196,7 @@ export function DayDetailScreen({
             theme={theme}
             hours={dayHours}
             seriesList={[{ pick: (hour) => hour.precipProbability, color: '#5B8FD9' }]}
+            formatValue={(value) => `${Math.round(value)}%`}
             fixedMin={0}
             fixedMax={100}
           />

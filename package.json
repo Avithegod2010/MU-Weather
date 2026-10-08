@@ -58,7 +58,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "postinstall": "node scripts/copy-canvaskit.mjs",
+    "visual:capture": "python3 scripts/visual/capture.py"
   },
   "private": true,
   "overrides": {

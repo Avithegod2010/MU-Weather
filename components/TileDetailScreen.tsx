@@ -2,7 +2,6 @@ import { SlidingGroup, SlidingItem } from './Sliding';
 import { t } from '../utils/i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Line, Path } from 'react-native-svg';
 import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -22,6 +21,8 @@ import { AnimatedBackground } from './AnimatedBackground';
 import { GraphExplorer } from './GraphExplorer';
 import { haptics } from '../utils/haptics';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
+import { SkiaSeriesChart, type ChartColumn, type ChartSeries } from './SkiaSeriesChart';
+import { Canvas, Circle, Line, vec } from '@shopify/react-native-skia';
 import {
   compassLabel,
   convertWind,
@@ -123,6 +124,7 @@ export function DetailChart({
   fixedMax,
   legendLabels,
   band,
+  formatValue,
 }: {
   theme: AppTheme;
   hours: HourPoint[];
@@ -132,6 +134,8 @@ export function DetailChart({
   legendLabels?: string[];
   /** Optional P10-P90 band aligned to hours by time string; drawn behind the series. */
   band?: EnsembleSpreadPoint[] | null;
+  /** Text for the scrub cursor's value tag. Defaults to a rounded number. */
+  formatValue?: (value: number) => string;
 }) {
   const slice = hours.slice(0, 24);
   const usable = slice.filter((hour) =>
@@ -160,11 +164,10 @@ export function DetailChart({
     if (fixedMin === undefined) min -= pad;
     if (fixedMax === undefined) max += pad;
   }
+  const plotBottom = CHART_HEIGHT - PADDING - 16;
+  const format = formatValue ?? ((value: number) => String(Math.round(value)));
 
-  const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
-
-  // Ensemble band polygon: P90 forward, P10 reversed, closed. First child so it
-  // renders behind the series paths.
+  // Ensemble band polygon: P90 forward, P10 reversed, closed.
   let bandPath = '';
   if (bandRows) {
     const upperPoints: CurvePoint[] = [];
@@ -172,61 +175,58 @@ export function DetailChart({
     bandRows.forEach((row, index) => {
       if (!row) return;
       const x = index * COL_WIDTH + COL_WIDTH / 2;
-      upperPoints.push({ x, y: scaleY(row.p90, min, max, PADDING, CHART_HEIGHT - PADDING - 16) });
-      lowerPoints.push({ x, y: scaleY(row.p10, min, max, PADDING, CHART_HEIGHT - PADDING - 16) });
+      upperPoints.push({ x, y: scaleY(row.p90, min, max, PADDING, plotBottom) });
+      lowerPoints.push({ x, y: scaleY(row.p10, min, max, PADDING, plotBottom) });
     });
     if (upperPoints.length >= 2) {
       bandPath = `${smoothPath(upperPoints)} ${smoothPath([...lowerPoints].reverse()).replace(/^M/, 'L')} Z`;
     }
   }
 
+  const series: ChartSeries[] = seriesList.map((entry) => {
+    const points: CurvePoint[] = [];
+    usable.forEach((hour, index) => {
+      const value = entry.pick(hour);
+      if (value !== null) {
+        points.push({
+          x: index * COL_WIDTH + COL_WIDTH / 2,
+          y: scaleY(value, min, max, PADDING, plotBottom),
+        });
+      }
+    });
+    return { color: entry.color, points };
+  });
+
+  // Scrub columns: the first series' value at every hour, for the cursor tag.
+  const columns: ChartColumn[] = usable.map((hour, index) => {
+    const value = seriesList[0]?.pick(hour) ?? null;
+    return {
+      x: index * COL_WIDTH + COL_WIDTH / 2,
+      y0: value === null ? null : scaleY(value, min, max, PADDING, plotBottom),
+      label: value === null ? '--' : format(value),
+    };
+  });
+
+  // Everything that changes the drawing goes in the key, so the chart redraws exactly then.
+  const dataKey = [
+    usable.map((hour) => hour.time).join(','),
+    series.map((entry) => entry.points.map((point) => `${point.x.toFixed(1)}:${point.y.toFixed(1)}`).join(' ')).join('|'),
+    bandPath,
+  ].join('#');
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
       <View style={{ width }}>
-        <Svg
+        <SkiaSeriesChart
+          theme={theme}
           width={width}
           height={CHART_HEIGHT}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-        >
-          {bandPath ? (
-            <Path
-              d={bandPath}
-              fill={seriesList[0]?.color ?? '#F5A962'}
-              opacity={theme.isLight ? 0.16 : 0.22}
-              stroke="none"
-            />
-          ) : null}
-          {seriesList.map((series, seriesIndex) => {
-            const points: CurvePoint[] = [];
-            usable.forEach((hour, index) => {
-              const value = series.pick(hour);
-              if (value !== null) {
-                points.push({
-                  x: index * COL_WIDTH + COL_WIDTH / 2,
-                  y: scaleY(value, min, max, PADDING, CHART_HEIGHT - PADDING - 16),
-                });
-              }
-            });
-            if (points.length < 2) return null;
-            return (
-              <React.Fragment key={`s-${seriesIndex}`}>
-                <Path d={smoothPath(points)} stroke={series.color} strokeWidth={2.5} fill="none" strokeLinecap="round" />
-                {points.map((point, pointIndex) => (
-                  <Circle
-                    key={`p-${seriesIndex}-${pointIndex}`}
-                    cx={point.x}
-                    cy={point.y}
-                    r={pointIndex === 0 ? 5 : 3.5}
-                    fill={dotFill}
-                    stroke={series.color}
-                    strokeWidth={2}
-                  />
-                ))}
-              </React.Fragment>
-            );
-          })}
-        </Svg>
+          series={series}
+          bandPath={bandPath || undefined}
+          columns={columns}
+          dotFill={theme.isLight ? '#FFFFFF' : '#F6F9FD'}
+          dataKey={dataKey}
+        />
         <View style={styles.chartTimes}>
           {usable.map((hour, index) =>
             index % 6 === 0 ? (
@@ -515,10 +515,10 @@ let windRose: React.ReactNode = null;
               .replace('{n}', `${fastest} ${windUnitLabel()}`)}
           >
             <View style={{ width: size, height: size }}>
-              <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-                <Circle cx={center} cy={center} r={radius + 8} stroke={theme.trackColor} strokeWidth={1} fill="none" />
-                <Circle cx={center} cy={center} r={radius / 2} stroke={theme.trackColor} strokeWidth={1} fill="none" />
-                <Circle cx={center} cy={center} r={2.5} fill={theme.textTertiary} />
+              <Canvas style={{ width: size, height: size }}>
+                <Circle cx={center} cy={center} r={radius + 8} color={theme.trackColor} style="stroke" strokeWidth={1} />
+                <Circle cx={center} cy={center} r={radius / 2} color={theme.trackColor} style="stroke" strokeWidth={1} />
+                <Circle cx={center} cy={center} r={2.5} color={theme.textTertiary} />
                 {sectorMax.map((maxSpeed, index) => {
                   if (maxSpeed <= 0) return null;
                   const angle = ((index * 22.5 - 90) * Math.PI) / 180;
@@ -527,17 +527,15 @@ let windRose: React.ReactNode = null;
                   return (
                     <Line
                       key={index}
-                      x1={center}
-                      y1={center}
-                      x2={center + Math.cos(angle) * length}
-                      y2={center + Math.sin(angle) * length}
-                      stroke={isDominant ? '#8FD0B8' : theme.textTertiary}
+                      p1={vec(center, center)}
+                      p2={vec(center + Math.cos(angle) * length, center + Math.sin(angle) * length)}
+                      color={isDominant ? '#8FD0B8' : theme.textTertiary}
                       strokeWidth={isDominant ? 4 : 2}
-                      strokeLinecap="round"
+                      strokeCap="round"
                     />
                   );
                 })}
-              </Svg>
+              </Canvas>
               <Text style={[styles.roseN, { color: theme.textTertiary }]}>N</Text>
             </View>
             <Text style={[styles.roseCaption, { color: theme.textSecondary }]}>
