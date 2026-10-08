@@ -528,6 +528,7 @@ export function HomeScreen() {
         particles={particles}
         condition={condition}
         isDay={weatherThemeResult.isDay}
+        animated={settings.skyMotion}
       />
       <StatusBar style={theme.isLight ? 'dark' : 'light'} />
 

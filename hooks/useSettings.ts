@@ -78,10 +78,13 @@ export interface AppSettings {
    * place and cancelled automatically when the rain is over.
    */
   rainOngoingEnabled: boolean;
+  /** Sky animation: sun, stars, clouds, fog, lightning, rain and snow. Off keeps the sky still. */
+  skyMotion: boolean;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
   hapticsEnabled: true,
+  skyMotion: true,
   language: 'en',
   themeMode: 'system',
   styleMode: 'material',

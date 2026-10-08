@@ -431,6 +431,25 @@ export function SettingsSheet({
             />
           </View>
 
+          <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sunrise size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_sky_motion')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {t('s_sky_motion_sub')}
+              </Text>
+            </View>
+            <Switch
+              value={ready ? settings.skyMotion : true}
+              onValueChange={(value) => onUpdate({ skyMotion: value })}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={settings.skyMotion ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_appearance')}</Text>
           <View style={[styles.themeGrid, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             {COLOR_THEMES.map((option) => {
