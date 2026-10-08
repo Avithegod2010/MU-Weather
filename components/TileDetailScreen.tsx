@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from './Sliding';
 import { t } from '../utils/i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -297,6 +298,7 @@ function BarRow({
  */
 function AqiDayRow({
   theme,
+  index,
   label,
   peak,
   fraction,
@@ -306,6 +308,7 @@ function AqiDayRow({
   onSelect,
 }: {
   theme: AppTheme;
+  index: number;
   label: string;
   peak: number;
   fraction: number;
@@ -315,13 +318,10 @@ function AqiDayRow({
   onSelect: () => void;
 }) {
   return (
-    <Pressable
+    <SlidingItem
+      index={index}
       onPress={onSelect}
-      style={[
-        styles.aqiDayRow,
-        { borderColor: selected ? bandColor : 'transparent' },
-        selected && { backgroundColor: theme.chipBg },
-      ]}
+      style={[styles.aqiDayRow, { borderColor: 'transparent' }]}
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={`${label}, ${peak}, ${bandLabel}`}
@@ -331,7 +331,7 @@ function AqiDayRow({
         <View style={[styles.barFill, { width: `${Math.round(Math.min(1, Math.max(0.02, fraction)) * 100)}%`, backgroundColor: bandColor }]} />
       </View>
       <Text style={[styles.aqiDayValue, { color: theme.textPrimary }]}>{peak}</Text>
-    </Pressable>
+    </SlidingItem>
   );
 }
 
@@ -715,19 +715,25 @@ let windRose: React.ReactNode = null;
       accent: band?.color,
     };
     scaleToggle = (
-      <View style={[styles.scaleToggleRow, { backgroundColor: theme.chipBg }]}>
-        {(['us', 'european'] as const).map((key) => {
+      <SlidingGroup
+        theme={theme}
+        activeIndex={(['us', 'european'] as const).indexOf(scale)}
+        color={theme.isLight ? '#FFFFFF' : '#F4F6FA'}
+        style={[styles.scaleToggleRow, { backgroundColor: theme.chipBg }]}
+      >
+        {(['us', 'european'] as const).map((key, index) => {
           const active = scale === key;
           return (
-            <Pressable
+            <SlidingItem
               key={key}
+              index={index}
               onPress={() => {
                 if (!active) {
                   haptics.select();
                   onAqiScaleChange?.(key);
                 }
               }}
-              style={[styles.scaleOption, active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' }]}
+              style={styles.scaleOption}
               accessibilityRole="button"
               accessibilityState={{ selected: active }}
             >
@@ -739,10 +745,10 @@ let windRose: React.ReactNode = null;
               >
                 {key === 'us' ? 'US' : 'EU'}
               </Text>
-            </Pressable>
+            </SlidingItem>
           );
         })}
-      </View>
+      </SlidingGroup>
     );
     chartTitle = t('d_aqi24');
     chart = (
@@ -833,8 +839,19 @@ let windRose: React.ReactNode = null;
         );
       }
       const dayAqiMap = new Map(aqiHourly.map((point) => [point.time, point]));
+      const selectedBand =
+        selectedPeak === null ? undefined : (aqiBandForScale(scale, selectedPeak)?.color ?? theme.trackColor);
       aqiForecast = (
-        <View style={styles.aqiDaysWrap}>
+        <SlidingGroup
+          theme={theme}
+          variant="fill"
+          activeIndex={selectedPeak !== null ? selectedDay : -1}
+          color={theme.chipBg}
+          stroke={selectedBand}
+          strokeWidth={1}
+          radius={14}
+          style={styles.aqiDaysWrap}
+        >
           {dayPeaks.map((day, index) => {
             const peak = peakFor(index);
             if (peak === null) return null;
@@ -846,6 +863,7 @@ let windRose: React.ReactNode = null;
             return (
               <AqiDayRow
                 key={day.date}
+                index={index}
                 theme={theme}
                 label={formatDayLabel(day.date, day.date.slice(0, 10) === todayStamp ? index : index + 2)}
                 peak={Math.round(peak)}
@@ -881,7 +899,7 @@ let windRose: React.ReactNode = null;
               />
             </View>
           ) : null}
-        </View>
+        </SlidingGroup>
       );
     }
   } else if (view.topic === 'moon') {

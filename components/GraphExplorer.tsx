@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from './Sliding';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
 import Svg, { Circle, Line, Path } from 'react-native-svg';
@@ -226,13 +227,19 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
   const rangeLabel = t(RANGE_LABEL_KEYS[range]);
   const granularityLabel = t(range === '30d' ? 'gx_daily' : 'gx_hourly');
   const rangeBlock = (
-    <View style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}>
-      {RANGE_OPTIONS.map((option) => {
+    <SlidingGroup
+      theme={theme}
+      activeIndex={RANGE_OPTIONS.findIndex((option) => option.key === range)}
+      color={theme.isLight ? '#FFFFFF' : '#F4F6FA'}
+      style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}
+    >
+      {RANGE_OPTIONS.map((option, index) => {
         const label = t(option.labelKey);
         const active = range === option.key;
         return (
-          <Pressable
+          <SlidingItem
             key={option.key}
+            index={index}
             onPress={() => {
               if (!active) {
                 haptics.select();
@@ -240,7 +247,7 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
                 setSelIdx(0);
               }
             }}
-            style={[styles.rangeOption, active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' }]}
+            style={styles.rangeOption}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
             accessibilityLabel={t('gx_a11y_range').replace('{n}', label)}
@@ -251,10 +258,10 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
             >
               {label}
             </Text>
-          </Pressable>
+          </SlidingItem>
         );
       })}
-    </View>
+    </SlidingGroup>
   );
 
   // No metric works for this range (or the slice is too short): the range
@@ -425,12 +432,22 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
         ))}
       </View>
 
-      <View style={styles.chips}>
-        {chips.map((chip) => {
+      <SlidingGroup
+        theme={theme}
+        variant="ring"
+        activeIndex={chips.findIndex((chip) => chip.key === activeKey)}
+        color={chips.find((chip) => chip.key === activeKey)?.color}
+        fill={tint(chips.find((chip) => chip.key === activeKey)?.color)}
+        strokeWidth={1}
+        radius={999}
+        style={styles.chips}
+      >
+        {chips.map((chip, index) => {
           const active = chip.key === activeKey;
           return (
-            <Pressable
+            <SlidingItem
               key={chip.key}
+              index={index}
               onPress={() => {
                 if (!active) {
                   haptics.select();
@@ -438,11 +455,7 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
                   setSelIdx(0);
                 }
               }}
-              style={[
-                styles.chip,
-                { backgroundColor: theme.chipBg },
-                active && { backgroundColor: `${chip.color}26`, borderColor: chip.color },
-              ]}
+              style={[styles.chip, { backgroundColor: theme.chipBg }]}
               accessibilityRole="button"
               accessibilityState={{ selected: active }}
               accessibilityLabel={t('gx_a11y_metric').replace('{n}', chip.label)}
@@ -453,15 +466,18 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
               >
                 {chip.label}
               </Text>
-            </Pressable>
+            </SlidingItem>
           );
         })}
-      </View>
+      </SlidingGroup>
 
       <Text style={[styles.hint, { color: theme.textTertiary }]}>{t('gx_scrub_hint')}</Text>
     </View>
   );
 }
+
+/** Translucent tint of a metric's colour, used behind its selected chip. */
+const tint = (color?: string) => (color ? `${color}26` : undefined);
 
 const styles = StyleSheet.create({
   root: {

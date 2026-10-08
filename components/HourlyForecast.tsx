@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from './Sliding';
 import { t, tWmo } from '../utils/i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -179,23 +180,26 @@ export function HourlyForecast({ theme, hours, focus }: HourlyForecastProps) {
       title={t('card_hourly')}
       icon={Clock}
       headerRight={
-        <View style={[styles.toggleWrap, { backgroundColor: theme.chipBg }]}>
-          {toggleIcons.map((entry) => {
+        <SlidingGroup
+          theme={theme}
+          activeIndex={toggleIcons.findIndex((entry) => entry.key === view)}
+          color={theme.isLight ? '#FFFFFF' : '#F4F6FA'}
+          style={[styles.toggleWrap, { backgroundColor: theme.chipBg }]}
+        >
+          {toggleIcons.map((entry, index) => {
             const ToggleIcon = entry.icon;
             const active = view === entry.key;
             return (
-              <Pressable
+              <SlidingItem
                 key={entry.key}
+                index={index}
                 onPress={() => {
                   if (!active) {
                     haptics.select();
                     setView(entry.key);
                   }
                 }}
-                style={[
-                  styles.toggleButton,
-                  active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' },
-                ]}
+                style={styles.toggleButton}
                 accessibilityRole="button"
                 accessibilityLabel={
                   entry.key === 'temp'
@@ -211,10 +215,10 @@ export function HourlyForecast({ theme, hours, focus }: HourlyForecastProps) {
                   color={active ? (theme.isLight ? '#1C2431' : '#1C2431') : theme.textTertiary}
                   strokeWidth={2.3}
                 />
-              </Pressable>
+              </SlidingItem>
             );
           })}
-        </View>
+        </SlidingGroup>
       }
     >
       <ScrollView

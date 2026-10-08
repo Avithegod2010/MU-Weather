@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from './Sliding';
 import { t, tDay, getLanguage, type StringKey } from '../utils/i18n';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -106,22 +107,25 @@ export function PastWeekCard({
       title={t(isAccuracy ? 'card_accuracy' : isMonth ? 'card_past_week_30' : 'card_past_week')}
       icon={History}
       headerRight={
-        <View style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}>
-          {([7, 30, 'accuracy'] as const).map((option) => {
+        <SlidingGroup
+          theme={theme}
+          activeIndex={[7, 30, 'accuracy'].indexOf(pastDaysRange)}
+          color={theme.isLight ? '#FFFFFF' : '#F4F6FA'}
+          style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}
+        >
+          {([7, 30, 'accuracy'] as const).map((option, index) => {
             const active = pastDaysRange === option;
             return (
-              <Pressable
+              <SlidingItem
                 key={option}
+                index={index}
                 onPress={() => {
                   if (!active) {
                     haptics.select();
                     onRangeChange?.(option);
                   }
                 }}
-                style={[
-                  styles.rangeOption,
-                  active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' },
-                ]}
+                style={styles.rangeOption}
                 accessibilityRole="button"
                 accessibilityLabel={
                   option === 'accuracy' ? t('accuracy_tab') : t('trip_days').replace('{n}', String(option))
@@ -139,10 +143,10 @@ export function PastWeekCard({
                 >
                   {option === 'accuracy' ? t('accuracy_tab') : option}
                 </Text>
-              </Pressable>
+              </SlidingItem>
             );
           })}
-        </View>
+        </SlidingGroup>
       }
     >
       {isAccuracy ? (
@@ -387,23 +391,26 @@ function ModelLeaderboard({
   // The switcher stays visible even with nothing scored yet, so the user can
   // tell the other two metrics apart from a missing-data bug.
   const metricPicker = (
-    <View style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}>
-      {MODEL_METRICS.map((option) => {
+    <SlidingGroup
+      theme={theme}
+      activeIndex={(MODEL_METRICS as readonly string[]).indexOf(metric)}
+      color={theme.isLight ? '#FFFFFF' : '#F4F6FA'}
+      style={[styles.rangeRow, { backgroundColor: theme.chipBg }]}
+    >
+      {MODEL_METRICS.map((option, index) => {
         const label = t(METRIC_LABEL_KEYS[option]);
         const active = metric === option;
         return (
-          <Pressable
+          <SlidingItem
             key={option}
+            index={index}
             onPress={() => {
               if (!active) {
                 haptics.select();
                 setMetric(option);
               }
             }}
-            style={[
-              styles.rangeOption,
-              active && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' },
-            ]}
+            style={styles.rangeOption}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
             accessibilityLabel={label}
@@ -416,10 +423,10 @@ function ModelLeaderboard({
             >
               {label}
             </Text>
-          </Pressable>
+          </SlidingItem>
         );
       })}
-    </View>
+    </SlidingGroup>
   );
 
   return (

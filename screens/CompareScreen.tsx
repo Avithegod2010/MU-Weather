@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from '../components/Sliding';
 import React, { useEffect, useMemo, useState } from 'react';
 import { t } from '../utils/i18n';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -162,14 +163,20 @@ export function CompareScreen({ theme, visible, onClose, entries, status, favori
       </View>
 
       {/* Tabs: the original all-cities metrics table, plus the new two-city view. */}
-      <View style={[styles.tabBar, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-        {(['metrics', 'two'] as CompareTab[]).map((key) => {
+      <SlidingGroup
+        theme={theme}
+        activeIndex={(['metrics', 'two'] as CompareTab[]).indexOf(tab)}
+        color={theme.chipBg}
+        style={[styles.tabBar, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+      >
+        {(['metrics', 'two'] as CompareTab[]).map((key, index) => {
           const active = tab === key;
           return (
-            <Pressable
+            <SlidingItem
               key={key}
+              index={index}
               onPress={() => setTab(key)}
-              style={[styles.tab, active && { backgroundColor: theme.chipBg }]}
+              style={styles.tab}
               accessibilityRole="tab"
               accessibilityState={{ selected: active }}
               accessibilityLabel={key === 'metrics' ? t('cmp_tab_metrics') : t('c2_tab')}
@@ -182,10 +189,10 @@ export function CompareScreen({ theme, visible, onClose, entries, status, favori
               >
                 {key === 'metrics' ? t('cmp_tab_metrics') : t('c2_tab')}
               </Text>
-            </Pressable>
+            </SlidingItem>
           );
         })}
-      </View>
+      </SlidingGroup>
 
       {tab === 'two' ? (
         <ScrollView

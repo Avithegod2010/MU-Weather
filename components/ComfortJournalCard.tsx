@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from './Sliding';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { t } from '../utils/i18n';
@@ -58,21 +59,25 @@ export function ComfortJournalCard({
       ) : (
         <Text style={[styles.prompt, { color: theme.textSecondary }]}>{t('journal_prompt')}</Text>
       )}
-      <View style={styles.choices}>
-        {CHOICES.map(({ rating, icon: Icon }) => {
+      <SlidingGroup
+        theme={theme}
+        activeIndex={CHOICES.findIndex(({ rating }) => today?.rating === rating)}
+        color={theme.chipBg}
+        radius={14}
+        style={styles.choices}
+      >
+        {CHOICES.map(({ rating, icon: Icon }, index) => {
           const selected = today?.rating === rating;
           return (
-            <Pressable
+            <SlidingItem
               key={rating}
+              index={index}
               onPress={() => {
                 haptics.select();
                 onRate(rating);
               }}
-              style={({ pressed }) => [
-                styles.choice,
-                { backgroundColor: selected ? theme.chipBg : 'transparent', borderColor: theme.cardBorder },
-                pressed && { opacity: 0.7 },
-              ]}
+              style={[styles.choice, { borderColor: theme.cardBorder }]}
+              pressedOpacity={0.7}
               accessibilityRole="button"
               accessibilityState={{ selected }}
               accessibilityLabel={t(`journal_a11y_${rating}`)}
@@ -88,10 +93,10 @@ export function ComfortJournalCard({
               >
                 {t(`journal_rating_${rating}`)}
               </Text>
-            </Pressable>
+            </SlidingItem>
           );
         })}
-      </View>
+      </SlidingGroup>
       {total > 0 ? (
         <Text style={[styles.progress, { color: theme.textTertiary }]}>
           {t('journal_progress').split('{n}').join(String(total))}
