@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import * as Notifications from '../utils/notifications';
 import { isInQuietHoursNow } from '../utils/fireAlertNotifications';
 import { computeNowcast } from '../utils/nowcast';

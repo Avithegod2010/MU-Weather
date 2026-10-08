@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { loadComfortJournal, saveComfortEntry, localDateStamp } from '../utils/comfortJournal';
+import { loadComfortJournal, saveComfortEntry, localDateStamp , comfortOffset } from '../utils/comfortJournal';
 import type { ComfortJournalEntry, ComfortRating, ComfortOffset } from '../utils/comfortJournal';
-import { comfortOffset } from '../utils/comfortJournal';
 
 export interface UseComfortJournal {
   /** The rating already recorded for TODAY, or null when not yet answered. */

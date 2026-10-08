@@ -24,7 +24,7 @@ interface WeatherWidgetCityProps {
   rainChance: string;
   precipitation: string;
   updatedLabel: string;
-  hours: Array<{ time: string; label: string; temp: string; rain: string }>;
+  hours: { time: string; label: string; temp: string; rain: string }[];
   aqiLabel: string;
   aqiColor: ColorProp | null;
   /** Why there is nothing to draw, when hasData is false. */

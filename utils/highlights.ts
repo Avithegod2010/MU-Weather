@@ -1,6 +1,6 @@
 import { formatTemp, convertWind, windUnitLabel } from './format';
 import { describeWmo } from './wmo';
-import { computeNowcast } from './nowcast';
+import {  } from './nowcast';
 import type { Nowcast } from './nowcast';
 import type { WeatherBundle } from '../api/types';
 

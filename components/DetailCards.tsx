@@ -5,12 +5,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import {
   Sun,
   Moon as MoonIcon,
-  CloudLightning,
-  CloudHail,
-  Clock,
-  ArrowUp,
-  ArrowDown,
-  Droplet,
   Droplets,
   Wind,
   Gauge,
@@ -28,7 +22,7 @@ import { SunArc } from './SunArc';
 import { MoonPhaseVisual, RainGauge } from './MiniGauges';
 import { WeatherIcon } from './WeatherIcon';
 import type { AppTheme } from '../theme/palettes';
-import { uvBand, humidityComfort } from '../utils/aqi';
+import { uvBand, humidityComfort , pollenLevel } from '../utils/aqi';
 import { moonPhase, nextMoonMilestone } from '../utils/moon';
 import {
   dewPointComfort,
@@ -36,18 +30,15 @@ import {
   formatPrecipValue,
   formatTemp,
   formatVisibility,
-  formatTime12,
   precipUnitLabel,
   formatPressureValue,
   pressureUnitLabel,
 } from '../utils/format';
 import { beaufortText } from '../utils/beaufort';
-import { pollenLevel } from '../utils/aqi';
 import type { AqiScale } from '../utils/aqi';
 import {
   findGoldenBlueHours,
   daylightDeltaMinutes,
-  moonTimes,
   formatDateClock,
 } from '../utils/sunCalc';
 import { StormDistanceCard } from './StormDistanceCard';
@@ -64,11 +55,10 @@ import {
   snowfallNext24,
 } from '../utils/winter';
 import type { YearAgoState } from '../hooks/useYearAgo';
-import type { PollenInfo } from '../api/types';
-import type { AqiInfo, CurrentConditions, DayPoint, GeoLocation, HourPoint } from '../api/types';
+import type { PollenInfo , AqiInfo, CurrentConditions, DayPoint, GeoLocation, HourPoint } from '../api/types';
 import { peakCape } from '../utils/storm';
 
-const POLLEN_TYPES: Array<{ key: keyof PollenInfo; label: string }> = [
+const POLLEN_TYPES: { key: keyof PollenInfo; label: string }[] = [
   { key: 'grass', label: 'Grass' },
   { key: 'birch', label: 'Birch' },
   { key: 'alder', label: 'Alder' },
@@ -124,11 +114,6 @@ export function DetailCards({
     [location.latitude, location.longitude],
   );
 
-  const moonTimesToday = useMemo(
-    () => moonTimes(new Date(), location.latitude, location.longitude),
-    [location.latitude, location.longitude],
-  );
-
   const stormRisk = useMemo(() => (hourly ? peakCape(hourly) : null), [hourly]);
 
   /** Snow stats, or null when the tile is hidden or snow is irrelevant here. */
@@ -147,7 +132,7 @@ export function DetailCards({
     };
   }, [hourly, hourlyAll]);
 
-  const snowRows: Array<{ label: string; value: string }> = snow
+  const snowRows: { label: string; value: string }[] = snow
     ? [
         {
           label: t('snow_depth'),

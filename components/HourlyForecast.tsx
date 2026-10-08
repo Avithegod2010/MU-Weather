@@ -132,14 +132,14 @@ export function HourlyForecast({ theme, hours, focus }: HourlyForecastProps) {
 
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
-  const toggleIcons: Array<{ key: HourView; icon: typeof Wind }> = [
+  const toggleIcons: { key: HourView; icon: typeof Wind }[] = [
     { key: 'temp', icon: Thermometer },
     { key: 'rain', icon: Umbrella },
     { key: 'wind', icon: Wind },
   ];
 
   const selectedHour = selected !== null ? slice[selected] ?? null : null;
-  const stats: Array<{ label: string; value: string }> = [];
+  const stats: { label: string; value: string }[] = [];
   if (selectedHour) {
     stats.push({
       label: t('feels_like'),

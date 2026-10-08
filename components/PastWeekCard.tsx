@@ -1,7 +1,7 @@
 import { SlidingGroup, SlidingItem } from './Sliding';
 import { t, tDay, getLanguage, type StringKey } from '../utils/i18n';
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SkiaSeriesChart } from './SkiaSeriesChart';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, Clock3 as History } from '../utils/uiIcons';

@@ -122,7 +122,7 @@ export function SunTwilightCard({
 
   // The day's phases in the order they actually happen: night ends → daylight
   // peaks → night returns.
-  const rows: Array<{ label: string; value: string }> = [
+  const rows: { label: string; value: string }[] = [
     { label: t('tw_first_light'), value: clock(tw.astroDawn) },
     { label: t('tw_civil_dawn'), value: clock(tw.civilDawn) },
     { label: t('sunrise'), value: clock(tw.sunrise) },

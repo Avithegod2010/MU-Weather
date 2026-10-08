@@ -83,6 +83,8 @@ animation code here does both on purpose, for worklets and for the first layout 
 sites would be a broad refactor of the animation code, so those five rules are kept as **warnings**. They
 stay visible and do not fail the lint. Hook-order and other real correctness rules stay errors.
 
-Result: 0 errors. The remaining warnings are `no-unused-vars` (252), `array-type` (78), `import/first` (16),
-`import/no-duplicates` (12), `exhaustive-deps` (5). Clearing these is a follow-up, not a blocker.
-
+Cleanup pass: 250 unused import specifiers removed, `array-type` and `import/first` fixed by `eslint --fix`,
+one unused `useMemo` (`moonTimesToday`, never read) and one unused constant removed. Two deliberate lazy
+`require` calls carry a disable comment with the reason. Result: **0 errors, 192 warnings**, all from the five
+deferred hook rules plus `exhaustive-deps` (5). Those are the follow-up. The smoke run after the cleanup still
+passes the journal probe in both styles.

@@ -114,7 +114,7 @@ export function DayDetailScreen({
   const dayLabel =
     view.index === 0 ? t('today') : view.index === 1 ? t('tomorrow') : formatDayFull(dayData.date);
 
-  const factRows: Array<{ label: string; value: string }> = [
+  const factRows: { label: string; value: string }[] = [
     { label: t('sunrise'), value: formatTime12(dayData.sunrise) },
     { label: t('sunset'), value: formatTime12(dayData.sunset) },
     {

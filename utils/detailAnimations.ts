@@ -12,7 +12,7 @@ import { getReduceMotion } from './reduceMotion';
 
 export type DetailAnimStyle = 'fade' | 'slideUp' | 'zoom' | 'push';
 
-export const DETAIL_ANIM_OPTIONS: Array<{ value: DetailAnimStyle; label: string }> = [
+export const DETAIL_ANIM_OPTIONS: { value: DetailAnimStyle; label: string }[] = [
   { value: 'fade', label: 'Fade' },
   { value: 'slideUp', label: 'Slide' },
   { value: 'zoom', label: 'Zoom' },

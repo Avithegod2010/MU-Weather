@@ -14,6 +14,7 @@ import './widget/widgetConfigScreen';
 // It also ensures that whether you load the app in Expo Go or in a native build,
 // the environment is set up appropriately
 // The app loads lazily through withSkia so CanvasKit (web) is ready before any Skia module runs.
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy on purpose: withSkia must run before App loads.
 const App = withSkia(() => require('./App'));
 
 registerRootComponent(App);

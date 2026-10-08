@@ -19,7 +19,7 @@ export function useBarometer(enabled: boolean): BarometerState {
     pressure: null,
     trendPer10Min: null,
   });
-  const readingsRef = useRef<Array<{ t: number; p: number }>>([]);
+  const readingsRef = useRef<{ t: number; p: number }[]>([]);
 
   useEffect(() => {
     if (!enabled) return;

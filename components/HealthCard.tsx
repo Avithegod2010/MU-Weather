@@ -44,7 +44,7 @@ export function HealthCard({ theme, current, usAqi, style, revealDelay }: Health
     high: t('band_high'),
   };
 
-  const rows: Array<{ label: string; risk: HealthRisk }> = [
+  const rows: { label: string; risk: HealthRisk }[] = [
     { label: t('health_migraine'), risk: migraine },
     { label: t('health_respiratory'), risk: respiratory },
     { label: t('health_flu'), risk: flu },

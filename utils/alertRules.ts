@@ -228,7 +228,7 @@ export function evaluateAlerts(
   }
 
   if (settings.pollen && aqi?.pollen) {
-    const types: Array<[string, number | null]> = [
+    const types: [string, number | null][] = [
       ['grass', aqi.pollen.grass],
       ['birch', aqi.pollen.birch],
       ['alder', aqi.pollen.alder],

@@ -53,11 +53,11 @@ export async function fetchYearAgo(lat: number, lon: number): Promise<Historical
 
 interface ArchiveDailyPayload {
   time?: string[];
-  temperature_2m_max?: Array<number | null>;
-  temperature_2m_min?: Array<number | null>;
-  precipitation_sum?: Array<number | null>;
-  weather_code?: Array<number | null>;
-  wind_speed_10m_max?: Array<number | null>;
+  temperature_2m_max?: (number | null)[];
+  temperature_2m_min?: (number | null)[];
+  precipitation_sum?: (number | null)[];
+  weather_code?: (number | null)[];
+  wind_speed_10m_max?: (number | null)[];
 }
 
 function isoDaysAgo(offset: number): string {
@@ -405,7 +405,7 @@ const ENSEMBLE_RAIN_THRESHOLD_MM = 0.1;
 interface EnsembleApiResponse {
   hourly?: {
     time?: string[];
-  } & Record<string, Array<number | null> | string[] | undefined>;
+  } & Record<string, (number | null)[] | string[] | undefined>;
 }
 
 function percentile(sorted: number[], p: number): number {
@@ -452,13 +452,13 @@ export async function fetchEnsembleSpread(lat: number, lon: number): Promise<Ens
       let wetMembers = 0;
       let precipMembers = 0;
       for (const key of memberTempKeys) {
-        const tempsArray = hourly[key] as Array<number | null>;
+        const tempsArray = hourly[key] as (number | null)[];
         const value = tempsArray[i];
         if (typeof value === 'number') temps.push(value);
         const precipKey = key.replace('temperature_2m', 'precipitation');
         const precipArray = hourly[precipKey];
         if (Array.isArray(precipArray)) {
-          const precip = (precipArray as Array<number | null>)[i];
+          const precip = (precipArray as (number | null)[])[i];
           if (typeof precip === 'number') {
             precipMembers += 1;
             if (precip >= ENSEMBLE_RAIN_THRESHOLD_MM) wetMembers += 1;

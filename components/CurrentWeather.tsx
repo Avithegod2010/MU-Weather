@@ -14,7 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { BlurMask, Canvas, Circle } from '@shopify/react-native-skia';
 import { LinearGradient } from 'expo-linear-gradient';
-import { withAlpha } from '../utils/color';
+import { withAlpha , parseColor } from '../utils/color';
 import {
   ArrowUp,
   ArrowDown,
@@ -24,7 +24,6 @@ import {
   Square,
 } from '../utils/uiIcons';
 import type { AppTheme } from '../theme/palettes';
-import { parseColor } from '../utils/color';
 import { luminance } from '../utils/contrast';
 import { WeatherIcon } from './WeatherIcon';
 import { formatTemp } from '../utils/format';

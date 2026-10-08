@@ -40,7 +40,7 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
 
   // Align the ensemble band to the displayed slice by time string.
   const bandByTime = ensemble ? new Map(ensemble.map((point) => [point.time, point])) : null;
-  const band: Array<{ p10: number; p90: number } | null> | null = bandByTime
+  const band: ({ p10: number; p90: number } | null)[] | null = bandByTime
     ? slice.map((hour) => {
         const point = bandByTime.get(hour.time);
         return point ? { p10: point.tP10, p90: point.tP90 } : null;
