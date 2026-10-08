@@ -99,7 +99,7 @@ export function ComfortJournalCard({
       </SlidingGroup>
       {total > 0 ? (
         <Text style={[styles.progress, { color: theme.textTertiary }]}>
-          {t('journal_progress').split('{n}').join(String(total))}
+          {(total === 1 ? t('journal_progress_one') : t('journal_progress')).split('{n}').join(String(total))}
         </Text>
       ) : null}
     </Card>

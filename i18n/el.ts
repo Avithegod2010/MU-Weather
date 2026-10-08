@@ -344,6 +344,7 @@ export const el: Strings = {
   journal_saved: 'Σήμερα ένιωσα {rating}',
   journal_change: 'Πατήστε άλλη επιλογή για αλλαγή',
   journal_progress: '{n} ημέρες αξιολογημένες · μόνο σε αυτή τη συσκευή',
+  journal_progress_one: '{n} ημέρα αξιολογημένη · μόνο σε αυτή τη συσκευή',
   journal_rating_cold: 'Κρύος',
   journal_rating_ok: 'Ακριβώς',
   journal_rating_hot: 'Ζέστη',

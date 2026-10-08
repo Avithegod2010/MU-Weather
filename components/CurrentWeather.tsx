@@ -23,6 +23,8 @@ import {
   Square,
 } from '../utils/uiIcons';
 import type { AppTheme } from '../theme/palettes';
+import { parseColor } from '../utils/color';
+import { luminance } from '../utils/contrast';
 import { WeatherIcon } from './WeatherIcon';
 import { formatTemp } from '../utils/format';
 import { F } from '../theme/typography';
@@ -53,10 +55,14 @@ interface CurrentWeatherProps {
  * A soft halo in the opposite tone keeps the text readable across the whole gradient.
  */
 function heroTextShadow(theme: AppTheme) {
+  // The halo must be the opposite tone of the ink actually drawn, not of the theme's light flag:
+  // the ink is chosen from the cards, so a dark theme can still carry dark text (see palettes.ts).
+  const ink = parseColor(theme.textPrimary);
+  const darkInk = ink ? luminance([ink.r, ink.g, ink.b]) < 0.4 : theme.isLight;
   return {
-    textShadowColor: theme.isLight ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 6,
+    textShadowColor: darkInk ? 'rgba(255,255,255,0.92)' : 'rgba(0,0,0,0.85)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
   };
 }
 

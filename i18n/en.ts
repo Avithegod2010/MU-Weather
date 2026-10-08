@@ -801,6 +801,7 @@ export const en = {
   journal_saved: 'Today felt {rating}',
   journal_change: 'Tap another to change it',
   journal_progress: '{n} days rated · on this device only',
+  journal_progress_one: '{n} day rated · on this device only',
   journal_rating_cold: 'Cold',
   journal_rating_ok: 'Just right',
   journal_rating_hot: 'Hot',

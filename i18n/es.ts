@@ -344,6 +344,7 @@ export const es: Strings = {
   journal_saved: 'Hoy se sintió {rating}',
   journal_change: 'Toca otra opción para cambiarla',
   journal_progress: '{n} días valorados · solo en este dispositivo',
+  journal_progress_one: '{n} día valorado · solo en este dispositivo',
   journal_rating_cold: 'Frío',
   journal_rating_ok: 'Justo',
   journal_rating_hot: 'Calor',

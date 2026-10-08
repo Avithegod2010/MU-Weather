@@ -344,6 +344,7 @@ export const bn: Strings = {
   journal_saved: 'আজ {rating} লেগেছে',
   journal_change: 'বদলাতে অন্যটি চাপুন',
   journal_progress: '{n} দিন রেট করা · শুধু এই ডিভাইসে',
+  journal_progress_one: '{n} দিন রেট করা · শুধু এই ডিভাইসে',
   journal_rating_cold: 'ঠান্ডা',
   journal_rating_ok: 'ঠিক ঠিক',
   journal_rating_hot: 'গরম',

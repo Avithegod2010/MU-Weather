@@ -344,6 +344,7 @@ export const hi: Strings = {
   journal_saved: 'आज {rating} लगा',
   journal_change: 'बदलने के लिए दूसरा चुनें',
   journal_progress: '{n} दिन रेट किए · केवल इस डिवाइस पर',
+  journal_progress_one: '{n} दिन रेट किए · केवल इस डिवाइस पर',
   journal_rating_cold: 'ठंडा',
   journal_rating_ok: 'ठीक ठीक',
   journal_rating_hot: 'गर्म',

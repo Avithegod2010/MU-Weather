@@ -344,6 +344,7 @@ export const hu: Strings = {
   journal_saved: 'Ma {rating} érzés',
   journal_change: 'Változtatáshoz válasszon másikat',
   journal_progress: '{n} nap értékelve · csak ezen az eszközön',
+  journal_progress_one: '{n} nap értékelve · csak ezen az eszközön',
   journal_rating_cold: 'Hideg',
   journal_rating_ok: 'Pont jó',
   journal_rating_hot: 'Meleg',
