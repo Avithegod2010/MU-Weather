@@ -405,12 +405,14 @@ export function SlidingGroup({
 
   // Layout events do not fire for a pure move on the web, so the selected item and its
   // target are measured again whenever the selection changes.
-  const settled = useRef(false);
+  // The first pass waits for the sheet to settle. On web, layout events can fire while the sheet
+  // is still hidden or at zero size, and nothing else would measure the selected item again, so
+  // the first highlight stayed invisible until the selection changed.
+  const [settledReady, setSettledReady] = useState(false);
   useEffect(() => {
-    // The first pass is left to the layout events: the sheet may still be animating in.
-    if (!settled.current) {
-      settled.current = true;
-      return;
+    if (!settledReady) {
+      const timer = setTimeout(() => setSettledReady(true), 400);
+      return () => clearTimeout(timer);
     }
     const container = containerRef.current;
     const item = itemNodes.current.get(activeIndex);
@@ -451,7 +453,7 @@ export function SlidingGroup({
         }
       });
     });
-  }, [activeIndex, report]);
+  }, [activeIndex, report, settledReady]);
 
   const active = useMemo<Frame | null>(() => {
     const item = items[activeIndex];

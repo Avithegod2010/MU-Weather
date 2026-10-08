@@ -49,3 +49,17 @@ environment, so no performance improvement is claimed. The `pageErrors: 1` entry
   including the storm flash tap. The earlier flash-click timeout came from the older build.
 - `glass_check.py`: loads Home in glass style, records page errors and a screenshot in `results/glass/`.
 - Android frame times: not measured here. No device run happened in this environment.
+
+## Open-list pass (this session)
+
+- Journal singulars (`journal_progress_one`): all 14 locales reviewed. Bengali, Hindi, Hungarian, Indonesian and
+  Turkish keep one wording for one and many, which is correct for those languages. The rest agree with the count.
+- `glass_refraction.py`: 2x close-ups of the glass pill at rest and after moving to "Hot", in `results/glass/`.
+  The pill renders with the tint and the specular rim. From a single still, the refraction itself is not proven:
+  the sky behind it is nearly uniform. A side-by-side with the gradient fallback needs a build toggle, which
+  does not exist yet.
+- The journal pill is correctly absent when today has no rating (`activeIndex` is -1). The probe seeds a rating.
+- `Sliding.tsx`: the first selection measurement now runs 400 ms after mount instead of being skipped. Verified
+  with a rated day at launch: the pill appears at rest at the right size.
+- `capture.py`: `open_page` takes a `scale` argument for the 2x close-ups.
+- Android frame times: still not measured. No device or `adb` is available in this environment.

@@ -1,0 +1,9 @@
+{
+  "shots": [
+    "results/glass/refraction-pill-rest.png",
+    "results/glass/refraction-pill-moved.png"
+  ],
+  "pageErrors": [
+    "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+  ]
+}
