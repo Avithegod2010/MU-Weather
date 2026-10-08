@@ -119,6 +119,8 @@ function useSlideFrame(frame: Frame | null, liquid: boolean, reduced: boolean) {
       bottom.value = withSpring(endY, SLIDE);
     }
     // Depend on the numbers, not the object, so a re-render with the same frame does nothing.
+    // The shared values read here are stable refs; listing them would only add noise.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frame?.x, frame?.y, frame?.width, frame?.height, liquid, reduced]);
 
   // Size as values of their own, so the glass shader can follow the sliding frame.

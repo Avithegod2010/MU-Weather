@@ -86,6 +86,8 @@ export function useCityComparison(cities: GeoLocation[], enabled: boolean): City
     return () => {
       cancelled = true;
     };
+  // `cities` is intentionally left out: `cityKey` is its stable identity. Re-picking the same pair must not refetch.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, cityKey, reloadToken]);
 
   return { ...state, reload };
