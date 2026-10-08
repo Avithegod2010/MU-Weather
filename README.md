@@ -10,7 +10,7 @@ built with React Native & Expo.
 [![Expo SDK](https://img.shields.io/badge/Expo_SDK-57-000020.svg?logo=expo&logoColor=white)](https://docs.expo.dev/versions/v57.0.0/)
 [![React Native](https://img.shields.io/badge/React_Native-0.86-61DAFB.svg?logo=react&logoColor=white)](https://reactnative.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Languages](https://img.shields.io/badge/languages-11-8A2BE2.svg)](#-languages)
+[![Languages](https://img.shields.io/badge/languages-14-8A2BE2.svg)](#-languages)
 [![API keys](https://img.shields.io/badge/API_keys-none-success.svg)](#-data-sources--attribution)
 [![Release](https://img.shields.io/badge/release-v1.0-brightgreen.svg)](https://github.com/Avithegod2010/MU-Weather/releases/tag/v1.0)
 
@@ -26,7 +26,7 @@ built with React Native & Expo.
 
 | Material You idea | How MU Weather delivers it |
 | --- | --- |
-| Colour that adapts to *you* | A dedicated **Material You** theme (Android 12+) reads the system palette — derived from your wallpaper — and recolours the app, its **home-screen widgets** and its notification surfaces |
+| Colour that adapts to *you* | A dedicated **Material You** theme (Android 12+) reads the system palette — derived from your wallpaper — and recolours the app's screens. The home-screen widgets keep a fixed palette and do not follow it |
 | Rounded, tactile surfaces | Card-based layout, soft radii, layered gradients, and an optional glass style |
 | Personal expression | 10 colour themes · light / dark / system · comfortable & compact density · 3 icon styles · 4 tile-transition animations · 6 home backgrounds |
 | Feel like part of Android | Home-screen widgets, app shortcuts, notification actions, spoken readouts, calendar rows |
@@ -103,7 +103,7 @@ built with React Native & Expo.
 - **Icon styles** — outline, filled or colourful
 - **Tile animations** — fade, slide, zoom or push, plus per-section visibility under *Adjust tiles*
 - **Home backgrounds** — dynamic weather, aurora, sunset, ocean, midnight, forest
-- **Home-screen widgets** — 2×2 and 4×2 (with hourly strips), 30-minute background refresh, themed like the app
+- **Home-screen widgets** — five widgets (one with an hourly strip), refreshed in the background, with fixed colour palettes (they do not follow Material You or the sky)
 - **App shortcuts** — `muweather://radar` · `muweather://search` · `muweather://favorites`
 - **Accessibility** — TalkBack labels throughout, reduced-motion support, font-fitting for long translated labels
 - **Offline-friendly** — the last snapshot, caches and history live on the device and are served without a connection
@@ -113,11 +113,12 @@ built with React Native & Expo.
 | Language | Code | Language | Code |
 | --- | --- | --- | --- |
 | English | `en` | Ελληνικά (Greek) | `el` |
-| हिन्दी (Hindi) | `hi` | Magyar (Hungarian) | `hu` |
-| বাংলা (Bengali) | `bn` | Bahasa Indonesia | `id` |
-| Español (Spanish) | `es` | Italiano (Italian) | `it` |
-| Français (French) | `fr` | Nederlands (Dutch) | `nl` |
-| Deutsch (German) | `de` | | |
+| Deutsch (German) | `de` | हिन्दी (Hindi) | `hi` |
+| Español (Spanish) | `es` | Magyar (Hungarian) | `hu` |
+| Français (French) | `fr` | Bahasa Indonesia | `id` |
+| Italiano (Italian) | `it` | Nederlands (Dutch) | `nl` |
+| Polski (Polish) | `pl` | Português (Portuguese) | `pt` |
+| Türkçe (Turkish) | `tr` | বাংলা (Bengali) | `bn` |
 
 Translations are **strictly typed against the English catalog** (`i18n/en.ts`), so missing keys fail the TypeScript build instead of silently rendering raw key names. Adding a language = one new file + one entry in `utils/i18n.ts`.
 
@@ -127,12 +128,13 @@ Translations are **strictly typed against the English catalog** (`i18n/en.ts`), 
 | --- | --- |
 | Framework | [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/) · React Native 0.86 (Hermes) · React 19 |
 | Language | TypeScript in **strict** mode — no `any` in app code |
-| UI | Hand-built themed components · `react-native-svg` charts · `react-native-reanimated` motion · `lucide-react-native` icons · Outfit font |
+| UI | Hand-built themed components · design tokens in `theme/tokens.ts` · `react-native-svg` charts and sky effects · `react-native-reanimated` motion · `expo-linear-gradient` · `lucide-react-native` icons · Outfit font |
 | Radar & maps | Custom Web-Mercator tile renderer — **no map SDK** |
-| Widgets | `react-native-android-widget` (2×2 and 4×2) |
+| Widgets | `react-native-android-widget` · five home-screen widgets rendered as RemoteViews, so they are static (no animation) and use the fixed palette in `utils/widgetPalette.ts` |
 | Theming | 10 themes, including `react-native-material-you-colors` for the Android 12+ wallpaper palette |
 | Storage | `@react-native-async-storage/async-storage` — settings, snapshot caches, forecast logs, alert history |
 | Platform APIs | `expo-location` · `expo-notifications` · `expo-background-task` · `expo-calendar` · `expo-speech` · `expo-file-system` · `expo-sharing` · `expo-haptics` · `expo-blur` · `expo-sensors` |
+| Web preview | `react-native-web` 0.21 · `react-dom` 19 · `npx expo start --web` serves a browser preview of the UI. Android-only modules are stubbed on web, and some native calls (for example `expo-notifications`) log errors there |
 
 > There is **no `expo-dev-client`** in this project: it runs in plain **Expo Go** during development. Add a dev client only if you introduce custom native modules.
 
@@ -143,7 +145,7 @@ api/         Open-Meteo, MET Norway, MeteoAlarm, providers, wire types
 components/  cards, charts, deep-dive screens, settings sheet
 config/      feature flags, tile registry, colour themes
 hooks/       data hooks — weather, alerts, caches, settings
-i18n/        11 typed language catalogs (en.ts is canonical)
+i18n/        14 typed language catalogs (en.ts is canonical)
 plugins/     Expo config plugins (ABI splits, app shortcuts)
 screens/     Home, radar, layer map, compare, alerts, model comparison…
 tasks/       background task — widgets, digest, alerts
@@ -182,7 +184,7 @@ eas build -p android --profile preview
 `app.json` ships two config plugins:
 
 - **`plugins/withAbiSplits.js`** — Gradle ABI splits, so the build emits per-architecture APKs (`arm64-v8a`, `armeabi-v7a`, `x86_64`) plus a universal APK. The arm64 APK is roughly half the size of the universal one.
-- **`plugins/withAndroidShortcuts.js`** — Android app shortcuts, with labels translated into all 11 languages.
+- **`plugins/withAndroidShortcuts.js`** — Android app shortcuts, with labels translated into all 14 languages.
 
 ## 🌐 Data sources & attribution
 
@@ -231,7 +233,7 @@ Everything the app stores — settings, caches, the forecast log, alert history,
 Issues and pull requests are welcome. Before opening a PR:
 
 1. `npx tsc --noEmit` passes.
-2. New user-facing strings exist in **all 11** catalogs.
+2. New user-facing strings exist in **all 14** catalogs.
 3. No new runtime dependency without an issue first.
 4. One feature or fix per pull request, with a clear description.
 
