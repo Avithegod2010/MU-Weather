@@ -1,5 +1,12 @@
 import React from 'react';
-import { WIDGET_CORNER_RADIUS, widgetGradient, widgetPalette } from '../utils/widgetPalette';
+import {
+  WIDGET_CORNER_RADIUS,
+  widgetGradient,
+  widgetPaletteFor,
+  widgetSky,
+  type WidgetSky,
+} from '../utils/widgetPalette';
+import { computeTwilight } from '../utils/twilight';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { ColorProp } from 'react-native-android-widget';
 import { describeWmo } from '../utils/wmo';
@@ -7,7 +14,6 @@ import { usAqiBand } from '../utils/aqi';
 import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 import type { CitySnapshot } from '../utils/citySnapshots';
 
-const C = widgetPalette('night');
 
 interface WeatherWidgetCityProps {
   cityName: string;
@@ -25,6 +31,8 @@ interface WeatherWidgetCityProps {
   emptyReason: 'not_configured' | 'no_data' | '';
   hasData: boolean;
   stale: boolean;
+  /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
+  sky?: WidgetSky;
 }
 
 /** `Band.color` is a plain string; the library needs a `#rrggbb` literal. */
@@ -57,7 +65,9 @@ export function WeatherWidgetCity({
   emptyReason,
   hasData,
   stale,
+  sky,
 }: WeatherWidgetCityProps) {
+  const C = widgetPaletteFor(sky);
   const emptyMessage =
     emptyReason === 'not_configured'
       ? 'Tap and hold this widget, then choose a city'
@@ -182,6 +192,15 @@ export function renderCityWidgetNoData(): React.JSX.Element {
 }
 
 /** Builds the city widget from a stored per-city snapshot. */
+/** Day or night at the city's coordinates. Polar day or night counts as day. */
+function citySky(snapshot: CitySnapshot): WidgetSky {
+  const now = new Date();
+  const { sunrise, sunset } = computeTwilight(now, snapshot.latitude, snapshot.longitude);
+  const isDay =
+    sunrise && sunset ? now.getTime() >= sunrise.getTime() && now.getTime() < sunset.getTime() : true;
+  return widgetSky(snapshot.weatherCode, isDay);
+}
+
 export function renderCityWidgetFromSnapshot(snapshot: CitySnapshot): React.JSX.Element {
   const { label } = describeWmo(snapshot.weatherCode);
   const { stale } = describeFreshness(snapshot.fetchedAt);
@@ -194,6 +213,7 @@ export function renderCityWidgetFromSnapshot(snapshot: CitySnapshot): React.JSX.
   }));
   return (
     <WeatherWidgetCity
+      sky={citySky(snapshot)}
       hasData
       stale={stale}
       emptyReason=""

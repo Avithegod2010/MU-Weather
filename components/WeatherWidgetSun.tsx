@@ -1,11 +1,16 @@
 import React from 'react';
-import { WIDGET_CORNER_RADIUS, widgetGradient, widgetPalette } from '../utils/widgetPalette';
+import {
+  WIDGET_CORNER_RADIUS,
+  widgetGradient,
+  widgetPaletteFor,
+  widgetSky,
+  type WidgetSky,
+} from '../utils/widgetPalette';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { WeatherBundle } from '../api/types';
 import { computeTwilight } from '../utils/twilight';
 import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 
-const C = { dark: widgetPalette('dusk') } as const;
 
 interface WeatherWidgetSunProps {
   /** False renders the placeholder (no cached bundle at all). */
@@ -23,6 +28,8 @@ interface WeatherWidgetSunProps {
   polarNote: string;
   updatedLabel: string;
   stale: boolean;
+  /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
+  sky?: WidgetSky;
 }
 
 /**
@@ -47,7 +54,9 @@ export function WeatherWidgetSun({
   polarNote,
   updatedLabel,
   stale,
+  sky,
 }: WeatherWidgetSunProps) {
+  const C = { dark: widgetPaletteFor(sky) } as const;
   return (
     <FlexWidget
       style={{
@@ -189,6 +198,7 @@ export function renderWeatherWidgetSunFromBundle(bundle: WeatherBundle): React.J
 
   return (
     <WeatherWidgetSun
+      sky={widgetSky(bundle.current.weatherCode, bundle.current.isDay)}
       hasData
       stale={stale}
       cityName={bundle.location.name}

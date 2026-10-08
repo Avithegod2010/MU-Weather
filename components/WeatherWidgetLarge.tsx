@@ -1,11 +1,16 @@
 import React from 'react';
-import { WIDGET_CORNER_RADIUS, widgetGradient, widgetPalette } from '../utils/widgetPalette';
+import {
+  WIDGET_CORNER_RADIUS,
+  widgetGradient,
+  widgetPaletteFor,
+  widgetSky,
+  type WidgetSky,
+} from '../utils/widgetPalette';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { WeatherBundle } from '../api/types';
 import { describeWmo } from '../utils/wmo';
 import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 
-const C = { dark: widgetPalette('night') } as const;
 
 interface WeatherWidgetLargeProps {
   temperature: string;
@@ -20,6 +25,8 @@ interface WeatherWidgetLargeProps {
   hasData: boolean;
   /** True when the cached bundle is old enough to warn the user about. */
   stale: boolean;
+  /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
+  sky?: WidgetSky;
 }
 
 /**
@@ -43,7 +50,9 @@ export function WeatherWidgetLarge({
   hours,
   hasData,
   stale,
+  sky,
 }: WeatherWidgetLargeProps) {
+  const C = { dark: widgetPaletteFor(sky) } as const;
   return (
     <FlexWidget
       style={{
@@ -156,6 +165,7 @@ export function renderWeatherWidgetLargeFromBundle(bundle: WeatherBundle): React
   const { stale } = describeFreshness(bundle.fetchedAt);
   return (
     <WeatherWidgetLarge
+      sky={widgetSky(bundle.current.weatherCode, bundle.current.isDay)}
       hasData
       stale={stale}
       temperature={`${Math.round(bundle.current.temperature)}°`}
