@@ -1,6 +1,8 @@
+import { SlidingGroup, SlidingItem, SlidingTarget } from './Sliding';
+import { SlidingSwitch } from './SlidingSwitch';
 import React, { useState } from 'react';
 import { F } from '../theme/typography';
-import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Sharing from 'expo-sharing';
 import Svg, { Polyline } from 'react-native-svg';
@@ -201,21 +203,28 @@ function Segmented({
   onChange: (value: string) => void;
 }) {
   const activeColor = theme.isLight ? '#FFFFFF' : '#F4F6FA';
-  const activeText = theme.isLight ? '#1C2431' : '#1C2431';
+  const activeText = '#1C2431';
+  const activeIndex = options.findIndex((option) => option.value === value);
   return (
-    <View style={[styles.segmentWrap, { backgroundColor: theme.chipBg }]}>
-      {options.map((option) => {
-        const active = option.value === value;
+    <SlidingGroup
+      theme={theme}
+      activeIndex={activeIndex}
+      color={activeColor}
+      style={[styles.segmentWrap, { backgroundColor: theme.chipBg }]}
+    >
+      {options.map((option, index) => {
+        const active = index === activeIndex;
         return (
-          <Pressable
+          <SlidingItem
             key={option.value}
+            index={index}
             onPress={() => {
               if (!active) {
                 haptics.select();
                 onChange(option.value);
               }
             }}
-            style={[styles.segment, active && { backgroundColor: activeColor }]}
+            style={styles.segment}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
           >
@@ -228,10 +237,10 @@ function Segmented({
             >
               {option.label}
             </Text>
-          </Pressable>
+          </SlidingItem>
         );
       })}
-    </View>
+    </SlidingGroup>
   );
 }
 
@@ -415,7 +424,7 @@ export function SettingsSheet({
                 {t('s_haptics_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.hapticsEnabled : true}
               onValueChange={(value) => {
                 if (value) {
@@ -441,7 +450,7 @@ export function SettingsSheet({
                 {t('s_sky_motion_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.skyMotion : true}
               onValueChange={(value) => onUpdate({ skyMotion: value })}
               trackColor={{ true: theme.accent, false: theme.trackColor }}
@@ -451,28 +460,33 @@ export function SettingsSheet({
           </View>
 
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_appearance')}</Text>
-          <View style={[styles.themeGrid, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            {COLOR_THEMES.map((option) => {
+          <SlidingGroup
+            theme={theme}
+            variant="ring"
+            activeIndex={COLOR_THEMES.findIndex((option) => settings.colorTheme === option.key)}
+            color={theme.accent}
+            strokeWidth={2.5}
+            radius={999}
+            style={[styles.themeGrid, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+          >
+            {COLOR_THEMES.map((option, index) => {
               const active = settings.colorTheme === option.key;
               return (
-                <Pressable
+                <SlidingItem
                   key={option.key}
+                  index={index}
                   onPress={() => {
                     if (!active) {
                       haptics.select();
                       onUpdate({ colorTheme: option.key });
                     }
                   }}
-                  style={({ pressed }) => [styles.themeGridItem, pressed && { opacity: 0.7 }]}
+                  style={styles.themeGridItem}
+                  pressedOpacity={0.7}
                 >
-                  <View
-                    style={[
-                      styles.themeSwatchRing,
-                      { borderColor: active ? theme.accent : 'transparent' },
-                    ]}
-                  >
+                  <SlidingTarget style={[styles.themeSwatchRing, { borderColor: 'transparent' }]}>
                     <View style={[styles.themeSwatch, { backgroundColor: option.swatch }]} />
-                  </View>
+                  </SlidingTarget>
                   <Text
                     style={[
                       styles.themeSwatchLabel,
@@ -482,10 +496,10 @@ export function SettingsSheet({
                   >
                     {option.label}
                   </Text>
-                </Pressable>
+                </SlidingItem>
               );
             })}
-          </View>
+          </SlidingGroup>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
               <Sun size={20} color={theme.textPrimary} strokeWidth={2} />
@@ -520,7 +534,7 @@ export function SettingsSheet({
                 {t('s_weather_accent_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={settings.weatherAccentEnabled}
               onValueChange={(value) => {
                 haptics.select();
@@ -566,48 +580,53 @@ export function SettingsSheet({
               </Text>
             </View>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.bgScroller}
-            contentContainerStyle={styles.bgSwatchRow}
-          >
-            {BACKGROUND_OPTIONS.map((option) => {
-              const active = settings.homeBackground === option.key;
-              return (
-                <Pressable
-                  key={option.key}
-                  onPress={() => {
-                    if (!active) {
-                      haptics.select();
-                      onUpdate({ homeBackground: option.key });
-                    }
-                  }}
-                  style={({ pressed }) => [styles.bgSwatchWrap, pressed && { opacity: 0.75 }]}
-                >
-                  <LinearGradient
-                    colors={option.gradient as unknown as readonly [string, string, string]}
-                    locations={[0, 0.52, 1]}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
-                    style={[
-                      styles.bgSwatch,
-                      active && styles.bgSwatchActive,
-                      { borderColor: active ? inputColor : 'transparent' },
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.bgSwatchLabel,
-                      { color: active ? inputColor : theme.textSecondary },
-                      active && { fontFamily: F.bold },
-                    ]}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bgScroller}>
+            <SlidingGroup
+              theme={theme}
+              variant="ring"
+              activeIndex={BACKGROUND_OPTIONS.findIndex((option) => settings.homeBackground === option.key)}
+              color={inputColor}
+              strokeWidth={3}
+              radius={14}
+              style={styles.bgSwatchRow}
+            >
+              {BACKGROUND_OPTIONS.map((option, index) => {
+                const active = settings.homeBackground === option.key;
+                return (
+                  <SlidingItem
+                    key={option.key}
+                    index={index}
+                    onPress={() => {
+                      if (!active) {
+                        haptics.select();
+                        onUpdate({ homeBackground: option.key });
+                      }
+                    }}
+                    style={styles.bgSwatchWrap}
+                    pressedOpacity={0.75}
                   >
-                    {option.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                    <SlidingTarget>
+                    <LinearGradient
+                      colors={option.gradient as unknown as readonly [string, string, string]}
+                      locations={[0, 0.52, 1]}
+                      start={{ x: 0.5, y: 0 }}
+                      end={{ x: 0.5, y: 1 }}
+                      style={[styles.bgSwatch, { borderColor: 'transparent' }, active && styles.bgSwatchActive]}
+                    />
+                    </SlidingTarget>
+                    <Text
+                      style={[
+                        styles.bgSwatchLabel,
+                        { color: active ? inputColor : theme.textSecondary },
+                        active && { fontFamily: F.bold },
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
+                  </SlidingItem>
+                );
+              })}
+            </SlidingGroup>
           </ScrollView>
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -693,23 +712,26 @@ export function SettingsSheet({
             </View>
           </View>
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-            <View style={[styles.modelChips, { backgroundColor: theme.chipBg }]}>
-              {MODEL_KEYS.map((key) => {
+            <SlidingGroup
+              theme={theme}
+              activeIndex={(MODEL_KEYS as readonly string[]).indexOf(settings.modelSource)}
+              color={theme.accent}
+              style={[styles.modelChips, { backgroundColor: theme.chipBg }]}
+            >
+              {MODEL_KEYS.map((key, index) => {
                 const active = settings.modelSource === key;
                 return (
-                  <Pressable
+                  <SlidingItem
                     key={key}
+                    index={index}
                     onPress={() => {
                       if (!active) {
                         haptics.select();
                         onUpdate({ modelSource: key });
                       }
                     }}
-                    style={({ pressed }) => [
-                      styles.modelChip,
-                      { backgroundColor: active ? theme.accent : 'transparent' },
-                      pressed && { opacity: 0.7 },
-                    ]}
+                    style={styles.modelChip}
+                    pressedOpacity={0.7}
                     accessibilityRole="button"
                     accessibilityState={{ selected: active }}
                   >
@@ -721,10 +743,10 @@ export function SettingsSheet({
                     >
                       {MODEL_LABELS[key]}
                     </Text>
-                  </Pressable>
+                  </SlidingItem>
                 );
               })}
-            </View>
+            </SlidingGroup>
           </View>
 
           <Pressable
@@ -761,7 +783,7 @@ export function SettingsSheet({
                 {t('s_bgalerts_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.backgroundAlerts : true}
               onValueChange={(value) => {
                 if (value) {
@@ -787,7 +809,7 @@ export function SettingsSheet({
                 {t('s_digest_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.digestEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -831,7 +853,7 @@ export function SettingsSheet({
                 {t('s_golden_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.goldenHourEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -860,7 +882,7 @@ export function SettingsSheet({
                 {t('rain_alert_subtitle')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.rainAlertEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -889,7 +911,7 @@ export function SettingsSheet({
                 {t('s_rain_ongoing_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.rainOngoingEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -918,7 +940,7 @@ export function SettingsSheet({
                 {t('s_sunrise_alarm_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.sunriseAlarmEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -1083,7 +1105,7 @@ export function SettingsSheet({
                 {t('s_beaufort_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.windBeaufort : false}
               onValueChange={(value) => {
                 if (value) {
@@ -1155,7 +1177,7 @@ export function SettingsSheet({
                 {t('s_snark_sub')}
               </Text>
             </View>
-            <Switch
+            <SlidingSwitch theme={theme}
               value={ready ? settings.snarkMode : false}
               onValueChange={(value) => {
                 if (value) {
@@ -1348,40 +1370,47 @@ export function SettingsSheet({
         >
           {view === 'language' ? (
             <>
-              {LANGUAGES.map((language) => {
-                const active = settings.language === language.key;
-                return (
-                  <Pressable
-                    key={language.key}
-                    onPress={() => {
-                      haptics.select();
-                      onUpdate({ language: language.key });
-                    }}
-                    style={({ pressed }) => [
-                      styles.row,
-                      { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
-                      pressed && { opacity: 0.75 },
-                    ]}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: active }}
-                  >
-                    <View style={styles.rowTexts}>
-                      <Text
-                        style={[
-                          styles.rowTitle,
-                          { color: inputColor },
-                          active && { fontFamily: F.bold },
-                        ]}
-                      >
-                        {language.name} ({language.native})
-                      </Text>
-                    </View>
-                    {active ? (
-                      <Check size={20} color={theme.accent} strokeWidth={2.6} />
-                    ) : null}
-                  </Pressable>
-                );
-              })}
+              <SlidingGroup
+                theme={theme}
+                variant="ring"
+                activeIndex={LANGUAGES.findIndex((language) => settings.language === language.key)}
+                color={theme.accent}
+                strokeWidth={2}
+                radius={24}
+              >
+                {LANGUAGES.map((language, index) => {
+                  const active = settings.language === language.key;
+                  return (
+                    <SlidingItem
+                      key={language.key}
+                      index={index}
+                      onPress={() => {
+                        haptics.select();
+                        onUpdate({ language: language.key });
+                      }}
+                      style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+                      pressedOpacity={0.75}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: active }}
+                    >
+                      <View style={styles.rowTexts}>
+                        <Text
+                          style={[
+                            styles.rowTitle,
+                            { color: inputColor },
+                            active && { fontFamily: F.bold },
+                          ]}
+                        >
+                          {language.name} ({language.native})
+                        </Text>
+                      </View>
+                      {active ? (
+                        <Check size={20} color={theme.accent} strokeWidth={2.6} />
+                      ) : null}
+                    </SlidingItem>
+                  );
+                })}
+              </SlidingGroup>
               <View style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
                 <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
                 <Text style={[styles.noteText, { color: theme.textSecondary }]}>
@@ -1415,7 +1444,7 @@ export function SettingsSheet({
                             {t(TILE_LABEL_KEYS[tile.key])}
                           </Text>
                         </View>
-                        <Switch
+                        <SlidingSwitch theme={theme}
                           value={ready ? visible : true}
                           onValueChange={(value) => {
                             if (value) {

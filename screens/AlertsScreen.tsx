@@ -1,8 +1,10 @@
+import { SlidingGroup, SlidingItem } from '../components/Sliding';
+import { SlidingSwitch } from '../components/SlidingSwitch';
 import React, { useCallback, useEffect, useState } from 'react';
 import { t, getLanguage } from '../utils/i18n';
 import { formatClockParts } from '../utils/format';
 import { F } from '../theme/typography';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -231,36 +233,44 @@ function Segmented({
   onChange: (value: string) => void;
 }) {
   const activeColor = theme.isLight ? '#FFFFFF' : '#F4F6FA';
+  const activeText = '#1C2431';
+  const activeIndex = options.findIndex((option) => option.value === value);
   return (
-    <View style={[styles.segmentWrap, { backgroundColor: theme.chipBg }]}>
-      {options.map((option) => {
-        const active = option.value === value;
+    <SlidingGroup
+      theme={theme}
+      activeIndex={activeIndex}
+      color={activeColor}
+      style={[styles.segmentWrap, { backgroundColor: theme.chipBg }]}
+    >
+      {options.map((option, index) => {
+        const active = index === activeIndex;
         return (
-          <Pressable
+          <SlidingItem
             key={option.value}
+            index={index}
             onPress={() => {
               if (!active) {
                 haptics.select();
                 onChange(option.value);
               }
             }}
-            style={[styles.segment, active && { backgroundColor: activeColor }]}
+            style={styles.segment}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
           >
             <Text
               style={[
                 styles.segmentText,
-                { color: active ? '#1C2431' : theme.textSecondary },
+                { color: active ? activeText : theme.textSecondary },
                 active && { fontFamily: F.bold },
               ]}
             >
               {option.label}
             </Text>
-          </Pressable>
+          </SlidingItem>
         );
       })}
-    </View>
+    </SlidingGroup>
   );
 }
 
@@ -388,7 +398,7 @@ export function AlertsScreen({
                   {t(definition.subtitle)}
                 </Text>
               </View>
-              <Switch
+              <SlidingSwitch theme={theme}
                 value={enabled}
                 onValueChange={() => {
                   if (settings[definition.key]) {
@@ -418,7 +428,7 @@ export function AlertsScreen({
               {t('s_quiet_sub')}
             </Text>
           </View>
-          <Switch
+          <SlidingSwitch theme={theme}
             value={ready ? settings.quietHoursEnabled : false}
             onValueChange={(value) => {
               if (value) {
@@ -529,7 +539,7 @@ export function AlertsScreen({
                   </Pressable>
                 ) : null}
               </View>
-              <Switch
+              <SlidingSwitch theme={theme}
                 value={rule.enabled}
                 onValueChange={() => {
                   if (rule.enabled) {

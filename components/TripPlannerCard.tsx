@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from './Sliding';
 import { t, tDay, getLanguage } from '../utils/i18n';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
@@ -252,46 +253,46 @@ export function TripPlannerCard({ theme, favorites, onOpenFavorites }: TripPlann
         </View>
       ) : (
         <>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.chipRow}
-          >
-            {favorites.map((fav) => {
-              const isSelected = selected?.id === fav.id;
-              return (
-                <Pressable
-                  key={fav.id}
-                  onPress={() => {
-                    haptics.select();
-                    setSelectedId(fav.id);
-                  }}
-                  style={({ pressed }) => [
-                    styles.chip,
-                    {
-                      backgroundColor: theme.chipBg,
-                      borderColor: isSelected ? theme.accent : theme.cardBorder,
-                    },
-                    pressed && { opacity: 0.7 },
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
-                >
-                  {isSelected ? (
-                    <MapPin size={12} color={theme.accent} strokeWidth={2.4} />
-                  ) : null}
-                  <Text
-                    style={[
-                      styles.chipText,
-                      { color: isSelected ? theme.accent : theme.textSecondary },
-                    ]}
-                    numberOfLines={1}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <SlidingGroup
+              theme={theme}
+              variant="ring"
+              activeIndex={favorites.findIndex((fav) => selected?.id === fav.id)}
+              color={theme.accent}
+              strokeWidth={1.5}
+              style={styles.chipRow}
+            >
+              {favorites.map((fav, index) => {
+                const isSelected = selected?.id === fav.id;
+                return (
+                  <SlidingItem
+                    key={fav.id}
+                    index={index}
+                    onPress={() => {
+                      haptics.select();
+                      setSelectedId(fav.id);
+                    }}
+                    style={[styles.chip, { backgroundColor: theme.chipBg, borderColor: theme.cardBorder }]}
+                    pressedOpacity={0.7}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: isSelected }}
                   >
-                    {fav.name}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                    {isSelected ? (
+                      <MapPin size={12} color={theme.accent} strokeWidth={2.4} />
+                    ) : null}
+                    <Text
+                      style={[
+                        styles.chipText,
+                        { color: isSelected ? theme.accent : theme.textSecondary },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {fav.name}
+                    </Text>
+                  </SlidingItem>
+                );
+              })}
+            </SlidingGroup>
           </ScrollView>
 
           <View style={styles.stepperGroup}>

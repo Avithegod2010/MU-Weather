@@ -1,3 +1,4 @@
+import { SlidingGroup, SlidingItem } from '../components/Sliding';
 import React, { useMemo, useState } from 'react';
 import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
@@ -126,22 +127,25 @@ export function MapScreen({ theme, location, visible, onClose, onOpenRadar }: Ma
         </Text>
       </Pressable>
 
-      <View style={[styles.chipsWrap, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
-        {LAYERS.map((entry) => {
+      <SlidingGroup
+        theme={theme}
+        activeIndex={LAYERS.findIndex((entry) => entry.key === layer)}
+        color={theme.isLight ? '#FFFFFF' : '#F4F6FA'}
+        style={[styles.chipsWrap, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+      >
+        {LAYERS.map((entry, index) => {
           const Icon = entry.icon;
           const isActive = layer === entry.key;
           return (
-            <Pressable
+            <SlidingItem
               key={entry.key}
+              index={index}
               onPress={() => {
                 haptics.select();
                 setLayer(entry.key);
               }}
-              style={({ pressed }) => [
-                styles.chip,
-                isActive && { backgroundColor: theme.isLight ? '#FFFFFF' : '#F4F6FA' },
-                pressed && { opacity: 0.8 },
-              ]}
+              style={styles.chip}
+              pressedOpacity={0.8}
             >
               <Icon
                 size={19}
@@ -156,10 +160,10 @@ export function MapScreen({ theme, location, visible, onClose, onOpenRadar }: Ma
               >
                 {entry.label}
               </Text>
-            </Pressable>
+            </SlidingItem>
           );
         })}
-      </View>
+      </SlidingGroup>
 
       <View style={styles.mapWrap}>
         <WebView
