@@ -420,21 +420,34 @@ export function SlidingGroup({
 
     if (Platform.OS === 'web') {
       // Layout offsets are immune to a transform still running on an ancestor.
-      const itemFrame = offsetFrame(item, container);
-      if (!itemFrame) return;
-      report(activeIndex, itemFrame, 'item');
-      const target = targetNodes.current.get(activeIndex);
-      const targetFrame = target ? offsetFrame(target, item) : null;
-      if (targetFrame) {
-        // A target's frame is relative to its item's outer edge, so the item's border is added.
-        const itemEl = item as unknown as HTMLElement;
-        report(
-          activeIndex,
-          { ...targetFrame, x: targetFrame.x + itemEl.clientLeft, y: targetFrame.y + itemEl.clientTop },
-          'target',
-        );
-      }
-      return;
+      // A pass can read no offset parent, or a zero size, while the sheet is still settling. That
+      // frame must not stand, and nothing else would measure again, so retry for a few seconds.
+      let retry: ReturnType<typeof setTimeout> | null = null;
+      let attempts = 0;
+      const measureWeb = () => {
+        retry = null;
+        const itemFrame = offsetFrame(item, container);
+        if (!itemFrame || itemFrame.width === 0 || itemFrame.height === 0) {
+          if (attempts++ < 30) retry = setTimeout(measureWeb, 100);
+          return;
+        }
+        report(activeIndex, itemFrame, 'item');
+        const target = targetNodes.current.get(activeIndex);
+        const targetFrame = target ? offsetFrame(target, item) : null;
+        if (targetFrame) {
+          // A target's frame is relative to its item's outer edge, so the item's border is added.
+          const itemEl = item as unknown as HTMLElement;
+          report(
+            activeIndex,
+            { ...targetFrame, x: targetFrame.x + itemEl.clientLeft, y: targetFrame.y + itemEl.clientTop },
+            'target',
+          );
+        }
+      };
+      measureWeb();
+      return () => {
+        if (retry) clearTimeout(retry);
+      };
     }
 
     // Native: window coordinates. Positions are relative to the inside of the container's border, like child layout.
@@ -457,7 +470,8 @@ export function SlidingGroup({
 
   const active = useMemo<Frame | null>(() => {
     const item = items[activeIndex];
-    if (!item) return null;
+    // A zero-size frame is not yet measured; showing it would leave an invisible highlight.
+    if (!item || item.width === 0 || item.height === 0) return null;
     const target = targets[activeIndex];
     if (!target) return item;
     // A target's frame is relative to its item, so add the item's offset.
