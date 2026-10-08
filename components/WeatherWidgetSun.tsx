@@ -1,21 +1,11 @@
 import React from 'react';
+import { WIDGET_CORNER_RADIUS, widgetGradient, widgetPalette } from '../utils/widgetPalette';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { WeatherBundle } from '../api/types';
 import { computeTwilight } from '../utils/twilight';
 import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 
-const C = {
-  dark: {
-    bgFrom: '#2A1E3F',
-    bgTo: '#5A3B63',
-    text: '#FFFFFF',
-    subtle: '#D8C7D8',
-    chip: '#3E2C55',
-    /** Gold, matching the sun card's arc colour so the two read as one family. */
-    gold: '#EFC25C',
-    stale: '#F0B429',
-  },
-} as const;
+const C = { dark: widgetPalette('dusk') } as const;
 
 interface WeatherWidgetSunProps {
   /** False renders the placeholder (no cached bundle at all). */
@@ -65,9 +55,9 @@ export function WeatherWidgetSun({
         height: 'match_parent',
         flexDirection: 'column',
         justifyContent: 'center',
-        borderRadius: 20,
+        borderRadius: WIDGET_CORNER_RADIUS,
         padding: 14,
-        backgroundGradient: { from: C.dark.bgFrom, to: C.dark.bgTo, orientation: 'TOP_BOTTOM' },
+        backgroundGradient: widgetGradient(C.dark),
       }}
       clickAction="OPEN_APP"
     >
