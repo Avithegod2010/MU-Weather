@@ -1,4 +1,5 @@
-import { lerpColor } from '../utils/format';
+import { parseColor, mixHex } from '../utils/color';
+import { composite, textTiers, toRgb, type Rgb } from '../utils/contrast';
 
 export type WeatherCondition =
   | 'clear'
@@ -127,6 +128,40 @@ export function buildTheme(
   palette: Palette,
   styleMode: StyleMode = 'material',
 ): AppTheme {
+  return resolveTextColors(buildSurfaceTheme(palette, styleMode), palette);
+}
+
+/** Every surface the text sits on: the three sky stops, the card and the chip, as the user sees them. */
+function textSurfaces(palette: Palette, cardBg: string, chipBg: string): Rgb[] {
+  const sky = palette.gradient.map(toRgb);
+  const cardParsed = parseColor(cardBg);
+  const card: Rgb = cardParsed ? composite(cardParsed, sky[1]) : sky[1];
+  const chipParsed = parseColor(chipBg);
+  const chip: Rgb = chipParsed ? composite(chipParsed, card) : card;
+  return [...sky, card, chip];
+}
+
+/**
+ * Text colours picked from the sky's brightness and checked against the actual surfaces.
+ * Each tier keeps its design alpha unless the WCAG minimum needs more (see utils/contrast.ts).
+ */
+function resolveTextColors(theme: AppTheme, palette: Palette): AppTheme {
+  const tiers = textTiers(textSurfaces(palette, theme.cardBg, theme.chipBg), {
+    secondary: theme.isLight ? 0.68 : 0.74,
+    tertiary: theme.isLight ? 0.45 : 0.5,
+  });
+  return {
+    ...theme,
+    textPrimary: tiers.primary,
+    textSecondary: tiers.secondary,
+    textTertiary: tiers.tertiary,
+  };
+}
+
+function buildSurfaceTheme(
+  palette: Palette,
+  styleMode: StyleMode,
+): AppTheme {
   const base = baseTheme(palette);
   if (styleMode === 'glass') {
     return {
@@ -141,12 +176,13 @@ export function buildTheme(
   }
 
   const mid = palette.gradient[1];
+  // mixHex, not lerpColor: lerpColor returns rgb() strings, and chaining it turned every chip near-black.
   const card = palette.light
-    ? lerpColor(mid, '#FFFFFF', 0.62)
-    : lerpColor(mid, '#FFFFFF', 0.13);
+    ? mixHex(mid, '#FFFFFF', 0.62)
+    : mixHex(mid, '#FFFFFF', 0.13);
   const chip = palette.light
-    ? lerpColor(card, '#1C2431', 0.05)
-    : lerpColor(card, '#FFFFFF', 0.11);
+    ? mixHex(card, '#1C2431', 0.05)
+    : mixHex(card, '#FFFFFF', 0.11);
 
   return {
     ...base,

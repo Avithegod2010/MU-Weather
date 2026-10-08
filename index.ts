@@ -1,6 +1,6 @@
 import { registerRootComponent } from 'expo';
 
-import App from './App';
+import { withSkia } from './utils/skiaWeb';
 // Side effect: registers the Android home-screen widget task handler. Safe in
 // Expo Go - the widget library falls back to a native no-op module there.
 import './widget/weatherWidgetTask';
@@ -13,4 +13,7 @@ import './widget/widgetConfigScreen';
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,
 // the environment is set up appropriately
+// The app loads lazily through withSkia so CanvasKit (web) is ready before any Skia module runs.
+const App = withSkia(() => require('./App'));
+
 registerRootComponent(App);

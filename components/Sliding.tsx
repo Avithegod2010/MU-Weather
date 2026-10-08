@@ -22,6 +22,7 @@ import {
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withDelay,
   withSpring,
@@ -32,6 +33,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { AppTheme } from '../theme/palettes';
 import { LIQUID, MOTION, SLIDE } from '../theme/tokens';
 import { useReducedMotion } from '../utils/reduceMotion';
+import { GlassHighlight, glassEffect } from './GlassHighlight';
 
 interface Frame {
   x: number;
@@ -117,13 +119,17 @@ function useSlideFrame(frame: Frame | null, liquid: boolean, reduced: boolean) {
     // Depend on the numbers, not the object, so a re-render with the same frame does nothing.
   }, [frame?.x, frame?.y, frame?.width, frame?.height, liquid, reduced]);
 
-  return useAnimatedStyle(() => ({
+  // Size as values of their own, so the glass shader can follow the sliding frame.
+  const width = useDerivedValue(() => Math.abs(right.value - left.value));
+  const height = useDerivedValue(() => Math.abs(bottom.value - top.value));
+  const style = useAnimatedStyle(() => ({
     left: Math.min(left.value, right.value),
-    width: Math.abs(right.value - left.value),
+    width: width.value,
     top: Math.min(top.value, bottom.value),
-    height: Math.abs(bottom.value - top.value),
+    height: height.value,
     opacity: shown.value,
   }));
+  return { style, width, height };
 }
 
 interface HighlightProps {
@@ -151,7 +157,7 @@ function SlidingHighlight({
   liquid,
   reduced,
 }: HighlightProps) {
-  const animated = useSlideFrame(frame, liquid, reduced);
+  const { style: animated, width: glassWidth, height: glassHeight } = useSlideFrame(frame, liquid, reduced);
 
   if (variant === 'ring') {
     return (
@@ -174,6 +180,9 @@ function SlidingHighlight({
   }
 
   if (liquid) {
+    // Liquid glass: the Skia shader when it compiles. Otherwise the blur-and-gradient stack below,
+    // which is the look the app shipped with.
+    const effect = glassEffect();
     return (
       <Animated.View
         pointerEvents="none"
@@ -181,25 +190,39 @@ function SlidingHighlight({
         style={[styles.absolute, animated, { borderRadius: radius }, styles.glassShadow]}
       >
         <View style={[styles.glassClip, { borderRadius: radius }]}>
-          <BlurView
-            intensity={theme.blurIntensity}
-            tint={theme.blurTint}
-            experimentalBlurMethod="dimezisBlurView"
-            style={StyleSheet.absoluteFill}
-          />
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: glassTint(color, theme.isLight) }]} />
-          <LinearGradient
-            colors={['rgba(255,255,255,0.24)', 'rgba(255,255,255,0)']}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-            style={styles.glassSheen}
-          />
-          <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.07)']}
-            start={{ x: 0.5, y: 0.55 }}
-            end={{ x: 0.5, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
+          {effect ? (
+            <GlassHighlight
+              effect={effect}
+              width={glassWidth}
+              height={glassHeight}
+              radius={radius}
+              tint={glassTint(color, theme.isLight)}
+              sky={theme.gradient}
+              rimStrength={0.3}
+            />
+          ) : (
+            <>
+              <BlurView
+                intensity={theme.blurIntensity}
+                tint={theme.blurTint}
+                experimentalBlurMethod="dimezisBlurView"
+                style={StyleSheet.absoluteFill}
+              />
+              <View style={[StyleSheet.absoluteFill, { backgroundColor: glassTint(color, theme.isLight) }]} />
+              <LinearGradient
+                colors={['rgba(255,255,255,0.24)', 'rgba(255,255,255,0)']}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={styles.glassSheen}
+              />
+              <LinearGradient
+                colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.07)']}
+                start={{ x: 0.5, y: 0.55 }}
+                end={{ x: 0.5, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            </>
+          )}
         </View>
         <View
           pointerEvents="none"

@@ -1,0 +1,97 @@
+{
+  "label": "after-skia",
+  "durationSeconds": 4,
+  "scenarios": {
+    "clear-day": {
+      "frames": 194,
+      "meanMs": 20.75,
+      "medianMs": 20.5,
+      "p95Ms": 35.9,
+      "maxMs": 37.5,
+      "over33ms": 12,
+      "fpsApprox": 48.2,
+      "domNodes": 1612,
+      "svgNodes": 111,
+      "canvasNodes": 1,
+      "pageErrors": 1
+    },
+    "clear-night": {
+      "frames": 193,
+      "meanMs": 20.78,
+      "medianMs": 20.4,
+      "p95Ms": 27.1,
+      "maxMs": 37.5,
+      "over33ms": 5,
+      "fpsApprox": 48.1,
+      "domNodes": 1596,
+      "svgNodes": 111,
+      "canvasNodes": 1,
+      "pageErrors": 1
+    },
+    "cloudy-day": {
+      "frames": 337,
+      "meanMs": 11.92,
+      "medianMs": 11.7,
+      "p95Ms": 13.9,
+      "maxMs": 19,
+      "over33ms": 0,
+      "fpsApprox": 83.9,
+      "domNodes": 1422,
+      "svgNodes": 111,
+      "canvasNodes": 1,
+      "pageErrors": 1
+    },
+    "fog-day": {
+      "frames": 330,
+      "meanMs": 12.16,
+      "medianMs": 12.1,
+      "p95Ms": 15,
+      "maxMs": 17.4,
+      "over33ms": 0,
+      "fpsApprox": 82.3,
+      "domNodes": 1504,
+      "svgNodes": 111,
+      "canvasNodes": 1,
+      "pageErrors": 1
+    },
+    "rain-night": {
+      "frames": 339,
+      "meanMs": 11.87,
+      "medianMs": 11.6,
+      "p95Ms": 14.6,
+      "maxMs": 17.6,
+      "over33ms": 0,
+      "fpsApprox": 84.2,
+      "domNodes": 1545,
+      "svgNodes": 111,
+      "canvasNodes": 1,
+      "pageErrors": 1
+    },
+    "snow-day": {
+      "frames": 919,
+      "meanMs": 4.36,
+      "medianMs": 4.1,
+      "p95Ms": 5.8,
+      "maxMs": 11.6,
+      "over33ms": 0,
+      "fpsApprox": 229.4,
+      "domNodes": 1668,
+      "svgNodes": 111,
+      "canvasNodes": 1,
+      "pageErrors": 1
+    },
+    "thunder-night": {
+      "frames": 333,
+      "meanMs": 12.08,
+      "medianMs": 11.7,
+      "p95Ms": 14.7,
+      "maxMs": 31.4,
+      "over33ms": 0,
+      "fpsApprox": 82.8,
+      "domNodes": 1490,
+      "svgNodes": 114,
+      "canvasNodes": 1,
+      "pageErrors": 1
+    }
+  }
+}
