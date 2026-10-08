@@ -59,8 +59,8 @@ def launch(p, uncapped=False):
     return p.chromium.launch(executable_path=executable or None, args=args, headless=True)
 
 
-def open_page(browser, base_url, condition, is_day, settings_overrides=None, viewport=(390, 844)):
-    context = browser.new_context(viewport={'width': viewport[0], 'height': viewport[1]}, device_scale_factor=1)
+def open_page(browser, base_url, condition, is_day, settings_overrides=None, viewport=(390, 844), scale=1):
+    context = browser.new_context(viewport={'width': viewport[0], 'height': viewport[1]}, device_scale_factor=scale)
     settings = {'skyMotion': True, **(settings_overrides or {})}
     # Guarded: some frames (about:blank, sandboxed iframes) deny localStorage access.
     seed = (
