@@ -47,6 +47,19 @@ interface CurrentWeatherProps {
   sharing?: boolean;
 }
 
+/**
+ * Text drawn straight onto the sky (no card behind it). The sky can be light at one end and dark
+ * at the other, so no single ink reaches 4.5:1 everywhere (see scripts/visual/contrast-audit.ts).
+ * A soft halo in the opposite tone keeps the text readable across the whole gradient.
+ */
+function heroTextShadow(theme: AppTheme) {
+  return {
+    textShadowColor: theme.isLight ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
+  };
+}
+
 export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary, onShare, sharing }: CurrentWeatherProps) {
   const compact = theme.density === 'compact';
   const [speaking, setSpeaking] = useState(false);
@@ -152,7 +165,7 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
         accessibilityElementsHidden
       >
         <MapPin size={15} color={theme.textSecondary} strokeWidth={2.4} />
-        <Text style={[styles.locationText, { color: theme.textPrimary }]} numberOfLines={1}>
+        <Text style={[styles.locationText, { color: theme.textPrimary }, heroTextShadow(theme)]} numberOfLines={1}>
           {location.name}
         </Text>
       </View>
@@ -189,12 +202,12 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
         />
       </Animated.View>
 
-      <Text style={[styles.temperature, compact && styles.temperatureCompact, { color: theme.textPrimary }]}>
+      <Text style={[styles.temperature, compact && styles.temperatureCompact, { color: theme.textPrimary }, heroTextShadow(theme)]}>
         {formatTemp(shownTemperature)}
       </Text>
 
-      <Text style={[styles.conditionText, { color: theme.textPrimary }]}>{conditionLabel}</Text>
-      <Text style={[styles.feelsLike, { color: theme.textSecondary }]}>
+      <Text style={[styles.conditionText, { color: theme.textPrimary }, heroTextShadow(theme)]}>{conditionLabel}</Text>
+      <Text style={[styles.feelsLike, { color: theme.textSecondary }, heroTextShadow(theme)]}>
         {t('feels_like')} {formatTemp(current.apparentTemperature)}
       </Text>
 
