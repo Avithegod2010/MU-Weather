@@ -699,6 +699,7 @@ export const tr: Strings = {
   journal_saved: 'Bugün {rating} idi',
   journal_change: 'Değiştirmek için başka birine dokunun',
   journal_progress: '{n} gün puanlandı · yalnızca bu cihazda',
+  journal_progress_one: '{n} gün puanlandı · yalnızca bu cihazda',
   journal_rating_cold: 'Soğuk',
   journal_rating_ok: 'Tam kıvamında',
   journal_rating_hot: 'Sıcak',

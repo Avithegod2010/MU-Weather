@@ -1,0 +1,848 @@
+{
+  "samples": 30,
+  "targets": 120,
+  "worstHalo": 2.85,
+  "worstNoHalo": 1.9,
+  "rows": [
+    {
+      "config": "clear-day-dynamic",
+      "text": "London",
+      "size": 17,
+      "halo": 6.91,
+      "noHalo": 5.82
+    },
+    {
+      "config": "clear-day-dynamic",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 9.22,
+      "noHalo": 6.81
+    },
+    {
+      "config": "clear-day-dynamic",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 8.69,
+      "noHalo": 7.74
+    },
+    {
+      "config": "clear-day-dynamic",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 4.71,
+      "noHalo": 4.45
+    },
+    {
+      "config": "clear-day-aurora",
+      "text": "London",
+      "size": 17,
+      "halo": 8.05,
+      "noHalo": 10.42
+    },
+    {
+      "config": "clear-day-aurora",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 8.62,
+      "noHalo": 11.72
+    },
+    {
+      "config": "clear-day-aurora",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 12.97,
+      "noHalo": 11.17
+    },
+    {
+      "config": "clear-day-aurora",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 8.43,
+      "noHalo": 7.52
+    },
+    {
+      "config": "clear-day-sunset",
+      "text": "London",
+      "size": 17,
+      "halo": 2.93,
+      "noHalo": 1.93
+    },
+    {
+      "config": "clear-day-sunset",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 3.84,
+      "noHalo": 2.26
+    },
+    {
+      "config": "clear-day-sunset",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 3.83,
+      "noHalo": 2.77
+    },
+    {
+      "config": "clear-day-sunset",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 3.73,
+      "noHalo": 2.94
+    },
+    {
+      "config": "clear-day-ocean",
+      "text": "London",
+      "size": 17,
+      "halo": 6.36,
+      "noHalo": 7.69
+    },
+    {
+      "config": "clear-day-ocean",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 5.82,
+      "noHalo": 7.8
+    },
+    {
+      "config": "clear-day-ocean",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 9.05,
+      "noHalo": 7.25
+    },
+    {
+      "config": "clear-day-ocean",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 8.21,
+      "noHalo": 6.79
+    },
+    {
+      "config": "clear-day-forest",
+      "text": "London",
+      "size": 17,
+      "halo": 6.51,
+      "noHalo": 6.94
+    },
+    {
+      "config": "clear-day-forest",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 8.12,
+      "noHalo": 8.67
+    },
+    {
+      "config": "clear-day-forest",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 9.98,
+      "noHalo": 8.18
+    },
+    {
+      "config": "clear-day-forest",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 8.66,
+      "noHalo": 7.28
+    },
+    {
+      "config": "clear-day-midnight",
+      "text": "London",
+      "size": 17,
+      "halo": 9.47,
+      "noHalo": 12.82
+    },
+    {
+      "config": "clear-day-midnight",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 13.3,
+      "noHalo": 16.43
+    },
+    {
+      "config": "clear-day-midnight",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 18.39,
+      "noHalo": 17.57
+    },
+    {
+      "config": "clear-day-midnight",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 10.13,
+      "noHalo": 9.84
+    },
+    {
+      "config": "clear-night-dynamic",
+      "text": "London",
+      "size": 17,
+      "halo": 6.91,
+      "noHalo": 5.82
+    },
+    {
+      "config": "clear-night-dynamic",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 9.22,
+      "noHalo": 6.81
+    },
+    {
+      "config": "clear-night-dynamic",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 8.69,
+      "noHalo": 7.74
+    },
+    {
+      "config": "clear-night-dynamic",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 4.71,
+      "noHalo": 4.45
+    },
+    {
+      "config": "clear-night-aurora",
+      "text": "London",
+      "size": 17,
+      "halo": 7.98,
+      "noHalo": 10.26
+    },
+    {
+      "config": "clear-night-aurora",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 9.98,
+      "noHalo": 11.72
+    },
+    {
+      "config": "clear-night-aurora",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 12.97,
+      "noHalo": 11.17
+    },
+    {
+      "config": "clear-night-aurora",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 8.43,
+      "noHalo": 7.52
+    },
+    {
+      "config": "clear-night-sunset",
+      "text": "London",
+      "size": 17,
+      "halo": 2.85,
+      "noHalo": 1.9
+    },
+    {
+      "config": "clear-night-sunset",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 3.63,
+      "noHalo": 2.26
+    },
+    {
+      "config": "clear-night-sunset",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 3.83,
+      "noHalo": 2.77
+    },
+    {
+      "config": "clear-night-sunset",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 3.73,
+      "noHalo": 2.94
+    },
+    {
+      "config": "clear-night-ocean",
+      "text": "London",
+      "size": 17,
+      "halo": 6.4,
+      "noHalo": 5.98
+    },
+    {
+      "config": "clear-night-ocean",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 8.11,
+      "noHalo": 7.91
+    },
+    {
+      "config": "clear-night-ocean",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 9.05,
+      "noHalo": 7.25
+    },
+    {
+      "config": "clear-night-ocean",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 8.21,
+      "noHalo": 6.79
+    },
+    {
+      "config": "clear-night-forest",
+      "text": "London",
+      "size": 17,
+      "halo": 6.51,
+      "noHalo": 7.72
+    },
+    {
+      "config": "clear-night-forest",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 7.73,
+      "noHalo": 8.67
+    },
+    {
+      "config": "clear-night-forest",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 9.98,
+      "noHalo": 8.18
+    },
+    {
+      "config": "clear-night-forest",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 8.66,
+      "noHalo": 7.28
+    },
+    {
+      "config": "clear-night-midnight",
+      "text": "London",
+      "size": 17,
+      "halo": 9.51,
+      "noHalo": 12.88
+    },
+    {
+      "config": "clear-night-midnight",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 11.44,
+      "noHalo": 16.45
+    },
+    {
+      "config": "clear-night-midnight",
+      "text": "Clear Sky",
+      "size": 19,
+      "halo": 18.39,
+      "noHalo": 17.57
+    },
+    {
+      "config": "clear-night-midnight",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 10.13,
+      "noHalo": 9.84
+    },
+    {
+      "config": "rain-day-dynamic",
+      "text": "London",
+      "size": 17,
+      "halo": 4.61,
+      "noHalo": 3.15
+    },
+    {
+      "config": "rain-day-dynamic",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 5.22,
+      "noHalo": 3.05
+    },
+    {
+      "config": "rain-day-dynamic",
+      "text": "Rain",
+      "size": 19,
+      "halo": 4.32,
+      "noHalo": 3.31
+    },
+    {
+      "config": "rain-day-dynamic",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 3.94,
+      "noHalo": 3.4
+    },
+    {
+      "config": "rain-day-aurora",
+      "text": "London",
+      "size": 17,
+      "halo": 5.51,
+      "noHalo": 4.38
+    },
+    {
+      "config": "rain-day-aurora",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 14.97,
+      "noHalo": 11.81
+    },
+    {
+      "config": "rain-day-aurora",
+      "text": "Rain",
+      "size": 19,
+      "halo": 13.1,
+      "noHalo": 11.17
+    },
+    {
+      "config": "rain-day-aurora",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 2.88,
+      "noHalo": 7.52
+    },
+    {
+      "config": "rain-day-sunset",
+      "text": "London",
+      "size": 17,
+      "halo": 3.06,
+      "noHalo": 1.9
+    },
+    {
+      "config": "rain-day-sunset",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 4.54,
+      "noHalo": 2.24
+    },
+    {
+      "config": "rain-day-sunset",
+      "text": "Rain",
+      "size": 19,
+      "halo": 3.9,
+      "noHalo": 2.77
+    },
+    {
+      "config": "rain-day-sunset",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 3.48,
+      "noHalo": 2.92
+    },
+    {
+      "config": "rain-day-ocean",
+      "text": "London",
+      "size": 17,
+      "halo": 4.77,
+      "noHalo": 3.61
+    },
+    {
+      "config": "rain-day-ocean",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 7.75,
+      "noHalo": 7.89
+    },
+    {
+      "config": "rain-day-ocean",
+      "text": "Rain",
+      "size": 19,
+      "halo": 9.18,
+      "noHalo": 7.25
+    },
+    {
+      "config": "rain-day-ocean",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 3.23,
+      "noHalo": 6.79
+    },
+    {
+      "config": "rain-day-forest",
+      "text": "London",
+      "size": 17,
+      "halo": 4.78,
+      "noHalo": 3.71
+    },
+    {
+      "config": "rain-day-forest",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 5.31,
+      "noHalo": 8.78
+    },
+    {
+      "config": "rain-day-forest",
+      "text": "Rain",
+      "size": 19,
+      "halo": 10.11,
+      "noHalo": 8.19
+    },
+    {
+      "config": "rain-day-forest",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 3.12,
+      "noHalo": 7.28
+    },
+    {
+      "config": "rain-day-midnight",
+      "text": "London",
+      "size": 17,
+      "halo": 6.26,
+      "noHalo": 5.07
+    },
+    {
+      "config": "rain-day-midnight",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 13.01,
+      "noHalo": 16.97
+    },
+    {
+      "config": "rain-day-midnight",
+      "text": "Rain",
+      "size": 19,
+      "halo": 18.42,
+      "noHalo": 17.57
+    },
+    {
+      "config": "rain-day-midnight",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 3.22,
+      "noHalo": 9.84
+    },
+    {
+      "config": "thunder-night-dynamic",
+      "text": "London",
+      "size": 17,
+      "halo": 3.56,
+      "noHalo": 3.25
+    },
+    {
+      "config": "thunder-night-dynamic",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 12.11,
+      "noHalo": 8.65
+    },
+    {
+      "config": "thunder-night-dynamic",
+      "text": "Thunderstorm",
+      "size": 19,
+      "halo": 10.37,
+      "noHalo": 8.43
+    },
+    {
+      "config": "thunder-night-dynamic",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 8.56,
+      "noHalo": 7.34
+    },
+    {
+      "config": "thunder-night-aurora",
+      "text": "London",
+      "size": 17,
+      "halo": 4.08,
+      "noHalo": 3.83
+    },
+    {
+      "config": "thunder-night-aurora",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 10.4,
+      "noHalo": 10.39
+    },
+    {
+      "config": "thunder-night-aurora",
+      "text": "Thunderstorm",
+      "size": 19,
+      "halo": 11.12,
+      "noHalo": 9.08
+    },
+    {
+      "config": "thunder-night-aurora",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 7.17,
+      "noHalo": 6.22
+    },
+    {
+      "config": "thunder-night-sunset",
+      "text": "London",
+      "size": 17,
+      "halo": 3.5,
+      "noHalo": 2.22
+    },
+    {
+      "config": "thunder-night-sunset",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 5.2,
+      "noHalo": 2.75
+    },
+    {
+      "config": "thunder-night-sunset",
+      "text": "Thunderstorm",
+      "size": 19,
+      "halo": 4.6,
+      "noHalo": 3.39
+    },
+    {
+      "config": "thunder-night-sunset",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 4.41,
+      "noHalo": 3.59
+    },
+    {
+      "config": "thunder-night-ocean",
+      "text": "London",
+      "size": 17,
+      "halo": 3.54,
+      "noHalo": 3.24
+    },
+    {
+      "config": "thunder-night-ocean",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 10.47,
+      "noHalo": 6.78
+    },
+    {
+      "config": "thunder-night-ocean",
+      "text": "Thunderstorm",
+      "size": 19,
+      "halo": 7.72,
+      "noHalo": 5.87
+    },
+    {
+      "config": "thunder-night-ocean",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 6.81,
+      "noHalo": 5.58
+    },
+    {
+      "config": "thunder-night-forest",
+      "text": "London",
+      "size": 17,
+      "halo": 3.55,
+      "noHalo": 3.33
+    },
+    {
+      "config": "thunder-night-forest",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 8.75,
+      "noHalo": 7.6
+    },
+    {
+      "config": "thunder-night-forest",
+      "text": "Thunderstorm",
+      "size": 19,
+      "halo": 8.48,
+      "noHalo": 6.57
+    },
+    {
+      "config": "thunder-night-forest",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 7.13,
+      "noHalo": 5.88
+    },
+    {
+      "config": "thunder-night-midnight",
+      "text": "London",
+      "size": 17,
+      "halo": 4.87,
+      "noHalo": 4.44
+    },
+    {
+      "config": "thunder-night-midnight",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 9.14,
+      "noHalo": 16.36
+    },
+    {
+      "config": "thunder-night-midnight",
+      "text": "Thunderstorm",
+      "size": 19,
+      "halo": 17.59,
+      "noHalo": 16.5
+    },
+    {
+      "config": "thunder-night-midnight",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 9.77,
+      "noHalo": 9.41
+    },
+    {
+      "config": "fog-day-dynamic",
+      "text": "London",
+      "size": 17,
+      "halo": 9.08,
+      "noHalo": 8.1
+    },
+    {
+      "config": "fog-day-dynamic",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 8.58,
+      "noHalo": 7.67
+    },
+    {
+      "config": "fog-day-dynamic",
+      "text": "Foggy",
+      "size": 19,
+      "halo": 10.32,
+      "noHalo": 9.32
+    },
+    {
+      "config": "fog-day-dynamic",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 4.43,
+      "noHalo": 4.27
+    },
+    {
+      "config": "fog-day-aurora",
+      "text": "London",
+      "size": 17,
+      "halo": 7.25,
+      "noHalo": 6.02
+    },
+    {
+      "config": "fog-day-aurora",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 7.01,
+      "noHalo": 4.62
+    },
+    {
+      "config": "fog-day-aurora",
+      "text": "Foggy",
+      "size": 19,
+      "halo": 8.21,
+      "noHalo": 6.27
+    },
+    {
+      "config": "fog-day-aurora",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 5.45,
+      "noHalo": 4.42
+    },
+    {
+      "config": "fog-day-sunset",
+      "text": "London",
+      "size": 17,
+      "halo": 4.17,
+      "noHalo": 2.87
+    },
+    {
+      "config": "fog-day-sunset",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 3.38,
+      "noHalo": 2.26
+    },
+    {
+      "config": "fog-day-sunset",
+      "text": "Foggy",
+      "size": 19,
+      "halo": 5.27,
+      "noHalo": 3.91
+    },
+    {
+      "config": "fog-day-sunset",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 4.9,
+      "noHalo": 3.98
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "London",
+      "size": 17,
+      "halo": 5.91,
+      "noHalo": 4.7
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 5.34,
+      "noHalo": 2.85
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "Foggy",
+      "size": 19,
+      "halo": 6.2,
+      "noHalo": 4.58
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 5.58,
+      "noHalo": 4.29
+    },
+    {
+      "config": "fog-day-forest",
+      "text": "London",
+      "size": 17,
+      "halo": 6.09,
+      "noHalo": 4.86
+    },
+    {
+      "config": "fog-day-forest",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 5.62,
+      "noHalo": 3.82
+    },
+    {
+      "config": "fog-day-forest",
+      "text": "Foggy",
+      "size": 19,
+      "halo": 6.63,
+      "noHalo": 4.88
+    },
+    {
+      "config": "fog-day-forest",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 5.65,
+      "noHalo": 4.39
+    },
+    {
+      "config": "fog-day-midnight",
+      "text": "London",
+      "size": 17,
+      "halo": 8.35,
+      "noHalo": 7.13
+    },
+    {
+      "config": "fog-day-midnight",
+      "text": "14\u00b0",
+      "size": 96,
+      "halo": 8.77,
+      "noHalo": 8.75
+    },
+    {
+      "config": "fog-day-midnight",
+      "text": "Foggy",
+      "size": 19,
+      "halo": 11.41,
+      "noHalo": 9.21
+    },
+    {
+      "config": "fog-day-midnight",
+      "text": "Feels like 13\u00b0",
+      "size": 14.5,
+      "halo": 6.64,
+      "noHalo": 5.69
+    }
+  ]
+}

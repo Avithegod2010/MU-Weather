@@ -3,15 +3,18 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   BlurMask,
+  BlurStyle,
   Canvas,
   Circle,
   Group,
+  Image as SkiaImage,
   LinearGradient as SkiaLinearGradient,
   Path,
   Points,
   Rect,
   Skia,
   vec,
+  type SkImage,
   type SkPath,
 } from '@shopify/react-native-skia';
 import Animated, {
@@ -241,12 +244,43 @@ function SkyEffects({
 }
 
 /** Warm sun glow in the upper right, blurred with a Skia mask, with slowly turning rays. */
+/**
+ * The sun's glow is two large blurred discs. Their blur does not change over time (only the
+ * group opacity breathes), so they are drawn once into an offscreen image per size and blitted
+ * each frame. Blurring them live every frame was the most expensive part of the clear-sky scene.
+ */
+function useSunGlowImage(
+  width: number,
+  height: number,
+  centerX: number,
+  centerY: number,
+  glowRadius: number,
+): SkImage | null {
+  return useMemo(() => {
+    if (width <= 0 || height <= 0) return null;
+    const surface = Skia.Surface.MakeOffscreen(Math.ceil(width), Math.ceil(height));
+    if (!surface) return null;
+    const canvas = surface.getCanvas();
+    const soft = Skia.Paint();
+    soft.setColor(Skia.Color('rgba(255,244,214,0.42)'));
+    soft.setMaskFilter(Skia.MaskFilter.MakeBlur(BlurStyle.Normal, glowRadius * 0.32, true));
+    canvas.drawCircle(centerX, centerY, glowRadius * 0.55, soft);
+    const core = Skia.Paint();
+    core.setColor(Skia.Color('rgba(255,255,255,0.55)'));
+    core.setMaskFilter(Skia.MaskFilter.MakeBlur(BlurStyle.Normal, glowRadius * 0.08, true));
+    canvas.drawCircle(centerX, centerY, glowRadius * 0.16, core);
+    surface.flush();
+    return surface.makeImageSnapshot();
+  }, [width, height, centerX, centerY, glowRadius]);
+}
+
 function SunLayer({ width, height, clock, reducedMotion }: LayerProps) {
   const extent = Math.max(width, height);
   const glowRadius = extent * 0.45;
   const rayInner = extent * 0.8 * 0.2;
   const centerX = width * 0.8;
   const centerY = height * 0.12;
+  const glowImage = useSunGlowImage(width, height, centerX, centerY, glowRadius);
 
   // Breathing glow: 0.82 to 1.0 over an 8.4 s cycle.
   const glowOpacity = useDerivedValue(() => {
@@ -277,13 +311,19 @@ function SunLayer({ width, height, clock, reducedMotion }: LayerProps) {
   return (
     <>
       <Group opacity={glowOpacity}>
-        {/* Blur masks replace the old SVG radial gradient: a soft disc, then a brighter core. */}
-        <Circle cx={centerX} cy={centerY} r={glowRadius * 0.55} color="rgba(255,244,214,0.42)">
-          <BlurMask blur={glowRadius * 0.32} style="normal" />
-        </Circle>
-        <Circle cx={centerX} cy={centerY} r={glowRadius * 0.16} color="rgba(255,255,255,0.55)">
-          <BlurMask blur={glowRadius * 0.08} style="normal" />
-        </Circle>
+        {glowImage ? (
+          <SkiaImage image={glowImage} x={0} y={0} width={width} height={height} fit="fill" />
+        ) : (
+          // Fallback when an offscreen surface is unavailable: the same discs, drawn live.
+          <>
+            <Circle cx={centerX} cy={centerY} r={glowRadius * 0.55} color="rgba(255,244,214,0.42)">
+              <BlurMask blur={glowRadius * 0.32} style="normal" />
+            </Circle>
+            <Circle cx={centerX} cy={centerY} r={glowRadius * 0.16} color="rgba(255,255,255,0.55)">
+              <BlurMask blur={glowRadius * 0.08} style="normal" />
+            </Circle>
+          </>
+        )}
       </Group>
       <Group origin={vec(centerX, centerY)} transform={rayTransform}>
         <Points points={rays.even} mode="lines" color="rgba(255,255,255,0.17)" style="stroke" strokeWidth={3} strokeCap="round" />

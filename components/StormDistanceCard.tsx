@@ -98,7 +98,7 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
     haptics.warning();
     clearTimer();
     setSeconds(Math.max((Date.now() - startRef.current) / 1000, 1));
-    setResultLine(Math.floor(Math.random() * RESULT_LINES.close.length));
+    setResultLine(Math.floor(Math.random() * RESULT_LINES.close.length));  // all bands have 6 lines
     setPhase('result');
   };
 
@@ -110,7 +110,10 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
   };
 
   const distanceMeters = seconds * SOUND_SPEED_MPS;
-  const resultLines = RESULT_LINES[bandFor(distanceMeters)];
+  const resultBand = bandFor(distanceMeters);
+  // Close range: line 0 is the shelter message, so the detail line is drawn from lines 1..5.
+  const resultLines =
+    resultBand === 'close' ? RESULT_LINES.close.slice(1) : RESULT_LINES[resultBand];
   const resultKey = resultLines[resultLine % resultLines.length];
   const listenKey = LISTEN_LINES[Math.floor(seconds / LISTEN_STEP_SECONDS) % LISTEN_LINES.length];
 
@@ -139,13 +142,24 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
                   ? `${Math.round(distanceMeters / 10) * 10} m`
                   : `${(distanceMeters / 1000).toFixed(distanceMeters < 10000 ? 1 : 0)} km`}
               </Text>
-              <Animated.Text
-                key={resultKey}
-                entering={FadeIn.duration(400)}
-                style={[styles.caption, styles.captionBox, { color: theme.textSecondary }]}
-              >
-                {t(resultKey)}
-              </Animated.Text>
+              {resultBand === 'close' ? (
+                // Close range is a safety message: the shelter line always shows, with a
+                // varied detail line under it.
+                <Animated.View key={resultKey} entering={FadeIn.duration(400)} style={styles.captionBox}>
+                  <Text style={[styles.caption, styles.safetyLine, { color: theme.textPrimary }]}>
+                    {t(RESULT_LINES.close[0])}
+                  </Text>
+                  <Text style={[styles.caption, { color: theme.textSecondary }]}>{t(resultKey)}</Text>
+                </Animated.View>
+              ) : (
+                <Animated.Text
+                  key={resultKey}
+                  entering={FadeIn.duration(400)}
+                  style={[styles.caption, styles.captionBox, { color: theme.textSecondary }]}
+                >
+                  {t(resultKey)}
+                </Animated.Text>
+              )}
             </View>
             {ring}
           </View>
@@ -278,6 +292,10 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   // Room for two lines, so the card does not jump when the line rotates.
+  safetyLine: {
+    fontFamily: F.semibold,
+    marginBottom: 2,
+  },
   captionBox: {
     minHeight: 34,
   },

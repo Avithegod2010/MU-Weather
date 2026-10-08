@@ -132,10 +132,10 @@ export function SunTwilightCard({
           {elevation >= 0 ? `+${elevation}°` : `${elevation}°`}
         </Text>
         <View style={styles.positionMeta}>
-          <Text style={[styles.positionLabel, { color: theme.textTertiary }]} numberOfLines={1}>
+          <Text style={[styles.positionLabel, { color: theme.textTertiary }]}>
             {t('tw_elevation')}
           </Text>
-          <Text style={[styles.azimuth, { color: theme.textSecondary }]} numberOfLines={1}>
+          <Text style={[styles.azimuth, { color: theme.textSecondary }]}>
             {t('tw_azimuth')} {Math.round(tw.currentAzimuth)}° {compassLabel(tw.currentAzimuth)}
           </Text>
         </View>

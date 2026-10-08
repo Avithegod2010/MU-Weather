@@ -699,6 +699,7 @@ export const pt: Strings = {
   journal_saved: 'Hoje pareceu {rating}',
   journal_change: 'Toque noutro para mudar',
   journal_progress: '{n} dias avaliados · apenas neste dispositivo',
+  journal_progress_one: '{n} dia avaliado · apenas neste dispositivo',
   journal_rating_cold: 'Frio',
   journal_rating_ok: 'Ideal',
   journal_rating_hot: 'Quente',

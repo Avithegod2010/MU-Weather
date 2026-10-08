@@ -344,6 +344,7 @@ export const id: Strings = {
   journal_saved: 'Hari ini terasa {rating}',
   journal_change: 'Ketuk pilihan lain untuk mengubahnya',
   journal_progress: '{n} hari dinilai · hanya di perangkat ini',
+  journal_progress_one: '{n} hari dinilai · hanya di perangkat ini',
   journal_rating_cold: 'Dingin',
   journal_rating_ok: 'Tepat',
   journal_rating_hot: 'Panas',

@@ -344,6 +344,7 @@ export const nl: Strings = {
   journal_saved: 'Vandaag voelde {rating}',
   journal_change: 'Tik op een ander om te wijzigen',
   journal_progress: '{n} dagen beoordeeld · alleen op dit apparaat',
+  journal_progress_one: '{n} dag beoordeeld · alleen op dit apparaat',
   journal_rating_cold: 'Koud',
   journal_rating_ok: 'Precies goed',
   journal_rating_hot: 'Warm',

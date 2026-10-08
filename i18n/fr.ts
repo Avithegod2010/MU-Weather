@@ -344,6 +344,7 @@ export const fr: Strings = {
   journal_saved: 'Aujourd’hui : {rating}',
   journal_change: 'Touchez une autre option pour changer',
   journal_progress: '{n} jours notés · uniquement sur cet appareil',
+  journal_progress_one: '{n} jour noté · uniquement sur cet appareil',
   journal_rating_cold: 'Froid',
   journal_rating_ok: 'Juste',
   journal_rating_hot: 'Chaud',

@@ -344,6 +344,7 @@ export const de: Strings = {
   journal_saved: 'Heute {rating}',
   journal_change: 'Für eine Änderung andere wählen',
   journal_progress: '{n} Tage bewertet · nur auf diesem Gerät',
+  journal_progress_one: '{n} Tag bewertet · nur auf diesem Gerät',
   journal_rating_cold: 'Kalt',
   journal_rating_ok: 'Genau richtig',
   journal_rating_hot: 'Heiß',
