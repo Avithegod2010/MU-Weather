@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { t, tWmo } from '../utils/i18n';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,15 +20,35 @@ interface DailyForecastProps {
 const PREVIEW_COUNT = 7;
 const PRECIP_COLOR = '#A5DBF9';
 
-export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
+export const DailyForecast = React.memo(function DailyForecast({
+  theme,
+  days,
+  onPressDay,
+}: DailyForecastProps) {
   const [expanded, setExpanded] = useState(false);
+
+  // Memoize visible days slice based on expanded state and days array.
+  const visible = useMemo(
+    () => (expanded ? days : days.slice(0, PREVIEW_COUNT)),
+    [days, expanded],
+  );
+
+  // Single-pass computation of week min/max temperature range to avoid array allocations and multiple iterations.
+  const { weekMin, weekMax, range } = useMemo(() => {
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i = 0; i < days.length; i++) {
+      const day = days[i];
+      if (day.tMin < min) min = day.tMin;
+      if (day.tMax > max) max = day.tMax;
+    }
+    const r = Math.max(max - min, 1);
+    return { weekMin: min, weekMax: max, range: r };
+  }, [days]);
+
   if (!days.length) return null;
 
   const hasMore = days.length > PREVIEW_COUNT;
-  const visible = expanded ? days : days.slice(0, PREVIEW_COUNT);
-  const weekMin = Math.min(...days.map((d) => d.tMin));
-  const weekMax = Math.max(...days.map((d) => d.tMax));
-  const range = Math.max(weekMax - weekMin, 1);
 
   return (
     <View style={styles.container}>
@@ -133,7 +153,7 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
       ) : null}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
