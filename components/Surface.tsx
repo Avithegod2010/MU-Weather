@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { AppTheme } from '../theme/palettes';
+import { RADIUS } from '../theme/tokens';
 
 interface SurfaceProps {
   theme: AppTheme;
@@ -28,6 +30,14 @@ export function Surface({ theme, style, children }: SurfaceProps) {
   }
   return (
     <View style={[styles.solid, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }, style]}>
+      <View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.sheenClip]}>
+        <LinearGradient
+          colors={['rgba(255,255,255,0.16)', 'rgba(255,255,255,0)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.8, y: 1 }}
+          style={StyleSheet.absoluteFill}
+        />
+      </View>
       {children}
     </View>
   );
@@ -35,11 +45,15 @@ export function Surface({ theme, style, children }: SurfaceProps) {
 
 const styles = StyleSheet.create({
   solid: {
-    borderRadius: 21,
+    borderRadius: RADIUS.lg,
     borderWidth: 1,
   },
+  sheenClip: {
+    borderRadius: RADIUS.lg,
+    overflow: 'hidden',
+  },
   glass: {
-    borderRadius: 21,
+    borderRadius: RADIUS.lg,
     borderWidth: 1,
     overflow: 'hidden',
     backgroundColor: 'rgba(255,255,255,0.04)',
