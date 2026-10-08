@@ -932,6 +932,12 @@ export const en = {
   hl_uv: 'Very high UV today ({n}) — sunscreen between {from} and {to}',
   hl_frost: 'Frost likely tonight — lows near {t}',
   hl_aqi: 'Air quality is poor (AQI {n}) — limit outdoor exertion',
+  // ── home chapters ──
+  chapter_now: 'Now',
+  chapter_today: 'Today',
+  chapter_week: 'This week',
+  chapter_plan: 'Plan',
+  chapter_insights: 'Insights',
 };
 
 export type Strings = typeof en;

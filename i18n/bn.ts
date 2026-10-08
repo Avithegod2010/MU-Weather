@@ -478,4 +478,10 @@ export const bn: Strings = {
   hl_uv: 'আজ খুব বেশি UV ({n}) — {from} থেকে {to}-এর মধ্যে সানস্ক্রিন',
   hl_frost: 'আজ রাতে তুষারপাতের সম্ভাবনা — সর্বনিম্ন {t}-এর কাছাকাছি',
   hl_aqi: 'বাতাসের মান খারাপ (AQI {n}) — বাইরের পরিশ্রম কমান',
+  // ── home chapters ──
+  chapter_now: 'এখন',
+  chapter_today: 'আজ',
+  chapter_week: 'এই সপ্তাহ',
+  chapter_plan: 'পরিকল্পনা',
+  chapter_insights: 'অন্তর্দৃষ্টি',
 };

@@ -478,4 +478,10 @@ export const hu: Strings = {
   hl_uv: 'Ma nagyon magas UV ({n}) — naptej {from} és {to} között',
   hl_frost: 'Valószínű fagy ma éjjel — minimum {t} körül',
   hl_aqi: 'Rossz levegőminőség (AQI {n}) — mérsékeld a kinti terhelést',
+  // ── home chapters ──
+  chapter_now: 'Most',
+  chapter_today: 'Ma',
+  chapter_week: 'Ezen a héten',
+  chapter_plan: 'Tervezés',
+  chapter_insights: 'Elemzések',
 };

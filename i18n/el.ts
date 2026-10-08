@@ -478,4 +478,10 @@ export const el: Strings = {
   hl_uv: 'Σήμερα πολύ υψηλή UV ({n}) — αντηλιακό από {from} έως {to}',
   hl_frost: 'Πιθανός παγετός απόψε — ελάχιστη κοντά στους {t}',
   hl_aqi: 'Κακή ποιότητα αέρα (AQI {n}) — περιόρισε την άσκηση έξω',
+  // ── home chapters ──
+  chapter_now: 'Τώρα',
+  chapter_today: 'Σήμερα',
+  chapter_week: 'Αυτή την εβδομάδα',
+  chapter_plan: 'Σχέδιο',
+  chapter_insights: 'Ανάλυση',
 };

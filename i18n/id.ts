@@ -478,4 +478,10 @@ export const id: Strings = {
   hl_uv: 'UV sangat tinggi hari ini ({n}) — tabir surya antara {from} dan {to}',
   hl_frost: 'Kemungkinan embun beku malam ini — terendah sekitar {t}',
   hl_aqi: 'Kualitas udara buruk (AQI {n}) — batasi aktivitas luar ruangan',
+  // ── home chapters ──
+  chapter_now: 'Sekarang',
+  chapter_today: 'Hari ini',
+  chapter_week: 'Minggu ini',
+  chapter_plan: 'Rencana',
+  chapter_insights: 'Wawasan',
 };

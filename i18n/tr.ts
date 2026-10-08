@@ -809,4 +809,10 @@ export const tr: Strings = {
   hl_uv: 'Bugün çok yüksek UV ({n}) — {from} ile {to} arasında güneş kremi',
   hl_frost: 'Bu gece don bekleniyor — en düşük {t} civarında',
   hl_aqi: 'Hava kalitesi kötü (AQI {n}) — dışarıda eforu sınırla',
+  // ── home chapters ──
+  chapter_now: 'Şimdi',
+  chapter_today: 'Bugün',
+  chapter_week: 'Bu hafta',
+  chapter_plan: 'Planla',
+  chapter_insights: 'İçgörüler',
 };

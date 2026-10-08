@@ -809,4 +809,10 @@ export const pl: Strings = {
   hl_uv: 'Dziś bardzo wysoki UV ({n}) — krem z filtrem między {from} a {to}',
   hl_frost: 'Prawdopodobny mróz dziś w nocy — minimum około {t}',
   hl_aqi: 'Słaba jakość powietrza (AQI {n}) — ogranicz wysiłek na zewnątrz',
+  // ── home chapters ──
+  chapter_now: 'Teraz',
+  chapter_today: 'Dziś',
+  chapter_week: 'Ten tydzień',
+  chapter_plan: 'Planowanie',
+  chapter_insights: 'Spostrzeżenia',
 };

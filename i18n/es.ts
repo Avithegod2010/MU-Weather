@@ -478,4 +478,10 @@ export const es: Strings = {
   hl_uv: 'UV muy alto hoy ({n}) — protector solar entre {from} y {to}',
   hl_frost: 'Probable helada esta noche — mínima cerca de {t}',
   hl_aqi: 'La calidad del aire es mala (AQI {n}) — limita el esfuerzo al aire libre',
+  // ── home chapters ──
+  chapter_now: 'Ahora',
+  chapter_today: 'Hoy',
+  chapter_week: 'Esta semana',
+  chapter_plan: 'Planificar',
+  chapter_insights: 'Perspectivas',
 };

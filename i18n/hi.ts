@@ -478,4 +478,10 @@ export const hi: Strings = {
   hl_uv: 'आज बहुत ज़्यादा UV ({n}) — {from} से {to} के बीच सनस्क्रीन',
   hl_frost: 'आज रात पाला पड़ने की संभावना — न्यूनतम {t} के आसपास',
   hl_aqi: 'हवा की गुणवत्ता खराब (AQI {n}) — बाहर मेहनत कम करें',
+  // ── home chapters ──
+  chapter_now: 'अभी',
+  chapter_today: 'आज',
+  chapter_week: 'इस हफ़्ते',
+  chapter_plan: 'योजना',
+  chapter_insights: 'अंतर्दृष्टि',
 };

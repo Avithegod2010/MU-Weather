@@ -478,4 +478,10 @@ export const nl: Strings = {
   hl_uv: 'Vandaag zeer hoge UV ({n}) — zonnebrand tussen {from} en {to}',
   hl_frost: 'Waarschijnlijk vorst vannacht — minima rond {t}',
   hl_aqi: 'Slechte luchtkwaliteit (AQI {n}) — beperk inspanning buiten',
+  // ── home chapters ──
+  chapter_now: 'Nu',
+  chapter_today: 'Vandaag',
+  chapter_week: 'Deze week',
+  chapter_plan: 'Plannen',
+  chapter_insights: 'Inzichten',
 };
