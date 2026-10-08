@@ -1,0 +1,17 @@
+Checked 14400 text colour cases (minimum 4.5:1).
+
+Card and chip text (no shadow): 7200 cases
+  Before: 2929/7200 below minimum; worst 1.31:1.
+  After:  0/7200 below minimum; worst 4.50:1 at card · clear-day · glass · bg=dynamic · theme=skyblue · textTertiary.
+    textPrimary: worst after 4.55:1 (0 failing)
+    textSecondary: worst after 4.50:1 (0 failing)
+    textTertiary: worst after 4.50:1 (0 failing)
+
+Sky text (hero, halo not measured): 7200 cases
+  Before: 3956/7200 below minimum; worst 1.20:1.
+  After:  3408/7200 below minimum; worst 1.02:1 at sky · clear-day · material · bg=sunset · theme=default · textSecondary.
+    textPrimary: worst after 1.02:1 (412 failing)
+    textSecondary: worst after 1.02:1 (1378 failing)
+    textTertiary: worst after 1.02:1 (1618 failing)
+
+Sky text below minimum: 3408 cases. Covered only by the hero text halo, which is not measured here.
