@@ -559,6 +559,10 @@ export function HomeScreen() {
     setFavoritesOpen(false);
   }, []);
 
+  const handlePressDay = useCallback((day: DayPoint, index: number) => {
+    setDayDetail({ day, index });
+  }, []);
+
   const refreshing = weather.status === 'refreshing';
 
   // Chapter headers appear only when a section inside the chapter will render.
@@ -928,7 +932,7 @@ export function HomeScreen() {
                   <DailyForecast
                     theme={theme}
                     days={weather.data.daily}
-                    onPressDay={(day, index) => setDayDetail({ day, index })}
+                    onPressDay={handlePressDay}
                   />
                 </Reveal>
               ) : null}
