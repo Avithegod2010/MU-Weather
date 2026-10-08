@@ -1,5 +1,5 @@
 import { parseColor, mixHex } from '../utils/color';
-import { composite, textTiers, toRgb, type Rgb } from '../utils/contrast';
+import { INK_DARK, MIN_TEXT_CONTRAST, composite, contrastRatio, pickInk, textTiers, toRgb, type Rgb } from '../utils/contrast';
 
 export type WeatherCondition =
   | 'clear'
@@ -131,27 +131,76 @@ export function buildTheme(
   return resolveTextColors(buildSurfaceTheme(palette, styleMode), palette);
 }
 
-/** Every surface the text sits on: the three sky stops, the card and the chip, as the user sees them. */
+/**
+ * The surfaces body text sits on: the card and the chip, as the user sees them. Sky-level text
+ * (the Home hero) is not included: it carries a text halo instead (see CurrentWeather's
+ * heroTextShadow), because no single ink can pass on a gradient that runs light to dark.
+ */
 function textSurfaces(palette: Palette, cardBg: string, chipBg: string): Rgb[] {
   const sky = palette.gradient.map(toRgb);
   const cardParsed = parseColor(cardBg);
   const card: Rgb = cardParsed ? composite(cardParsed, sky[1]) : sky[1];
   const chipParsed = parseColor(chipBg);
   const chip: Rgb = chipParsed ? composite(chipParsed, card) : card;
-  return [...sky, card, chip];
+  return [card, chip];
+}
+
+/** Smallest change that makes the ink pass on the card and chip. Fills move toward the opposite tone. */
+function fitCardsForInk(theme: AppTheme, palette: Palette, ink: string): AppTheme {
+  const inkRgb = toRgb(ink);
+  const passes = (cardBg: string, chipBg: string) =>
+    textSurfaces(palette, cardBg, chipBg).every((surface) => contrastRatio(inkRgb, surface) >= MIN_TEXT_CONTRAST);
+  if (passes(theme.cardBg, theme.chipBg)) return theme;
+
+  // Dark ink needs lighter cards; white ink needs darker ones.
+  const tint = ink === INK_DARK ? '#FFFFFF' : '#000000';
+  const glass = theme.styleMode === 'glass';
+  const withStep = (step: number) => {
+    if (glass) {
+      const cardAlpha = Math.min(0.9, parseAlpha(theme.cardBg) + (0.9 - parseAlpha(theme.cardBg)) * step);
+      const chipAlpha = Math.min(0.9, parseAlpha(theme.chipBg) + (0.9 - parseAlpha(theme.chipBg)) * step);
+      return {
+        cardBg: rgbaOf(tint, cardAlpha),
+        chipBg: rgbaOf(tint, chipAlpha),
+      };
+    }
+    return {
+      cardBg: mixHex(theme.cardBg, tint, step),
+      chipBg: mixHex(theme.chipBg, tint, step),
+    };
+  };
+  for (let step = 0.02; step <= 1; step += 0.02) {
+    const next = withStep(step);
+    if (passes(next.cardBg, next.chipBg)) return { ...theme, ...next };
+  }
+  return { ...theme, ...withStep(1) };
+}
+
+function parseAlpha(color: string): number {
+  const parsed = parseColor(color);
+  return parsed ? parsed.a : 1;
+}
+
+function rgbaOf(hex: string, alpha: number): string {
+  const parsed = parseColor(hex);
+  if (!parsed) return hex;
+  return `rgba(${parsed.r},${parsed.g},${parsed.b},${alpha.toFixed(2)})`;
 }
 
 /**
  * Text colours picked from the sky's brightness and checked against the actual surfaces.
  * Each tier keeps its design alpha unless the WCAG minimum needs more (see utils/contrast.ts).
+ * If the chosen ink fails on the card or chip, the card fills move until it passes.
  */
 function resolveTextColors(theme: AppTheme, palette: Palette): AppTheme {
-  const tiers = textTiers(textSurfaces(palette, theme.cardBg, theme.chipBg), {
-    secondary: theme.isLight ? 0.68 : 0.74,
-    tertiary: theme.isLight ? 0.45 : 0.5,
+  const designInk = pickInk(textSurfaces(palette, theme.cardBg, theme.chipBg));
+  const fitted = fitCardsForInk(theme, palette, designInk);
+  const tiers = textTiers(textSurfaces(palette, fitted.cardBg, fitted.chipBg), {
+    secondary: fitted.isLight ? 0.68 : 0.74,
+    tertiary: fitted.isLight ? 0.45 : 0.5,
   });
   return {
-    ...theme,
+    ...fitted,
     textPrimary: tiers.primary,
     textSecondary: tiers.secondary,
     textTertiary: tiers.tertiary,
