@@ -5,7 +5,8 @@ import { F } from '../theme/typography';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Sharing from 'expo-sharing';
-import Svg, { Polyline } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath } from './SkiaShapes';
 import * as Notifications from '../utils/notifications';
 import {
   Sun,
@@ -1550,22 +1551,20 @@ export function SettingsSheet({
                   ) : null}
                   {accuracyHistory.length >= 2 ? (
                     <View style={styles.sparkRow}>
-                      <Svg width={120} height={30} viewBox="0 0 120 30">
-                        <Polyline
-                          points={accuracyHistory
+                      <Canvas style={{ width: 120, height: 30 }}>
+                        <SvgPath
+                          d={`M ${accuracyHistory
                             .slice(-12)
                             .map((entry, index, array) => {
                               const x = (index / Math.max(array.length - 1, 1)) * 116 + 2;
                               const y = 27 - (Math.min(entry.d, 3) / 3) * 24;
                               return `${x.toFixed(1)},${y.toFixed(1)}`;
                             })
-                            .join(' ')}
-                          stroke={theme.accent}
+                            .join(' L ')}`}
+                          color={theme.accent}
                           strokeWidth={2}
-                          fill="none"
-                          strokeLinecap="round"
                         />
-                      </Svg>
+                      </Canvas>
                       <Text style={[styles.avgText, { color: theme.textTertiary }]}>
                         {t('src_drift')
                           .replace('{d}', avgDelta?.toFixed(1) ?? '--')
