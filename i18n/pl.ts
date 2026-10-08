@@ -764,4 +764,10 @@ export const pl: Strings = {
   cmp_sky: 'Niebo',
   diagnostics_report: 'Raport diagnostyczny',
   diagnostics_report_sub: 'Udostępnij plik tekstowy do zgłoszenia błędu',
+  // ── home chapters ──
+  chapter_now: 'Teraz',
+  chapter_today: 'Dziś',
+  chapter_week: 'Ten tydzień',
+  chapter_plan: 'Planowanie',
+  chapter_insights: 'Spostrzeżenia',
 };

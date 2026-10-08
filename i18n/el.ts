@@ -433,4 +433,10 @@ export const el: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Αναφορά διαγνωστικής',
   diagnostics_report_sub: 'Μοιραστείτε ένα αρχείο κειμένου για να το επισυνάψετε σε αναφορά σφάλματος',
+  // ── home chapters ──
+  chapter_now: 'Τώρα',
+  chapter_today: 'Σήμερα',
+  chapter_week: 'Αυτή την εβδομάδα',
+  chapter_plan: 'Σχέδιο',
+  chapter_insights: 'Ανάλυση',
 };

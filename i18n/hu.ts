@@ -433,4 +433,10 @@ export const hu: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Diagnosztikai jelentés',
   diagnostics_report_sub: 'Oszszon meg egy szöveges fájlt, hogy csatolhassa egy hibajegyhez',
+  // ── home chapters ──
+  chapter_now: 'Most',
+  chapter_today: 'Ma',
+  chapter_week: 'Ezen a héten',
+  chapter_plan: 'Tervezés',
+  chapter_insights: 'Elemzések',
 };

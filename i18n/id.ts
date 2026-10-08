@@ -433,4 +433,10 @@ export const id: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Laporan diagnostik',
   diagnostics_report_sub: 'Bagikan berkas teks untuk dilampirkan ke laporan bug',
+  // ── home chapters ──
+  chapter_now: 'Sekarang',
+  chapter_today: 'Hari ini',
+  chapter_week: 'Minggu ini',
+  chapter_plan: 'Rencana',
+  chapter_insights: 'Wawasan',
 };

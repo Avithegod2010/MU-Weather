@@ -433,4 +433,10 @@ export const hi: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'निदान रिपोर्ट',
   diagnostics_report_sub: 'बग रिपोर्ट के साथ संलग्न करने के लिए टेक्स्ट फ़ाइल साझा करें',
+  // ── home chapters ──
+  chapter_now: 'अभी',
+  chapter_today: 'आज',
+  chapter_week: 'इस हफ़्ते',
+  chapter_plan: 'योजना',
+  chapter_insights: 'अंतर्दृष्टि',
 };

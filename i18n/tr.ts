@@ -764,4 +764,10 @@ export const tr: Strings = {
   cmp_sky: 'Gökyüzü',
   diagnostics_report: 'Tanılama raporu',
   diagnostics_report_sub: 'Hata bildirimine eklemek için bir metin dosyası paylaşın',
+  // ── home chapters ──
+  chapter_now: 'Şimdi',
+  chapter_today: 'Bugün',
+  chapter_week: 'Bu hafta',
+  chapter_plan: 'Planla',
+  chapter_insights: 'İçgörüler',
 };

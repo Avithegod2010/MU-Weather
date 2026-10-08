@@ -764,4 +764,10 @@ export const pt: Strings = {
   cmp_sky: 'Céu',
   diagnostics_report: 'Relatório de diagnóstico',
   diagnostics_report_sub: 'Partilhe um ficheiro de texto para anexar a um relatório de erro',
+  // ── home chapters ──
+  chapter_now: 'Agora',
+  chapter_today: 'Hoje',
+  chapter_week: 'Esta semana',
+  chapter_plan: 'Planear',
+  chapter_insights: 'Análises',
 };

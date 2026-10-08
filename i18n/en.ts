@@ -890,6 +890,12 @@ export const en = {
   // ── diagnostics report ──
   diagnostics_report: 'Diagnostics report',
   diagnostics_report_sub: 'Share a text file to attach to a bug report',
+  // ── home chapters ──
+  chapter_now: 'Now',
+  chapter_today: 'Today',
+  chapter_week: 'This week',
+  chapter_plan: 'Plan',
+  chapter_insights: 'Insights',
 };
 
 export type Strings = typeof en;

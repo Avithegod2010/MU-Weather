@@ -433,4 +433,10 @@ export const bn: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'ডায়াগনস্টিক রিপোর্ট',
   diagnostics_report_sub: 'বাগ রিপোর্টের সাথে যুক্ত করতে একটি টেক্সট ফাইল শেয়ার করুন',
+  // ── home chapters ──
+  chapter_now: 'এখন',
+  chapter_today: 'আজ',
+  chapter_week: 'এই সপ্তাহ',
+  chapter_plan: 'পরিকল্পনা',
+  chapter_insights: 'অন্তর্দৃষ্টি',
 };

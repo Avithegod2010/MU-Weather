@@ -433,4 +433,10 @@ export const es: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Informe de diagnóstico',
   diagnostics_report_sub: 'Comparte un archivo de texto para adjuntarlo a un informe de error',
+  // ── home chapters ──
+  chapter_now: 'Ahora',
+  chapter_today: 'Hoy',
+  chapter_week: 'Esta semana',
+  chapter_plan: 'Planificar',
+  chapter_insights: 'Perspectivas',
 };

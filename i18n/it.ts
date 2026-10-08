@@ -433,4 +433,10 @@ export const it: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Rapporto diagnostico',
   diagnostics_report_sub: 'Condividi un file di testo da allegare a una segnalazione di bug',
+  // ── home chapters ──
+  chapter_now: 'Ora',
+  chapter_today: 'Oggi',
+  chapter_week: 'Questa settimana',
+  chapter_plan: 'Pianifica',
+  chapter_insights: 'Approfondimenti',
 };

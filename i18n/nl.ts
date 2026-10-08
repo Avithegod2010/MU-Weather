@@ -433,4 +433,10 @@ export const nl: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Diagnostisch rapport',
   diagnostics_report_sub: 'Deel een tekstbestand om het aan een bugmelding toe te voegen',
+  // ── home chapters ──
+  chapter_now: 'Nu',
+  chapter_today: 'Vandaag',
+  chapter_week: 'Deze week',
+  chapter_plan: 'Plannen',
+  chapter_insights: 'Inzichten',
 };
