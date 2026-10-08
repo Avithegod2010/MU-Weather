@@ -38,7 +38,8 @@ def shoot(page, out, name, report):
 def scroll_to(page, text, report):
     loc = visible_text(page, text)
     try:
-        loc.scroll_into_view_if_needed(timeout=4000)
+        # Centre the element, so the screenshot shows the control and what is around it.
+        loc.evaluate("e => e.scrollIntoView({block: 'center', inline: 'nearest'})")
         page.wait_for_timeout(1200)
         return True
     except Exception as error:  # noqa: BLE001 - report and continue
@@ -62,8 +63,21 @@ def run(args):
     report = {'shots': [], 'missing': []}
     with sync_playwright() as p:
         browser = capture.launch(p)
-        context, page, errors = capture.open_page(browser, args.base_url, args.condition, not args.night)
+        overrides = json.loads(args.settings) if args.settings else None
+        context, page, errors = capture.open_page(
+            browser, args.base_url, args.condition, not args.night, settings_overrides=overrides)
         capture.settle(page, 5000)
+
+        # Liquid Glass: the sliding highlight in the comfort journal (Cold / Just right / Hot).
+        if scroll_to(page, 'Just right', report):
+            shoot(page, out, 'glass-slider-rest', report)
+            if tap(page, 'Hot', report):
+                page.wait_for_timeout(600)
+                shoot(page, out, 'glass-slider-moved', report)
+
+        # Sun and moon: the sun arc card and the moon phase gauge.
+        if scroll_to(page, 'Sun & Twilight', report):
+            shoot(page, out, 'sun-twilight-card', report)
 
         # Home: the converted charts.
         for label, name in [
@@ -110,4 +124,5 @@ if __name__ == '__main__':
     parser.add_argument('--out', default='scripts/visual/results/detail')
     parser.add_argument('--condition', default='clear', help='fixture weather: clear, rain, thunder, ...')
     parser.add_argument('--night', action='store_true')
+    parser.add_argument('--settings', default='', help='JSON settings overrides, e.g. {"styleMode":"glass"}')
     run(parser.parse_args())

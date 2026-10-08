@@ -1,0 +1,21 @@
+{
+  "shots": [
+    "scripts/visual/results/glass/glass-slider-rest.png",
+    "scripts/visual/results/glass/glass-slider-moved.png",
+    "scripts/visual/results/glass/sun-twilight-card.png",
+    "scripts/visual/results/glass/home-rain-probability.png",
+    "scripts/visual/results/glass/home-hourly-forecast.png",
+    "scripts/visual/results/glass/home-trend.png",
+    "scripts/visual/results/glass/home-moon.png",
+    "scripts/visual/results/glass/day-detail-top.png",
+    "scripts/visual/results/glass/day-detail-temperature.png",
+    "scripts/visual/results/glass/storm-counting-start.png",
+    "scripts/visual/results/glass/storm-counting-mid.png",
+    "scripts/visual/results/glass/storm-result.png"
+  ],
+  "missing": [],
+  "pageErrors": [
+    "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?",
+    "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+  ]
+}
