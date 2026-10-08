@@ -1,5 +1,11 @@
 import React from 'react';
-import { WIDGET_CORNER_RADIUS, widgetGradient, widgetPalette } from '../utils/widgetPalette';
+import {
+  WIDGET_CORNER_RADIUS,
+  widgetGradient,
+  widgetPaletteFor,
+  widgetSky,
+  type WidgetSky,
+} from '../utils/widgetPalette';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { ColorProp } from 'react-native-android-widget';
 import type { DayPoint, WeatherBundle } from '../api/types';
@@ -7,7 +13,6 @@ import { describeWmo } from '../utils/wmo';
 import { usAqiBand } from '../utils/aqi';
 import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 
-const C = widgetPalette('night');
 
 /** Short weekday names, hardcoded English like the rest of the widget chrome. */
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -45,6 +50,8 @@ interface WeatherWidgetDashboardProps {
   aqiColor: ColorProp | null;
   hasData: boolean;
   stale: boolean;
+  /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
+  sky?: WidgetSky;
 }
 
 /**
@@ -80,7 +87,9 @@ export function WeatherWidgetDashboard({
   aqiColor,
   hasData,
   stale,
+  sky,
 }: WeatherWidgetDashboardProps) {
+  const C = widgetPaletteFor(sky);
   return (
     <FlexWidget
       style={{
@@ -293,6 +302,7 @@ export function renderWeatherWidgetDashboardFromBundle(
   }));
   return (
     <WeatherWidgetDashboard
+      sky={widgetSky(bundle.current.weatherCode, bundle.current.isDay)}
       hasData
       stale={stale}
       cityName={bundle.location.name}
