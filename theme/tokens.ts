@@ -55,3 +55,16 @@ export const SPRING = {
   /** Soft return once the finger lifts. */
   release: { damping: 13, stiffness: 240, mass: 0.7 },
 } as const;
+
+/** Sliding selection and switch thumbs in Material mode: quick, with no bounce. */
+export const SLIDE = { damping: 24, stiffness: 320, mass: 0.9 } as const;
+
+/**
+ * Liquid glass: the leading edge snaps ahead, the trailing edge follows a beat later,
+ * so the glass stretches while it travels and settles on arrival.
+ */
+export const LIQUID = {
+  lead: { damping: 17, stiffness: 320, mass: 0.8 },
+  trail: { damping: 22, stiffness: 260, mass: 0.85 },
+  lagMs: 45,
+} as const;
