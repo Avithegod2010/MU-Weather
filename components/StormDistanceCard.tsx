@@ -1,7 +1,8 @@
-import { t } from '../utils/i18n';
+import { t, type StringKey } from '../utils/i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { F } from '../theme/typography';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { Zap } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
@@ -26,9 +27,30 @@ const BAND_COLORS: Record<'low' | 'moderate' | 'high', string> = {
   high: '#E85F5F',
 };
 
+type Band = 'close' | 'near' | 'far';
+
+/** Result lines for each distance band. One is picked at random each time a distance is measured. */
+const RESULT_LINES: Record<Band, readonly StringKey[]> = {
+  close: ['storm_close_1', 'storm_close_2', 'storm_close_3', 'storm_close_4', 'storm_close_5', 'storm_close_6'],
+  near: ['storm_near_1', 'storm_near_2', 'storm_near_3', 'storm_near_4', 'storm_near_5', 'storm_near_6'],
+  far: ['storm_far_1', 'storm_far_2', 'storm_far_3', 'storm_far_4', 'storm_far_5', 'storm_far_6'],
+};
+
+/** Lines that take turns while the timer runs, one every LISTEN_STEP_SECONDS. */
+const LISTEN_LINES: readonly StringKey[] = ['storm_counting', 'storm_listen_2', 'storm_listen_3', 'storm_listen_4'];
+const LISTEN_STEP_SECONDS = 3;
+
+function bandFor(distanceMeters: number): Band {
+  if (distanceMeters < 3000) return 'close';
+  if (distanceMeters < 10000) return 'near';
+  return 'far';
+}
+
 export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [seconds, setSeconds] = useState(0);
+  // Index into the band's result lines, chosen once per measurement so a re-render does not change it.
+  const [resultLine, setResultLine] = useState(0);
   const startRef = useRef(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -58,6 +80,7 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
     haptics.warning();
     clearTimer();
     setSeconds(Math.max((Date.now() - startRef.current) / 1000, 1));
+    setResultLine(Math.floor(Math.random() * RESULT_LINES.close.length));
     setPhase('result');
   };
 
@@ -69,6 +92,9 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
   };
 
   const distanceMeters = seconds * SOUND_SPEED_MPS;
+  const resultLines = RESULT_LINES[bandFor(distanceMeters)];
+  const resultKey = resultLines[resultLine % resultLines.length];
+  const listenKey = LISTEN_LINES[Math.floor(seconds / LISTEN_STEP_SECONDS) % LISTEN_LINES.length];
 
   return (
     <Card theme={theme} title={t('card_storm')} icon={Zap} style={styles.card} revealDelay={600}>
@@ -79,13 +105,13 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
               ? `${Math.round(distanceMeters / 10) * 10} m`
               : `${(distanceMeters / 1000).toFixed(distanceMeters < 10000 ? 1 : 0)} km`}
           </Text>
-          <Text style={[styles.caption, { color: theme.textTertiary }]}>
-            {distanceMeters < 3000
-              ? 'Very close — take shelter immediately'
-              : distanceMeters < 10000
-                ? 'Storm is near — stay alert'
-                : 'Storm is at a safe distance'}
-          </Text>
+          <Animated.Text
+            key={resultKey}
+            entering={FadeIn.duration(400)}
+            style={[styles.caption, styles.captionBox, { color: theme.textTertiary }]}
+          >
+            {t(resultKey)}
+          </Animated.Text>
           <Pressable
             onPress={reset}
             style={({ pressed }) => [
@@ -103,9 +129,13 @@ export function StormDistanceCard({ theme, stormRisk }: StormDistanceCardProps) 
           <Text style={[styles.listening, { color: theme.textPrimary }]}>
             {Math.round(seconds * SOUND_SPEED_MPS / 10) * 10} m
           </Text>
-          <Text style={[styles.caption, { color: theme.textSecondary }]}>
-            {t('storm_counting')}
-          </Text>
+          <Animated.Text
+            key={listenKey}
+            entering={FadeIn.duration(350)}
+            style={[styles.caption, styles.captionBox, { color: theme.textSecondary }]}
+          >
+            {t(listenKey)}
+          </Animated.Text>
           <Pressable
             onPress={registerThunder}
             style={({ pressed }) => [
@@ -195,6 +225,10 @@ const styles = StyleSheet.create({
   caption: {
     fontSize: 12.5,
     lineHeight: 17,
+  },
+  // Room for two lines, so the card does not jump when the line rotates.
+  captionBox: {
+    minHeight: 34,
   },
   button: {
     alignSelf: 'flex-start',
