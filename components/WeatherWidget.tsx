@@ -1,27 +1,11 @@
 import React from 'react';
+import { WIDGET_CORNER_RADIUS, widgetGradient, widgetPalette } from '../utils/widgetPalette';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { WeatherBundle } from '../api/types';
 import { describeWmo } from '../utils/wmo';
 import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 
-const C = {
-  dark: {
-    bgFrom: '#0D1631',
-    bgTo: '#22345C',
-    text: '#FFFFFF',
-    subtle: '#B9C6DC',
-    chip: '#2A3C63',
-    /** Amber, used only for the stale-data warning tint. */
-    stale: '#F0B429',
-  },
-  light: {
-    bgFrom: '#DCE9FB',
-    bgTo: '#F7FAFF',
-    text: '#1C2431',
-    subtle: '#5A6B80',
-    chip: '#FFFFFF',
-  },
-} as const;
+const C = { dark: widgetPalette('night') } as const;
 
 interface WeatherWidgetProps {
   temperature: string;
@@ -61,9 +45,9 @@ export function WeatherWidget({
         height: 'match_parent',
         flexDirection: 'column',
         justifyContent: 'center',
-        borderRadius: 20,
+        borderRadius: WIDGET_CORNER_RADIUS,
         padding: 14,
-        backgroundGradient: { from: C.dark.bgFrom, to: C.dark.bgTo, orientation: 'TOP_BOTTOM' },
+        backgroundGradient: widgetGradient(C.dark),
       }}
       clickAction="OPEN_APP"
     >

@@ -1,4 +1,5 @@
 import React from 'react';
+import { WIDGET_CORNER_RADIUS, widgetGradient, widgetPalette } from '../utils/widgetPalette';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
 import type { ColorProp } from 'react-native-android-widget';
 import type { DayPoint, WeatherBundle } from '../api/types';
@@ -6,16 +7,7 @@ import { describeWmo } from '../utils/wmo';
 import { usAqiBand } from '../utils/aqi';
 import { describeFreshness, widgetUpdatedLabel } from '../utils/widgetFreshness';
 
-const C = {
-  bgFrom: '#0D1631',
-  bgTo: '#22345C',
-  text: '#FFFFFF',
-  subtle: '#B9C6DC',
-  chip: '#2A3C63',
-  strip: '#1A2947',
-  /** Amber, used only for the stale-data warning tint. */
-  stale: '#F0B429',
-} as const;
+const C = widgetPalette('night');
 
 /** Short weekday names, hardcoded English like the rest of the widget chrome. */
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -95,9 +87,9 @@ export function WeatherWidgetDashboard({
         width: 'match_parent',
         height: 'match_parent',
         flexDirection: 'column',
-        borderRadius: 20,
+        borderRadius: WIDGET_CORNER_RADIUS,
         padding: 14,
-        backgroundGradient: { from: C.bgFrom, to: C.bgTo, orientation: 'TOP_BOTTOM' },
+        backgroundGradient: widgetGradient(C),
       }}
       clickAction="OPEN_APP"
     >
