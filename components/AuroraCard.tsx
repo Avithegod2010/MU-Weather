@@ -2,12 +2,11 @@ import { t } from '../utils/i18n';
 import React, { useState } from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
-import { Canvas } from '@shopify/react-native-skia';
-import { SvgPath, SvgDot } from './SkiaShapes';
+import { SkiaSeriesChart } from './SkiaSeriesChart';
 import { Star } from '../utils/uiIcons';
 import { Card } from './Card';
 import { formatHourLabel } from '../utils/format';
-import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
+import { scaleY, type CurvePoint } from '../utils/curve';
 import {
   AURORA_LATITUDE_MIN,
   auroraVisibilityChance,
@@ -64,7 +63,7 @@ function KpSparkline({ theme, history }: { theme: AppTheme; history: KpHistory }
     x: width > 0 ? (index / (values.length - 1)) * (width - 2 * SPARK_PADDING) + SPARK_PADDING : 0,
     y: scaleY(value, 0, 9, SPARK_PADDING, SPARK_HEIGHT - SPARK_PADDING),
   }));
-  const peak = points[values.indexOf(Math.max(...values))];
+  const peakIndex = values.indexOf(Math.max(...values));
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
   if (width <= 0) {
@@ -73,10 +72,16 @@ function KpSparkline({ theme, history }: { theme: AppTheme; history: KpHistory }
 
   return (
     <View style={styles.sparkSlot} onLayout={onLayout}>
-      <Canvas style={{ width: width, height: SPARK_HEIGHT }}>
-        <SvgPath d={smoothPath(points)} color="#EFC25C" strokeWidth={2.2} />
-        {peak ? <SvgDot cx={peak.x} cy={peak.y} r={3} fill={dotFill} stroke="#EFC25C" strokeWidth={2} /> : null}
-      </Canvas>
+      <SkiaSeriesChart
+        theme={theme}
+        width={width}
+        height={SPARK_HEIGHT}
+        series={[{ color: '#EFC25C', points, markers: [peakIndex] }]}
+        columns={[]}
+        dotFill={dotFill}
+        dataKey={`aurora|${values.join(',')}|${width}`}
+        scrub={false}
+      />
     </View>
   );
 }

@@ -1,8 +1,9 @@
 import { t } from '../utils/i18n';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { Canvas } from '@shopify/react-native-skia';
-import { SvgPath, SvgDot } from './SkiaShapes';
+import { Canvas, Circle, Group, Path, Skia, type SkPath } from '@shopify/react-native-skia';
+import { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useReducedMotion } from '../utils/reduceMotion';
 import { Sunrise } from '../utils/uiIcons';
 import { Card } from './Card';
 import type { AppTheme } from '../theme/palettes';
@@ -23,6 +24,11 @@ function clock(date: Date | null): string {
 }
 
 const ARC_HEIGHT = 66;
+const DRAW_MS = 900;
+
+function pathFrom(d: string): SkPath {
+  return Skia.Path.MakeFromSVGString(d) ?? Skia.Path.Make();
+}
 /** Same gold the aurora card uses for its Kp line, so the two read as one family. */
 const SUN_GOLD = '#EFC25C';
 
@@ -33,7 +39,20 @@ const SUN_GOLD = '#EFC25C';
  * screen readers, like MoonPhaseVisual / RainGauge in MiniGauges.
  */
 function SunArcVisual({ theme, tw }: { theme: AppTheme; tw: TwilightData }) {
+  const reduced = useReducedMotion();
+  // The sun's path draws from sunrise to its current position, once per layout.
+  const draw = useSharedValue(reduced ? 1 : 0);
   const [width, setWidth] = useState(0);
+  const measured = width > 0;
+  useEffect(() => {
+    if (!measured) return;
+    if (reduced) {
+      draw.value = 1;
+      return;
+    }
+    draw.value = 0;
+    draw.value = withTiming(1, { duration: DRAW_MS, easing: Easing.out(Easing.cubic) });
+  }, [measured, reduced, draw]);
 
   const onLayout = (event: { nativeEvent: { layout: { width: number } } }) => {
     const next = event.nativeEvent.layout.width;
@@ -69,12 +88,16 @@ function SunArcVisual({ theme, tw }: { theme: AppTheme; tw: TwilightData }) {
   return (
     <View style={styles.arcSlot} onLayout={onLayout}>
       <Canvas style={{ width: width, height: ARC_HEIGHT }} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants">
-        <SvgPath d={`M ${left.toFixed(1)} ${cy} A ${r} ${r} 0 0 1 ${right.toFixed(1)} ${cy}`} color={theme.trackColor} strokeWidth={1.5} />
+        <Path path={pathFrom(`M ${left.toFixed(1)} ${cy} A ${r} ${r} 0 0 1 ${right.toFixed(1)} ${cy}`)} style="stroke" strokeWidth={1.5} color={theme.trackColor} />
         {travelled ? (
-          <SvgPath d={travelled} color={SUN_GOLD} strokeWidth={2.2} />
+          <Path path={pathFrom(travelled)} style="stroke" strokeWidth={2.2} strokeCap="round" color={SUN_GOLD} start={0} end={draw} />
         ) : null}
-        <SvgPath d={`M ${left.toFixed(1)} ${cy} L ${right.toFixed(1)} ${cy}`} color={theme.trackColor} strokeWidth={1} />
-        {progress !== null ? <SvgDot cx={dotX} cy={dotY} r={4.5} fill={SUN_GOLD} /> : null}
+        <Path path={pathFrom(`M ${left.toFixed(1)} ${cy} L ${right.toFixed(1)} ${cy}`)} style="stroke" strokeWidth={1} color={theme.trackColor} />
+        {progress !== null ? (
+          <Group opacity={draw}>
+            <Circle cx={dotX} cy={dotY} r={4.5} color={SUN_GOLD} />
+          </Group>
+        ) : null}
       </Canvas>
     </View>
   );

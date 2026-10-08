@@ -1,17 +1,21 @@
 {
   "shots": [
-    "scripts/visual/results/detail/home-rain-probability.png",
-    "scripts/visual/results/detail/home-hourly-forecast.png",
-    "scripts/visual/results/detail/home-trend.png",
-    "scripts/visual/results/detail/home-moon.png",
-    "scripts/visual/results/detail/day-detail-top.png",
-    "scripts/visual/results/detail/day-detail-temperature.png"
+    "results/detail/glass-slider-rest.png",
+    "results/detail/glass-slider-moved.png",
+    "results/detail/sun-twilight-card.png",
+    "results/detail/home-rain-probability.png",
+    "results/detail/home-hourly-forecast.png",
+    "results/detail/home-trend.png",
+    "results/detail/home-moon.png",
+    "results/detail/day-detail-top.png",
+    "results/detail/day-detail-temperature.png",
+    "results/detail/storm-counting-start.png",
+    "results/detail/storm-counting-mid.png",
+    "results/detail/storm-result.png"
   ],
-  "missing": [
-    "tap Storm Distance: Locator.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for get_by_text(\"Storm Distance\", exact=True).first\n    - ",
-    "tap I saw a flash: Locator.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for get_by_text(\"I saw a flash\", exact=True).first\n    - l"
-  ],
+  "missing": [],
   "pageErrors": [
+    "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?",
     "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
   ]
 }

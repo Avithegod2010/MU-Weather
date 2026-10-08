@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
-import { Canvas, Group, LinearGradient, RoundedRect, vec } from '@shopify/react-native-skia';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { PanResponder, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { Canvas, LinearGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia';
 import { Easing, useDerivedValue, useSharedValue, withDelay, withTiming, type SharedValue } from 'react-native-reanimated';
 import { t } from '../utils/i18n';
 import type { AppTheme } from '../theme/palettes';
@@ -39,6 +39,27 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
     grow.value = withDelay(120, withTiming(1, { duration: GROW_MS + STAGGER_MS * BAR_COUNT, easing: Easing.out(Easing.cubic) }));
   }, [dataKey, reduced, grow]);
 
+  // Touch and drag over the plot picks a column. The responder is created once and reads the
+  // geometry through a ref, so it can sit above the early return below.
+  const [scrubIndex, setScrubIndex] = useState<number | null>(null);
+  const geometry = useRef({ plotLeft: GUTTER_LEFT, columnWidth: 0, count: 0 });
+  const responder = useMemo(() => {
+    const indexAt = (x: number) => {
+      const { plotLeft: left, columnWidth: step, count } = geometry.current;
+      if (step <= 0 || count === 0) return null;
+      return Math.min(count - 1, Math.max(0, Math.floor((x - left) / step)));
+    };
+    const pick = (event: { nativeEvent: { locationX: number } }) => setScrubIndex(indexAt(event.nativeEvent.locationX));
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: pick,
+      onPanResponderMove: pick,
+      onPanResponderRelease: () => setScrubIndex(null),
+      onPanResponderTerminate: () => setScrubIndex(null),
+    });
+  }, []);
+
   if (!slice.length) return null;
 
   const peak = slice.reduce(
@@ -50,6 +71,9 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
   const plotRight = Math.max(plotWidth - GUTTER_RIGHT, plotLeft);
   const columnWidth = plotWidth > 0 ? (plotRight - plotLeft) / slice.length : 0;
   const barHeightFor = (value: number) => Math.max(6, (value / 100) * (CHART_HEIGHT - 34));
+  geometry.current = { plotLeft, columnWidth, count: slice.length };
+  const scrubItem = scrubIndex !== null ? slice[scrubIndex] : undefined;
+  const scrubLeft = scrubIndex !== null ? plotLeft + scrubIndex * columnWidth : 0;
 
   return (
     <View
@@ -59,7 +83,11 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
         .replace('{time}', formatHourLabel(peak.time, false))
         .replace('{n}', String(Math.round(peak.precipProbability)))}
     >
-      <View style={[styles.chartArea, { height: CHART_HEIGHT }]} onLayout={(event: LayoutChangeEvent) => setPlotWidth(event.nativeEvent.layout.width)}>
+      <View
+        style={[styles.chartArea, { height: CHART_HEIGHT }]}
+        onLayout={(event: LayoutChangeEvent) => setPlotWidth(event.nativeEvent.layout.width)}
+        {...responder.panHandlers}
+      >
         {[
           { label: t('rain_band_heavy'), ratio: 0.06 },
           { label: t('rain_band_moderate'), ratio: 0.42 },
@@ -79,6 +107,9 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
 
         {plotWidth > 0 ? (
           <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
+            {scrubItem ? (
+              <Rect x={scrubLeft} y={0} width={columnWidth} height={CHART_HEIGHT} color={theme.isLight ? 'rgba(61,111,216,0.10)' : 'rgba(174,207,242,0.14)'} />
+            ) : null}
             {slice.map((item, index) => (
               <RainBar
                 key={item.time}
@@ -90,6 +121,24 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
               />
             ))}
           </Canvas>
+        ) : null}
+
+        {scrubItem && plotWidth > 0 ? (
+          <View
+            pointerEvents="none"
+            style={[
+              styles.scrubTag,
+              {
+                left: Math.min(Math.max(scrubLeft + columnWidth / 2 - 26, 0), Math.max(plotWidth - 52, 0)),
+                backgroundColor: theme.chipBg,
+                borderColor: theme.cardBorder,
+              },
+            ]}
+          >
+            <Text style={[styles.scrubText, { color: theme.textPrimary }]}>
+              {Math.round(scrubItem.precipProbability)}%
+            </Text>
+          </View>
         ) : null}
 
         {plotWidth > 0 && peak.precipProbability >= 15 ? (
@@ -180,6 +229,20 @@ const styles = StyleSheet.create({
     width: 44,
     fontFamily: F.regular,
     textAlign: 'right',
+  },
+  scrubTag: {
+    position: 'absolute',
+    top: 0,
+    width: 52,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 3,
+    alignItems: 'center',
+  },
+  scrubText: {
+    fontSize: 12,
+    fontFamily: F.bold,
+    fontVariant: ['tabular-nums'],
   },
   peakChip: {
     position: 'absolute',

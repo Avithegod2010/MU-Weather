@@ -9,13 +9,12 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import { Canvas } from '@shopify/react-native-skia';
-import { SvgPath, SvgDot } from './SkiaShapes';
+import { SkiaSeriesChart } from './SkiaSeriesChart';
 import Animated from 'react-native-reanimated';
 import { Clock, Thermometer, Umbrella, Wind, X } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
-import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
+import { scaleY, type CurvePoint } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
 import {
@@ -192,6 +191,40 @@ export const HourlyForecast = React.memo(function HourlyForecast({
     viewportWidth.current = event.nativeEvent.layout.width;
   };
 
+  let points: CurvePoint[];
+  let lineColor: string;
+  let formatValue: (hour: HourPoint) => string;
+
+  if (view === 'rain') {
+    lineColor = '#6FA8DC';
+    points = slice.map((hour, index) => ({
+      x: index * COL_WIDTH + COL_WIDTH / 2,
+      y: scaleY(Math.min(hour.precipProbability, 100), 0, 100, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
+    }));
+    formatValue = (hour) => `${Math.round(hour.precipProbability)}%`;
+  } else if (view === 'wind') {
+    lineColor = '#8FD0B8';
+    const maxSpeed = Math.max(
+      10,
+      ...slice.map((hour) => Math.max(hour.windSpeed, hour.windGusts)),
+    ) * 1.15;
+    points = slice.map((hour, index) => ({
+      x: index * COL_WIDTH + COL_WIDTH / 2,
+      y: scaleY(hour.windSpeed, 0, maxSpeed, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
+    }));
+    formatValue = (hour) => `${Math.round(convertWind(hour.windSpeed))}`;
+  } else {
+    lineColor = theme.isLight ? 'rgba(28,36,49,0.32)' : 'rgba(255,255,255,0.42)';
+    const temps = slice.map((hour) => hour.temperature);
+    const min = Math.min(...temps);
+    const max = Math.max(...temps);
+    points = slice.map((hour, index) => ({
+      x: index * COL_WIDTH + COL_WIDTH / 2,
+      y: scaleY(hour.temperature, min, max, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
+    }));
+    formatValue = (hour) => formatTemp(hour.temperature);
+  }
+
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
   const toggleIcons: Array<{ key: HourView; icon: typeof Wind }> = [
@@ -291,12 +324,16 @@ export const HourlyForecast = React.memo(function HourlyForecast({
             importantForAccessibility="no-hide-descendants"
             accessibilityElementsHidden
           >
-            <Canvas style={{ width: contentWidth, height: CURVE_HEIGHT }}>
-              <SvgPath d={path} color={lineColor} strokeWidth={2.5} />
-              {points.map((point, index) => (
-                <SvgDot key={`d-${slice[index].time}`} cx={point.x} cy={point.y} r={slice[index].isNow ? 5.5 : 4} fill={dotFill} stroke={lineColor} strokeWidth={2} />
-              ))}
-            </Canvas>
+            <SkiaSeriesChart
+              theme={theme}
+              width={contentWidth}
+              height={CURVE_HEIGHT}
+              series={[{ color: lineColor, points }]}
+              columns={[]}
+              dotFill={dotFill}
+              dataKey={`hourly|${points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ')}|${lineColor}`}
+              scrub={false}
+            />
           </View>
 
           <View style={[styles.row, styles.tempRow]}>
