@@ -117,6 +117,8 @@ import { computeNowcast } from '../utils/nowcast';
 import { computeHighlights } from '../utils/highlights';
 import { weekendVerdict } from '../utils/weekendScore';
 import { Reveal, ScrollYProvider } from '../components/Reveal';
+import { ChapterHeader } from '../components/ChapterHeader';
+import { HeaderBackdrop } from '../components/HeaderBackdrop';
 import { Surface } from '../components/Surface';
 import { SkeletonDashboard } from '../components/Skeleton';
 import { ErrorState } from '../components/ErrorState';
@@ -486,6 +488,30 @@ export function HomeScreen() {
 
   const refreshing = weather.status === 'refreshing';
 
+  // Chapter headers appear only when a section inside the chapter will render.
+  // Each test repeats the flag and tile checks of the sections it groups.
+  const chapterNow =
+    showSection('highlights') ||
+    showSection('journal') ||
+    showSection('nowcast') ||
+    (FEATURES.meteoalarm && showSection('warnings'));
+  const chapterToday =
+    showSection('rainChart') || showSection('hourly') || (FEATURES.trendChart && showSection('trend'));
+  const chapterWeek =
+    showSection('daily') || showSection('pastWeek') || (FEATURES.climate && showSection('climate'));
+  const chapterPlan =
+    (FEATURES.bestWindow && showSection('bestWindow') && (!!bestWindowLabel || weekend != null)) ||
+    (FEATURES.activityPlanner && showSection('activity')) ||
+    showSection('tripPlanner') ||
+    (FEATURES.marineForecast && showSection('marine')) ||
+    (FEATURES.calendarWeather && showSection('calendar'));
+  const chapterInsights =
+    showSection('yearReview') ||
+    showSection('records') ||
+    (FEATURES.onThisDay && showSection('onThisDay')) ||
+    (FEATURES.aurora && showSection('aurora')) ||
+    (FEATURES.modelComparison && showSection('models'));
+
   if (!bootstrapped || locating || (weather.status === 'loading' && !weather.data && !weather.errorMessage)) {
     return (
       <View style={[styles.root, styles.center]}>
@@ -497,17 +523,23 @@ export function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      <AnimatedBackground gradient={theme.gradient} particles={particles} />
+      <AnimatedBackground
+        gradient={theme.gradient}
+        particles={particles}
+        condition={condition}
+        isDay={weatherThemeResult.isDay}
+      />
       <StatusBar style={theme.isLight ? 'dark' : 'light'} />
 
       {active ? (
         <ScrollYProvider value={scrollY}>
         <Animated.ScrollView
           ref={scrollRef}
+          stickyHeaderIndices={[0]}
           contentContainerStyle={[
             styles.content,
             theme.density === 'compact' && styles.contentCompact,
-            { paddingTop: insets.top + 8, paddingBottom: insets.bottom + 32 },
+            { paddingBottom: insets.bottom + 32 },
           ]}
           showsVerticalScrollIndicator={false}
           onScroll={scrollHandler}
@@ -524,7 +556,8 @@ export function HomeScreen() {
             />
           }
         >
-          <View style={styles.header}>
+          <View style={[styles.header, { paddingTop: insets.top + 8, marginHorizontal: -16, paddingHorizontal: 16 }]}>
+            <HeaderBackdrop color={theme.gradient[0]} />
             <Surface theme={theme} style={styles.iconButton}>
               <Pressable
                 onPress={() => {
@@ -685,6 +718,12 @@ export function HomeScreen() {
                 </Reveal>
               ) : null}
 
+              {chapterNow ? (
+                <Reveal delay={40}>
+                  <ChapterHeader theme={theme} title={t('chapter_now')} />
+                </Reveal>
+              ) : null}
+
               {showSection('highlights') ? (
                 <Reveal delay={60}>
                   <HighlightsCard theme={theme} highlights={highlights} />
@@ -714,14 +753,6 @@ export function HomeScreen() {
                 </View>
               ) : null}
 
-              {showSection('yearReview') ? (
-                <YearReviewCard theme={theme} rows={yearReview.rows} revealDelay={140} />
-              ) : null}
-
-              {showSection('records') ? (
-                <RecordCard theme={theme} records={records.records} revealDelay={180} />
-              ) : null}
-
               {showSection('nowcast') ? (
                 <Reveal delay={80}>
                   <NowcastCard
@@ -732,8 +763,24 @@ export function HomeScreen() {
                 </Reveal>
               ) : null}
 
+              {FEATURES.meteoalarm && showSection('warnings') ? (
+                <Reveal delay={156}>
+                  <WarningsCard
+                    theme={theme}
+                    warnings={meteoAlarm.warnings}
+                    status={meteoAlarm.status}
+                  />
+                </Reveal>
+              ) : null}
+
+              {chapterToday ? (
+                <Reveal delay={40}>
+                  <ChapterHeader theme={theme} title={t('chapter_today')} />
+                </Reveal>
+              ) : null}
+
               {showSection('rainChart') ? (
-                <Reveal delay={100}>
+                <Reveal delay={100} wipe>
                   <Card theme={theme} title={t('card_rain')}>
                     <RainProbabilityChart theme={theme} hours={weather.data.hourly} />
                   </Card>
@@ -741,8 +788,20 @@ export function HomeScreen() {
               ) : null}
 
               {showSection('hourly') ? (
-                <Reveal delay={170}>
+                <Reveal delay={170} wipe>
                   <HourlyForecast theme={theme} hours={weather.data.hourly} focus={hourFocus} />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.trendChart && showSection('trend') ? (
+                <Reveal delay={140} wipe>
+                  <TrendChart theme={theme} hours={weather.data.hourly} ensemble={ensemble.spread?.points ?? null} />
+                </Reveal>
+              ) : null}
+
+              {chapterWeek ? (
+                <Reveal delay={40}>
+                  <ChapterHeader theme={theme} title={t('chapter_week')} />
                 </Reveal>
               ) : null}
 
@@ -754,12 +813,6 @@ export function HomeScreen() {
                     days={weather.data.daily}
                     onPressDay={handlePressDay}
                   />
-                </Reveal>
-              ) : null}
-
-              {FEATURES.trendChart && showSection('trend') ? (
-                <Reveal delay={140}>
-                  <TrendChart theme={theme} hours={weather.data.hourly} ensemble={ensemble.spread?.points ?? null} />
                 </Reveal>
               ) : null}
 
@@ -786,24 +839,16 @@ export function HomeScreen() {
                 </Reveal>
               ) : null}
 
-              {FEATURES.onThisDay && showSection('onThisDay') ? (
-                <Reveal delay={154}>
-                  <OnThisDayCard
-                    theme={theme}
-                    years={onThisDay.years}
-                    status={onThisDay.status}
-                    onExplore={() => setHistoryOpen(true)}
-                  />
+              {chapterPlan ? (
+                <Reveal delay={40}>
+                  <ChapterHeader theme={theme} title={t('chapter_plan')} />
                 </Reveal>
               ) : null}
 
-              {FEATURES.meteoalarm && showSection('warnings') ? (
-                <Reveal delay={156}>
-                  <WarningsCard
-                    theme={theme}
-                    warnings={meteoAlarm.warnings}
-                    status={meteoAlarm.status}
-                  />
+              {/* ── bot2: aurora + alerts + wear ── */}
+              {FEATURES.bestWindow && showSection('bestWindow') && bestWindow && bestWindowLabel ? (
+                <Reveal delay={210}>
+                  <BestWindowCard theme={theme} line={bestWindowLabel} score={bestWindow.score} />
                 </Reveal>
               ) : null}
 
@@ -823,6 +868,12 @@ export function HomeScreen() {
                 </Reveal>
               ) : null}
 
+              {FEATURES.marineForecast && showSection('marine') ? (
+                <Reveal delay={200}>
+                  <MarineCard theme={theme} state={marine} />
+                </Reveal>
+              ) : null}
+
               {FEATURES.calendarWeather && showSection('calendar') ? (
                 <Reveal delay={180}>
                   <CalendarCard
@@ -834,9 +885,39 @@ export function HomeScreen() {
                 </Reveal>
               ) : null}
 
-              {FEATURES.marineForecast && showSection('marine') ? (
-                <Reveal delay={200}>
-                  <MarineCard theme={theme} state={marine} />
+              {chapterInsights ? (
+                <Reveal delay={40}>
+                  <ChapterHeader theme={theme} title={t('chapter_insights')} />
+                </Reveal>
+              ) : null}
+
+              {showSection('yearReview') ? (
+                <YearReviewCard theme={theme} rows={yearReview.rows} revealDelay={140} />
+              ) : null}
+
+              {showSection('records') ? (
+                <RecordCard theme={theme} records={records.records} revealDelay={180} />
+              ) : null}
+
+              {FEATURES.onThisDay && showSection('onThisDay') ? (
+                <Reveal delay={154}>
+                  <OnThisDayCard
+                    theme={theme}
+                    years={onThisDay.years}
+                    status={onThisDay.status}
+                    onExplore={() => setHistoryOpen(true)}
+                  />
+                </Reveal>
+              ) : null}
+
+              {FEATURES.aurora && showSection('aurora') ? (
+                <Reveal delay={220}>
+                  <AuroraCard
+                    theme={theme}
+                    forecast={aurora.forecast}
+                    latitude={active?.latitude ?? null}
+                    extras={aurora.extras}
+                  />
                 </Reveal>
               ) : null}
 
@@ -879,7 +960,7 @@ export function HomeScreen() {
               ) : null}
 
               <Reveal delay={160}>
-                <SectionTitle theme={theme}>{t('sec_details')}</SectionTitle>
+                <ChapterHeader theme={theme} title={t('sec_details')} />
                 <DetailCards
                   theme={theme}
                   current={weather.data.current}
