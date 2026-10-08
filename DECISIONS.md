@@ -69,4 +69,20 @@ it. The gradient fallback stretches the theme gradient across the pill's own hei
 that the sky there does not have. It is kept as the fallback, as requested, but it is an approximation.
 
 The sliding highlight refracts a snapshot of the Home sky canvas. The snapshot is taken every 1.5 s, once under
-reduced motion. The gradient shader remains the fallback when no snapshot exists. 
+reduced motion. The gradient shader remains the fallback when no snapshot exists.
+
+## 7. Lint setup and the compiler-era hook rules
+
+`npm run lint` runs Expo's own rules (`eslint-config-expo`, ESLint 9 flat config). The repo had no lint
+tooling before this.
+
+The first run reported 187 errors and 365 warnings. Most errors came from the React Compiler-era hook
+rules: `react-hooks/refs` (148), `set-state-in-effect` (31), `purity`, `immutability` and `static-components`.
+They flag reading and writing refs during render, and setting state from effects after layout. The
+animation code here does both on purpose, for worklets and for the first layout measurement. Fixing 187
+sites would be a broad refactor of the animation code, so those five rules are kept as **warnings**. They
+stay visible and do not fail the lint. Hook-order and other real correctness rules stay errors.
+
+Result: 0 errors. The remaining warnings are `no-unused-vars` (252), `array-type` (78), `import/first` (16),
+`import/no-duplicates` (12), `exhaustive-deps` (5). Clearing these is a follow-up, not a blocker.
+

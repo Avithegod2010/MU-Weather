@@ -332,21 +332,21 @@ function SunLayer({ width, height, clock, reducedMotion }: LayerProps) {
 
   return (
     <>
-      <Group opacity={glowOpacity}>
-        {glowImage ? (
-          <SkiaImage image={glowImage} x={0} y={0} width={width} height={height} fit="fill" />
-        ) : (
-          // Fallback when an offscreen surface is unavailable: the same discs, drawn live.
-          <>
-            <Circle cx={centerX} cy={centerY} r={glowRadius * 0.55} color="rgba(255,244,214,0.42)">
-              <BlurMask blur={glowRadius * 0.32} style="normal" />
-            </Circle>
-            <Circle cx={centerX} cy={centerY} r={glowRadius * 0.16} color="rgba(255,255,255,0.55)">
-              <BlurMask blur={glowRadius * 0.08} style="normal" />
-            </Circle>
-          </>
-        )}
-      </Group>
+      {glowImage ? (
+        // The breathing alpha goes on the image itself. A group opacity over a full-screen child
+        // would force an offscreen layer every frame.
+        <SkiaImage image={glowImage} x={0} y={0} width={width} height={height} fit="fill" opacity={glowOpacity} />
+      ) : (
+        // Fallback when an offscreen surface is unavailable: the same discs, drawn live.
+        <Group opacity={glowOpacity}>
+          <Circle cx={centerX} cy={centerY} r={glowRadius * 0.55} color="rgba(255,244,214,0.42)">
+            <BlurMask blur={glowRadius * 0.32} style="normal" />
+          </Circle>
+          <Circle cx={centerX} cy={centerY} r={glowRadius * 0.16} color="rgba(255,255,255,0.55)">
+            <BlurMask blur={glowRadius * 0.08} style="normal" />
+          </Circle>
+        </Group>
+      )}
       <Group origin={vec(centerX, centerY)} transform={rayTransform}>
         <Points points={rays.even} mode="lines" color="rgba(255,255,255,0.17)" style="stroke" strokeWidth={3} strokeCap="round" />
         <Points points={rays.odd} mode="lines" color="rgba(255,255,255,0.17)" style="stroke" strokeWidth={2} strokeCap="round" />

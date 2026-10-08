@@ -1,0 +1,51 @@
+{
+  "results": [
+    {
+      "style": "clear",
+      "highlights": [
+        {
+          "x": 145,
+          "y": 460,
+          "width": 100,
+          "height": 38,
+          "opacity": "1"
+        },
+        {
+          "x": 16,
+          "y": 1169,
+          "width": 0,
+          "height": 26,
+          "opacity": "1"
+        }
+      ],
+      "visible": 1,
+      "pageErrors": [
+        "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+      ]
+    },
+    {
+      "style": "glass",
+      "highlights": [
+        {
+          "x": 145,
+          "y": 460,
+          "width": 100,
+          "height": 38,
+          "opacity": "1"
+        },
+        {
+          "x": 16,
+          "y": 1169,
+          "width": 0,
+          "height": 26,
+          "opacity": "1"
+        }
+      ],
+      "visible": 1,
+      "pageErrors": [
+        "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+      ]
+    }
+  ],
+  "pass": true
+}

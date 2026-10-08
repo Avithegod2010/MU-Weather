@@ -76,3 +76,17 @@ environment, so no performance improvement is claimed. The `pageErrors: 1` entry
 - `sun-twilight-card.png`: the title and labels wrap in full, nothing truncated. The arc is empty at night, as expected.
 - Storm copy: all near and far lines reviewed in all 14 locales, no changes needed. A native speaker should still
   confirm the close-band safety lines.
+
+## Pass 3: journal pill, sky frame time, lint
+
+- `journal_pill_check.py` -> `results/journal/journal-pill.json`: the journal highlight is visible at rest in both
+  clear and glass styles (100x38 px at 145,460). Cause of the earlier missing pill: `measureWeb` took a single
+  measurement at 400 ms. When that read gave no offset parent, or a zero size, the zero frame stayed, with no
+  re-measure. Fixed by retrying every 100 ms for up to 3 s, and by not showing a zero-size highlight.
+  One other zero-width highlight exists at y 1169 (another group). It is invisible, not fixed here.
+- `frames-after-glow-opacity.json`: the sun glow's breathing opacity moved from a full-screen group onto the cached
+  image. Clear-day mean 13.9 ms to 11.5 ms; clear-night 13.7 ms to 11.2 ms. The SVG baseline is 6.0 ms, so the
+  Skia sky is still about twice as slow in software Chromium. Remaining cost: the full-canvas glow draw and the
+  rotating rays. Not measured on a device.
+- Lint: see DECISIONS.md section 7. `npm run lint` exits 0.
+
