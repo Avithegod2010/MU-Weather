@@ -3,61 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
+  Extrapolation,
+  cancelAnimation,
+  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 import {
-  Sun,
-  Moon,
-  CloudSun,
-  CloudMoon,
-  Cloud,
-  CloudFog,
-  CloudDrizzle,
-  CloudRainWind,
-  CloudRain,
-  CloudSnow,
-  CloudLightning,
-  CloudHail,
-  Clock,
-  MapPin,
   ArrowUp,
   ArrowDown,
-  Droplet,
-  Droplets,
-  Wind,
-  Gauge,
-  Eye,
-  Umbrella,
-  WifiOff,
-  RefreshCw,
-  SearchX,
-  Search,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  Vibrate,
-  Thermometer,
-  Database,
-  Info,
-  Map,
-  Bell,
-  Settings,
-  TriangleAlert,
-  Navigation2,
-  Radar,
-  Flower2,
-  TrendingDown,
-  Navigation,
-  Sunrise,
-  Sunset,
+  MapPin,
   Volume2,
-  Square,
   Share,
+  Square,
 } from '../utils/uiIcons';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
@@ -66,6 +28,9 @@ import { F } from '../theme/typography';
 import { haptics } from '../utils/haptics';
 import { buildSpokenForecast, speakForecast, stopForecastSpeech } from '../utils/speech';
 import { isDigestSpeaking, stopDigestSpeech } from '../utils/spokenDigest';
+import { useCountUp } from '../utils/motion';
+import { useReducedMotion } from '../utils/reduceMotion';
+import { useScrollY } from './Reveal';
 import type { CurrentConditions, DayPoint, GeoLocation } from '../api/types';
 
 interface CurrentWeatherProps {
@@ -84,9 +49,19 @@ interface CurrentWeatherProps {
 export function CurrentWeather({ theme, location, current, today, conditionLabel, commentary, onShare, sharing }: CurrentWeatherProps) {
   const compact = theme.density === 'compact';
   const [speaking, setSpeaking] = useState(false);
+  const reducedMotion = useReducedMotion();
+  const scrollY = useScrollY();
+
+  // The temperature counts up from zero on first render (instant under reduce-motion).
+  const shownTemperature = useCountUp(current.temperature, { from: 0, duration: 1000, delay: 150 });
+
+  const iconSize = compact ? 72 : 84;
+  const haloSize = iconSize + 124;
 
   const floatY = useSharedValue(0);
+  const breathe = useSharedValue(0);
   useEffect(() => {
+    if (reducedMotion) return;
     floatY.value = withDelay(
       400,
       withRepeat(
@@ -95,8 +70,30 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
         true,
       ),
     );
-  }, [floatY]);
+    breathe.value = withRepeat(
+      withTiming(1, { duration: 3800, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true,
+    );
+    return () => {
+      cancelAnimation(floatY);
+      cancelAnimation(breathe);
+    };
+  }, [floatY, breathe, reducedMotion]);
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: floatY.value }] }));
+  const haloStyle = useAnimatedStyle(() => ({
+    opacity: 0.72 + breathe.value * 0.28,
+    transform: [{ scale: 0.94 + breathe.value * 0.1 }],
+  }));
+
+  // Scroll parallax: the hero drifts slower than the content and fades as it leaves the top.
+  const parallaxStyle = useAnimatedStyle(() => {
+    const offset = scrollY ? Math.max(0, scrollY.value) : 0;
+    return {
+      transform: [{ translateY: offset * 0.18 }],
+      opacity: interpolate(offset, [0, 320], [1, 0.45], Extrapolation.CLAMP),
+    };
+  });
 
   const heroLabel = [
     location.name,
@@ -142,8 +139,8 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
 
   return (
     <>
-    <View
-      style={[styles.container, compact && styles.containerCompact]}
+    <Animated.View
+      style={[styles.container, compact && styles.containerCompact, parallaxStyle]}
       accessible={true}
       accessibilityRole="text"
       accessibilityLabel={heroLabel}
@@ -160,16 +157,40 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
       </View>
 
       <Animated.View style={[styles.iconWrap, compact && styles.iconWrapCompact, floatStyle]}>
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.halo,
+            {
+              width: haloSize,
+              height: haloSize,
+              left: (iconSize - haloSize) / 2,
+              top: (iconSize - haloSize) / 2,
+            },
+            haloStyle,
+          ]}
+        >
+          <Svg width={haloSize} height={haloSize}>
+            <Defs>
+              <RadialGradient id="muHeroHalo" cx="50%" cy="50%" rx="50%" ry="50%">
+                <Stop offset="0" stopColor={theme.accent} stopOpacity="0.5" />
+                <Stop offset="0.45" stopColor={theme.accent} stopOpacity="0.16" />
+                <Stop offset="1" stopColor={theme.accent} stopOpacity="0" />
+              </RadialGradient>
+            </Defs>
+            <Circle cx={haloSize / 2} cy={haloSize / 2} r={haloSize / 2} fill="url(#muHeroHalo)" />
+          </Svg>
+        </Animated.View>
         <WeatherIcon
           code={current.weatherCode}
           isDay={current.isDay}
-          size={compact ? 72 : 84}
+          size={iconSize}
           themeColor={theme.textPrimary}
         />
       </Animated.View>
 
       <Text style={[styles.temperature, compact && styles.temperatureCompact, { color: theme.textPrimary }]}>
-        {formatTemp(current.temperature)}
+        {formatTemp(shownTemperature)}
       </Text>
 
       <Text style={[styles.conditionText, { color: theme.textPrimary }]}>{conditionLabel}</Text>
@@ -194,7 +215,7 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
           </Text>
         </View>
       ) : null}
-    </View>
+    </Animated.View>
     <View style={styles.heroActions}>
       <Pressable
         onPress={toggleSpeech}
@@ -254,6 +275,9 @@ const styles = StyleSheet.create({
   },
   iconWrapCompact: {
     marginBottom: 1,
+  },
+  halo: {
+    position: 'absolute',
   },
   temperature: {
     fontSize: 96,

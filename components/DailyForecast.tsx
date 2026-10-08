@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { t, tWmo } from '../utils/i18n';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, ChevronDown } from '../utils/uiIcons';
+import { useRevealProgress } from './Reveal';
+import { useReducedMotion } from '../utils/reduceMotion';
 import { haptics } from '../utils/haptics';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
@@ -62,14 +65,11 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
               {formatTemp(day.tMin)}
             </Text>
             <View style={[styles.barTrack, { backgroundColor: theme.trackColor }]}>
-              <LinearGradient
-                colors={[tempColor(day.tMin), tempColor(day.tMax)] as [string, string]}
-                start={{ x: 0, y: 0.5 }}
-                end={{ x: 1, y: 0.5 }}
-                style={[
-                  styles.barFill,
-                  { left: `${leftPct}%`, width: `${widthPct}%` },
-                ]}
+              <GrowBar
+                colors={[tempColor(day.tMin), tempColor(day.tMax)]}
+                leftPct={leftPct}
+                widthPct={widthPct}
+                order={index}
               />
             </View>
             <Text style={[styles.tempMax, { color: theme.textPrimary }]}>
@@ -132,6 +132,43 @@ export function DailyForecast({ theme, days, onPressDay }: DailyForecastProps) {
         </Pressable>
       ) : null}
     </View>
+  );
+}
+
+/**
+ * Temperature-range segment that grows out from its left edge once the
+ * surrounding Reveal plays. Rows are staggered so the week fills in top-down.
+ */
+function GrowBar({
+  colors,
+  leftPct,
+  widthPct,
+  order,
+}: {
+  colors: [string, string];
+  leftPct: number;
+  widthPct: number;
+  order: number;
+}) {
+  const progress = useRevealProgress();
+  const reducedMotion = useReducedMotion();
+  const stagger = Math.min(order * 0.07, 0.5);
+  const growStyle = useAnimatedStyle(() => {
+    if (!progress || reducedMotion) return { width: `${widthPct}%` };
+    const local = Math.min(1, Math.max(0, (progress.value - stagger) / (1 - stagger)));
+    const eased = 1 - Math.pow(1 - local, 3);
+    return { width: `${widthPct * eased}%` };
+  });
+
+  return (
+    <Animated.View style={[styles.barFill, { left: `${leftPct}%` }, growStyle]}>
+      <LinearGradient
+        colors={colors}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={StyleSheet.absoluteFill}
+      />
+    </Animated.View>
   );
 }
 
