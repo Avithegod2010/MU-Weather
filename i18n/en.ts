@@ -896,6 +896,9 @@ export const en = {
   chapter_week: 'This week',
   chapter_plan: 'Plan',
   chapter_insights: 'Insights',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Animated sky',
+  s_sky_motion_sub: 'Sun, stars, clouds, fog, lightning and rain move. Off keeps the sky still and saves battery.',
 };
 
 export type Strings = typeof en;

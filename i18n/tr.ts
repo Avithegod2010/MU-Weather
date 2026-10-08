@@ -770,4 +770,7 @@ export const tr: Strings = {
   chapter_week: 'Bu hafta',
   chapter_plan: 'Planla',
   chapter_insights: 'İçgörüler',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Hareketli gökyüzü',
+  s_sky_motion_sub: 'Güneş, yıldızlar, bulutlar, sis, şimşek ve yağmur hareket eder. Kapalıyken gökyüzü durur ve pil daha uzun gider.',
 };

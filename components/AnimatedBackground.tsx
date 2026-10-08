@@ -26,6 +26,8 @@ interface AnimatedBackgroundProps {
   condition?: WeatherCondition | null;
   /** Day or night. Chooses the sun or the stars. Defaults to day. */
   isDay?: boolean;
+  /** False keeps the sky still: no sun, star, cloud, fog or lightning motion, and no rain or snow. */
+  animated?: boolean;
 }
 
 type GradientTuple = [string, string, string];
@@ -61,9 +63,11 @@ export function AnimatedBackground({
   particles = null,
   condition = null,
   isDay = true,
+  animated = true,
 }: AnimatedBackgroundProps) {
-  // Decorative rain/snow is skipped entirely when the OS asks for less motion.
-  const reducedMotion = useReducedMotion();
+  // Still when the OS asks for less motion or the sky animation is switched off.
+  // Decorative rain and snow are skipped entirely in that case.
+  const reducedMotion = useReducedMotion() || !animated;
   const { width, height } = useWindowDimensions();
   const [layerA, setLayerA] = useState<GradientTuple>([...gradient] as GradientTuple);
   const [layerB, setLayerB] = useState<GradientTuple | null>(null);

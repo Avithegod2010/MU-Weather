@@ -439,4 +439,7 @@ export const nl: Strings = {
   chapter_week: 'Deze week',
   chapter_plan: 'Plannen',
   chapter_insights: 'Inzichten',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Geanimeerde lucht',
+  s_sky_motion_sub: 'De zon, sterren, wolken, mist, bliksem en regen bewegen. Uitgeschakeld blijft de lucht stil en gaat er minder batterij op.',
 };

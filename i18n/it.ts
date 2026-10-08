@@ -439,4 +439,7 @@ export const it: Strings = {
   chapter_week: 'Questa settimana',
   chapter_plan: 'Pianifica',
   chapter_insights: 'Approfondimenti',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Cielo animato',
+  s_sky_motion_sub: 'Sole, stelle, nuvole, nebbia, fulmini e pioggia si muovono. Disattivato, il cielo resta fermo e la batteria dura di più.',
 };

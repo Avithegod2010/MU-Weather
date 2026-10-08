@@ -439,4 +439,7 @@ export const hi: Strings = {
   chapter_week: 'इस हफ़्ते',
   chapter_plan: 'योजना',
   chapter_insights: 'अंतर्दृष्टि',
+  // ── settings: sky motion ──
+  s_sky_motion: 'एनिमेटेड आकाश',
+  s_sky_motion_sub: 'सूरज, तारे, बादल, कोहरा, बिजली और बारिश चलते हैं। बंद होने पर आकाश स्थिर रहता है और बैटरी बचती है।',
 };

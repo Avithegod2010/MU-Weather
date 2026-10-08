@@ -439,4 +439,7 @@ export const id: Strings = {
   chapter_week: 'Minggu ini',
   chapter_plan: 'Rencana',
   chapter_insights: 'Wawasan',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Langit animasi',
+  s_sky_motion_sub: 'Matahari, bintang, awan, kabut, kilat, dan hujan bergerak. Jika dimatikan, langit diam dan baterai lebih hemat.',
 };

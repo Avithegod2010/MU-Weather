@@ -439,4 +439,7 @@ export const de: Strings = {
   chapter_week: 'Diese Woche',
   chapter_plan: 'Planen',
   chapter_insights: 'Einblicke',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Animierter Himmel',
+  s_sky_motion_sub: 'Sonne, Sterne, Wolken, Nebel, Blitze und Regen bewegen sich. Ausgeschaltet bleibt der Himmel still und der Akku wird geschont.',
 };

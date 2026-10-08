@@ -770,4 +770,7 @@ export const pt: Strings = {
   chapter_week: 'Esta semana',
   chapter_plan: 'Planear',
   chapter_insights: 'Análises',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Céu animado',
+  s_sky_motion_sub: 'O sol, as estrelas, as nuvens, a neblina, os relâmpagos e a chuva se movem. Desativado, o céu fica parado e a bateria dura mais.',
 };

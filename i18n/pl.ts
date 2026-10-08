@@ -770,4 +770,7 @@ export const pl: Strings = {
   chapter_week: 'Ten tydzień',
   chapter_plan: 'Planowanie',
   chapter_insights: 'Spostrzeżenia',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Animowane niebo',
+  s_sky_motion_sub: 'Słońce, gwiazdy, chmury, mgła, błyskawice i deszcz się poruszają. Po wyłączeniu niebo jest nieruchome i bateria dłużej wytrzymuje.',
 };

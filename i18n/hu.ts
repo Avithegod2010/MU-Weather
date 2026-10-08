@@ -439,4 +439,7 @@ export const hu: Strings = {
   chapter_week: 'Ezen a héten',
   chapter_plan: 'Tervezés',
   chapter_insights: 'Elemzések',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Animált égbolt',
+  s_sky_motion_sub: 'A nap, a csillagok, a felhők, a köd, a villámok és az eső mozognak. Kikapcsolva az égbolt mozdulatlan marad, és kevesebb energiát használ.',
 };

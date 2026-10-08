@@ -439,4 +439,7 @@ export const bn: Strings = {
   chapter_week: 'এই সপ্তাহ',
   chapter_plan: 'পরিকল্পনা',
   chapter_insights: 'অন্তর্দৃষ্টি',
+  // ── settings: sky motion ──
+  s_sky_motion: 'অ্যানিমেটেড আকাশ',
+  s_sky_motion_sub: 'সূর্য, তারা, মেঘ, কুয়াশা, বজ্রপাত ও বৃষ্টি চলে। বন্ধ করলে আকাশ স্থির থাকবে এবং ব্যাটারি বাঁচবে।',
 };

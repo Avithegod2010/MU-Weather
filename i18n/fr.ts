@@ -439,4 +439,7 @@ export const fr: Strings = {
   chapter_week: 'Cette semaine',
   chapter_plan: 'Planifier',
   chapter_insights: 'Analyses',
+  // ── settings: sky motion ──
+  s_sky_motion: 'Ciel animé',
+  s_sky_motion_sub: 'Le soleil, les étoiles, les nuages, le brouillard, les éclairs et la pluie bougent. Désactivé, le ciel reste immobile et la batterie est préservée.',
 };
