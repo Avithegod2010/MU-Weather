@@ -11,6 +11,7 @@
  */
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Platform,
   Pressable,
   StyleSheet,
   View,
@@ -49,10 +50,10 @@ function sameFrame(a: Frame | undefined, b: Frame): boolean {
   return !!a && a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
 }
 
-/** Frosted tint for a glass highlight. Solid colours get 70% opacity so the blur shows through. */
+/** Glass tint: nearly clear, so the blur and the bright rim carry the effect, as on iOS glass. */
 function glassTint(color: string | undefined, isLight: boolean): string {
-  if (!color) return isLight ? 'rgba(255,255,255,0.34)' : 'rgba(255,255,255,0.12)';
-  return /^#[0-9a-fA-F]{6}$/.test(color) ? `${color}B3` : color;
+  if (!color) return isLight ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)';
+  return /^#[0-9a-fA-F]{6}$/.test(color) ? `${color}2E` : color;
 }
 
 /**
@@ -188,10 +189,16 @@ function SlidingHighlight({
           />
           <View style={[StyleSheet.absoluteFill, { backgroundColor: glassTint(color, theme.isLight) }]} />
           <LinearGradient
-            colors={['rgba(255,255,255,0.45)', 'rgba(255,255,255,0)']}
+            colors={['rgba(255,255,255,0.24)', 'rgba(255,255,255,0)']}
             start={{ x: 0.5, y: 0 }}
             end={{ x: 0.5, y: 1 }}
             style={styles.glassSheen}
+          />
+          <LinearGradient
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.07)']}
+            start={{ x: 0.5, y: 0.55 }}
+            end={{ x: 0.5, y: 1 }}
+            style={StyleSheet.absoluteFill}
           />
         </View>
         <View
@@ -200,7 +207,7 @@ function SlidingHighlight({
             styles.glassEdge,
             {
               borderRadius: radius,
-              borderColor: stroke ?? (theme.isLight ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.25)'),
+              borderColor: stroke ?? (theme.isLight ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.32)'),
             },
           ]}
         />
@@ -252,6 +259,32 @@ interface GroupRegistry {
   registerTarget: (index: number, node: View | null) => void;
 }
 
+/**
+ * A node's frame inside `within`, from layout offsets rather than screen coordinates.
+ * Offsets ignore CSS transforms, so a card that is still scaling in cannot skew the frame.
+ * The result is relative to the inside of `within`'s border. Null when the node is not laid out.
+ */
+function offsetFrame(node: View, within: View): Frame | null {
+  const el = node as unknown as HTMLElement;
+  const root = within as unknown as HTMLElement;
+  let x = 0;
+  let y = 0;
+  let current: HTMLElement = el;
+  while (current !== root) {
+    x += current.offsetLeft;
+    y += current.offsetTop;
+    const parent = current.offsetParent as HTMLElement | null;
+    if (!parent) return null;
+    // Offsets are measured from a parent's padding edge. Each intermediate parent's border sits outside it.
+    if (parent !== root) {
+      x += parent.clientLeft;
+      y += parent.clientTop;
+    }
+    current = parent;
+  }
+  return { x, y, width: el.offsetWidth, height: el.offsetHeight };
+}
+
 /** Container for a set of SlidingItems. Its direct children must be items (or wrappers around them). */
 export function SlidingGroup({
   theme,
@@ -296,8 +329,7 @@ export function SlidingGroup({
   );
 
   // Layout events do not fire for a pure move on the web, so the selected item and its
-  // target are measured again whenever the selection changes. Window coordinates keep
-  // this correct on native and web alike.
+  // target are measured again whenever the selection changes.
   const settled = useRef(false);
   useEffect(() => {
     // The first pass is left to the layout events: the sheet may still be animating in.
@@ -308,7 +340,27 @@ export function SlidingGroup({
     const container = containerRef.current;
     const item = itemNodes.current.get(activeIndex);
     if (!container || !item) return;
-    // Positions are relative to the inside of the container's border, like child layout.
+
+    if (Platform.OS === 'web') {
+      // Layout offsets are immune to a transform still running on an ancestor.
+      const itemFrame = offsetFrame(item, container);
+      if (!itemFrame) return;
+      report(activeIndex, itemFrame, 'item');
+      const target = targetNodes.current.get(activeIndex);
+      const targetFrame = target ? offsetFrame(target, item) : null;
+      if (targetFrame) {
+        // A target's frame is relative to its item's outer edge, so the item's border is added.
+        const itemEl = item as unknown as HTMLElement;
+        report(
+          activeIndex,
+          { ...targetFrame, x: targetFrame.x + itemEl.clientLeft, y: targetFrame.y + itemEl.clientTop },
+          'target',
+        );
+      }
+      return;
+    }
+
+    // Native: window coordinates. Positions are relative to the inside of the container's border, like child layout.
     const flat = StyleSheet.flatten(styleRef.current) as ViewStyle | undefined;
     const borderLeft = flat?.borderLeftWidth ?? flat?.borderWidth ?? 0;
     const borderTop = flat?.borderTopWidth ?? flat?.borderWidth ?? 0;
@@ -425,8 +477,8 @@ const styles = StyleSheet.create({
   absolute: { position: 'absolute', left: 0, top: 0 },
   glassShadow: {
     shadowColor: '#000000',
-    shadowOpacity: 0.16,
-    shadowRadius: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
   },

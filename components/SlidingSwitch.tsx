@@ -111,7 +111,7 @@ export function SlidingSwitch({
         style={[styles.thumb, thumbStyle, liquid ? styles.glassThumbShadow : null]}
       >
         {liquid ? (
-          <View style={[StyleSheet.absoluteFill, styles.thumbFill, styles.glassThumbEdge, { backgroundColor: knob }]}>
+          <View style={[StyleSheet.absoluteFill, styles.thumbFill, styles.glassThumbEdge, { backgroundColor: knob, opacity: 0.82 }]}>
             <LinearGradient
               colors={['rgba(255,255,255,0.75)', 'rgba(255,255,255,0)']}
               start={{ x: 0.5, y: 0 }}
