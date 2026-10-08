@@ -21,6 +21,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Animated, {
+  type SharedValue,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -33,7 +34,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import type { AppTheme } from '../theme/palettes';
 import { LIQUID, MOTION, SLIDE } from '../theme/tokens';
 import { useReducedMotion } from '../utils/reduceMotion';
-import { GlassHighlight, glassEffect } from './GlassHighlight';
+import { GlassBackdropHighlight, GlassHighlight, glassBackdropEffect, glassEffect } from './GlassHighlight';
+import { useSkyBackdrop } from '../utils/skyBackdrop';
 
 interface Frame {
   x: number;
@@ -122,14 +124,16 @@ function useSlideFrame(frame: Frame | null, liquid: boolean, reduced: boolean) {
   // Size as values of their own, so the glass shader can follow the sliding frame.
   const width = useDerivedValue(() => Math.abs(right.value - left.value));
   const height = useDerivedValue(() => Math.abs(bottom.value - top.value));
+  const pillLeft = useDerivedValue(() => Math.min(left.value, right.value));
+  const pillTop = useDerivedValue(() => Math.min(top.value, bottom.value));
   const style = useAnimatedStyle(() => ({
-    left: Math.min(left.value, right.value),
+    left: pillLeft.value,
     width: width.value,
-    top: Math.min(top.value, bottom.value),
+    top: pillTop.value,
     height: height.value,
     opacity: shown.value,
   }));
-  return { style, width, height };
+  return { style, width, height, pillLeft, pillTop };
 }
 
 interface HighlightProps {
@@ -143,6 +147,9 @@ interface HighlightProps {
   theme: AppTheme;
   liquid: boolean;
   reduced: boolean;
+  /** The group's window position, which the liquid glass needs to find the sky behind it. */
+  groupX: SharedValue<number>;
+  groupY: SharedValue<number>;
 }
 
 function SlidingHighlight({
@@ -156,8 +163,21 @@ function SlidingHighlight({
   theme,
   liquid,
   reduced,
+  groupX,
+  groupY,
 }: HighlightProps) {
-  const { style: animated, width: glassWidth, height: glassHeight } = useSlideFrame(frame, liquid, reduced);
+  const {
+    style: animated,
+    width: glassWidth,
+    height: glassHeight,
+    pillLeft,
+    pillTop,
+  } = useSlideFrame(frame, liquid, reduced);
+  // The sky snapshot, when one exists. It re-renders this highlight each time it changes.
+  const backdrop = useSkyBackdrop();
+  // The pill's window position: the group's window origin plus the pill's offset in the group.
+  const originX = useDerivedValue(() => groupX.value + pillLeft.value);
+  const originY = useDerivedValue(() => groupY.value + pillTop.value);
 
   if (variant === 'ring') {
     return (
@@ -183,6 +203,7 @@ function SlidingHighlight({
     // Liquid glass: the Skia shader when it compiles. Otherwise the blur-and-gradient stack below,
     // which is the look the app shipped with.
     const effect = glassEffect();
+    const backdropEffect = backdrop ? glassBackdropEffect() : null;
     return (
       <Animated.View
         pointerEvents="none"
@@ -190,7 +211,19 @@ function SlidingHighlight({
         style={[styles.absolute, animated, { borderRadius: radius }, styles.glassShadow]}
       >
         <View style={[styles.glassClip, { borderRadius: radius }]}>
-          {effect ? (
+          {backdrop && backdropEffect ? (
+            <GlassBackdropHighlight
+              effect={backdropEffect}
+              backdrop={backdrop}
+              width={glassWidth}
+              height={glassHeight}
+              originX={originX}
+              originY={originY}
+              radius={radius}
+              tint={glassTint(color, theme.isLight)}
+              rimStrength={0.3}
+            />
+          ) : effect ? (
             <GlassHighlight
               effect={effect}
               width={glassWidth}
@@ -326,6 +359,10 @@ export function SlidingGroup({
   const reduced = useReducedMotion();
   const liquid = theme.styleMode === 'glass';
   const containerRef = useRef<View>(null);
+  // The group's window position, for the liquid glass to sample the sky behind it. Measured
+  // on a timer, since the group can move; the pill's own offset is added on the UI thread.
+  const groupX = useSharedValue(0);
+  const groupY = useSharedValue(0);
   const styleRef = useRef(style);
   styleRef.current = style;
   const itemNodes = useRef(new Map<number, View>());
@@ -335,6 +372,21 @@ export function SlidingGroup({
     const update = kind === 'item' ? setItems : setTargets;
     update((previous) => (sameFrame(previous[index], frame) ? previous : { ...previous, [index]: frame }));
   }, []);
+
+  useEffect(() => {
+    if (!liquid) return;
+    const measure = () => {
+      containerRef.current?.measureInWindow((x, y) => {
+        groupX.value = x;
+        groupY.value = y;
+      });
+    };
+    measure();
+    // Under reduced motion nothing moves, so one measurement after each selection is enough.
+    if (reduced) return;
+    const timer = setInterval(measure, 400);
+    return () => clearInterval(timer);
+  }, [liquid, reduced, activeIndex, groupX, groupY]);
 
   const registry = useMemo<GroupRegistry>(
     () => ({
@@ -422,6 +474,8 @@ export function SlidingGroup({
       theme={theme}
       liquid={liquid}
       reduced={reduced}
+      groupX={groupX}
+      groupY={groupY}
     />
   );
 

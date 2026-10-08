@@ -1,0 +1,7 @@
+{
+  "screenshot": "results/glass/home-glass-clear.png",
+  "slideHighlights": 2,
+  "pageErrors": [
+    "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+  ]
+}

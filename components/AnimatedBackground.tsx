@@ -13,6 +13,7 @@ import {
   Points,
   Rect,
   Skia,
+  useCanvasRef,
   vec,
   type SkImage,
   type SkPath,
@@ -29,6 +30,7 @@ import Animated, {
 import { ParticleLayer, type ParticleKind } from './WeatherParticles';
 import { useReducedMotion } from '../utils/reduceMotion';
 import { hasSkia } from '../utils/skiaWeb';
+import { setSkyBackdrop } from '../utils/skyBackdrop';
 import type { WeatherCondition } from '../theme/palettes';
 
 interface AnimatedBackgroundProps {
@@ -105,6 +107,27 @@ export function AnimatedBackground({
   // Decorative rain and snow are skipped entirely in that case.
   const reducedMotion = useReducedMotion() || !animated;
   const { width, height } = useWindowDimensions();
+  // The sky is published to the liquid-glass highlight as a snapshot. Taken once shortly after
+  // mount, then every 1.5 s while the sky moves. Under reduced motion the first snapshot stands.
+  const skiaReady = hasSkia();
+  const skyRef = useCanvasRef();
+  useEffect(() => {
+    if (!skiaReady || width <= 0 || height <= 0) return;
+    let cancelled = false;
+    const publish = () => {
+      if (cancelled) return;
+      const image = skyRef.current?.makeImageSnapshot();
+      if (image) setSkyBackdrop({ image, width, height });
+    };
+    const first = setTimeout(publish, 300);
+    const timer = reducedMotion ? null : setInterval(publish, 1500);
+    return () => {
+      cancelled = true;
+      clearTimeout(first);
+      if (timer) clearInterval(timer);
+    };
+  }, [skiaReady, width, height, reducedMotion, skyRef]);
+  useEffect(() => () => setSkyBackdrop(null), []);
   const [layerA, setLayerA] = useState<GradientTuple>([...gradient] as GradientTuple);
   const [layerB, setLayerB] = useState<GradientTuple | null>(null);
   const frontIsA = useRef(true);
@@ -135,7 +158,6 @@ export function AnimatedBackground({
 
   // Skipped entirely when still: the clock never starts, so the canvas draws one frame.
   const clock = useSkyClock(!reducedMotion);
-  const skiaReady = hasSkia();
 
   return (
     <View
@@ -165,7 +187,7 @@ export function AnimatedBackground({
         </Animated.View>
       ) : null}
       {skiaReady ? (
-        <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
+        <Canvas ref={skyRef} style={StyleSheet.absoluteFill} pointerEvents="none">
           {condition ? (
             <SkyEffects
               condition={condition}
