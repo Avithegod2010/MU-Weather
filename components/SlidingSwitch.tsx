@@ -80,6 +80,8 @@ export function SlidingSwitch({
       left.value = withSpring(target, SLIDE);
       right.value = withSpring(target + THUMB, SLIDE);
     }
+  // left, right and progress are shared values, which are stable; only the value and mode drive the animation.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, liquid, reduced]);
 
   const trackStyle = useAnimatedStyle(

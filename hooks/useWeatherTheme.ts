@@ -32,7 +32,7 @@ export function useWeatherTheme(
   const themeKey = `${condition}-${isDay ? 'day' : 'night'}-${styleMode}`;
   const theme = useMemo(
     () => buildTheme(getPalette(condition, isDay), styleMode),
-    [themeKey],
+    [condition, isDay, styleMode],
   );
 
   return { theme, condition, conditionLabel: data ? info.label : 'Loading', isDay };

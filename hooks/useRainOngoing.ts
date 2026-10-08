@@ -95,6 +95,7 @@ async function cancelStatus(): Promise<void> {
  */
 export function useRainOngoing(enabled: boolean, data: WeatherBundle | null): void {
   // A slow clock keeps "3 h stale" honest without re-running on every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `data` is a refresh trigger: a new forecast resets "now".
   const now = useMemo(() => Date.now(), [data]);
   const status = useMemo(() => rainStatus(data, now), [data, now]);
   const signature = status.signature;

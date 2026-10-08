@@ -85,6 +85,9 @@ stay visible and do not fail the lint. Hook-order and other real correctness rul
 
 Cleanup pass: 250 unused import specifiers removed, `array-type` and `import/first` fixed by `eslint --fix`,
 one unused `useMemo` (`moonTimesToday`, never read) and one unused constant removed. Two deliberate lazy
-`require` calls carry a disable comment with the reason. Result: **0 errors, 192 warnings**, all from the five
-deferred hook rules plus `exhaustive-deps` (5). Those are the follow-up. The smoke run after the cleanup still
+`require` calls carry a disable comment with the reason. Then the five `exhaustive-deps` warnings were resolved. `useWeatherTheme` now lists its three real
+dependencies. Four others are kept on purpose and carry a disable comment with the reason: `useRainOngoing`
+(data is a refresh trigger), `useCityComparison` (`cityKey` is the stable identity, so re-picking the same
+pair does not refetch), and the two sliding effects, which drive shared values.
+Result: **0 errors, 188 warnings**, all from the five deferred compiler-era hook rules. Those are the follow-up. The smoke run after the cleanup still
 passes the journal probe in both styles.
