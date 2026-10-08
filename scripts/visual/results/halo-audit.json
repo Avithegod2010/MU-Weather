@@ -1,22 +1,22 @@
 {
   "samples": 30,
   "targets": 120,
-  "worstHalo": 4.31,
-  "worstNoHalo": 3.05,
+  "worstHalo": 4.89,
+  "worstNoHalo": 4.82,
   "rows": [
     {
       "config": "clear-day-dynamic",
       "text": "London",
       "size": 17,
-      "halo": 8.07,
-      "noHalo": 6.93
+      "halo": 9.75,
+      "noHalo": 8.93
     },
     {
       "config": "clear-day-dynamic",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 11.74,
-      "noHalo": 9.97
+      "halo": 11.78,
+      "noHalo": 9.96
     },
     {
       "config": "clear-day-dynamic",
@@ -27,80 +27,80 @@
     },
     {
       "config": "clear-day-dynamic",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 5.56,
-      "noHalo": 5.39
+      "noHalo": 5.42
     },
     {
       "config": "clear-day-aurora",
       "text": "London",
       "size": 17,
-      "halo": 9.44,
-      "noHalo": 8.46
+      "halo": 11.57,
+      "noHalo": 10.27
     },
     {
       "config": "clear-day-aurora",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 18.23,
-      "noHalo": 16.14
+      "halo": 18.09,
+      "noHalo": 15.75
     },
     {
       "config": "clear-day-aurora",
       "text": "Clear Sky",
       "size": 19,
-      "halo": 17.08,
+      "halo": 17.07,
       "noHalo": 15.96
     },
     {
       "config": "clear-day-aurora",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 11.11,
-      "noHalo": 10.47
+      "noHalo": 10.58
     },
     {
       "config": "clear-day-sunset",
       "text": "London",
       "size": 17,
-      "halo": 4.31,
-      "noHalo": 3.05
+      "halo": 6.64,
+      "noHalo": 5.51
     },
     {
       "config": "clear-day-sunset",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 8.59,
-      "noHalo": 6.05
+      "halo": 8.68,
+      "noHalo": 6.07
     },
     {
       "config": "clear-day-sunset",
       "text": "Clear Sky",
       "size": 19,
-      "halo": 7.76,
+      "halo": 7.79,
       "noHalo": 6.69
     },
     {
       "config": "clear-day-sunset",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 7.49,
-      "noHalo": 6.62
+      "noHalo": 6.75
     },
     {
       "config": "clear-day-ocean",
       "text": "London",
       "size": 17,
-      "halo": 8.36,
-      "noHalo": 6.83
+      "halo": 10.41,
+      "noHalo": 9.0
     },
     {
       "config": "clear-day-ocean",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 16.24,
-      "noHalo": 13.3
+      "halo": 16.36,
+      "noHalo": 13.09
     },
     {
       "config": "clear-day-ocean",
@@ -111,24 +111,24 @@
     },
     {
       "config": "clear-day-ocean",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 13.65,
-      "noHalo": 12.23
+      "halo": 13.69,
+      "noHalo": 12.42
     },
     {
       "config": "clear-day-forest",
       "text": "London",
       "size": 17,
-      "halo": 8.04,
-      "noHalo": 6.95
+      "halo": 10.38,
+      "noHalo": 8.88
     },
     {
       "config": "clear-day-forest",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 16.71,
-      "noHalo": 13.79
+      "halo": 16.69,
+      "noHalo": 13.4
     },
     {
       "config": "clear-day-forest",
@@ -139,24 +139,24 @@
     },
     {
       "config": "clear-day-forest",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 13.65,
-      "noHalo": 12.37
+      "halo": 13.66,
+      "noHalo": 12.54
     },
     {
       "config": "clear-day-midnight",
       "text": "London",
       "size": 17,
-      "halo": 10.48,
-      "noHalo": 10.73
+      "halo": 12.47,
+      "noHalo": 11.39
     },
     {
       "config": "clear-day-midnight",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 19.53,
-      "noHalo": 18.56
+      "halo": 19.54,
+      "noHalo": 18.23
     },
     {
       "config": "clear-day-midnight",
@@ -167,24 +167,24 @@
     },
     {
       "config": "clear-day-midnight",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 10.69,
-      "noHalo": 10.56
+      "noHalo": 10.6
     },
     {
       "config": "clear-night-dynamic",
       "text": "London",
       "size": 17,
-      "halo": 8.07,
-      "noHalo": 6.93
+      "halo": 9.77,
+      "noHalo": 8.93
     },
     {
       "config": "clear-night-dynamic",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 11.74,
-      "noHalo": 9.97
+      "halo": 11.78,
+      "noHalo": 9.96
     },
     {
       "config": "clear-night-dynamic",
@@ -195,80 +195,80 @@
     },
     {
       "config": "clear-night-dynamic",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 5.56,
-      "noHalo": 5.39
+      "noHalo": 5.42
     },
     {
       "config": "clear-night-aurora",
       "text": "London",
       "size": 17,
-      "halo": 9.44,
-      "noHalo": 8.46
+      "halo": 11.57,
+      "noHalo": 10.45
     },
     {
       "config": "clear-night-aurora",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 18.23,
-      "noHalo": 16.14
+      "halo": 18.09,
+      "noHalo": 15.75
     },
     {
       "config": "clear-night-aurora",
       "text": "Clear Sky",
       "size": 19,
-      "halo": 17.08,
+      "halo": 17.07,
       "noHalo": 15.96
     },
     {
       "config": "clear-night-aurora",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 11.11,
-      "noHalo": 10.47
+      "noHalo": 10.58
     },
     {
       "config": "clear-night-sunset",
       "text": "London",
       "size": 17,
-      "halo": 4.31,
-      "noHalo": 3.05
+      "halo": 6.64,
+      "noHalo": 5.51
     },
     {
       "config": "clear-night-sunset",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 8.59,
-      "noHalo": 6.06
+      "halo": 8.68,
+      "noHalo": 6.07
     },
     {
       "config": "clear-night-sunset",
       "text": "Clear Sky",
       "size": 19,
-      "halo": 7.76,
+      "halo": 7.79,
       "noHalo": 6.69
     },
     {
       "config": "clear-night-sunset",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 7.49,
-      "noHalo": 6.62
+      "noHalo": 6.75
     },
     {
       "config": "clear-night-ocean",
       "text": "London",
       "size": 17,
-      "halo": 8.26,
-      "noHalo": 6.84
+      "halo": 10.41,
+      "noHalo": 9.0
     },
     {
       "config": "clear-night-ocean",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 16.23,
-      "noHalo": 13.3
+      "halo": 16.34,
+      "noHalo": 12.95
     },
     {
       "config": "clear-night-ocean",
@@ -279,24 +279,24 @@
     },
     {
       "config": "clear-night-ocean",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 13.65,
-      "noHalo": 12.23
+      "halo": 13.69,
+      "noHalo": 12.42
     },
     {
       "config": "clear-night-forest",
       "text": "London",
       "size": 17,
-      "halo": 7.86,
-      "noHalo": 8.32
+      "halo": 10.5,
+      "noHalo": 9.0
     },
     {
       "config": "clear-night-forest",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 16.71,
-      "noHalo": 13.77
+      "halo": 16.69,
+      "noHalo": 13.53
     },
     {
       "config": "clear-night-forest",
@@ -307,24 +307,24 @@
     },
     {
       "config": "clear-night-forest",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 13.65,
-      "noHalo": 12.37
+      "halo": 13.66,
+      "noHalo": 12.54
     },
     {
       "config": "clear-night-midnight",
       "text": "London",
       "size": 17,
-      "halo": 10.53,
-      "noHalo": 9.67
+      "halo": 12.41,
+      "noHalo": 13.92
     },
     {
       "config": "clear-night-midnight",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 19.56,
-      "noHalo": 18.55
+      "halo": 19.52,
+      "noHalo": 18.23
     },
     {
       "config": "clear-night-midnight",
@@ -335,164 +335,164 @@
     },
     {
       "config": "clear-night-midnight",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 10.69,
-      "noHalo": 10.56
+      "noHalo": 10.6
     },
     {
       "config": "rain-day-dynamic",
       "text": "London",
       "size": 17,
-      "halo": 6.09,
-      "noHalo": 4.52
+      "halo": 8.11,
+      "noHalo": 6.9
     },
     {
       "config": "rain-day-dynamic",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 9.39,
+      "halo": 9.42,
       "noHalo": 7.09
     },
     {
       "config": "rain-day-dynamic",
       "text": "Rain",
       "size": 19,
-      "halo": 8.52,
+      "halo": 8.51,
       "noHalo": 7.42
     },
     {
       "config": "rain-day-dynamic",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 7.94,
-      "noHalo": 7.33
+      "halo": 8.06,
+      "noHalo": 7.5
     },
     {
       "config": "rain-day-aurora",
       "text": "London",
       "size": 17,
-      "halo": 6.58,
-      "noHalo": 5.5
+      "halo": 8.87,
+      "noHalo": 7.91
     },
     {
       "config": "rain-day-aurora",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 18.09,
-      "noHalo": 15.91
+      "halo": 12.39,
+      "noHalo": 15.39
     },
     {
       "config": "rain-day-aurora",
       "text": "Rain",
       "size": 19,
-      "halo": 17.2,
+      "halo": 11.25,
       "noHalo": 15.96
     },
     {
       "config": "rain-day-aurora",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 5.94,
-      "noHalo": 4.97
+      "halo": 8.52,
+      "noHalo": 10.58
     },
     {
       "config": "rain-day-sunset",
       "text": "London",
       "size": 17,
-      "halo": 4.67,
-      "noHalo": 3.17
+      "halo": 6.92,
+      "noHalo": 5.59
     },
     {
       "config": "rain-day-sunset",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 8.47,
-      "noHalo": 6.06
+      "halo": 8.42,
+      "noHalo": 6.07
     },
     {
       "config": "rain-day-sunset",
       "text": "Rain",
       "size": 19,
-      "halo": 7.88,
+      "halo": 7.82,
       "noHalo": 6.69
     },
     {
       "config": "rain-day-sunset",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 7.19,
-      "noHalo": 6.62
+      "halo": 7.36,
+      "noHalo": 6.75
     },
     {
       "config": "rain-day-ocean",
       "text": "London",
       "size": 17,
-      "halo": 5.82,
-      "noHalo": 4.7
+      "halo": 8.09,
+      "noHalo": 6.87
     },
     {
       "config": "rain-day-ocean",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 14.52,
-      "noHalo": 12.69
+      "halo": 15.06,
+      "noHalo": 12.55
     },
     {
       "config": "rain-day-ocean",
       "text": "Rain",
       "size": 19,
-      "halo": 14.56,
-      "noHalo": 12.91
+      "halo": 14.54,
+      "noHalo": 7.86
     },
     {
       "config": "rain-day-ocean",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 7.4,
-      "noHalo": 12.04
+      "halo": 7.37,
+      "noHalo": 12.42
     },
     {
       "config": "rain-day-forest",
       "text": "London",
       "size": 17,
-      "halo": 5.9,
-      "noHalo": 4.77
+      "halo": 8.17,
+      "noHalo": 7.03
     },
     {
       "config": "rain-day-forest",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 16.53,
-      "noHalo": 13.64
+      "halo": 15.94,
+      "noHalo": 13.31
     },
     {
       "config": "rain-day-forest",
       "text": "Rain",
       "size": 19,
       "halo": 15.17,
-      "noHalo": 13.74
+      "noHalo": 13.76
     },
     {
       "config": "rain-day-forest",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 7.13,
-      "noHalo": 8.73
+      "halo": 10.26,
+      "noHalo": 12.54
     },
     {
       "config": "rain-day-midnight",
       "text": "London",
       "size": 17,
-      "halo": 7.42,
-      "noHalo": 6.26
+      "halo": 9.56,
+      "noHalo": 8.64
     },
     {
       "config": "rain-day-midnight",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 19.6,
-      "noHalo": 18.47
+      "halo": 16.31,
+      "noHalo": 18.17
     },
     {
       "config": "rain-day-midnight",
@@ -503,192 +503,192 @@
     },
     {
       "config": "rain-day-midnight",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 5.85,
-      "noHalo": 7.98
+      "halo": 8.42,
+      "noHalo": 10.6
     },
     {
       "config": "thunder-night-dynamic",
       "text": "London",
       "size": 17,
-      "halo": 4.39,
-      "noHalo": 4.25
+      "halo": 6.64,
+      "noHalo": 6.43
     },
     {
       "config": "thunder-night-dynamic",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 16.57,
-      "noHalo": 13.45
+      "halo": 16.13,
+      "noHalo": 13.21
     },
     {
       "config": "thunder-night-dynamic",
       "text": "Thunderstorm",
       "size": 19,
-      "halo": 15.41,
+      "halo": 15.39,
       "noHalo": 13.87
     },
     {
       "config": "thunder-night-dynamic",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 12.98,
-      "noHalo": 11.86
+      "noHalo": 12.02
     },
     {
       "config": "thunder-night-aurora",
       "text": "London",
       "size": 17,
-      "halo": 5.17,
-      "noHalo": 4.94
+      "halo": 7.79,
+      "noHalo": 7.21
     },
     {
       "config": "thunder-night-aurora",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 17.39,
-      "noHalo": 15.1
+      "halo": 17.53,
+      "noHalo": 14.87
     },
     {
       "config": "thunder-night-aurora",
       "text": "Thunderstorm",
       "size": 19,
-      "halo": 15.89,
+      "halo": 15.9,
       "noHalo": 14.44
     },
     {
       "config": "thunder-night-aurora",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 10.3,
-      "noHalo": 9.55
+      "halo": 10.31,
+      "noHalo": 9.66
     },
     {
       "config": "thunder-night-sunset",
       "text": "London",
       "size": 17,
-      "halo": 4.81,
-      "noHalo": 3.4
+      "halo": 7.0,
+      "noHalo": 5.82
     },
     {
       "config": "thunder-night-sunset",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 9.01,
-      "noHalo": 6.55
+      "halo": 9.02,
+      "noHalo": 6.54
     },
     {
       "config": "thunder-night-sunset",
       "text": "Thunderstorm",
       "size": 19,
-      "halo": 8.33,
+      "halo": 8.4,
       "noHalo": 7.3
     },
     {
       "config": "thunder-night-sunset",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 8.11,
-      "noHalo": 7.3
+      "halo": 8.09,
+      "noHalo": 7.4
     },
     {
       "config": "thunder-night-ocean",
       "text": "London",
       "size": 17,
-      "halo": 4.44,
-      "noHalo": 4.23
+      "halo": 6.91,
+      "noHalo": 6.48
     },
     {
       "config": "thunder-night-ocean",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 15.34,
-      "noHalo": 12.11
+      "halo": 15.56,
+      "noHalo": 11.9
     },
     {
       "config": "thunder-night-ocean",
       "text": "Thunderstorm",
       "size": 19,
-      "halo": 13.21,
+      "halo": 13.23,
       "noHalo": 11.48
     },
     {
       "config": "thunder-night-ocean",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 12.35,
-      "noHalo": 10.87
+      "halo": 12.36,
+      "noHalo": 11.05
     },
     {
       "config": "thunder-night-forest",
       "text": "London",
       "size": 17,
-      "halo": 4.53,
-      "noHalo": 4.32
+      "halo": 6.9,
+      "noHalo": 6.53
     },
     {
       "config": "thunder-night-forest",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 15.89,
-      "noHalo": 12.9
+      "halo": 16.08,
+      "noHalo": 12.73
     },
     {
       "config": "thunder-night-forest",
       "text": "Thunderstorm",
       "size": 19,
-      "halo": 13.88,
+      "halo": 13.91,
       "noHalo": 12.16
     },
     {
       "config": "thunder-night-forest",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 12.31,
-      "noHalo": 10.95
+      "halo": 12.33,
+      "noHalo": 11.1
     },
     {
       "config": "thunder-night-midnight",
       "text": "London",
       "size": 17,
-      "halo": 5.88,
-      "noHalo": 5.7
+      "halo": 8.56,
+      "noHalo": 7.99
     },
     {
       "config": "thunder-night-midnight",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 19.51,
-      "noHalo": 18.16
+      "halo": 19.39,
+      "noHalo": 18.0
     },
     {
       "config": "thunder-night-midnight",
       "text": "Thunderstorm",
       "size": 19,
       "halo": 19.31,
-      "noHalo": 18.86
+      "noHalo": 18.78
     },
     {
       "config": "thunder-night-midnight",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 10.55,
-      "noHalo": 10.4
+      "noHalo": 10.44
     },
     {
       "config": "fog-day-dynamic",
       "text": "London",
       "size": 17,
-      "halo": 10.03,
-      "noHalo": 9.13
+      "halo": 11.42,
+      "noHalo": 10.78
     },
     {
       "config": "fog-day-dynamic",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 12.32,
-      "noHalo": 10.75
+      "halo": 12.4,
+      "noHalo": 10.73
     },
     {
       "config": "fog-day-dynamic",
@@ -699,136 +699,136 @@
     },
     {
       "config": "fog-day-dynamic",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 4.88,
-      "noHalo": 4.81
+      "halo": 4.89,
+      "noHalo": 4.82
     },
     {
       "config": "fog-day-aurora",
       "text": "London",
       "size": 17,
-      "halo": 8.45,
-      "noHalo": 7.3
+      "halo": 9.7,
+      "noHalo": 8.85
     },
     {
       "config": "fog-day-aurora",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 11.56,
-      "noHalo": 7.73
+      "halo": 12.06,
+      "noHalo": 10.74
     },
     {
       "config": "fog-day-aurora",
       "text": "Foggy",
       "size": 19,
       "halo": 13.69,
-      "noHalo": 11.86
+      "noHalo": 11.85
     },
     {
       "config": "fog-day-aurora",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 9.01,
+      "halo": 9.0,
       "noHalo": 8.02
     },
     {
       "config": "fog-day-sunset",
       "text": "London",
       "size": 17,
-      "halo": 5.55,
-      "noHalo": 4.24
+      "halo": 7.89,
+      "noHalo": 6.72
     },
     {
       "config": "fog-day-sunset",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 7.22,
-      "noHalo": 6.14
+      "halo": 7.24,
+      "noHalo": 6.13
     },
     {
       "config": "fog-day-sunset",
       "text": "Foggy",
       "size": 19,
-      "halo": 9.0,
-      "noHalo": 7.88
+      "halo": 8.99,
+      "noHalo": 7.9
     },
     {
       "config": "fog-day-sunset",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
-      "halo": 8.51,
+      "halo": 8.57,
+      "noHalo": 7.83
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "London",
+      "size": 17,
+      "halo": 8.76,
+      "noHalo": 7.56
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "12\u00b0",
+      "size": 96,
+      "halo": 11.43,
+      "noHalo": 8.92
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "Foggy",
+      "size": 19,
+      "halo": 11.78,
+      "noHalo": 9.74
+    },
+    {
+      "config": "fog-day-ocean",
+      "text": "Feels like 11\u00b0",
+      "size": 14.5,
+      "halo": 10.99,
+      "noHalo": 9.35
+    },
+    {
+      "config": "fog-day-forest",
+      "text": "London",
+      "size": 17,
+      "halo": 8.86,
       "noHalo": 7.76
     },
     {
-      "config": "fog-day-ocean",
-      "text": "London",
-      "size": 17,
-      "halo": 7.12,
-      "noHalo": 5.98
-    },
-    {
-      "config": "fog-day-ocean",
-      "text": "14\u00b0",
-      "size": 96,
-      "halo": 10.73,
-      "noHalo": 6.9
-    },
-    {
-      "config": "fog-day-ocean",
-      "text": "Foggy",
-      "size": 19,
-      "halo": 11.8,
-      "noHalo": 9.75
-    },
-    {
-      "config": "fog-day-ocean",
-      "text": "Feels like 13\u00b0",
-      "size": 14.5,
-      "halo": 11.0,
-      "noHalo": 9.22
-    },
-    {
       "config": "fog-day-forest",
-      "text": "London",
-      "size": 17,
-      "halo": 7.26,
-      "noHalo": 6.1
-    },
-    {
-      "config": "fog-day-forest",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 10.73,
-      "noHalo": 7.07
+      "halo": 11.27,
+      "noHalo": 9.25
     },
     {
       "config": "fog-day-forest",
       "text": "Foggy",
       "size": 19,
-      "halo": 12.23,
+      "halo": 12.19,
       "noHalo": 10.11
     },
     {
       "config": "fog-day-forest",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 10.77,
-      "noHalo": 9.2
+      "noHalo": 9.32
     },
     {
       "config": "fog-day-midnight",
       "text": "London",
       "size": 17,
-      "halo": 9.47,
-      "noHalo": 8.35
+      "halo": 10.7,
+      "noHalo": 9.92
     },
     {
       "config": "fog-day-midnight",
-      "text": "14\u00b0",
+      "text": "12\u00b0",
       "size": 96,
-      "halo": 12.84,
-      "noHalo": 8.74
+      "halo": 13.17,
+      "noHalo": 12.33
     },
     {
       "config": "fog-day-midnight",
@@ -839,7 +839,7 @@
     },
     {
       "config": "fog-day-midnight",
-      "text": "Feels like 13\u00b0",
+      "text": "Feels like 11\u00b0",
       "size": 14.5,
       "halo": 9.08,
       "noHalo": 8.46

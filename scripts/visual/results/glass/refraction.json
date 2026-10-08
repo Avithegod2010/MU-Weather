@@ -1,9 +1,13 @@
 {
-  "shots": [
-    "results/glass/refraction-pill-rest.png",
-    "results/glass/refraction-pill-moved.png"
-  ],
+  "shots": {
+    "snapshot": "results/glass/refraction-snapshot.png",
+    "fallback": "results/glass/refraction-fallback.png"
+  },
   "pageErrors": [
     "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
-  ]
+  ],
+  "meanDifference": {
+    "snapshotVsFallback": 49.84,
+    "snapshotVsSnapshot2 (noise)": 0.0
+  }
 }
