@@ -175,7 +175,7 @@ export function MapScreen({ theme, location, visible, onClose, onOpenRadar }: Ma
           style={[styles.webview, { backgroundColor: '#9FB2C8' }]}
           javaScriptEnabled
           domStorageEnabled
-          originWhitelist={['*']}
+          originWhitelist={['https://embed.windy.com']}
           setSupportMultipleWindows={false}
           onLoadStart={() => setLoading(true)}
           onLoadEnd={() => setLoading(false)}
