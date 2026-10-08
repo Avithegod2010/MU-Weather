@@ -1,7 +1,8 @@
 import { SlidingGroup, SlidingItem } from './Sliding';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
-import Svg, { Circle, Line, Path } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath, SvgDot } from './SkiaShapes';
 import { getLanguage, t, type StringKey } from '../utils/i18n';
 import { haptics } from '../utils/haptics';
 import { F } from '../theme/typography';
@@ -370,45 +371,21 @@ export function GraphExplorer({ theme, hourlyAll, pastDays }: GraphExplorerProps
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
       >
-        <Svg width={plotWidth} height={CHART_HEIGHT}>
+        <Canvas style={{ width: plotWidth, height: CHART_HEIGHT }}>
           {paths.map((path, index) =>
             path ? (
-              <Path
-                key={`line-${index}`}
-                d={path}
-                stroke={view.series[index].color}
-                strokeWidth={2.5}
-                fill="none"
-                strokeLinecap="round"
-              />
+              <SvgPath key={`line-${index}`} d={path} color={view.series[index].color} strokeWidth={2.5} />
             ) : null,
           )}
-          <Line
-            x1={xSel}
-            y1={PLOT_TOP - 6}
-            x2={xSel}
-            y2={CHART_HEIGHT - 6}
-            stroke={theme.textTertiary}
-            strokeWidth={1}
-            strokeDasharray="4 4"
-            opacity={0.6}
-          />
+          <SvgPath d={`M ${xSel} ${PLOT_TOP - 6} L ${xSel} ${CHART_HEIGHT - 6}`} color={theme.textTertiary} strokeWidth={1} dash={[4, 4]} opacity={0.6} />
           {view.series.map((series, index) => {
             const value = series.values[sel];
             if (value === null) return null;
             return (
-              <Circle
-                key={`dot-${index}`}
-                cx={xSel}
-                cy={yAt(value)}
-                r={5}
-                fill={theme.isLight ? '#FFFFFF' : '#F6F9FD'}
-                stroke={series.color}
-                strokeWidth={2.5}
-              />
+              <SvgDot key={`dot-${index}`} cx={xSel} cy={yAt(value)} r={5} fill={theme.isLight ? '#FFFFFF' : '#F6F9FD'} stroke={series.color} strokeWidth={2.5} />
             );
           })}
-        </Svg>
+        </Canvas>
       </View>
 
       <View style={styles.axis}>

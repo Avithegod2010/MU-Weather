@@ -1,7 +1,8 @@
 import { t } from '../utils/i18n';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath, SvgDot } from './SkiaShapes';
 import { TrendingUp } from '../utils/uiIcons';
 import { Card } from './Card';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
@@ -113,24 +114,19 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
         <View style={{ width }}>
-          <Svg
-            width={width}
-            height={CHART_HEIGHT}
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-          >
+          <Canvas style={{ width: width, height: CHART_HEIGHT }} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants">
             {bandPath ? (
-              <Path d={bandPath} fill={TEMP_COLOR} opacity={theme.isLight ? 0.16 : 0.22} stroke="none" />
+              <SvgPath d={bandPath} color={TEMP_COLOR} filled opacity={theme.isLight ? 0.16 : 0.22} />
             ) : null}
-            <Path d={windPath} stroke={WIND_COLOR} strokeWidth={2} fill="none" strokeLinecap="round" strokeDasharray="5 5" opacity={0.9} />
-            <Path d={dewPath} stroke={DEW_COLOR} strokeWidth={2} fill="none" strokeLinecap="round" />
-            <Path d={tempPath} stroke={TEMP_COLOR} strokeWidth={2.6} fill="none" strokeLinecap="round" />
+            <SvgPath d={windPath} color={WIND_COLOR} strokeWidth={2} dash={[5, 5]} opacity={0.9} />
+            <SvgPath d={dewPath} color={DEW_COLOR} strokeWidth={2} />
+            <SvgPath d={tempPath} color={TEMP_COLOR} strokeWidth={2.6} />
             {toPoints(temps, tempMin, tempMax)
               .filter((_, index) => index % 6 === 0)
               .map((point) => (
-                <Circle key={`dt-${point.x}`} cx={point.x} cy={point.y} r={3} fill={dotFill} stroke={TEMP_COLOR} strokeWidth={2} />
+                <SvgDot key={`dt-${point.x}`} cx={point.x} cy={point.y} r={3} fill={dotFill} stroke={TEMP_COLOR} strokeWidth={2} />
               ))}
-          </Svg>
+          </Canvas>
           <View style={[styles.timeRow, { width }]}>
             {slice.map((hour, index) =>
               index % 8 === 0 ? (
