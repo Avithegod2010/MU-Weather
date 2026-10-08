@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import type { AppTheme } from '../theme/palettes';
 import { RADIUS } from '../theme/tokens';
+import { Sheen, useMountSweep } from './Sheen';
 
 interface SurfaceProps {
   theme: AppTheme;
@@ -12,6 +12,8 @@ interface SurfaceProps {
 }
 
 export function Surface({ theme, style, children }: SurfaceProps) {
+  const sweep = useMountSweep();
+
   if (theme.styleMode === 'glass') {
     return (
       <BlurView
@@ -30,14 +32,7 @@ export function Surface({ theme, style, children }: SurfaceProps) {
   }
   return (
     <View style={[styles.solid, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }, style]}>
-      <View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.sheenClip]}>
-        <LinearGradient
-          colors={['rgba(255,255,255,0.16)', 'rgba(255,255,255,0)']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.8, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-      </View>
+      <Sheen radius={RADIUS.lg} sweep={sweep} />
       {children}
     </View>
   );
@@ -47,10 +42,6 @@ const styles = StyleSheet.create({
   solid: {
     borderRadius: RADIUS.lg,
     borderWidth: 1,
-  },
-  sheenClip: {
-    borderRadius: RADIUS.lg,
-    overflow: 'hidden',
   },
   glass: {
     borderRadius: RADIUS.lg,
