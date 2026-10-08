@@ -1,6 +1,6 @@
 import { SlidingGroup, SlidingItem } from './Sliding';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
+import { StyleSheet, Text, View, type GestureResponderEvent } from 'react-native';
 import { Canvas, Circle, DashPathEffect, Group, LinearGradient, Path, Skia, vec, type SkPath } from '@shopify/react-native-skia';
 import { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useReducedMotion } from '../utils/reduceMotion';
@@ -57,7 +57,7 @@ interface DailyMetric {
 interface ActiveView {
   labelKey: StringKey;
   format: (value: number) => string;
-  series: Array<{ color: string; prefixKey?: StringKey; values: Array<number | null> }>;
+  series: { color: string; prefixKey?: StringKey; values: (number | null)[] }[];
   /** Scrub/readout time for a point index. */
   timeLabel: (index: number) => string;
   /** Axis tick label for a point index. */
@@ -90,7 +90,7 @@ const AXIS_LABEL_WIDTH = 46;
  */
 const DAILY_RANGE_DAYS = 30;
 
-const RANGE_OPTIONS: ReadonlyArray<{ key: RangeKey; labelKey: StringKey }> = [
+const RANGE_OPTIONS: readonly { key: RangeKey; labelKey: StringKey }[] = [
   { key: '24h', labelKey: 'gx_range_24h' },
   { key: '7d', labelKey: 'gx_range_7d' },
   { key: '30d', labelKey: 'gx_range_30d' },

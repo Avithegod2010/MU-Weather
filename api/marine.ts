@@ -23,13 +23,13 @@ export interface MarineSnapshot extends MarineInfo {
 
 interface MarineHourlyPayload {
   time?: string[];
-  wave_height?: Array<number | null>;
-  wave_direction?: Array<number | null>;
-  wave_period?: Array<number | null>;
-  swell_wave_height?: Array<number | null>;
-  swell_wave_direction?: Array<number | null>;
-  swell_wave_period?: Array<number | null>;
-  sea_surface_temperature?: Array<number | null>;
+  wave_height?: (number | null)[];
+  wave_direction?: (number | null)[];
+  wave_period?: (number | null)[];
+  swell_wave_height?: (number | null)[];
+  swell_wave_direction?: (number | null)[];
+  swell_wave_period?: (number | null)[];
+  sea_surface_temperature?: (number | null)[];
 }
 
 interface MarineCurrentPayload {
@@ -100,7 +100,7 @@ export async function fetchMarineSnapshot(lat: number, lon: number): Promise<Mar
     let startIndex = times.findIndex((stamp) => stamp >= currentStamp);
     if (startIndex < 0) startIndex = 0;
     const window = times.slice(startIndex, startIndex + 24);
-    const at = (arr: Array<number | null> | undefined, i: number): number | null =>
+    const at = (arr: (number | null)[] | undefined, i: number): number | null =>
       arr ? toFinite(arr[startIndex + i]) : null;
     const hours = window.map((time, i) => ({
       time,

@@ -1,10 +1,10 @@
 import { SlidingGroup, SlidingItem } from '../components/Sliding';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { t } from '../utils/i18n';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft } from '../utils/uiIcons';
+import {  } from '../utils/uiIcons';
 import { F } from '../theme/typography';
 import { WeatherIcon } from '../components/WeatherIcon';
 import { AnimatedBackground } from '../components/AnimatedBackground';

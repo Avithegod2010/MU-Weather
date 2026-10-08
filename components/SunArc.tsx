@@ -4,49 +4,6 @@ import { F } from '../theme/typography';
 import { StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import { BlurMask, Canvas, Circle, DashPathEffect, Group, Path, Skia, vec } from '@shopify/react-native-skia';
 import {
-  Sun,
-  Moon,
-  CloudSun,
-  CloudMoon,
-  Cloud,
-  CloudFog,
-  CloudDrizzle,
-  CloudRainWind,
-  CloudRain,
-  CloudSnow,
-  CloudLightning,
-  CloudHail,
-  Clock,
-  MapPin,
-  ArrowUp,
-  ArrowDown,
-  Droplet,
-  Droplets,
-  Wind,
-  Gauge,
-  Eye,
-  Umbrella,
-  WifiOff,
-  RefreshCw,
-  SearchX,
-  Search,
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  Vibrate,
-  Thermometer,
-  Database,
-  Info,
-  Map,
-  Bell,
-  Settings,
-  TriangleAlert,
-  Navigation2,
-  Radar,
-  Flower2,
-  TrendingDown,
-  Navigation,
   Sunrise,
   Sunset,
 } from '../utils/uiIcons';
@@ -65,7 +22,6 @@ const HEIGHT = 118;
 const CX = WIDTH / 2;
 const CY = 104;
 const R = 88;
-const ARC_LENGTH = Math.PI * R;
 
 export function SunArc({ theme, sunrise, sunset, utcOffsetSeconds }: SunArcProps) {
   const localNowMs = Date.now() + utcOffsetSeconds * 1000;

@@ -20,7 +20,7 @@ interface WeatherWidgetLargeProps {
   rainChance: string;
   precipitation: string;
   updatedLabel: string;
-  hours: Array<{ time: string; label: string; temp: string; rain: string }>;
+  hours: { time: string; label: string; temp: string; rain: string }[];
   /** Whether data exists at all - false renders the no-data placeholder. */
   hasData: boolean;
   /** True when the cached bundle is old enough to warn the user about. */

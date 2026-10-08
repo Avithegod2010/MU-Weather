@@ -56,6 +56,22 @@ import {
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import appJson from '../app.json';
+import { Overlay } from './Overlay';
+import { haptics } from '../utils/haptics';
+import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
+import type { AppSettings } from '../hooks/useSettings';
+import { DETAIL_ANIM_OPTIONS } from '../utils/detailAnimations';
+import { TILE_GROUPS } from '../config/tiles';
+import { BACKGROUND_OPTIONS } from '../config/backgrounds';
+import { COLOR_THEMES } from '../config/colorThemes';
+import { LANGUAGES, t, type StringKey } from '../utils/i18n';
+import { MODEL_KEYS, MODEL_LABELS } from '../api/providers';
+import { formatClockParts } from '../utils/format';
+import { exportSettings, importSettings } from '../utils/backup';
+import { writeForecastLogExport, type DataExportFormat } from '../utils/dataExport';
+import { writeDiagnosticsReport } from '../utils/debugBundle';
+import type { ProviderCheck } from '../api/providers';
+import type { AppTheme } from '../theme/palettes';
 
 /** Every adjust-tiles label, translated. */
 const TILE_LABEL_KEYS: Record<string, StringKey> = {
@@ -108,22 +124,6 @@ const UNIT_PRESETS: Record<string, Partial<AppSettings>> = {
 
 /** Lead times offered by the sunrise alarm picker (minutes before sunrise). */
 const SUNRISE_ALARM_OFFSETS = [0, 15, 30, 60, 90];
-import { Overlay } from './Overlay';
-import { haptics } from '../utils/haptics';
-import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
-import type { AppSettings } from '../hooks/useSettings';
-import { DETAIL_ANIM_OPTIONS } from '../utils/detailAnimations';
-import { TILE_GROUPS } from '../config/tiles';
-import { BACKGROUND_OPTIONS } from '../config/backgrounds';
-import { COLOR_THEMES } from '../config/colorThemes';
-import { LANGUAGES, t, type StringKey } from '../utils/i18n';
-import { MODEL_KEYS, MODEL_LABELS } from '../api/providers';
-import { formatClockParts } from '../utils/format';
-import { exportSettings, importSettings } from '../utils/backup';
-import { writeForecastLogExport, type DataExportFormat } from '../utils/dataExport';
-import { writeDiagnosticsReport } from '../utils/debugBundle';
-import type { ProviderCheck } from '../api/providers';
-import type { AppTheme } from '../theme/palettes';
 
 interface SettingsSheetProps {
   theme: AppTheme;
@@ -282,7 +282,7 @@ export function SettingsSheet({
       const patch = UNIT_PRESETS[key];
       return (
         patch !== undefined &&
-        (Object.keys(patch) as Array<keyof AppSettings>).every(
+        (Object.keys(patch) as (keyof AppSettings)[]).every(
           (field) => settings[field] === patch[field],
         )
       );

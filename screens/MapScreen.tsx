@@ -23,7 +23,7 @@ import type { GeoLocation } from '../api/types';
 
 type MapLayer = 'precip' | 'temp' | 'clouds' | 'wind' | 'thunder' | 'pressure';
 
-const LAYERS: Array<{ key: MapLayer; label: string; windy: string; icon: typeof Cloud }> = [
+const LAYERS: { key: MapLayer; label: string; windy: string; icon: typeof Cloud }[] = [
   { key: 'precip', label: 'Precip', windy: 'rain', icon: CloudRain },
   { key: 'temp', label: 'Temp', windy: 'temp', icon: Thermometer },
   { key: 'thunder', label: 'Storms', windy: 'thunder', icon: CloudLightning },

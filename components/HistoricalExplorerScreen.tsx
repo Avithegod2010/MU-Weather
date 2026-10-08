@@ -28,7 +28,7 @@ import {
 } from '../utils/detailAnimations';
 import type { AppTheme } from '../theme/palettes';
 import { F } from '../theme/typography';
-import type { MonthlyNormal, PastDayActual } from '../api/types';
+import type { MonthlyNormal } from '../api/types';
 
 /**
  * The newest date the explorer may ask for. The archive lags the live era by a

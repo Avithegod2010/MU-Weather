@@ -45,6 +45,7 @@ let cached: MaterialYouPalette | null | undefined;
 function loadModule(): MaterialYouModule | null {
   try {
     // Lazy require on purpose — a static import would crash Expo Go (new arch).
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy on purpose: a static import crashes Expo Go.
     const mod = require('react-native-material-you-colors') as { default?: MaterialYouModule };
     return mod?.default ?? null;
   } catch {

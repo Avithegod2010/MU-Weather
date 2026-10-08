@@ -1,6 +1,6 @@
 import { SlidingGroup, SlidingItem } from './Sliding';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { Card } from './Card';
@@ -21,7 +21,7 @@ interface ComfortJournalCardProps {
   revealDelay?: number;
 }
 
-const CHOICES: Array<{ rating: ComfortRating; icon: LucideIcon }> = [
+const CHOICES: { rating: ComfortRating; icon: LucideIcon }[] = [
   { rating: 'cold', icon: Snowflake },
   { rating: 'ok', icon: Shirt },
   { rating: 'hot', icon: Sun },

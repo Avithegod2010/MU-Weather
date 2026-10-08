@@ -80,7 +80,7 @@ function sanitizeSettings(input: unknown): Partial<AppSettings> {
   const sanitized: Partial<AppSettings> = {};
   if (!input || typeof input !== 'object' || Array.isArray(input)) return sanitized;
   const record = input as Record<string, unknown>;
-  for (const key of Object.keys(DEFAULT_SETTINGS) as Array<keyof AppSettings>) {
+  for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof AppSettings)[]) {
     const expected = DEFAULT_SETTINGS[key];
     const value = record[key];
     if (Array.isArray(expected)) {

@@ -8,13 +8,12 @@ import type { AqiScale } from '../utils/aqi';
 import { setIconStyle } from '../utils/icons';
 import type { IconStyle } from '../utils/icons';
 import type { DetailAnimStyle } from '../utils/detailAnimations';
-import type { LayoutDensity } from '../theme/palettes';
+import type { LayoutDensity , StyleMode, ThemeMode } from '../theme/palettes';
 import type { HomeBackgroundKey } from '../config/backgrounds';
 import type { ColorThemeKey } from '../config/colorThemes';
 import type { ModelKey } from '../api/providers';
 import { setLanguage } from '../utils/i18n';
 import type { LanguageKey } from '../utils/i18n';
-import type { StyleMode, ThemeMode } from '../theme/palettes';
 
 const SETTINGS_KEY = '@mu_weather/settings_v1';
 

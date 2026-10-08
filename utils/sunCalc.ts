@@ -85,7 +85,7 @@ function classify(elevation: number): 'golden' | 'blue' | null {
 export function findGoldenBlueHours(lat: number, lon: number): GoldenBlueHours {
   const dayStart = startOfLocalDay(new Date());
   const stepMs = 5 * 60 * 1000;
-  const windows: Array<{ kind: 'golden' | 'blue'; start: Date; end: Date }> = [];
+  const windows: { kind: 'golden' | 'blue'; start: Date; end: Date }[] = [];
 
   let currentKind: 'golden' | 'blue' | null = null;
   let windowStart: Date | null = null;

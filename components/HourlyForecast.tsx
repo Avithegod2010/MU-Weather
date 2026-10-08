@@ -227,11 +227,46 @@ export const HourlyForecast = React.memo(function HourlyForecast({
 
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
-  const toggleIcons: Array<{ key: HourView; icon: typeof Wind }> = [
+  const toggleIcons: { key: HourView; icon: typeof Wind }[] = [
     { key: 'temp', icon: Thermometer },
     { key: 'rain', icon: Umbrella },
     { key: 'wind', icon: Wind },
   ];
+
+  const selectedHour = selected !== null ? slice[selected] ?? null : null;
+  const stats: { label: string; value: string }[] = [];
+  if (selectedHour) {
+    stats.push({
+      label: t('feels_like'),
+      value: formatTemp(selectedHour.apparent ?? selectedHour.temperature),
+    });
+    stats.push({ label: t('rain_chance'), value: `${Math.round(selectedHour.precipProbability)}%` });
+    stats.push({ label: t('card_precipitation'), value: formatPrecip(selectedHour.precipitation) });
+    stats.push({
+      label: t('card_wind'),
+      value: `${Math.round(convertWind(selectedHour.windSpeed))} ${windUnitLabel()}`,
+    });
+    stats.push({
+      label: t('gusts'),
+      value: `${Math.round(convertWind(selectedHour.windGusts))} ${windUnitLabel()}`,
+    });
+    stats.push({ label: t('f_direction'), value: compassLabel(selectedHour.windDirection) });
+    if (selectedHour.humidity !== null && selectedHour.humidity !== undefined) {
+      stats.push({ label: t('card_humidity'), value: `${Math.round(selectedHour.humidity)}%` });
+    }
+    if (selectedHour.dewPoint !== null) {
+      stats.push({ label: t('dew_point'), value: formatTemp(selectedHour.dewPoint) });
+    }
+    if (selectedHour.pressure !== null) {
+      stats.push({ label: t('card_pressure'), value: formatPressure(selectedHour.pressure) });
+    }
+    if (selectedHour.uvIndex !== null) {
+      stats.push({ label: t('card_uv'), value: String(Math.round(selectedHour.uvIndex)) });
+    }
+    if (selectedHour.visibility !== null) {
+      stats.push({ label: t('card_visibility'), value: formatVisibility(selectedHour.visibility) });
+    }
+  }
 
   return (
     <Card

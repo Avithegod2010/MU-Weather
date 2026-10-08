@@ -75,7 +75,7 @@ export interface MeteoAlarmWarning {
 /** Internal parsed warning: carries the CAP polygons of the chosen info. */
 interface ParsedWarning extends MeteoAlarmWarning {
   /** [lat, lon] pairs per area polygon; empty = area-wide warning. */
-  polygons: Array<Array<[number, number]>>;
+  polygons: [number, number][][];
 }
 
 const SEVERITIES: readonly MeteoAlarmSeverity[] = ['Minor', 'Moderate', 'Severe', 'Extreme'];
@@ -148,10 +148,10 @@ function awarenessLevelColor(value: unknown): MeteoAlarmLevelColor | null {
  * space-separated pairs). Returns null when malformed or too small to
  * enclose an area.
  */
-export function parseCapPolygon(raw: string): Array<[number, number]> | null {
+export function parseCapPolygon(raw: string): [number, number][] | null {
   const pairs = raw.trim().split(/\s+/);
   if (pairs.length < 3) return null;
-  const out: Array<[number, number]> = [];
+  const out: [number, number][] = [];
   for (const pair of pairs) {
     const parts = pair.split(',');
     if (parts.length !== 2) return null;
@@ -164,7 +164,7 @@ export function parseCapPolygon(raw: string): Array<[number, number]> | null {
 }
 
 /** Standard ray-casting point-in-polygon over (lat, lon) pairs. */
-export function pointInPolygon(lat: number, lon: number, polygon: Array<[number, number]>): boolean {
+export function pointInPolygon(lat: number, lon: number, polygon: [number, number][]): boolean {
   let inside = false;
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
     const [latI, lonI] = polygon[i];
@@ -195,7 +195,7 @@ export function matchesLocation(
  * falling back to English, then to the first entry.
  */
 function pickInfo(infos: unknown[], lang: string): Record<string, unknown> | null {
-  const withPrefix: Array<{ prefix: string; info: Record<string, unknown> }> = [];
+  const withPrefix: { prefix: string; info: Record<string, unknown> }[] = [];
   for (const entry of infos) {
     const info = asRecord(entry);
     if (!info) continue;
@@ -249,7 +249,7 @@ function parseOneWarning(entry: unknown, now: number, lang: string): ParsedWarni
   const finalSeverity = severity ?? (SEVERITIES[LEVEL_COLORS.indexOf(levelColor)] ?? 'Moderate');
 
   const areas = Array.isArray(info.area) ? info.area : [];
-  const polygons: Array<Array<[number, number]>> = [];
+  const polygons: [number, number][][] = [];
   const areaDescs: string[] = [];
   for (const areaEntry of areas) {
     const area = asRecord(areaEntry);

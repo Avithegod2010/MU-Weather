@@ -208,27 +208,27 @@ export interface ForecastResponse {
   hourly: {
     time: string[];
     temperature_2m: number[];
-    apparent_temperature: Array<number | null>;
+    apparent_temperature: (number | null)[];
     weather_code: number[];
-    precipitation: Array<number | null>;
-    precipitation_probability: Array<number | null>;
+    precipitation: (number | null)[];
+    precipitation_probability: (number | null)[];
     is_day: number[];
-    dew_point_2m: Array<number | null>;
-    visibility: Array<number | null>;
-    pressure_msl: Array<number | null>;
-    wind_speed_10m: Array<number | null>;
-    wind_gusts_10m: Array<number | null>;
-    wind_direction_10m: Array<number | null>;
-    uv_index: Array<number | null>;
-    relative_humidity_2m: Array<number | null>;
-    cape?: Array<number | null>;
-    snow_depth?: Array<number | null>;
-    snowfall?: Array<number | null>;
-    freezing_level_height?: Array<number | null>;
+    dew_point_2m: (number | null)[];
+    visibility: (number | null)[];
+    pressure_msl: (number | null)[];
+    wind_speed_10m: (number | null)[];
+    wind_gusts_10m: (number | null)[];
+    wind_direction_10m: (number | null)[];
+    uv_index: (number | null)[];
+    relative_humidity_2m: (number | null)[];
+    cape?: (number | null)[];
+    snow_depth?: (number | null)[];
+    snowfall?: (number | null)[];
+    freezing_level_height?: (number | null)[];
   };
   minutely_15?: {
     time: string[];
-    precipitation: Array<number | null>;
+    precipitation: (number | null)[];
   };
   daily: {
     time: string[];
@@ -237,15 +237,15 @@ export interface ForecastResponse {
     temperature_2m_min: number[];
     sunrise: string[];
     sunset: string[];
-    uv_index_max: Array<number | null>;
-    precipitation_probability_max: Array<number | null>;
-    precipitation_sum: Array<number | null>;
-    wind_speed_10m_max: Array<number | null>;
+    uv_index_max: (number | null)[];
+    precipitation_probability_max: (number | null)[];
+    precipitation_sum: (number | null)[];
+    wind_speed_10m_max: (number | null)[];
   };
 }
 
 export interface GeocodingResponse {
-  results?: Array<{
+  results?: {
     id: number;
     name: string;
     latitude: number;
@@ -255,7 +255,7 @@ export interface GeocodingResponse {
     admin1?: string;
     timezone?: string;
     population?: number;
-  }>;
+  }[];
 }
 
 export interface AirQualityResponse {
@@ -276,9 +276,9 @@ export interface AirQualityResponse {
   };
   hourly?: {
     time: string[];
-    us_aqi: Array<number | null>;
-    european_aqi: Array<number | null>;
-    pm2_5: Array<number | null>;
-    pm10: Array<number | null>;
+    us_aqi: (number | null)[];
+    european_aqi: (number | null)[];
+    pm2_5: (number | null)[];
+    pm10: (number | null)[];
   };
 }

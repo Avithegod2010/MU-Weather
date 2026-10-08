@@ -315,8 +315,8 @@ function SunLayer({ width, height, clock, reducedMotion }: LayerProps) {
   ]);
 
   const rays = useMemo(() => {
-    const even: Array<{ x: number; y: number }> = [];
-    const odd: Array<{ x: number; y: number }> = [];
+    const even: { x: number; y: number }[] = [];
+    const odd: { x: number; y: number }[] = [];
     const outerFor = (index: number) => extent * 0.8 * (index % 2 === 0 ? 0.5 : 0.42);
     for (let index = 0; index < 16; index++) {
       const angle = (index / 16) * Math.PI * 2;
@@ -506,7 +506,7 @@ function FogBand({
 }
 
 /** Piecewise-linear flash envelope: sharp rise, dip, second rise, then fade. */
-const FLASH_KEYS: Array<[number, number]> = [
+const FLASH_KEYS: [number, number][] = [
   [0, 0],
   [60, 0.32],
   [150, 0.05],

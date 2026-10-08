@@ -99,7 +99,7 @@ const TOPIC_META: Record<TopicKey, { title: string; icon: LucideIcon }> = {
 };
 
 /** Species display names stay plain English, matching the home pollen card. */
-const POLLEN_SPECIES: Array<{ key: keyof PollenInfo; label: string }> = [
+const POLLEN_SPECIES: { key: keyof PollenInfo; label: string }[] = [
   { key: 'alder', label: 'Alder' },
   { key: 'birch', label: 'Birch' },
   { key: 'grass', label: 'Grass' },
@@ -150,7 +150,7 @@ export function DetailChart({
     .filter((value): value is number => value !== null);
 
   const bandByTime = band ? new Map(band.map((point) => [point.time, point])) : null;
-  const bandRows: Array<{ p10: number; p90: number } | null> | null = bandByTime
+  const bandRows: ({ p10: number; p90: number } | null)[] | null = bandByTime
     ? usable.map((hour) => {
         const point = bandByTime.get(hour.time);
         return point ? { p10: point.tP10, p90: point.tP90 } : null;
@@ -436,8 +436,8 @@ export function TileDetailScreen({
   let dewChart: React.ReactNode = null;
 let windRose: React.ReactNode = null;
   let explorer: React.ReactNode = null;
-  let factRows: Array<{ label: string; value: string }> = [];
-  let bars: Array<{ label: string; value: string; fraction: number; color: string }> | null = null;
+  let factRows: { label: string; value: string }[] = [];
+  let bars: { label: string; value: string; fraction: number; color: string }[] | null = null;
   let barsTitle = t('d_pollutants');
   let progress: { fraction: number; color: string } | null = null;
   let about = '';

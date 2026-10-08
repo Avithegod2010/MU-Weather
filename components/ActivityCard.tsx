@@ -1,12 +1,11 @@
 import { t } from '../utils/i18n';
 import React from 'react';
 import { F } from '../theme/typography';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View , Pressable } from 'react-native';
 import { Footprints, Bike, Shirt, Moon, Camera } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
-import { Pressable } from 'react-native';
 import type { AppTheme } from '../theme/palettes';
 import { computeActivities } from '../utils/activity';
 import type { ActivityKey } from '../utils/activity';

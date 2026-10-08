@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { GeoLocation, WeatherBundle } from '../api/types';
+import type { WeatherBundle } from '../api/types';
 import { fetchWeather } from '../api/openMeteo';
 import { loadFavorites } from './favoritesStore';
 import { loadWidgetCities } from './widgetCityConfig';
@@ -42,7 +42,7 @@ export interface CitySnapshot {
   precipProbabilityMax: number;
   precipSum: number;
   /** First few hours, trimmed to the fields the hourly strip renders. */
-  hours: Array<{ time: string; temperature: number; precipProbability: number }>;
+  hours: { time: string; temperature: number; precipProbability: number }[];
   /** US AQI for the chip, or null when the air-quality call failed. */
   usAqi: number | null;
   fetchedAt: number;
