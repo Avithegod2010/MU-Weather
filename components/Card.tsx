@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import type { LucideIcon } from 'lucide-react-native';
 import type { AppTheme } from '../theme/palettes';
 import { F } from '../theme/typography';
 import { RADIUS } from '../theme/tokens';
+import { Sheen } from './Sheen';
 import { PressScale } from './PressScale';
 import { Reveal } from './Reveal';
 
@@ -44,7 +44,7 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
           pointerEvents="none"
         />
       ) : null}
-      <Sheen />
+      <Sheen radius={RADIUS.xl} />
       {title ? (
         <View style={[styles.header, compact && styles.headerCompact]}>
           {Icon ? <Icon size={14} color={theme.textSecondary} strokeWidth={2.4} /> : null}
@@ -85,24 +85,6 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
   );
 }
 
-/**
- * Soft diagonal highlight across the top of a card: the glassy sheen that
- * lifts the surface off the sky. Decorative only, so it ignores touches.
- */
-function Sheen() {
-  return (
-    <View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.sheenClip]}>
-      <LinearGradient
-        colors={['rgba(255,255,255,0.14)', 'rgba(255,255,255,0.03)', 'rgba(255,255,255,0)']}
-        locations={[0, 0.45, 1]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0.9, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-    </View>
-  );
-}
-
 function ChevronGlyph({ color }: { color: string }) {
   return (
     <Text
@@ -121,10 +103,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingVertical: 18,
     paddingHorizontal: 20,
-  },
-  sheenClip: {
-    borderRadius: RADIUS.xl,
-    overflow: 'hidden',
   },
   cardCompact: {
     paddingVertical: 12,
