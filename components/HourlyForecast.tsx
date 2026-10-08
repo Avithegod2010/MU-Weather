@@ -191,40 +191,6 @@ export const HourlyForecast = React.memo(function HourlyForecast({
     viewportWidth.current = event.nativeEvent.layout.width;
   };
 
-  let points: CurvePoint[];
-  let lineColor: string;
-  let formatValue: (hour: HourPoint) => string;
-
-  if (view === 'rain') {
-    lineColor = '#6FA8DC';
-    points = slice.map((hour, index) => ({
-      x: index * COL_WIDTH + COL_WIDTH / 2,
-      y: scaleY(Math.min(hour.precipProbability, 100), 0, 100, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
-    }));
-    formatValue = (hour) => `${Math.round(hour.precipProbability)}%`;
-  } else if (view === 'wind') {
-    lineColor = '#8FD0B8';
-    const maxSpeed = Math.max(
-      10,
-      ...slice.map((hour) => Math.max(hour.windSpeed, hour.windGusts)),
-    ) * 1.15;
-    points = slice.map((hour, index) => ({
-      x: index * COL_WIDTH + COL_WIDTH / 2,
-      y: scaleY(hour.windSpeed, 0, maxSpeed, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
-    }));
-    formatValue = (hour) => `${Math.round(convertWind(hour.windSpeed))}`;
-  } else {
-    lineColor = theme.isLight ? 'rgba(28,36,49,0.32)' : 'rgba(255,255,255,0.42)';
-    const temps = slice.map((hour) => hour.temperature);
-    const min = Math.min(...temps);
-    const max = Math.max(...temps);
-    points = slice.map((hour, index) => ({
-      x: index * COL_WIDTH + COL_WIDTH / 2,
-      y: scaleY(hour.temperature, min, max, CURVE_PADDING, CURVE_HEIGHT - CURVE_PADDING),
-    }));
-    formatValue = (hour) => formatTemp(hour.temperature);
-  }
-
   const dotFill = theme.isLight ? '#FFFFFF' : '#F6F9FD';
 
   const toggleIcons: { key: HourView; icon: typeof Wind }[] = [
@@ -232,41 +198,6 @@ export const HourlyForecast = React.memo(function HourlyForecast({
     { key: 'rain', icon: Umbrella },
     { key: 'wind', icon: Wind },
   ];
-
-  const selectedHour = selected !== null ? slice[selected] ?? null : null;
-  const stats: { label: string; value: string }[] = [];
-  if (selectedHour) {
-    stats.push({
-      label: t('feels_like'),
-      value: formatTemp(selectedHour.apparent ?? selectedHour.temperature),
-    });
-    stats.push({ label: t('rain_chance'), value: `${Math.round(selectedHour.precipProbability)}%` });
-    stats.push({ label: t('card_precipitation'), value: formatPrecip(selectedHour.precipitation) });
-    stats.push({
-      label: t('card_wind'),
-      value: `${Math.round(convertWind(selectedHour.windSpeed))} ${windUnitLabel()}`,
-    });
-    stats.push({
-      label: t('gusts'),
-      value: `${Math.round(convertWind(selectedHour.windGusts))} ${windUnitLabel()}`,
-    });
-    stats.push({ label: t('f_direction'), value: compassLabel(selectedHour.windDirection) });
-    if (selectedHour.humidity !== null && selectedHour.humidity !== undefined) {
-      stats.push({ label: t('card_humidity'), value: `${Math.round(selectedHour.humidity)}%` });
-    }
-    if (selectedHour.dewPoint !== null) {
-      stats.push({ label: t('dew_point'), value: formatTemp(selectedHour.dewPoint) });
-    }
-    if (selectedHour.pressure !== null) {
-      stats.push({ label: t('card_pressure'), value: formatPressure(selectedHour.pressure) });
-    }
-    if (selectedHour.uvIndex !== null) {
-      stats.push({ label: t('card_uv'), value: String(Math.round(selectedHour.uvIndex)) });
-    }
-    if (selectedHour.visibility !== null) {
-      stats.push({ label: t('card_visibility'), value: formatVisibility(selectedHour.visibility) });
-    }
-  }
 
   return (
     <Card
