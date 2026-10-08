@@ -26,9 +26,9 @@ built with React Native & Expo.
 
 | Material You idea | How MU Weather delivers it |
 | --- | --- |
-| Colour that adapts to *you* | A dedicated **Material You** theme (Android 12+) reads the system palette — derived from your wallpaper — and recolours the app's screens. The home-screen widgets keep a fixed palette and do not follow it |
+| Colour that adapts to *you* | A dedicated **Material You** theme (Android 12+) reads the system palette — derived from your wallpaper — and recolours the app's screens. The home-screen widgets follow the sky, not Material You |
 | Rounded, tactile surfaces | Card-based layout, soft radii, layered gradients, and an optional glass style |
-| Personal expression | 10 colour themes · light / dark / system · comfortable & compact density · 3 icon styles · 4 tile-transition animations · 6 home backgrounds |
+| Personal expression | 10 colour themes · light / dark / system · comfortable & compact density · 3 icon styles · 4 tile-transition animations · 6 home backgrounds · animated sky (can be switched off) |
 | Feel like part of Android | Home-screen widgets, app shortcuts, notification actions, spoken readouts, calendar rows |
 
 ---
@@ -103,7 +103,7 @@ built with React Native & Expo.
 - **Icon styles** — outline, filled or colourful
 - **Tile animations** — fade, slide, zoom or push, plus per-section visibility under *Adjust tiles*
 - **Home backgrounds** — dynamic weather, aurora, sunset, ocean, midnight, forest
-- **Home-screen widgets** — five widgets (one with an hourly strip), refreshed in the background, with fixed colour palettes (they do not follow Material You or the sky)
+- **Home-screen widgets** — five widgets (one with an hourly strip), refreshed in the background, coloured from the current sky (weather and day or night), not Material You
 - **App shortcuts** — `muweather://radar` · `muweather://search` · `muweather://favorites`
 - **Accessibility** — TalkBack labels throughout, reduced-motion support, font-fitting for long translated labels
 - **Offline-friendly** — the last snapshot, caches and history live on the device and are served without a connection
@@ -130,7 +130,7 @@ Translations are **strictly typed against the English catalog** (`i18n/en.ts`), 
 | Language | TypeScript in **strict** mode — no `any` in app code |
 | UI | Hand-built themed components · design tokens in `theme/tokens.ts` · `react-native-svg` charts and sky effects · `react-native-reanimated` motion · `expo-linear-gradient` · `lucide-react-native` icons · Outfit font |
 | Radar & maps | Custom Web-Mercator tile renderer — **no map SDK** |
-| Widgets | `react-native-android-widget` · five home-screen widgets rendered as RemoteViews, so they are static (no animation) and use the fixed palette in `utils/widgetPalette.ts` |
+| Widgets | `react-native-android-widget` · five home-screen widgets rendered as RemoteViews, so they are static (no animation); colours come from the sky palette in `utils/widgetPalette.ts` |
 | Theming | 10 themes, including `react-native-material-you-colors` for the Android 12+ wallpaper palette |
 | Storage | `@react-native-async-storage/async-storage` — settings, snapshot caches, forecast logs, alert history |
 | Platform APIs | `expo-location` · `expo-notifications` · `expo-background-task` · `expo-calendar` · `expo-speech` · `expo-file-system` · `expo-sharing` · `expo-haptics` · `expo-blur` · `expo-sensors` |
