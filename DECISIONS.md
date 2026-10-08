@@ -19,11 +19,13 @@ top and bottom so it reads as light on the sky, not as a panel.
 | none (halo only, earlier audit) | 2.85:1 | 26 / 120 |
 | 0.34 white / 0.30 black | 3.90:1 | 7 / 120 |
 | 0.46 white / 0.42 black (shipped) | 4.31:1 | 4 / 120 |
+| same, gradient stop moved so the label sits at full strength (shipped) | 4.89:1 | 0 / 120 |
 
-**Residual.** The four remaining failures are the 17 px "London" location label on Sunset and Ocean skies
-(4.31 to 4.44:1). They are close to the threshold but do not pass. Options that would close the gap, not taken:
-a stronger scrim (it starts to look like a panel), a larger location label, or a per-theme sky review. Revisit
-if the user wants a strict AA pass on that label.
+**Why the last four failed.** The scrim's gradient started at 0% opacity at its top edge, and the 17 px
+"London" label sat in that fade. Moving the full-strength stop from 22% to 8% of the height fixed it. No
+change to the scrim tone was needed for the last step.
+
+**Result.** All 120 targets clear 4.5:1. Worst 4.89:1 with the halo, against 4.82:1 without it.
 
 ## 2. Remaining SVG charts (chosen: convert them to the Skia chart set)
 
@@ -60,6 +62,11 @@ now accepts `rgba()` colours as well as hex.
 
 ## 4. Liquid glass backdrop (chosen: sample the real sky, keep the gradient as fallback)
 
+**Measured.** `glass_refraction.py` with sky motion off. The snapshot pill and the fallback pill differ by a mean
+of 49.8 per channel, while two snapshot captures differ by 0.0. The snapshot matches the real sky: the pill
+averages (69,135,172), against (64,144,183), (78,140,175) and (72,143,181) for the sky just above, below and beside
+it. The gradient fallback stretches the theme gradient across the pill's own height, so it shows a yellow base
+that the sky there does not have. It is kept as the fallback, as requested, but it is an approximation.
+
 The sliding highlight refracts a snapshot of the Home sky canvas. The snapshot is taken every 1.5 s, once under
-reduced motion. The gradient shader remains the fallback when no snapshot exists. The look on a real device is
-not verified; `scripts/visual/glass_check.py` confirms the glass branch mounts without new errors.
+reduced motion. The gradient shader remains the fallback when no snapshot exists. 

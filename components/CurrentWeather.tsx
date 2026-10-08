@@ -181,7 +181,7 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
       <LinearGradient
         pointerEvents="none"
         colors={heroScrimColors(theme)}
-        locations={[0, 0.22, 0.78, 1]}
+        locations={[0, 0.08, 0.8, 1]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         style={styles.heroScrim}

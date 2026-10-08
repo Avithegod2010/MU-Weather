@@ -21,8 +21,17 @@ export function setSkyBackdrop(next: SkyBackdrop | null): void {
   listeners.forEach((listener) => listener());
 }
 
+/**
+ * Debug hook for the visual probes: `window.__MU_DISABLE_SKY_BACKDROP = true` makes the glass use its
+ * gradient fallback, so a capture with and without the snapshot can be compared pixel for pixel.
+ * Off in normal use.
+ */
+function backdropDisabled(): boolean {
+  return typeof window !== 'undefined' && (window as unknown as { __MU_DISABLE_SKY_BACKDROP?: boolean }).__MU_DISABLE_SKY_BACKDROP === true;
+}
+
 export function getSkyBackdrop(): SkyBackdrop | null {
-  return current;
+  return backdropDisabled() ? null : current;
 }
 
 function subscribe(listener: () => void): () => void {

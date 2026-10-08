@@ -55,11 +55,24 @@ environment, so no performance improvement is claimed. The `pageErrors: 1` entry
 - Journal singulars (`journal_progress_one`): all 14 locales reviewed. Bengali, Hindi, Hungarian, Indonesian and
   Turkish keep one wording for one and many, which is correct for those languages. The rest agree with the count.
 - `glass_refraction.py`: 2x close-ups of the glass pill at rest and after moving to "Hot", in `results/glass/`.
-  The pill renders with the tint and the specular rim. From a single still, the refraction itself is not proven:
-  the sky behind it is nearly uniform. A side-by-side with the gradient fallback needs a build toggle, which
-  does not exist yet.
+  The pill renders with the tint and the specular rim. The refraction is now measured: see the refraction results below.
 - The journal pill is correctly absent when today has no rating (`activeIndex` is -1). The probe seeds a rating.
 - `Sliding.tsx`: the first selection measurement now runs 400 ms after mount instead of being skipped. Verified
   with a rated day at launch: the pill appears at rest at the right size.
 - `capture.py`: `open_page` takes a `scale` argument for the 2x close-ups.
 - Android frame times: still not measured. No device or `adb` is available in this environment.
+
+## Glass refraction and halo, final
+
+- `glass_refraction.py` (sky motion off): the snapshot pill and the gradient fallback differ by a mean of 49.8 per
+  channel. Two snapshot captures differ by 0.0. The snapshot matches the real sky: the pill averages
+  (69,135,172) against (64,144,183), (78,140,175) and (72,143,181) for the sky just outside it. The fallback is
+  an approximation and shows a yellow base the sky does not have. Output: `results/glass/refraction.json`,
+  `refraction-compare.png`.
+- `halo-audit.json`: all 120 hero targets now clear 4.5:1 with the halo. Worst 4.89:1. The last four failed because
+  the scrim's gradient was still fading at the label; moving the full-strength stop to 8% of the height fixed it.
+- `debug hook`: `window.__MU_DISABLE_SKY_BACKDROP = true` forces the gradient fallback. Off in normal use; used only
+  by `glass_refraction.py`.
+- `sun-twilight-card.png`: the title and labels wrap in full, nothing truncated. The arc is empty at night, as expected.
+- Storm copy: all near and far lines reviewed in all 14 locales, no changes needed. A native speaker should still
+  confirm the close-band safety lines.
