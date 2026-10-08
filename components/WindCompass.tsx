@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath, SvgDot } from './SkiaShapes';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -39,25 +40,18 @@ export function WindCompass({ theme, speed, gusts, direction }: WindCompassProps
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
       >
-        <Svg width={SIZE} height={SIZE}>
-          <Circle
-            cx={CENTER}
-            cy={CENTER}
-            r={RADIUS}
-            stroke={theme.trackColor}
-            strokeWidth={2}
-            fill="none"
-          />
-          <Circle cx={CENTER} cy={CENTER} r={3.5} fill={theme.textSecondary} />
-        </Svg>
+        <Canvas style={{ width: SIZE, height: SIZE }}>
+          <SvgDot cx={CENTER} cy={CENTER} r={RADIUS} stroke={theme.trackColor} strokeWidth={2} />
+          <SvgDot cx={CENTER} cy={CENTER} r={3.5} fill={theme.textSecondary} />
+        </Canvas>
         <Text style={[styles.cardinal, styles.north, { color: theme.textTertiary }]}>N</Text>
         <Text style={[styles.cardinal, styles.south, { color: theme.textTertiary }]}>S</Text>
         <Text style={[styles.cardinal, styles.east, { color: theme.textTertiary }]}>E</Text>
         <Text style={[styles.cardinal, styles.west, { color: theme.textTertiary }]}>W</Text>
         <Animated.View style={[styles.needleWrap, needleStyle]}>
-          <Svg width={SIZE} height={SIZE}>
-            <Path d={`M ${CENTER} ${CENTER - RADIUS + 8} L ${CENTER + 9} ${CENTER + 12} L ${CENTER} ${CENTER + 5} L ${CENTER - 9} ${CENTER + 12} Z`} fill={theme.textPrimary} />
-          </Svg>
+          <Canvas style={{ width: SIZE, height: SIZE }}>
+            <SvgPath d={`M ${CENTER} ${CENTER - RADIUS + 8} L ${CENTER + 9} ${CENTER + 12} L ${CENTER} ${CENTER + 5} L ${CENTER - 9} ${CENTER + 12} Z`} color={theme.textPrimary} filled />
+          </Canvas>
         </Animated.View>
       </View>
       <Text style={[styles.speed, { color: theme.textPrimary }]}>{Math.round(convertWind(speed))}</Text>
