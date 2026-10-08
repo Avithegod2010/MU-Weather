@@ -1,7 +1,8 @@
 import { t } from '../utils/i18n';
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath, SvgDot } from './SkiaShapes';
 import { Sunrise } from '../utils/uiIcons';
 import { Card } from './Card';
 import type { AppTheme } from '../theme/palettes';
@@ -67,35 +68,14 @@ function SunArcVisual({ theme, tw }: { theme: AppTheme; tw: TwilightData }) {
 
   return (
     <View style={styles.arcSlot} onLayout={onLayout}>
-      <Svg
-        width={width}
-        height={ARC_HEIGHT}
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-      >
-        <Path
-          d={`M ${left.toFixed(1)} ${cy} A ${r} ${r} 0 0 1 ${right.toFixed(1)} ${cy}`}
-          stroke={theme.trackColor}
-          strokeWidth={1.5}
-          fill="none"
-        />
+      <Canvas style={{ width: width, height: ARC_HEIGHT }} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants">
+        <SvgPath d={`M ${left.toFixed(1)} ${cy} A ${r} ${r} 0 0 1 ${right.toFixed(1)} ${cy}`} color={theme.trackColor} strokeWidth={1.5} />
         {travelled ? (
-          <Path
-            d={travelled}
-            stroke={SUN_GOLD}
-            strokeWidth={2.2}
-            fill="none"
-            strokeLinecap="round"
-          />
+          <SvgPath d={travelled} color={SUN_GOLD} strokeWidth={2.2} />
         ) : null}
-        <Path
-          d={`M ${left.toFixed(1)} ${cy} L ${right.toFixed(1)} ${cy}`}
-          stroke={theme.trackColor}
-          strokeWidth={1}
-          fill="none"
-        />
-        {progress !== null ? <Circle cx={dotX} cy={dotY} r={4.5} fill={SUN_GOLD} /> : null}
-      </Svg>
+        <SvgPath d={`M ${left.toFixed(1)} ${cy} L ${right.toFixed(1)} ${cy}`} color={theme.trackColor} strokeWidth={1} />
+        {progress !== null ? <SvgDot cx={dotX} cy={dotY} r={4.5} fill={SUN_GOLD} /> : null}
+      </Canvas>
     </View>
   );
 }

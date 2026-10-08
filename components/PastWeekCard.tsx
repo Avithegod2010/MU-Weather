@@ -2,7 +2,8 @@ import { SlidingGroup, SlidingItem } from './Sliding';
 import { t, tDay, getLanguage, type StringKey } from '../utils/i18n';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath, SvgDot } from './SkiaShapes';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Droplet, Clock3 as History } from '../utils/uiIcons';
 import { Card } from './Card';
@@ -570,13 +571,13 @@ function TempTrendSparkline({ theme, days }: { theme: AppTheme; days: PastDayAct
 
   return (
     <View style={styles.sparkSlot} onLayout={onLayout}>
-      <Svg width={width} height={SPARK_HEIGHT}>
-        <Path d={bandPath(maxPoints, minPoints)} fill={MAX_LINE_COLOR} opacity={0.1} />
-        <Path d={smoothPath(minPoints)} stroke={MIN_LINE_COLOR} strokeWidth={2} fill="none" strokeLinecap="round" />
-        <Path d={smoothPath(maxPoints)} stroke={MAX_LINE_COLOR} strokeWidth={2.4} fill="none" strokeLinecap="round" />
-        <Circle cx={hottest.x} cy={hottest.y} r={3} fill={dotFill} stroke={MAX_LINE_COLOR} strokeWidth={2} />
-        <Circle cx={coldest.x} cy={coldest.y} r={3} fill={dotFill} stroke={MIN_LINE_COLOR} strokeWidth={2} />
-      </Svg>
+      <Canvas style={{ width: width, height: SPARK_HEIGHT }}>
+        <SvgPath d={bandPath(maxPoints, minPoints)} color={MAX_LINE_COLOR} filled opacity={0.1} />
+        <SvgPath d={smoothPath(minPoints)} color={MIN_LINE_COLOR} strokeWidth={2} />
+        <SvgPath d={smoothPath(maxPoints)} color={MAX_LINE_COLOR} strokeWidth={2.4} />
+        <SvgDot cx={hottest.x} cy={hottest.y} r={3} fill={dotFill} stroke={MAX_LINE_COLOR} strokeWidth={2} />
+        <SvgDot cx={coldest.x} cy={coldest.y} r={3} fill={dotFill} stroke={MIN_LINE_COLOR} strokeWidth={2} />
+      </Canvas>
     </View>
   );
 }

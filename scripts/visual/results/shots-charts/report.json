@@ -1,0 +1,66 @@
+{
+  "shots": [
+    "scripts/visual/results/shots-charts/sky-clear-day.png",
+    "scripts/visual/results/shots-charts/sky-clear-night.png",
+    "scripts/visual/results/shots-charts/sky-cloudy-day.png",
+    "scripts/visual/results/shots-charts/sky-fog-day.png",
+    "scripts/visual/results/shots-charts/sky-rain-night.png",
+    "scripts/visual/results/shots-charts/sky-snow-day.png",
+    "scripts/visual/results/shots-charts/sky-thunder-night.png",
+    "scripts/visual/results/shots-charts/theme-bright-default.png",
+    "scripts/visual/results/shots-charts/theme-bright-white.png",
+    "scripts/visual/results/shots-charts/theme-bright-skyblue.png",
+    "scripts/visual/results/shots-charts/theme-bright-midnight.png",
+    "scripts/visual/results/shots-charts/theme-bright-forest.png",
+    "scripts/visual/results/shots-charts/theme-bright-lavender.png",
+    "scripts/visual/results/shots-charts/theme-bright-sunset.png",
+    "scripts/visual/results/shots-charts/theme-bright-sepia.png",
+    "scripts/visual/results/shots-charts/theme-bright-amoled.png",
+    "scripts/visual/results/shots-charts/theme-bright-materialyou.png",
+    "scripts/visual/results/shots-charts/background-bright-dynamic.png",
+    "scripts/visual/results/shots-charts/background-bright-aurora.png",
+    "scripts/visual/results/shots-charts/background-bright-sunset.png",
+    "scripts/visual/results/shots-charts/background-bright-ocean.png",
+    "scripts/visual/results/shots-charts/background-bright-forest.png",
+    "scripts/visual/results/shots-charts/background-bright-midnight.png",
+    "scripts/visual/results/shots-charts/theme-dark-default.png",
+    "scripts/visual/results/shots-charts/theme-dark-white.png",
+    "scripts/visual/results/shots-charts/theme-dark-skyblue.png",
+    "scripts/visual/results/shots-charts/theme-dark-midnight.png",
+    "scripts/visual/results/shots-charts/theme-dark-forest.png",
+    "scripts/visual/results/shots-charts/theme-dark-lavender.png",
+    "scripts/visual/results/shots-charts/theme-dark-sunset.png",
+    "scripts/visual/results/shots-charts/theme-dark-sepia.png",
+    "scripts/visual/results/shots-charts/theme-dark-amoled.png",
+    "scripts/visual/results/shots-charts/theme-dark-materialyou.png",
+    "scripts/visual/results/shots-charts/background-dark-dynamic.png",
+    "scripts/visual/results/shots-charts/background-dark-aurora.png",
+    "scripts/visual/results/shots-charts/background-dark-sunset.png",
+    "scripts/visual/results/shots-charts/background-dark-ocean.png",
+    "scripts/visual/results/shots-charts/background-dark-forest.png",
+    "scripts/visual/results/shots-charts/background-dark-midnight.png"
+  ],
+  "pageErrors": {
+    "clear-day": [
+      "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+    ],
+    "clear-night": [
+      "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+    ],
+    "cloudy-day": [
+      "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+    ],
+    "fog-day": [
+      "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+    ],
+    "rain-night": [
+      "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+    ],
+    "snow-day": [
+      "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+    ],
+    "thunder-night": [
+      "The method or property ExpoNotifications.getLastNotificationResponse is not available on web, are you sure you've linked all the native dependencies properly?"
+    ]
+  }
+}

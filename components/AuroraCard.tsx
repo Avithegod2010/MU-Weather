@@ -2,7 +2,8 @@ import { t } from '../utils/i18n';
 import React, { useState } from 'react';
 import { F } from '../theme/typography';
 import { StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath, SvgDot } from './SkiaShapes';
 import { Star } from '../utils/uiIcons';
 import { Card } from './Card';
 import { formatHourLabel } from '../utils/format';
@@ -72,10 +73,10 @@ function KpSparkline({ theme, history }: { theme: AppTheme; history: KpHistory }
 
   return (
     <View style={styles.sparkSlot} onLayout={onLayout}>
-      <Svg width={width} height={SPARK_HEIGHT}>
-        <Path d={smoothPath(points)} stroke="#EFC25C" strokeWidth={2.2} fill="none" strokeLinecap="round" />
-        {peak ? <Circle cx={peak.x} cy={peak.y} r={3} fill={dotFill} stroke="#EFC25C" strokeWidth={2} /> : null}
-      </Svg>
+      <Canvas style={{ width: width, height: SPARK_HEIGHT }}>
+        <SvgPath d={smoothPath(points)} color="#EFC25C" strokeWidth={2.2} />
+        {peak ? <SvgDot cx={peak.x} cy={peak.y} r={3} fill={dotFill} stroke="#EFC25C" strokeWidth={2} /> : null}
+      </Canvas>
     </View>
   );
 }

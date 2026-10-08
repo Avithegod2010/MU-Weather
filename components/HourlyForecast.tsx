@@ -9,7 +9,8 @@ import {
   View,
   type LayoutChangeEvent,
 } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { Canvas } from '@shopify/react-native-skia';
+import { SvgPath, SvgDot } from './SkiaShapes';
 import Animated from 'react-native-reanimated';
 import { Clock, Thermometer, Umbrella, Wind, X } from '../utils/uiIcons';
 import { Card } from './Card';
@@ -265,26 +266,12 @@ export function HourlyForecast({ theme, hours, focus }: HourlyForecastProps) {
             importantForAccessibility="no-hide-descendants"
             accessibilityElementsHidden
           >
-            <Svg width={contentWidth} height={CURVE_HEIGHT}>
-              <Path
-                d={path}
-                stroke={lineColor}
-                strokeWidth={2.5}
-                fill="none"
-                strokeLinecap="round"
-              />
+            <Canvas style={{ width: contentWidth, height: CURVE_HEIGHT }}>
+              <SvgPath d={path} color={lineColor} strokeWidth={2.5} />
               {points.map((point, index) => (
-                <Circle
-                  key={`d-${slice[index].time}`}
-                  cx={point.x}
-                  cy={point.y}
-                  r={slice[index].isNow ? 5.5 : 4}
-                  fill={dotFill}
-                  stroke={lineColor}
-                  strokeWidth={2}
-                />
+                <SvgDot key={`d-${slice[index].time}`} cx={point.x} cy={point.y} r={slice[index].isNow ? 5.5 : 4} fill={dotFill} stroke={lineColor} strokeWidth={2} />
               ))}
-            </Svg>
+            </Canvas>
           </View>
 
           <View style={[styles.row, styles.tempRow]}>
