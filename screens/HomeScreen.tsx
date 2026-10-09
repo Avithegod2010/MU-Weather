@@ -59,11 +59,14 @@ import { BestWindowCard } from '../components/BestWindowCard';
 import { bestWindowLine } from '../utils/bestWindow';
 import { planOutdoorWeather } from '../utils/outdoorPlanAdapter';
 import {
+  effectiveOutdoorPreferences,
   stepOutdoorPreference,
   type OutdoorPreferenceControlKey,
 } from '../utils/outdoorPlanPolicy';
 import { computeWearLine } from '../utils/whatToWear';
 import { useComfortJournal } from '../hooks/useComfortJournal';
+import { useOutdoorWindowFeedback } from '../hooks/useOutdoorWindowFeedback';
+import { outdoorWindowFeedbackKey } from '../utils/outdoorWindowFeedbackPolicy';
 import { ComfortJournalCard } from '../components/ComfortJournalCard';
 import { TileDetailScreen, type TopicKey } from '../components/TileDetailScreen';
 import { DayDetailScreen } from '../components/DayDetailScreen';
@@ -121,6 +124,7 @@ import { useMeteoAlarm } from '../hooks/useMeteoAlarm';
 import { ClimateCard } from '../components/ClimateCard';
 import { OnThisDayCard } from '../components/OnThisDayCard';
 import { WarningsCard } from '../components/WarningsCard';
+import { ProviderStatusCard } from '../components/ProviderStatusCard';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
 import { useFavorites } from '../hooks/useFavorites';
@@ -418,7 +422,7 @@ export function HomeScreen() {
       FEATURES.bestWindow && weather.data
         ? planOutdoorWeather(
             weather.data,
-            settings.outdoorPreferences,
+            effectiveOutdoorPreferences(settings.outdoorPreferences),
             settings.aqiScale,
             { now: planningNow },
           )
@@ -426,6 +430,13 @@ export function HomeScreen() {
     [weather.data, settings.outdoorPreferences, settings.aqiScale, planningNow],
   );
   const bestWindow = outdoorPlan?.windows[0] ?? null;
+  const recommendedWindowKey = bestWindow
+    ? outdoorWindowFeedbackKey(bestWindow.startAt, bestWindow.endAt)
+    : null;
+  const outdoorFeedbackScope = weather.data
+    ? weatherLocationKey(weather.data.location.latitude, weather.data.location.longitude)
+    : null;
+  const outdoorWindowFeedback = useOutdoorWindowFeedback(outdoorFeedbackScope, recommendedWindowKey);
   const bestWindowLabel = bestWindow && weather.data
     ? bestWindowLine({
         start: forecastLocalIso(bestWindow.startAt, weather.data.utcOffsetSeconds),
@@ -437,6 +448,22 @@ export function HomeScreen() {
   const adjustOutdoorPreference = useCallback((key: OutdoorPreferenceControlKey, delta: number) => {
     updateSettings({
       outdoorPreferences: stepOutdoorPreference(settings.outdoorPreferences, key, delta),
+    });
+  }, [settings.outdoorPreferences, updateSettings]);
+  const applyJournalOutdoorSuggestion = useCallback((offsetC: number) => {
+    updateSettings({
+      outdoorPreferences: {
+        ...settings.outdoorPreferences,
+        journalTemperatureOffsetC: offsetC,
+      },
+    });
+  }, [settings.outdoorPreferences, updateSettings]);
+  const resetJournalOutdoorSuggestion = useCallback(() => {
+    updateSettings({
+      outdoorPreferences: {
+        ...settings.outdoorPreferences,
+        journalTemperatureOffsetC: 0,
+      },
     });
   }, [settings.outdoorPreferences, updateSettings]);
   const wearLine = useMemo(
@@ -825,6 +852,18 @@ export function HomeScreen() {
                   />
                 </Reveal>
               ) : null}
+              {showSection('warnings') && weather.data ? (
+                <Reveal delay={158}>
+                  <ProviderStatusCard
+                    theme={theme}
+                    weather={weather.data}
+                    ensemble={ensemble}
+                    officialWarnings={meteoAlarm}
+                    secondaryProvider={providerCheck}
+                    now={planningNow}
+                  />
+                </Reveal>
+              ) : null}
 
               {chapterToday ? (
                 <Reveal delay={40}>
@@ -910,8 +949,19 @@ export function HomeScreen() {
                     line={bestWindowLabel}
                     score={bestWindow?.score ?? null}
                     reasons={bestWindow?.reasons ?? []}
-                    preferences={settings.outdoorPreferences}
+                    preferences={effectiveOutdoorPreferences(settings.outdoorPreferences)}
                     onPreferenceStep={adjustOutdoorPreference}
+                    windowFeedback={outdoorWindowFeedback.vote}
+                    onWindowFeedback={(vote) => {
+                      haptics.select();
+                      outdoorWindowFeedback.submit(vote);
+                    }}
+                    journalSamples={comfort.total}
+                    journalSuggestionSamples={comfort.calibration?.samples ?? comfort.total}
+                    journalSuggestionOffsetC={comfort.calibration?.offsetC ?? null}
+                    journalAppliedOffsetC={settings.outdoorPreferences.journalTemperatureOffsetC ?? 0}
+                    onApplyJournalSuggestion={applyJournalOutdoorSuggestion}
+                    onResetJournalSuggestion={resetJournalOutdoorSuggestion}
                     weekend={weekend?.line ?? null}
                   />
                 </Reveal>
@@ -1102,6 +1152,7 @@ export function HomeScreen() {
         onUpdateQuiet={alertState.updateQuietHours}
         ready={alertState.ready}
         currentImpacts={currentImpacts}
+        feedbackScope={active?.id ?? 'current-location'}
       />
 
       <MapScreen

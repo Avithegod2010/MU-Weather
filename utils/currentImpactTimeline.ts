@@ -1,6 +1,7 @@
 import { aggregateWeatherImpacts } from './impactTimeline';
 import type { ImpactSeverity, ImpactSignal, WeatherImpact } from './impactTimeline';
 import type { TriggeredAlert } from './alertRules';
+import { formatAlertEvidence } from './alertEvidence';
 import { METEOALARM_CACHE_TTL_MS, type MeteoAlarmWarning } from './meteoalarm';
 import { WEATHER_CACHE_FRESH_FOR_MS } from './freshnessPolicy';
 
@@ -72,6 +73,7 @@ export function buildCurrentImpactTimeline(
         (alert.severity !== 'info' && alert.severity !== 'warning' && alert.severity !== 'severe')
       ) return;
       const hazard = hazardForAlert(alert.key);
+      const evidence = alert.evidence ? formatAlertEvidence(alert.evidence) : '';
       signals.push({
         id: `forecast:${alert.key}:${index}:${freshForecastAt}`,
         hazard,
@@ -82,7 +84,7 @@ export function buildCurrentImpactTimeline(
         sourceUpdatedAt: freshForecastAt,
         title: alert.title,
         expected: alert.message,
-        whyItMatters: alert.message,
+        whyItMatters: evidence ? `${alert.message} · ${evidence}` : alert.message,
         action: alert.message,
         ...(alert.severity === 'severe' ? { safetyCopy: alert.message } : {}),
       });

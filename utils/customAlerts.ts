@@ -257,6 +257,13 @@ export function evaluateCustomRules(
       title: rule.note ? t('custom_reminder') : t('notif_custom_title').split('{metric}').join(metricName),
       message: rule.note ?? body,
       severity: METRIC_SEVERITY[rule.metric],
+      evidence: {
+        metricLabel: CUSTOM_METRIC_KEYS[rule.metric],
+        actual: formatCustomValue(rule.metric, actual),
+        threshold: `${rule.op === 'gte' ? '≥' : '≤'} ${formatCustomValue(rule.metric, rule.value)}`,
+        source: 'User-defined rule',
+        observationTime: data.current.observationTime ?? today?.date,
+      },
     });
   }
   return triggered;

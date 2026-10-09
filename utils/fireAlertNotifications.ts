@@ -5,12 +5,15 @@ import {
   DEFAULT_QUIET_START_MINUTES,
   evaluateAlerts,
   isInsideQuietWindow,
+  localMinutesOfDay,
 } from './alertRules';
 import type { AlertExtras, AlertSettings, TriggeredAlert } from './alertRules';
 import { evaluateCustomRules, loadCustomAlerts } from './customAlerts';
 import { computeNowcast } from './nowcast';
 import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
 import { appendAlertHistory } from './alertHistory';
+import { normalizeFiredMap, shouldDeliverAlert } from './alertEscalation';
+import type { AlertFireStamp } from './alertEscalation';
 import { assessWeatherCacheFreshness, weatherLocationKey } from './freshnessPolicy';
 import { getLanguage, t } from './i18n';
 import type { WeatherBundle } from '../api/types';
@@ -116,12 +119,7 @@ export async function isInQuietHoursNow(): Promise<boolean> {
       typeof stored.quietEndMinutes === 'number'
         ? stored.quietEndMinutes
         : DEFAULT_QUIET_END_MINUTES;
-    const localNow = new Date();
-    return isInsideQuietWindow(
-      localNow.getHours() * 60 + localNow.getMinutes(),
-      quietStart,
-      quietEnd,
-    );
+    return isInsideQuietWindow(localMinutesOfDay(new Date()), quietStart, quietEnd);
   } catch {
     return false;
   }
@@ -213,13 +211,10 @@ export async function deliverAlerts(
   const inQuietHours = await isInQuietHoursNow();
 
   await withFiredLock(async () => {
-    let fired: Record<string, number> = {};
+    let fired: Record<string, AlertFireStamp> = {};
     try {
       const raw = await AsyncStorage.getItem(FIRED_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') fired = parsed;
-      }
+      if (raw) fired = normalizeFiredMap(JSON.parse(raw));
     } catch {
       // Corrupt cooldown map: start fresh.
     }
@@ -229,9 +224,9 @@ export async function deliverAlerts(
     let changed = false;
     for (const alert of triggered) {
       const cooldownKey = `${cooldownPrefix}${alert.key}`;
-      const lastFired = fired[cooldownKey] ?? 0;
-      if (now - lastFired < cooldownMs) continue;
-      fired[cooldownKey] = now;
+      const previous = fired[cooldownKey];
+      if (!shouldDeliverAlert(now, previous, alert.severity, cooldownMs)) continue;
+      fired[cooldownKey] = { at: now, severity: alert.severity };
       changed = true;
       delivered.push(alert);
       // Quiet hours silence the notification only - the cooldown stamp and the
@@ -272,6 +267,7 @@ export async function deliverAlerts(
           severity: alert.severity,
           city,
           at: now,
+          evidence: alert.evidence,
         })),
       );
     }
@@ -290,17 +286,14 @@ export async function deliverAlerts(
  */
 export async function snoozeAlert(alertKey: string): Promise<void> {
   await withFiredLock(async () => {
-    let fired: Record<string, number> = {};
+    let fired: Record<string, AlertFireStamp> = {};
     try {
       const raw = await AsyncStorage.getItem(FIRED_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') fired = parsed;
-      }
+      if (raw) fired = normalizeFiredMap(JSON.parse(raw));
     } catch {
       // Corrupt cooldown map: start fresh - the snooze still applies.
     }
-    fired[alertKey] = Date.now() - COOLDOWN_MS + SNOOZE_MS;
+    fired[alertKey] = { at: Date.now() - COOLDOWN_MS + SNOOZE_MS, severity: null };
     try {
       await AsyncStorage.setItem(FIRED_KEY, JSON.stringify(fired));
     } catch {

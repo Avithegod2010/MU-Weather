@@ -14,6 +14,7 @@ import { describeWmo } from '../utils/wmo';
 import type { AppTheme } from '../theme/palettes';
 import type { GeoLocation } from '../api/types';
 import type { ComparisonEntry } from '../hooks/useCityComparison';
+import { useClimateNormals } from '../hooks/useClimateNormals';
 
 interface CompareScreenProps {
   theme: AppTheme;
@@ -83,6 +84,8 @@ export function CompareScreen({ theme, visible, onClose, entries, status, favori
     entries.find((entry) => entry.city.id === selection[0]) ?? null,
     entries.find((entry) => entry.city.id === selection[1]) ?? null,
   ];
+  const climateA = useClimateNormals(visible && tab === 'two' ? pairEntries[0]?.city ?? null : null);
+  const climateB = useClimateNormals(visible && tab === 'two' ? pairEntries[1]?.city ?? null : null);
 
   const metrics: Metric[] = [
     {
@@ -207,6 +210,8 @@ export function CompareScreen({ theme, visible, onClose, entries, status, favori
             onSelect={handleSelect}
             entries={pairEntries}
             status={status}
+            climateA={climateA.months}
+            climateB={climateB.months}
             onRetry={() => onRetry?.()}
           />
         </ScrollView>

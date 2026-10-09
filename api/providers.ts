@@ -7,10 +7,13 @@ import type {
   OnThisDayYear,
 } from './types';
 import { RAIN_EVENT_THRESHOLD_MM } from './rain';
+import { traceAsync } from '../utils/performanceTracing';
 
 export interface ProviderCheck {
   status: 'idle' | 'checking' | 'ok' | 'error';
   temperature: number | null;
+  /** Client time when the most recent secondary-provider check completed. */
+  checkedAt?: number | null;
 }
 
 export interface HistoricalInfo {
@@ -494,11 +497,11 @@ function percentile(sorted: number[], p: number): number {
  * count toward temperature percentiles; rain probability uses only members
  * that reported precipitation.
  */
-export async function fetchEnsembleSpread(lat: number, lon: number): Promise<EnsembleSpread | null> {
+async function fetchEnsembleSpreadImpl(lat: number, lon: number): Promise<EnsembleSpread | null> {
   const params = new URLSearchParams({
     latitude: lat.toFixed(4),
     longitude: lon.toFixed(4),
-    hourly: 'temperature_2m,precipitation',
+    hourly: 'temperature_2m,precipitation,wind_speed_10m',
     forecast_days: '4',
     timezone: 'auto',
     models: 'icon_seamless',
@@ -519,9 +522,13 @@ export async function fetchEnsembleSpread(lat: number, lon: number): Promise<Ens
     );
     if (memberTempKeys.length === 0) return null;
 
+    const memberWindKeys = Object.keys(hourly).filter(
+      (key) => /^wind_speed_10m_member\d+$/.test(key) && Array.isArray(hourly[key]),
+    );
     const points: EnsembleSpreadPoint[] = [];
     for (let i = 0; i < times.length; i++) {
       const temps: number[] = [];
+      const winds: number[] = [];
       let wetMembers = 0;
       let precipMembers = 0;
       for (const key of memberTempKeys) {
@@ -538,13 +545,26 @@ export async function fetchEnsembleSpread(lat: number, lon: number): Promise<Ens
           }
         }
       }
+      for (const key of memberWindKeys) {
+        const value = (hourly[key] as (number | null)[])[i];
+        if (typeof value === 'number' && Number.isFinite(value) && value >= 0) winds.push(value);
+      }
       if (temps.length === 0) continue;
       temps.sort((a, b) => a - b);
+      winds.sort((a, b) => a - b);
       points.push({
         time: times[i],
         tP10: percentile(temps, 10),
         tMedian: percentile(temps, 50),
         tP90: percentile(temps, 90),
+        ...(winds.length > 0
+          ? {
+              windP10: percentile(winds, 10),
+              windMedian: percentile(winds, 50),
+              windP90: percentile(winds, 90),
+              windMembers: winds.length,
+            }
+          : {}),
         rainProb: precipMembers > 0 ? (wetMembers / precipMembers) * 100 : 0,
       });
     }
@@ -557,6 +577,10 @@ export async function fetchEnsembleSpread(lat: number, lon: number): Promise<Ens
   }
 }
 
+
+export function fetchEnsembleSpread(lat: number, lon: number): Promise<EnsembleSpread | null> {
+  return traceAsync('open-meteo.fetch-ensemble', () => fetchEnsembleSpreadImpl(lat, lon));
+}
 
 // ── Multi-model comparison (F2) ──
 

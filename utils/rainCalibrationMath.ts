@@ -18,6 +18,8 @@ export const MIN_RAIN_CALIBRATION_CASES = 100;
 export const MIN_RAIN_CALIBRATION_DAYS = 14;
 /** Do not report a reliability-bin estimate from a handful of cases. */
 export const MIN_RAIN_RELIABILITY_BIN_CASES = 20;
+/** Probability bins also need spread across days, not only many correlated hours. */
+export const MIN_RAIN_RELIABILITY_BIN_DAYS = 7;
 /** Lead-time scores need their own support threshold to avoid noisy slices. */
 export const MIN_RAIN_LEAD_BUCKET_CASES = 20;
 export const MIN_RAIN_LEAD_BUCKET_DAYS = 7;
@@ -61,6 +63,7 @@ export interface RainReliabilityBin {
   lowerPercent: number;
   upperPercent: number;
   cases: number;
+  verifiedDays: number;
   meanForecast: number | null;
   observedFrequency: number | null;
   sufficientlyPopulated: boolean;
@@ -73,6 +76,8 @@ export interface RainLeadTimeBucket {
   verifiedDays: number;
   /** Null until this lead range has enough independent days and hourly cases. */
   brierScore: number | null;
+  /** Reliability for each probability band, gated by its own case/day support. */
+  reliabilityBins: RainReliabilityBin[];
   sufficientlyPopulated: boolean;
 }
 
@@ -330,6 +335,41 @@ export function rainVerificationDateRange(
   return { startDate: dates[0], endDate: dates[dates.length - 1] };
 }
 
+function emptyReliabilityBins(): RainReliabilityBin[] {
+  return Array.from({ length: 5 }, (_, index): RainReliabilityBin => ({
+    lowerPercent: index * 20,
+    upperPercent: (index + 1) * 20,
+    cases: 0,
+    verifiedDays: 0,
+    meanForecast: null,
+    observedFrequency: null,
+    sufficientlyPopulated: false,
+  }));
+}
+
+function summarizeReliabilityBins(samples: RainForecastLogEntry[]): RainReliabilityBin[] {
+  const counts = Array.from({ length: 5 }, () => ({ count: 0, probabilitySum: 0, eventSum: 0, days: new Set<string>() }));
+  for (const sample of samples) {
+    if (sample.observed === null || !Number.isFinite(sample.probability)) continue;
+    const index = Math.min(4, Math.floor(Math.min(1, Math.max(0, sample.probability)) * 5));
+    const bin = counts[index];
+    bin.count += 1;
+    bin.probabilitySum += sample.probability;
+    bin.eventSum += sample.observed;
+    bin.days.add(sample.time.slice(0, 10));
+  }
+  return counts.map((bin, index): RainReliabilityBin => ({
+    lowerPercent: index * 20,
+    upperPercent: (index + 1) * 20,
+    cases: bin.count,
+    verifiedDays: bin.days.size,
+    meanForecast: bin.count > 0 ? bin.probabilitySum / bin.count : null,
+    observedFrequency: bin.count > 0 ? bin.eventSum / bin.count : null,
+    sufficientlyPopulated:
+      bin.count >= MIN_RAIN_RELIABILITY_BIN_CASES && bin.days.size >= MIN_RAIN_RELIABILITY_BIN_DAYS,
+  }));
+}
+
 function summarizeRainLeadTimes(samples: RainForecastLogEntry[]): RainLeadTimeBucket[] {
   return RAIN_LEAD_TIME_BUCKETS.map(({ startLeadHours, endLeadHours }) => {
     const bucket = samples.filter(
@@ -348,6 +388,7 @@ function summarizeRainLeadTimes(samples: RainForecastLogEntry[]): RainLeadTimeBu
       cases: bucket.length,
       verifiedDays,
       brierScore: sufficientlyPopulated ? squaredErrorSum / bucket.length : null,
+      reliabilityBins: summarizeReliabilityBins(bucket),
       sufficientlyPopulated,
     };
   });
@@ -363,14 +404,7 @@ export function computeRainCalibrationSummary(
   location: GeoLocation | RainLocationAnchor | null,
   now = Date.now(),
 ): RainCalibrationSummary {
-  const emptyBins = Array.from({ length: 5 }, (_, index): RainReliabilityBin => ({
-    lowerPercent: index * 20,
-    upperPercent: (index + 1) * 20,
-    cases: 0,
-    meanForecast: null,
-    observedFrequency: null,
-    sufficientlyPopulated: false,
-  }));
+  const emptyBins = emptyReliabilityBins();
   const emptySummary: RainCalibrationSummary = {
     status: 'insufficient',
     verifiedCases: 0,
@@ -402,27 +436,13 @@ export function computeRainCalibrationSummary(
     return { ...emptySummary, verifiedCases: samples.length, verifiedDays: days.size, leadTimeBuckets };
   }
 
-  const binCounts = Array.from({ length: 5 }, () => ({ count: 0, probabilitySum: 0, eventSum: 0 }));
   let squaredErrorSum = 0;
   for (const sample of samples) {
     const outcome = sample.observed as 0 | 1;
     const error = sample.probability - outcome;
     squaredErrorSum += error * error;
-    const index = Math.min(4, Math.floor(sample.probability * 5));
-    const bin = binCounts[index];
-    bin.count += 1;
-    bin.probabilitySum += sample.probability;
-    bin.eventSum += outcome;
   }
-
-  const reliabilityBins = binCounts.map((bin, index): RainReliabilityBin => ({
-    lowerPercent: index * 20,
-    upperPercent: (index + 1) * 20,
-    cases: bin.count,
-    meanForecast: bin.count > 0 ? bin.probabilitySum / bin.count : null,
-    observedFrequency: bin.count > 0 ? bin.eventSum / bin.count : null,
-    sufficientlyPopulated: bin.count >= MIN_RAIN_RELIABILITY_BIN_CASES,
-  }));
+  const reliabilityBins = summarizeReliabilityBins(samples);
   return {
     status: 'ready',
     verifiedCases: samples.length,

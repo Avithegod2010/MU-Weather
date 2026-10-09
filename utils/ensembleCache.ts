@@ -5,7 +5,7 @@ const ENSEMBLE_CACHE_KEY = '@mu_weather/ensemble_v1';
 /** Cap on persisted locations; the oldest fetch is dropped when full. */
 const MAX_CACHED_LOCATIONS = 8;
 /** Ensemble forecasts go stale - entries older than this are refetched. */
-const ENSEMBLE_TTL_MS = 3 * 60 * 60 * 1000;
+export const ENSEMBLE_TTL_MS = 3 * 60 * 60 * 1000;
 
 /**
  * One persisted ensemble-spread snapshot for a location. Unlike climate
@@ -34,7 +34,11 @@ function isValidPoint(value: unknown): value is EnsembleSpreadPoint {
     typeof point.tP10 === 'number' &&
     typeof point.tMedian === 'number' &&
     typeof point.tP90 === 'number' &&
-    typeof point.rainProb === 'number'
+    typeof point.rainProb === 'number' &&
+    (point.windP10 === undefined || (typeof point.windP10 === 'number' && Number.isFinite(point.windP10))) &&
+    (point.windMedian === undefined || (typeof point.windMedian === 'number' && Number.isFinite(point.windMedian))) &&
+    (point.windP90 === undefined || (typeof point.windP90 === 'number' && Number.isFinite(point.windP90))) &&
+    (point.windMembers === undefined || (typeof point.windMembers === 'number' && Number.isInteger(point.windMembers) && point.windMembers >= 0))
   );
 }
 

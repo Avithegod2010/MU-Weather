@@ -4,6 +4,8 @@ import type { GeoLocation, WeatherBundle } from '../api/types';
 import { loadLastWeather, saveLastWeather } from '../utils/storage';
 import { logForecast } from '../utils/forecastLog';
 import { refreshWeatherWidgets } from '../widget/weatherWidgetTask';
+import { traceAsync, traceSync } from '../utils/performanceTracing';
+import { transitionWeatherOffline } from '../utils/weatherOfflinePolicy';
 
 export type WeatherStatus = 'idle' | 'loading' | 'refreshing' | 'success' | 'error';
 
@@ -34,26 +36,34 @@ export function useWeather(location: GeoLocation | null) {
       try {
         const bundle = await fetchWeather(target);
         if (requestId.current !== id) return;
-        freshRef.current = true;
-        setData(bundle);
-        setStatus('success');
-        setOffline(false);
+        traceSync('app.weather-accept-response', () => {
+          freshRef.current = true;
+          setData(bundle);
+          setStatus('success');
+          setOffline((previous) => transitionWeatherOffline(previous, 'success'));
+        });
         // Non-critical: persist for the next cold start, record the daily
         // predictions for forecast-vs-actual, and redraw the home-screen widget.
-        void saveLastWeather(bundle);
-        void logForecast(bundle);
-        void refreshWeatherWidgets();
+        // Keep the work off the fetch path while exposing its duration to a
+        // development Android trace when profiling is enabled.
+        void traceAsync('app.weather-post-fetch-side-effects', async () => {
+          await Promise.allSettled([
+            traceAsync('app.weather-cache-write', () => saveLastWeather(bundle)),
+            traceAsync('app.forecast-log-write', () => logForecast(bundle)),
+            traceAsync('app.widget-refresh', () => refreshWeatherWidgets()),
+          ]);
+        }).catch(() => undefined);
       } catch (error) {
         if (requestId.current !== id) return;
         if (error instanceof ApiError && error.kind === 'network') {
           setErrorMessage('No internet connection. Check your network and try again.');
-          setOffline(true);
+          setOffline((previous) => transitionWeatherOffline(previous, 'network-failure'));
         } else if (error instanceof ApiError && error.kind === 'server') {
           setErrorMessage('The weather service is having trouble right now.');
-          setOffline(false);
+          setOffline((previous) => transitionWeatherOffline(previous, 'other-failure'));
         } else {
           setErrorMessage('Could not load the weather. Please try again.');
-          setOffline(false);
+          setOffline((previous) => transitionWeatherOffline(previous, 'other-failure'));
         }
         setStatus('error');
       }
@@ -67,7 +77,7 @@ export function useWeather(location: GeoLocation | null) {
     // resolves, so the UI renders instantly with the last known conditions.
     // Cache failure or a slow response must never break the live flow.
     void (async () => {
-      const cached = await loadLastWeather();
+      const cached = await traceAsync('app.weather-cache-read', () => loadLastWeather());
       if (cancelled || freshRef.current) return;
       if (cached && location && isSameLocation(cached.location, location)) {
         setData(cached);

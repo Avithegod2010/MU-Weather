@@ -4,12 +4,12 @@ import { t, tDay } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { WeatherIcon } from './WeatherIcon';
 import { ErrorState } from './ErrorState';
-import { formatTemp, convertWind, windUnitLabel, formatPrecip, precipUnitLabel } from '../utils/format';
+import { formatTemp, formatTemperatureDelta, convertWind, windUnitLabel, formatPrecip, precipUnitLabel } from '../utils/format';
 import { describeWmo } from '../utils/wmo';
 import { betterIndex, betterWindIndex, alignedDays, weekVerdict, COMPARE_DAYS } from '../utils/twoCityCompare';
 import type { BetterRule, TwoCityDayRow, WeekVerdict } from '../utils/twoCityCompare';
 import type { AppTheme } from '../theme/palettes';
-import type { GeoLocation, DayPoint } from '../api/types';
+import type { GeoLocation, DayPoint, MonthlyNormal } from '../api/types';
 import type { ComparisonEntry } from '../hooks/useCityComparison';
 
 const LABEL_WIDTH = 78;
@@ -29,6 +29,8 @@ interface TwoCityComparePanelProps {
   onSelect: (slot: 0 | 1, cityId: string) => void;
   entries: [ComparisonEntry | null, ComparisonEntry | null];
   status: 'idle' | 'loading' | 'ready';
+  climateA: MonthlyNormal[] | null;
+  climateB: MonthlyNormal[] | null;
   onRetry: () => void;
 }
 
@@ -54,6 +56,17 @@ function dayOfWeek(iso: string): string {
 function aqiText(entry: ComparisonEntry | null): string {
   const aqi = entry?.data?.aqi?.usAqi;
   return aqi === null || aqi === undefined ? '--' : String(Math.round(aqi));
+}
+
+/** Today's location-local forecast high minus that city's 1991–2020 monthly normal. */
+function forecastHighAnomaly(entry: ComparisonEntry | null, months: MonthlyNormal[] | null): string {
+  const date = entry?.data?.daily[0]?.date;
+  const high = entry?.data?.daily[0]?.tMax;
+  if (!date || typeof high !== 'number' || !months) return '--';
+  const month = Number(date.slice(5, 7));
+  const normal = months.find((row) => row.month === month);
+  if (!normal) return '--';
+  return formatTemperatureDelta(high - normal.tMaxMean);
 }
 
 /**
@@ -87,6 +100,8 @@ export function TwoCityComparePanel({
   onSelect,
   entries,
   status,
+  climateA,
+  climateB,
   onRetry,
 }: TwoCityComparePanelProps) {
   const widths: Widths = { label: LABEL_WIDTH, column: COL_WIDTH, border: theme.trackColor };
@@ -194,9 +209,17 @@ export function TwoCityComparePanel({
               a={entryA?.data ? `${Math.round(entryA.data.current.humidity)}%` : '--'}
               b={entryB?.data ? `${Math.round(entryB.data.current.humidity)}%` : '--'} />
             <LiveRow theme={theme} widths={widths} label={t('cmp_aqi')} a={aqiText(entryA)} b={aqiText(entryB)} />
+            <LiveRow
+              theme={theme}
+              widths={widths}
+              label={t('c2_anomaly')}
+              a={forecastHighAnomaly(entryA, climateA)}
+              b={forecastHighAnomaly(entryB, climateB)}
+            />
           </View>
         </ScrollView>
       )}
+      <Text style={[styles.climateNote, { color: theme.textTertiary }]}>{t('c2_anomaly_note')}</Text>
 
       {verdictText ? (
         <View style={[styles.verdict, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
@@ -426,6 +449,7 @@ const styles = StyleSheet.create({
   slotRetry: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
   slotRetryText: { fontSize: 11.5, fontFamily: F.semibold },
   loadingText: { fontSize: 14, textAlign: 'center', paddingVertical: 18 },
+  climateNote: { fontSize: 11, lineHeight: 15, marginTop: -6 },
   tableContent: { paddingBottom: 4 },
   headerRow: { flexDirection: 'row', marginBottom: 4 },
   cityCell: { alignItems: 'center', paddingHorizontal: 4 },

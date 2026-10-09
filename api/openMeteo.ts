@@ -13,6 +13,7 @@ import type {
   PollenInfo,
   WeatherBundle,
 } from './types';
+import { traceAsync } from '../utils/performanceTracing';
 
 const FORECAST_URL = 'https://api.open-meteo.com/v1/forecast';
 const AIR_QUALITY_URL = 'https://air-quality-api.open-meteo.com/v1/air-quality';
@@ -210,6 +211,7 @@ type BaseCurrentConditions = Omit<
 function buildCurrent(response: ForecastResponse): BaseCurrentConditions {
   const c = response.current;
   return {
+    observationTime: c.time,
     temperature: c.temperature_2m,
     apparentTemperature: c.apparent_temperature,
     humidity: c.relative_humidity_2m,
@@ -224,7 +226,7 @@ function buildCurrent(response: ForecastResponse): BaseCurrentConditions {
   };
 }
 
-export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle> {
+async function fetchWeatherImpl(location: GeoLocation): Promise<WeatherBundle> {
   const forecastParams = new URLSearchParams({
     latitude: location.latitude.toFixed(4),
     longitude: location.longitude.toFixed(4),
@@ -277,6 +279,7 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
     };
     const pollenAvailable = Object.values(pollen).some((value) => value !== null && value !== undefined);
     aqi = {
+      observationTime: ac.time,
       usAqi: ac.us_aqi,
       euAqi: ac.european_aqi,
       pm2_5: ac.pm2_5,
@@ -304,9 +307,14 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
     pressureTrend: pressureTrend(forecast, nowIndex),
   };
 
+  const fetchedAt = Date.now();
+
   return {
     location,
+    timezone: forecast.timezone,
     utcOffsetSeconds: forecast.utc_offset_seconds,
+    airQualityStatus: aqi ? 'available' : 'unavailable',
+    airQualityFetchedAt: aqi ? fetchedAt : null,
     elevation: forecast.elevation ?? null,
     current,
     hourly,
@@ -315,8 +323,12 @@ export async function fetchWeather(location: GeoLocation): Promise<WeatherBundle
     daily: buildDaily(forecast),
     aqi,
     aqiHourly: aqiResponse ? buildAqiHourly(aqiResponse, 120) : [],
-    fetchedAt: Date.now(),
+    fetchedAt,
   };
+}
+
+export function fetchWeather(location: GeoLocation): Promise<WeatherBundle> {
+  return traceAsync('open-meteo.fetch-weather', () => fetchWeatherImpl(location));
 }
 
 export async function searchCities(query: string): Promise<GeoLocation[]> {

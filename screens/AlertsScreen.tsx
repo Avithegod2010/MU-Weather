@@ -28,6 +28,8 @@ import {
   Bell,
   Flower2,
   TrendingDown,
+  ThumbsUp,
+  ThumbsDown,
   Sparkles,
   Plus,
   X,
@@ -36,6 +38,10 @@ import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
 import { ALERT_DEFINITIONS } from '../utils/alertRules';
 import type { AlertKey, AlertSettings, QuietHoursSettings } from '../utils/alertRules';
+import * as Notifications from '../utils/notifications';
+import { loadStormAlertFeedback, saveStormAlertFeedback } from '../utils/stormAlertFeedback';
+import { stormFeedbackEventKey, upsertStormFeedback } from '../utils/stormFeedbackPolicy';
+import type { StormFeedbackRecord, StormFeedbackVote } from '../utils/stormFeedbackPolicy';
 import { CUSTOM_METRIC_KEYS, formatCustomValue, MAX_NOTE_LENGTH } from '../utils/customAlerts';
 import type { CustomMetric, CustomOp } from '../utils/customAlerts';
 import { useCustomAlerts } from '../hooks/useCustomAlerts';
@@ -259,6 +265,8 @@ interface AlertsScreenProps {
   onUpdateQuiet: (patch: Partial<QuietHoursSettings>) => void;
   ready: boolean;
   currentImpacts: WeatherImpact[];
+  /** Stable, local city ID used to keep storm feedback scoped to this place. */
+  feedbackScope: string;
 }
 
 export function AlertsScreen({
@@ -270,9 +278,12 @@ export function AlertsScreen({
   onUpdateQuiet,
   ready,
   currentImpacts,
+  feedbackScope,
 }: AlertsScreenProps) {
   const insets = useSafeAreaInsets();
   const [history, setHistory] = useState<AlertHistoryEntry[]>([]);
+  const [stormFeedback, setStormFeedback] = useState<StormFeedbackRecord[]>([]);
+  const [notificationPermission, setNotificationPermission] = useState<'checking' | 'granted' | 'not-granted'>('checking');
   const { rules, addRule, toggleRule, deleteRule, setNote } = useCustomAlerts();
   const [builderOpen, setBuilderOpen] = useState(false);
   const [draftMetric, setDraftMetric] = useState<CustomMetric>('temp');
@@ -303,12 +314,56 @@ export function AlertsScreen({
     };
   }, [visible]);
 
+  useEffect(() => {
+    if (!visible) return;
+    let cancelled = false;
+    void Notifications.getPermissionsAsync()
+      .then(({ status }) => {
+        if (!cancelled) setNotificationPermission(status === 'granted' ? 'granted' : 'not-granted');
+      })
+      .catch(() => {
+        if (!cancelled) setNotificationPermission('not-granted');
+      });
+    void loadStormAlertFeedback().then((rows) => {
+      if (!cancelled) setStormFeedback(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible]);
+
+  const submitStormFeedback = useCallback((eventKey: string, vote: StormFeedbackVote) => {
+    const row: StormFeedbackRecord = { scope: feedbackScope, eventKey, vote, at: Date.now() };
+    setStormFeedback((previous) => upsertStormFeedback(previous, row));
+    void saveStormAlertFeedback(feedbackScope, eventKey, vote, row.at);
+  }, [feedbackScope]);
+
   const clearHistory = useCallback(() => {
     haptics.light();
     setHistory([]);
     void clearAlertHistory();
   }, []);
   const historyImpacts = aggregateAlertHistoryImpacts(history);
+  const enabledRuleNames = [
+    ...ALERT_DEFINITIONS.filter((definition) => settings[definition.key]).map((definition) => t(definition.title)),
+    ...rules.filter((rule) => rule.enabled).map((rule) =>
+      `${t(CUSTOM_METRIC_KEYS[rule.metric])} ${rule.op === 'gte' ? '≥' : '≤'} ${formatCustomValue(rule.metric, rule.value)}`,
+    ),
+  ];
+  const previewRuleNames = enabledRuleNames.length
+    ? `${enabledRuleNames.slice(0, 4).join(', ')}${enabledRuleNames.length > 4 ? ` +${enabledRuleNames.length - 4}` : ''}`
+    : t('unavailable');
+  const permissionLabel = notificationPermission === 'granted'
+    ? t('alert_permission_granted')
+    : notificationPermission === 'not-granted'
+      ? t('alert_permission_not_granted')
+      : '…';
+  const quietLabel = settings.quietHoursEnabled
+    ? `${quietClock(settings.quietStartMinutes)}–${quietClock(settings.quietEndMinutes)}`
+    : t('alert_preview_off');
+  const matchingForecastImpacts = currentImpacts.filter((impact) =>
+    impact.signalIds.some((id) => id.startsWith('forecast:')),
+  );
 
   if (!visible) return null;
 
@@ -344,6 +399,25 @@ export function AlertsScreen({
           {t('alerts_intro')}
         </Text>
 
+        <View style={[styles.previewCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+          <Text style={[styles.previewTitle, { color: theme.textPrimary }]}>{t('alert_preview_title')}</Text>
+          <Text style={[styles.previewBody, { color: theme.textSecondary }]}>
+            {t('alert_preview_line')
+              .replace('{rules}', previewRuleNames)
+              .replace('{permission}', permissionLabel)
+              .replace('{quiet}', quietLabel)}
+          </Text>
+          {matchingForecastImpacts[0] ? (
+            <Text style={[styles.previewBody, { color: theme.textSecondary }]}>
+              {t('alert_preview_match').replace('{title}', matchingForecastImpacts[0].title)}
+            </Text>
+          ) : (
+            <Text style={[styles.previewBody, { color: theme.textTertiary }]}>
+              {t('alert_preview_no_match')}
+            </Text>
+          )}
+        </View>
+
         {currentImpacts.length > 0 ? (
           <View style={styles.historyBlock}>
             <Text style={[styles.historyTitle, { color: theme.textPrimary }]}>
@@ -373,6 +447,11 @@ export function AlertsScreen({
               const untilText = impact.endsAt > impact.sourceUpdatedAt
                 ? t('warnings_until').replace('{t}', historyStamp(impact.endsAt))
                 : null;
+              const isStormImpact = normalizedKey === 'storm' || normalizedKey === 'thunder';
+              const feedbackEventKey = isStormImpact ? stormFeedbackEventKey(impact) : '';
+              const currentVote = isStormImpact
+                ? stormFeedback.find((row) => row.scope === feedbackScope && row.eventKey === feedbackEventKey)?.vote
+                : undefined;
               return (
                 <View
                   key={impact.id}
@@ -380,9 +459,9 @@ export function AlertsScreen({
                     styles.historyRow,
                     { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
                   ]}
-                  accessible
-                  accessibilityRole="text"
-                  accessibilityLabel={[impact.title, ...details, sourceUpdateText, untilText]
+                  accessible={!isStormImpact}
+                  accessibilityRole={isStormImpact ? undefined : 'text'}
+                  accessibilityLabel={isStormImpact ? undefined : [impact.title, ...details, sourceUpdateText, untilText]
                     .filter(Boolean)
                     .join(', ')}
                 >
@@ -399,6 +478,46 @@ export function AlertsScreen({
                     <Text style={[styles.historyMeta, { color: theme.textTertiary }]}>
                       {sourceUpdateText}{untilText ? ` · ${untilText}` : ''}
                     </Text>
+                    {isStormImpact ? (
+                      <View style={styles.feedbackBlock}>
+                        <Text style={[styles.feedbackQuestion, { color: theme.textSecondary }]}>
+                          {t('alert_storm_feedback_prompt')}
+                        </Text>
+                        <View style={styles.feedbackButtons}>
+                          {([
+                            { vote: 'useful' as const, label: t('alert_storm_feedback_useful'), Icon: ThumbsUp },
+                            { vote: 'not-useful' as const, label: t('alert_storm_feedback_not_useful'), Icon: ThumbsDown },
+                          ]).map(({ vote, label, Icon: FeedbackIcon }) => {
+                            const selected = currentVote === vote;
+                            return (
+                              <Pressable
+                                key={vote}
+                                onPress={() => {
+                                  haptics.select();
+                                  submitStormFeedback(feedbackEventKey, vote);
+                                }}
+                                style={({ pressed }) => [
+                                  styles.feedbackButton,
+                                  { backgroundColor: selected ? theme.cardBorder : theme.chipBg },
+                                  pressed && { opacity: 0.65 },
+                                ]}
+                                accessibilityRole="button"
+                                accessibilityState={{ selected }}
+                                accessibilityLabel={label}
+                              >
+                                <FeedbackIcon size={14} color={theme.textPrimary} strokeWidth={2.2} />
+                                <Text style={[styles.feedbackButtonText, { color: theme.textPrimary }]}>{label}</Text>
+                              </Pressable>
+                            );
+                          })}
+                        </View>
+                        {currentVote ? (
+                          <Text style={[styles.feedbackSaved, { color: theme.textTertiary }]}>
+                            {t('alert_storm_feedback_saved')}
+                          </Text>
+                        ) : null}
+                      </View>
+                    ) : null}
                   </View>
                   <View
                     style={[styles.severityDot, { backgroundColor: SEVERITY_COLORS[impact.severity] }]}
@@ -844,6 +963,22 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     paddingHorizontal: 4,
   },
+  previewCard: {
+    gap: 5,
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingVertical: 13,
+    paddingHorizontal: 15,
+  },
+  previewTitle: {
+    fontSize: 14,
+    fontFamily: F.semibold,
+  },
+  previewBody: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: F.regular,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -863,6 +998,35 @@ const styles = StyleSheet.create({
   rowTexts: {
     flex: 1,
     gap: 2,
+  },
+  feedbackBlock: {
+    gap: 6,
+    marginTop: 7,
+  },
+  feedbackQuestion: {
+    fontSize: 11.5,
+    fontFamily: F.medium,
+  },
+  feedbackButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  feedbackButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+  },
+  feedbackButtonText: {
+    fontSize: 11,
+    fontFamily: F.semibold,
+  },
+  feedbackSaved: {
+    fontSize: 10.5,
+    fontFamily: F.regular,
   },
   rowTitle: {
     fontSize: 15.5,

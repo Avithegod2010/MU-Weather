@@ -39,9 +39,11 @@ interface SkiaSeriesChartProps {
   width: number;
   height: number;
   series: ChartSeries[];
-  /** Ensemble band as SVG path data, drawn behind the series. */
+  /** Primary ensemble band as SVG path data, drawn behind the series. */
   bandPath?: string;
   bandColor?: string;
+  /** Additional independently scaled confidence bands (for example, wind). */
+  bands?: { path: string; color: string }[];
   /** Scrub cursor on touch and drag. Turn off when the chart sits in a horizontal scroller. */
   scrub?: boolean;
   columns: ChartColumn[];
@@ -75,6 +77,7 @@ export function SkiaSeriesChart({
   series,
   bandPath,
   bandColor,
+  bands = [],
   columns,
   dotFill,
   dataKey,
@@ -96,6 +99,7 @@ export function SkiaSeriesChart({
     });
   }, [dataKey, reduced, progress]);
 
+  const bandsColorKey = bands.map((entry) => entry.color).join('|');
   const built = useMemo(() => {
     const lines = series.map((entry) => pathFrom(smoothPath(entry.points)));
     const first = series[0]?.points ?? [];
@@ -104,11 +108,14 @@ export function SkiaSeriesChart({
       const d = `${smoothPath(first)} L ${first[first.length - 1].x.toFixed(1)} ${height} L ${first[0].x.toFixed(1)} ${height} Z`;
       fill = pathFrom(d);
     }
-    const band = bandPath ? pathFrom(bandPath) : null;
-    return { lines, fill, band };
+    const bandEntries = [
+      ...(bandPath ? [{ path: bandPath, color: bandColor ?? (theme.isLight ? 'rgba(245,169,98,0.16)' : 'rgba(245,169,98,0.22)') }] : []),
+      ...bands,
+    ].map((entry) => ({ path: pathFrom(entry.path), color: entry.color }));
+    return { lines, fill, bands: bandEntries };
     // dataKey is the change signal; series and bandPath are derived from it by the caller.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataKey, height]);
+  }, [dataKey, height, bandColor, bandsColorKey, theme.isLight]);
 
   // The PanResponder is created once, so it reads the latest columns through a ref.
   const columnsRef = useRef(columns);
@@ -153,19 +160,11 @@ export function SkiaSeriesChart({
   return (
     <View style={{ width, height }} {...(scrub ? responder.panHandlers : {})}>
       <Canvas style={{ width, height }}>
-        {built.band ? (
-          <Group opacity={progress}>
-            <Path
-              path={built.band}
-              color={
-                bandColor ??
-                (theme.isLight
-                  ? "rgba(245,169,98,0.16)"
-                  : "rgba(245,169,98,0.22)")
-              }
-            />
+        {built.bands.map((band, index) => (
+          <Group key={`band-${index}`} opacity={progress}>
+            <Path path={band.path} color={band.color} />
           </Group>
-        ) : null}
+        ))}
         {series.map((entry, index) => (
           <React.Fragment key={`series-${index}`}>
             {index === 0 && built.fill ? (

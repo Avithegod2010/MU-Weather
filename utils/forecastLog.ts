@@ -4,6 +4,8 @@ import type { WeatherBundle } from '../api/types';
 /** One predicted day, aligned with `DayPoint` field names. */
 export interface ForecastLogEntry {
   date: string;
+  /** IANA timezone or UTC offset for the location-local forecast date. */
+  timezone?: string;
   tMax: number;
   tMin: number;
   precipSum: number;
@@ -19,6 +21,7 @@ function isValidEntry(value: unknown): value is ForecastLogEntry {
   return (
     typeof entry.date === 'string' &&
     /^\d{4}-\d{2}-\d{2}$/.test(entry.date) &&
+    (entry.timezone === undefined || typeof entry.timezone === 'string') &&
     typeof entry.tMax === 'number' &&
     typeof entry.tMin === 'number' &&
     typeof entry.precipSum === 'number'
@@ -43,6 +46,19 @@ export async function loadForecastLog(): Promise<ForecastLogEntry[]> {
  * prediction for a date wins), capped at the newest MAX_LOG_ENTRIES dates.
  * Fire-and-forget: callers do not await this, so it must never throw.
  */
+function timezoneFromOffset(utcOffsetSeconds: number): string {
+  if (!Number.isFinite(utcOffsetSeconds)) return 'UTC';
+  const totalMinutes = Math.round(utcOffsetSeconds / 60);
+  const sign = totalMinutes >= 0 ? '+' : '-';
+  const absolute = Math.abs(totalMinutes);
+  return `UTC${sign}${String(Math.floor(absolute / 60)).padStart(2, '0')}:${String(absolute % 60).padStart(2, '0')}`;
+}
+
+function forecastTimezone(bundle: WeatherBundle): string {
+  const providerZone = bundle.timezone?.trim();
+  return providerZone || timezoneFromOffset(bundle.utcOffsetSeconds);
+}
+
 export async function logForecast(bundle: WeatherBundle): Promise<void> {
   try {
     const log = await loadForecastLog();
@@ -50,6 +66,7 @@ export async function logForecast(bundle: WeatherBundle): Promise<void> {
     for (const day of bundle.daily) {
       byDate.set(day.date, {
         date: day.date,
+        timezone: forecastTimezone(bundle),
         tMax: day.tMax,
         tMin: day.tMin,
         precipSum: day.precipSum,

@@ -59,6 +59,8 @@ export { default as Sunset } from 'lucide-react-native/icons/sunset';
 export { default as LayoutGrid } from 'lucide-react-native/icons/layout-grid';
 export { default as Palette } from 'lucide-react-native/icons/palette';
 export { default as Check } from 'lucide-react-native/icons/check';
+export { default as ThumbsUp } from 'lucide-react-native/icons/thumbs-up';
+export { default as ThumbsDown } from 'lucide-react-native/icons/thumbs-down';
 export { default as Languages } from 'lucide-react-native/icons/languages';
 export { default as HeartPulse } from 'lucide-react-native/icons/heart-pulse';
 export { default as X } from 'lucide-react-native/icons/x';

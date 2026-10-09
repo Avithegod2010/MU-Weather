@@ -1,5 +1,11 @@
 import { File, Paths } from 'expo-file-system';
-import { loadForecastLog, type ForecastLogEntry } from './forecastLog';
+import { loadForecastLog } from './forecastLog';
+import {
+  buildForecastLogCsv,
+  buildForecastLogJson,
+  DEFAULT_FORECAST_LOG_EXPORT_OPTIONS,
+} from './forecastLogExportFormat';
+import type { ForecastLogExportOptions } from './forecastLogExportFormat';
 
 export type DataExportFormat = 'csv' | 'json';
 
@@ -8,23 +14,6 @@ function todayStamp(): string {
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}${month}${day}`;
-}
-
-/**
- * Machine-readable CSV: raw °C / mm values (unit-independent), header line first,
- * one row per logged prediction in log order (oldest first). No BOM, \n endings.
- */
-export function buildForecastLogCsv(entries: ForecastLogEntry[]): string {
-  const lines = ['date,t_max_c,t_min_c,precip_sum_mm'];
-  for (const entry of entries) {
-    lines.push(`${entry.date},${entry.tMax},${entry.tMin},${entry.precipSum}`);
-  }
-  return lines.join('\n');
-}
-
-/** Pretty-printed JSON array of the raw log entries. */
-export function buildForecastLogJson(entries: ForecastLogEntry[]): string {
-  return JSON.stringify(entries, null, 2);
 }
 
 /**
@@ -45,13 +34,16 @@ export type ExportResult =
  * (the function never throws).
  */
 export async function writeForecastLogExport(
-  format: DataExportFormat
+  format: DataExportFormat,
+  options: ForecastLogExportOptions = DEFAULT_FORECAST_LOG_EXPORT_OPTIONS,
 ): Promise<ExportResult> {
   try {
+    if (!options.includeTemperature && !options.includePrecipitation) return { status: 'empty' };
     const entries = await loadForecastLog();
     if (entries.length === 0) return { status: 'empty' };
-    const content =
-      format === 'csv' ? buildForecastLogCsv(entries) : buildForecastLogJson(entries);
+    const content = format === 'csv'
+      ? buildForecastLogCsv(entries, options)
+      : buildForecastLogJson(entries, options);
     const file = new File(Paths.cache, `mu-weather-forecast-log-${todayStamp()}.${format}`);
     file.write(content);
     return { status: 'ok', uri: file.uri };

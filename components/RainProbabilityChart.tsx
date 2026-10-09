@@ -99,7 +99,7 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
   const reliabilityText = reliableBins
     ? t('rain_calibration_reliability').replace('{bins}', reliableBins)
     : null;
-  const leadTimeText = calibration?.status === 'ready'
+  const leadTimeText = calibration
     ? calibration.leadTimeBuckets
         .filter((bucket) => bucket.sufficientlyPopulated && bucket.brierScore !== null)
         .map((bucket) => {
@@ -107,7 +107,15 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
             .replace('{score}', (bucket.brierScore ?? 0).toFixed(3))
             .replace('{cases}', String(bucket.cases))
             .replace('{days}', String(bucket.verifiedDays));
-          return `${bucket.startLeadHours}–${bucket.endLeadHours} h: ${report}`;
+          const bins = bucket.reliabilityBins
+            .filter((bin) => bin.sufficientlyPopulated && bin.meanForecast !== null && bin.observedFrequency !== null)
+            .map((bin) =>
+              `${bin.lowerPercent}–${bin.upperPercent}%: ${Math.round(bin.meanForecast! * 100)}→${Math.round(bin.observedFrequency! * 100)}% (n=${bin.cases}, ${bin.verifiedDays}d)`,
+            );
+          const reliability = bins.length
+            ? ` · ${t('rain_calibration_reliability').replace('{bins}', bins.join(' · '))}`
+            : '';
+          return `${bucket.startLeadHours}–${bucket.endLeadHours} h: ${report}${reliability}`;
         })
         .join(' · ')
     : '';
