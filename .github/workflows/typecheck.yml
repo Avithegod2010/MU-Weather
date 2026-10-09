@@ -27,6 +27,9 @@ jobs:
       - name: TypeScript typecheck
         run: npx tsc --noEmit
 
+      - name: Locale key and placeholder audit
+        run: node scripts/audit-locales.mjs
+
       - name: Weather policy tests
         run: node scripts/test-weather-policies.mjs
 

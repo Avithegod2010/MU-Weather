@@ -62,8 +62,10 @@ function PreferenceStepper({
       <Pressable
         onPress={() => { haptics.select(); onStep(-1); }}
         style={({ pressed }) => [styles.preferenceButton, { backgroundColor: theme.chipBg }, pressed && { opacity: 0.65 }]}
+        hitSlop={8}
         accessibilityRole="button"
         accessibilityLabel={`${t('a11y_decrease')} ${label}`}
+        accessibilityValue={{ text: value }}
       >
         <ChevronLeft size={15} color={theme.textPrimary} strokeWidth={2.4} />
       </Pressable>
@@ -73,8 +75,10 @@ function PreferenceStepper({
       <Pressable
         onPress={() => { haptics.select(); onStep(1); }}
         style={({ pressed }) => [styles.preferenceButton, { backgroundColor: theme.chipBg }, pressed && { opacity: 0.65 }]}
+        hitSlop={8}
         accessibilityRole="button"
         accessibilityLabel={`${t('a11y_increase')} ${label}`}
+        accessibilityValue={{ text: value }}
       >
         <ChevronRight size={15} color={theme.textPrimary} strokeWidth={2.4} />
       </Pressable>

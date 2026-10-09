@@ -116,6 +116,12 @@ function testImpactAggregation(): void {
   equal(rainImpact.severity, 'severe', 'strongest severity is retained');
   equal(rainImpact.title, 'Severe rainfall warning', 'the severe signal leads presentation');
   equal(rainImpact.sources.length, 3, 'duplicate signal IDs are upserted to their latest version');
+  equal(rainImpact.sourceUpdatedAt, baseTime + 2_000, 'group keeps the latest overall update time');
+  equal(
+    rainImpact.sourceUpdates.find((update) => update.source === 'official warning')?.updatedAt,
+    baseTime + 1_000,
+    'group also retains the official source update time independently',
+  );
   assert(rainImpact.sources.includes('hourly forecast'), 'latest forecast source is used');
   assert(!rainImpact.sources.includes('forecast'), 'superseded source is not double-counted');
   assert(rainImpact.safetyMessages.includes('Move to higher ground if flooding begins.'), 'severe safety copy is preserved verbatim');

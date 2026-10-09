@@ -29,6 +29,11 @@ export interface ImpactSignal {
   safetyCopy?: string;
 }
 
+export interface ImpactSourceUpdate {
+  source: string;
+  updatedAt: number;
+}
+
 export interface WeatherImpact {
   id: string;
   hazard: string;
@@ -38,6 +43,8 @@ export interface WeatherImpact {
   endsAt: number;
   /** Unique source names, sorted for stable presentation. */
   sources: string[];
+  /** Latest update from each source, preserving mixed-age provenance in UI. */
+  sourceUpdates: ImpactSourceUpdate[];
   /** Latest source update in the group, epoch milliseconds. */
   sourceUpdatedAt: number;
   expected: string[];
@@ -113,6 +120,14 @@ function makeImpact(group: ImpactSignal[]): WeatherImpact {
   );
   const lead = ranked[0];
   const ids = group.map((signal) => signal.id).sort();
+  const latestUpdateBySource = new Map<string, number>();
+  for (const signal of group) {
+    const previous = latestUpdateBySource.get(signal.source) ?? Number.NEGATIVE_INFINITY;
+    if (signal.sourceUpdatedAt > previous) latestUpdateBySource.set(signal.source, signal.sourceUpdatedAt);
+  }
+  const sourceUpdates = [...latestUpdateBySource.entries()]
+    .map(([source, updatedAt]) => ({ source, updatedAt }))
+    .sort((a, b) => a.source.localeCompare(b.source));
   return {
     id: `${lead.hazard}:${ids.join('+')}`,
     hazard: lead.hazard,
@@ -120,8 +135,9 @@ function makeImpact(group: ImpactSignal[]): WeatherImpact {
     title: lead.title,
     startsAt: Math.min(...group.map((signal) => signal.startsAt)),
     endsAt: Math.max(...group.map((signal) => signal.endsAt)),
-    sources: uniqueStrings(group.map((signal) => signal.source)).sort(),
-    sourceUpdatedAt: Math.max(...group.map((signal) => signal.sourceUpdatedAt)),
+    sources: sourceUpdates.map((update) => update.source),
+    sourceUpdates,
+    sourceUpdatedAt: Math.max(...sourceUpdates.map((update) => update.updatedAt)),
     expected: uniqueStrings(group.map((signal) => signal.expected)),
     reasons: uniqueStrings(group.map((signal) => signal.whyItMatters)),
     actions: uniqueStrings(ranked.map((signal) => signal.action)),

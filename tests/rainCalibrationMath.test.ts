@@ -73,18 +73,20 @@ const spread: EnsembleSpread = {
 const forecasts = createRainForecastEntries(spread, paris, 60 * 60);
 assert(forecasts.length === 2, 'past, malformed and out-of-range forecast points are skipped');
 assert(forecasts[0].time === '2026-03-14T10:00', 'future hourly point is retained');
+// Europe/Paris repeats local 02:00 when daylight-saving time ends on 2026-10-25.
 const ambiguous = createRainForecastEntries(
   {
     ...spread,
+    fetchedAt: Date.UTC(2026, 9, 24, 22),
     points: [
-      { time: '2026-03-14T10:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 25 },
-      { time: '2026-03-14T10:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 75 },
+      { time: '2026-10-25T02:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 25 },
+      { time: '2026-10-25T02:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 75 },
     ],
   },
   paris,
-  60 * 60,
+  2 * 60 * 60,
 );
-assert(ambiguous.length === 0, 'ambiguous repeated local DST hours are not scored');
+assert(ambiguous.length === 0, 'ambiguous repeated fall-back local hours are not scored');
 closeTo(forecasts[0].leadHours, 1, 0.0001, 'lead is relative to retrieval time and location offset');
 closeTo(forecasts[0].probability, 0.25, 0.0001, 'member share is stored as a 0-1 probability');
 

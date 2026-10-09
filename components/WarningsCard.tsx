@@ -139,6 +139,11 @@ export function WarningsCard({
                     {warning.instruction}
                   </Text>
                 ) : null}
+                {warning.areaDesc ? (
+                  <Text style={[styles.area, { color: theme.textTertiary }]} numberOfLines={2}>
+                    {warning.areaDesc}
+                  </Text>
+                ) : null}
                 {untilText ? (
                   <Text style={[styles.until, { color: theme.textSecondary }]}>{untilText}</Text>
                 ) : null}
@@ -185,6 +190,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontFamily: F.medium,
+  },
+  area: {
+    fontSize: 11.5,
+    lineHeight: 15,
   },
   until: {
     fontSize: 11.5,
