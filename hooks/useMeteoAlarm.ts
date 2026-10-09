@@ -3,13 +3,19 @@ import { getLanguage } from '../utils/i18n';
 import {
   fetchMeteoAlarmWarnings,
   meteoalarmSlugFor,
+  meteoAlarmCacheFetchedAt,
   type MeteoAlarmWarning,
 } from '../utils/meteoalarm';
 import type { GeoLocation } from '../api/types';
+import { weatherLocationKey } from '../utils/freshnessPolicy';
 
 export interface MeteoAlarmState {
   status: 'idle' | 'loading' | 'ok' | 'error';
   warnings: MeteoAlarmWarning[] | null;
+  updatedAt: number | null;
+  locationKey: string | null;
+  /** Internal scope prevents one location/language response flashing for another. */
+  requestKey: string | null;
 }
 
 /** How often the hook asks the module cache whether the feed went stale. */
@@ -24,31 +30,50 @@ const REFRESH_CHECK_MS = 5 * 60 * 1000;
  * Failures leave the card absent (no crash, never throws).
  */
 export function useMeteoAlarm(location: GeoLocation | null): MeteoAlarmState {
-  const [state, setState] = useState<MeteoAlarmState>({ status: 'idle', warnings: null });
+  const [state, setState] = useState<MeteoAlarmState>({
+    status: 'idle',
+    warnings: null,
+    updatedAt: null,
+    locationKey: null,
+    requestKey: null,
+  });
 
   const countryCode = location?.countryCode ?? null;
   const lat = location?.latitude ?? null;
   const lon = location?.longitude ?? null;
+  const language = getLanguage();
+  const locationKey = weatherLocationKey(lat, lon);
+  const requestKey = countryCode && lat !== null && lon !== null && meteoalarmSlugFor(countryCode)
+    ? `${countryCode.toUpperCase()}|${language}|${locationKey ?? ''}|${lat}|${lon}`
+    : null;
 
   useEffect(() => {
-    // Not a member country (or no location yet): idle immediately, no fetch.
-    if (!countryCode || lat === null || lon === null || !meteoalarmSlugFor(countryCode)) {
-      setState({ status: 'idle', warnings: null });
-      return;
-    }
+    // Not a member country (or no location yet): idle immediately, no network.
+    if (!requestKey || !countryCode || lat === null || lon === null) return undefined;
 
     let cancelled = false;
-    setState({ status: 'loading', warnings: null });
     const load = () => {
       void (async () => {
-        const warnings = await fetchMeteoAlarmWarnings(countryCode, lat, lon, getLanguage());
+        const warnings = await fetchMeteoAlarmWarnings(countryCode, lat, lon, language);
         if (cancelled) return;
-        setState((prev) => {
-          // Refresh failure with warnings already shown: keep them rather
-          // than blanking the card; only the initial load reports 'error'.
-          if (warnings === null && prev.warnings) return prev;
-          if (warnings === null) return { status: 'error', warnings: null };
-          return { status: 'ok', warnings };
+        setState(() => {
+          // A failed refresh is not evidence that old warnings are still active.
+          if (warnings === null) {
+            return {
+              status: 'error',
+              warnings: null,
+              updatedAt: null,
+              locationKey,
+              requestKey,
+            };
+          }
+          return {
+            status: 'ok',
+            warnings,
+            updatedAt: meteoAlarmCacheFetchedAt(countryCode, language),
+            locationKey,
+            requestKey,
+          };
         });
       })();
     };
@@ -59,7 +84,21 @@ export function useMeteoAlarm(location: GeoLocation | null): MeteoAlarmState {
       cancelled = true;
       clearInterval(refresh);
     };
-  }, [countryCode, lat, lon]);
+  }, [countryCode, lat, lon, language, locationKey, requestKey]);
 
+  if (!requestKey) {
+    return {
+      status: 'idle',
+      warnings: null,
+      updatedAt: null,
+      locationKey: null,
+      requestKey: null,
+    };
+  }
+  if (state.requestKey !== requestKey) {
+    // Derive loading for a new location/language rather than synchronously
+    // setting state in the effect; old warnings cannot flash as current.
+    return { status: 'loading', warnings: null, updatedAt: null, locationKey, requestKey };
+  }
   return state;
 }

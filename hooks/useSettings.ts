@@ -14,6 +14,11 @@ import type { ColorThemeKey } from '../config/colorThemes';
 import type { ModelKey } from '../api/providers';
 import { setLanguage } from '../utils/i18n';
 import type { LanguageKey } from '../utils/i18n';
+import {
+  DEFAULT_OUTDOOR_PREFERENCES,
+  normalizeOutdoorPreferences,
+  type OutdoorPreferences,
+} from '../utils/outdoorPlanPolicy';
 
 const SETTINGS_KEY = '@mu_weather/settings_v1';
 
@@ -58,6 +63,8 @@ export interface AppSettings {
   pastDaysRange: 7 | 30 | 'accuracy';
   /** Home card spacing - 'compact' tightens paddings and hero typography */
   layoutDensity: LayoutDensity;
+  /** User comfort thresholds for the Best Time Outdoors and Trip Planner cards. */
+  outdoorPreferences: OutdoorPreferences;
   /**
    * Tint chips, switches and active rings with the current conditions
    * (home screen only). Ignored while the Material You theme is active -
@@ -107,6 +114,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   hiddenTiles: [],
   pastDaysRange: 7,
   layoutDensity: 'comfortable',
+  outdoorPreferences: DEFAULT_OUTDOOR_PREFERENCES,
   weatherAccentEnabled: false,
   sunriseAlarmEnabled: false,
   sunriseAlarmOffsetMin: 30,
@@ -143,9 +151,14 @@ export function useSettings() {
       try {
         const raw = await AsyncStorage.getItem(SETTINGS_KEY);
         if (!cancelled && raw) {
-          const parsed = JSON.parse(raw);
+          const parsed: unknown = JSON.parse(raw);
           if (parsed && typeof parsed === 'object') {
-            setSettings({ ...DEFAULT_SETTINGS, ...parsed });
+            const saved = parsed as Partial<AppSettings>;
+            setSettings({
+              ...DEFAULT_SETTINGS,
+              ...saved,
+              outdoorPreferences: normalizeOutdoorPreferences(saved.outdoorPreferences),
+            });
           }
         }
       } catch {
@@ -160,7 +173,13 @@ export function useSettings() {
   }, []);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
-    setSettings((previous) => ({ ...previous, ...patch }));
+    setSettings((previous) => ({
+      ...previous,
+      ...patch,
+      ...(patch.outdoorPreferences === undefined
+        ? {}
+        : { outdoorPreferences: normalizeOutdoorPreferences(patch.outdoorPreferences) }),
+    }));
   }, []);
 
   useEffect(() => {

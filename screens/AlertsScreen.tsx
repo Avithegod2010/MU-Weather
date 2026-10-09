@@ -45,6 +45,8 @@ import {
   MAX_ALERT_HISTORY,
   type AlertHistoryEntry,
 } from '../utils/alertHistory';
+import { aggregateAlertHistoryImpacts } from '../utils/alertImpactHistory';
+import type { WeatherImpact } from '../utils/impactTimeline';
 import type { AppTheme } from '../theme/palettes';
 
 const ALERT_ICONS: Record<AlertKey, typeof CloudRain> = {
@@ -256,6 +258,7 @@ interface AlertsScreenProps {
   onToggle: (key: AlertKey) => void;
   onUpdateQuiet: (patch: Partial<QuietHoursSettings>) => void;
   ready: boolean;
+  currentImpacts: WeatherImpact[];
 }
 
 export function AlertsScreen({
@@ -266,6 +269,7 @@ export function AlertsScreen({
   onToggle,
   onUpdateQuiet,
   ready,
+  currentImpacts,
 }: AlertsScreenProps) {
   const insets = useSafeAreaInsets();
   const [history, setHistory] = useState<AlertHistoryEntry[]>([]);
@@ -304,6 +308,7 @@ export function AlertsScreen({
     setHistory([]);
     void clearAlertHistory();
   }, []);
+  const historyImpacts = aggregateAlertHistoryImpacts(history);
 
   if (!visible) return null;
 
@@ -338,6 +343,62 @@ export function AlertsScreen({
         <Text style={[styles.intro, { color: theme.textSecondary }]}>
           {t('alerts_intro')}
         </Text>
+
+        {currentImpacts.length > 0 ? (
+          <View style={styles.historyBlock}>
+            <Text style={[styles.historyTitle, { color: theme.textPrimary }]}>
+              {t('tile_warnings')}
+            </Text>
+            {currentImpacts.map((impact) => {
+              const normalizedKey = impact.hazard.slice(impact.hazard.lastIndexOf(':') + 1);
+              const iconKey = normalizedKey === 'temperature'
+                ? 'heat'
+                : normalizedKey === 'air-quality'
+                  ? 'aqi'
+                  : normalizedKey === 'ice'
+                    ? 'frost'
+                    : normalizedKey;
+              const Icon = ALERT_ICONS[iconKey as AlertKey] ?? Bell;
+              const details = [
+                ...impact.safetyMessages,
+                ...impact.expected,
+                ...impact.reasons,
+                ...impact.actions,
+              ].filter((detail, index, all) => Boolean(detail.trim()) && all.indexOf(detail) === index);
+              const updatedText = t('aurora_updated').replace('{time}', historyStamp(impact.sourceUpdatedAt));
+              const untilText = impact.endsAt > impact.sourceUpdatedAt
+                ? t('warnings_until').replace('{t}', historyStamp(impact.endsAt))
+                : null;
+              return (
+                <View
+                  key={impact.id}
+                  style={[
+                    styles.historyRow,
+                    { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+                  ]}
+                >
+                  <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                    <Icon size={18} color={theme.textPrimary} strokeWidth={2} />
+                  </View>
+                  <View style={styles.rowTexts}>
+                    <Text style={[styles.historyRowTitle, { color: theme.textPrimary }]}>
+                      {impact.title}{impact.signalIds.length > 1 ? ` ×${impact.signalIds.length}` : ''}
+                    </Text>
+                    <Text style={[styles.historyRowBody, { color: theme.textSecondary }]}>
+                      {details.join('\n')}
+                    </Text>
+                    <Text style={[styles.historyMeta, { color: theme.textTertiary }]}>
+                      {impact.sources.join(' · ')} · {updatedText}{untilText ? ` · ${untilText}` : ''}
+                    </Text>
+                  </View>
+                  <View
+                    style={[styles.severityDot, { backgroundColor: SEVERITY_COLORS[impact.severity] }]}
+                  />
+                </View>
+              );
+            })}
+          </View>
+        ) : null}
 
         {ALERT_DEFINITIONS.map((definition) => {
           const Icon = ALERT_ICONS[definition.key];
@@ -672,11 +733,20 @@ export function AlertsScreen({
           ) : (
             // The whole stored history - the list scrolls, and a smaller slice
             // would hide older rows with no way to reveal them.
-            history.slice(0, MAX_ALERT_HISTORY).map((entry, index) => {
-              const Icon = ALERT_ICONS[entry.key as AlertKey] ?? Bell;
+            [...historyImpacts].reverse().slice(0, MAX_ALERT_HISTORY).map((impact) => {
+              const key = impact.hazard.slice(impact.hazard.lastIndexOf(':') + 1);
+              const Icon = ALERT_ICONS[key as AlertKey] ?? Bell;
+              const details = [
+                ...impact.safetyMessages,
+                ...impact.reasons.filter((reason) => !impact.safetyMessages.includes(reason)),
+              ];
+              const timeLabel = impact.startsAt === impact.endsAt
+                ? historyStamp(impact.startsAt)
+                : `${historyStamp(impact.startsAt)} – ${historyStamp(impact.endsAt)}`;
+              const cityLabel = impact.sources.filter((source) => source !== 'current-location').join(', ');
               return (
                 <View
-                  key={`${entry.at}-${entry.key}-${index}`}
+                  key={impact.id}
                   style={[
                     styles.historyRow,
                     { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -690,24 +760,21 @@ export function AlertsScreen({
                       style={[styles.historyRowTitle, { color: theme.textPrimary }]}
                       numberOfLines={1}
                     >
-                      {entry.title}
+                      {impact.title}{impact.signalIds.length > 1 ? ` ×${impact.signalIds.length}` : ''}
                     </Text>
-                    <Text
-                      style={[styles.historyRowBody, { color: theme.textSecondary }]}
-                      numberOfLines={2}
-                    >
-                      {entry.message}
+                    <Text style={[styles.historyRowBody, { color: theme.textSecondary }]}>
+                      {details.join('\n')}
                     </Text>
                     <Text
                       style={[styles.historyMeta, { color: theme.textTertiary }]}
                       numberOfLines={1}
                     >
-                      {entry.city ? `${entry.city} · ` : ''}
-                      {historyStamp(entry.at)}
+                      {cityLabel ? `${cityLabel} · ` : ''}
+                      {timeLabel}
                     </Text>
                   </View>
                   <View
-                    style={[styles.severityDot, { backgroundColor: SEVERITY_COLORS[entry.severity] }]}
+                    style={[styles.severityDot, { backgroundColor: SEVERITY_COLORS[impact.severity] }]}
                   />
                 </View>
               );

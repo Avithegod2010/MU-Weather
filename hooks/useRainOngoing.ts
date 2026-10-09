@@ -1,9 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as Notifications from '../utils/notifications';
 import { isInQuietHoursNow } from '../utils/fireAlertNotifications';
 import { computeNowcast } from '../utils/nowcast';
 import { localIsoToEpoch } from '../utils/format';
 import { t } from '../utils/i18n';
+import { assessWeatherCacheFreshness, weatherLocationKey } from '../utils/freshnessPolicy';
 import type { WeatherBundle } from '../api/types';
 
 /**
@@ -19,9 +20,6 @@ const MIN_UPDATE_MS = 30 * 60_000;
 const LEAD_MIN = 60;
 /** Rain further out than this no longer belongs on the home-screen status. */
 const HORIZON_H = 6;
-/** A bundle older than this must not keep a status notification alive. */
-const MAX_AGE_MS = 3 * 60 * 60 * 1000;
-
 // Module-level so a re-mount cannot double-post inside the throttle window.
 let lastPostedAt = 0;
 let lastSignature = '';
@@ -42,7 +40,16 @@ interface RainStatus {
  * local: no extra requests, no cache.
  */
 export function rainStatus(data: WeatherBundle | null, now: number): RainStatus {
-  if (!data || now - data.fetchedAt > MAX_AGE_MS) return { state: 'none', minutes: null, signature: 'none' };
+  if (!data) return { state: 'none', minutes: null, signature: 'none' };
+  const locationId = weatherLocationKey(data.location.latitude, data.location.longitude);
+  if (!locationId || !assessWeatherCacheFreshness({
+    snapshotLocationId: locationId,
+    currentLocationId: locationId,
+    fetchedAt: data.fetchedAt,
+    now,
+  }).alertsMayBeTreatedAsCurrent) {
+    return { state: 'none', minutes: null, signature: 'none' };
+  }
   const nowcast = computeNowcast(data.minutely);
   const rainingNow = data.current.precipitation > 0;
   const soon =
@@ -94,9 +101,13 @@ async function cancelStatus(): Promise<void> {
  * not an alert - but an existing one is left alone until the rain stops.
  */
 export function useRainOngoing(enabled: boolean, data: WeatherBundle | null): void {
-  // A slow clock keeps "3 h stale" honest without re-running on every render.
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- `data` is a refresh trigger: a new forecast resets "now".
-  const now = useMemo(() => Date.now(), [data]);
+  const [now, setNow] = useState(() => Date.now());
+  const hasData = data !== null;
+  useEffect(() => {
+    if (!hasData) return undefined;
+    const interval = setInterval(() => setNow(Date.now()), 60 * 1000);
+    return () => clearInterval(interval);
+  }, [hasData]);
   const status = useMemo(() => rainStatus(data, now), [data, now]);
   const signature = status.signature;
   const state = status.state;

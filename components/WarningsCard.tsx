@@ -6,7 +6,11 @@ import { Card } from './Card';
 import { formatHourLabel } from '../utils/format';
 import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
-import type { MeteoAlarmLevelColor, MeteoAlarmWarning } from '../utils/meteoalarm';
+import {
+  METEOALARM_CACHE_TTL_MS,
+  type MeteoAlarmLevelColor,
+  type MeteoAlarmWarning,
+} from '../utils/meteoalarm';
 
 interface WarningsCardProps {
   theme: AppTheme;
@@ -15,6 +19,9 @@ interface WarningsCardProps {
   /** Feed status from useMeteoAlarm; unused today - the card is simply
    * absent while loading or after a failure (no skeleton). */
   status: 'idle' | 'loading' | 'ok' | 'error';
+  /** Original source-fetch time, not the UI's last render/check time. */
+  updatedAt: number | null;
+  now: number;
   style?: StyleProp<ViewStyle>;
   revealDelay?: number;
 }
@@ -65,10 +72,23 @@ function untilLabel(iso: string): string {
 export function WarningsCard({
   theme,
   warnings,
+  updatedAt,
+  now,
   style,
   revealDelay,
 }: WarningsCardProps) {
-  if (!warnings || warnings.length === 0) return null;
+  const sourceAge = updatedAt === null ? Number.POSITIVE_INFINITY : now - updatedAt;
+  if (
+    !warnings ||
+    warnings.length === 0 ||
+    updatedAt === null ||
+    !Number.isFinite(updatedAt) ||
+    sourceAge < -5 * 60 * 1000 ||
+    sourceAge >= METEOALARM_CACHE_TTL_MS
+  ) return null;
+  const updatedDate = new Date(Math.min(updatedAt, now));
+  const updatedTime = `${updatedDate.toLocaleDateString(getLanguage(), { month: 'short', day: 'numeric' })} · ${formatHourLabel(localNaiveIso(updatedDate), false)}`;
+  const updatedText = t('aurora_updated').replace('{time}', updatedTime);
 
   return (
     <Card
@@ -88,6 +108,7 @@ export function WarningsCard({
           const composedLabel = [
             title,
             warning.description || null,
+            warning.instruction || null,
             untilText,
             warning.areaDesc,
           ]
@@ -113,6 +134,11 @@ export function WarningsCard({
                     {warning.description}
                   </Text>
                 ) : null}
+                {warning.instruction ? (
+                  <Text style={[styles.instruction, { color: theme.textSecondary }]}>
+                    {warning.instruction}
+                  </Text>
+                ) : null}
                 {untilText ? (
                   <Text style={[styles.until, { color: theme.textSecondary }]}>{untilText}</Text>
                 ) : null}
@@ -121,7 +147,10 @@ export function WarningsCard({
           );
         })}
       </View>
-      <Text style={[styles.source, { color: theme.textTertiary }]}>{t('warnings_source')}</Text>
+      <View style={styles.footer}>
+        <Text style={[styles.source, { color: theme.textTertiary }]}>{t('warnings_source')}</Text>
+        <Text style={[styles.updated, { color: theme.textTertiary }]}>{updatedText}</Text>
+      </View>
     </Card>
   );
 }
@@ -152,12 +181,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
   },
+  instruction: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontFamily: F.medium,
+  },
   until: {
     fontSize: 11.5,
     fontFamily: F.medium,
   },
+  footer: {
+    gap: 2,
+    marginTop: 8,
+  },
   source: {
     fontSize: 11,
-    marginTop: 8,
+  },
+  updated: {
+    fontSize: 11,
   },
 });

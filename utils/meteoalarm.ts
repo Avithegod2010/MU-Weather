@@ -64,6 +64,8 @@ export interface MeteoAlarmWarning {
   event: string;
   headline: string;
   description: string;
+  /** Feed-supplied protective actions, when provided by the CAP issuer. */
+  instruction?: string;
   severity: MeteoAlarmSeverity;
   levelColor: MeteoAlarmLevelColor;
   /** ISO 8601 instant of when the warning stops being valid. */
@@ -87,11 +89,12 @@ const SEVERITY_RANK: Record<MeteoAlarmSeverity, number> = {
   Extreme: 3,
 };
 
-const CACHE_TTL_MS = 15 * 60 * 1000;
+export const METEOALARM_CACHE_TTL_MS = 15 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 20_000;
 
 interface FeedCache {
   slug: string;
+  language: string;
   fetchedAt: number;
   warnings: ParsedWarning[];
 }
@@ -103,6 +106,15 @@ let cache: FeedCache | null = null;
 export function meteoalarmSlugFor(countryCode: string | null | undefined): string | null {
   if (!countryCode) return null;
   return METEOALARM_SLUGS[countryCode.toUpperCase()] ?? null;
+}
+
+/** Timestamp for freshness labels; warning validity still comes from CAP expiry. */
+export function meteoAlarmCacheFetchedAt(
+  countryCode: string | null | undefined,
+  language: string,
+): number | null {
+  const slug = meteoalarmSlugFor(countryCode);
+  return slug && cache?.slug === slug && cache.language === language ? cache.fetchedAt : null;
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -272,6 +284,7 @@ function parseOneWarning(entry: unknown, now: number, lang: string): ParsedWarni
     event: asString(info.event).trim(),
     headline: asString(info.headline).trim(),
     description: asString(info.description).trim(),
+    instruction: asString(info.instruction).trim(),
     severity: finalSeverity,
     levelColor,
     expires,
@@ -288,6 +301,7 @@ function toPublicWarning(warning: ParsedWarning): MeteoAlarmWarning {
     event: warning.event,
     headline: warning.headline,
     description: warning.description,
+    ...(warning.instruction ? { instruction: warning.instruction } : {}),
     severity: warning.severity,
     levelColor: warning.levelColor,
     expires: warning.expires,
@@ -352,7 +366,12 @@ export async function fetchMeteoAlarmWarnings(
   if (!slug) return null;
 
   const now = Date.now();
-  if (cache && cache.slug === slug && now - cache.fetchedAt < CACHE_TTL_MS) {
+  if (
+    cache &&
+    cache.slug === slug &&
+    cache.language === lang &&
+    now - cache.fetchedAt < METEOALARM_CACHE_TTL_MS
+  ) {
     return cache.warnings
       .filter((warning) => matchesLocation(warning, lat, lon))
       .map(toPublicWarning);
@@ -367,7 +386,7 @@ export async function fetchMeteoAlarmWarnings(
   if (json === null) return null;
 
   const parsed = parseParsedWarnings(json, Date.now(), lang);
-  cache = { slug, fetchedAt: Date.now(), warnings: parsed };
+  cache = { slug, language: lang, fetchedAt: Date.now(), warnings: parsed };
   return parsed
     .filter((warning) => matchesLocation(warning, lat, lon))
     .map(toPublicWarning);

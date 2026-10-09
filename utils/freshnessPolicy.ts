@@ -36,6 +36,17 @@ export interface CacheFreshnessPolicy {
 const DEFAULT_FRESH_FOR_MS = 15 * 60 * 1000;
 const DEFAULT_EXPIRE_AFTER_MS = 6 * 60 * 60 * 1000;
 const DEFAULT_FUTURE_TOLERANCE_MS = 5 * 60 * 1000;
+const HOUR_MS = 60 * 60 * 1000;
+
+/** App-level freshness window: preserve existing 3 h stale-banner behavior. */
+export const WEATHER_CACHE_FRESH_FOR_MS = 3 * HOUR_MS;
+/** Align expired-cache behavior with the existing 24 h AsyncStorage cap. */
+export const WEATHER_CACHE_EXPIRE_AFTER_MS = 24 * HOUR_MS;
+
+export const WEATHER_CACHE_FRESHNESS_POLICY: CacheFreshnessPolicy = {
+  freshForMs: WEATHER_CACHE_FRESH_FOR_MS,
+  expireAfterMs: WEATHER_CACHE_EXPIRE_AFTER_MS,
+};
 
 function assessment(
   state: CacheFreshnessState,
@@ -100,6 +111,27 @@ export function assessCacheFreshness(
   if (ageMs >= expireAfterMs) return assessment('expired', 'past-expiry', ageMs);
   if (ageMs >= freshForMs) return assessment('stale', 'beyond-fresh-window', ageMs);
   return assessment('fresh', 'within-fresh-window', ageMs);
+}
+
+/** Stable ~1 km coordinate key, matching the app's location-scoped caches. */
+export function weatherLocationKey(
+  latitude: number | null | undefined,
+  longitude: number | null | undefined,
+): string | null {
+  if (
+    typeof latitude !== 'number' || !Number.isFinite(latitude) || latitude < -90 || latitude > 90 ||
+    typeof longitude !== 'number' || !Number.isFinite(longitude) || longitude < -180 || longitude > 180
+  ) {
+    return null;
+  }
+  return `${Math.round(latitude * 100) / 100}|${Math.round(longitude * 100) / 100}`;
+}
+
+/** Apply the app's shared weather-cache TTLs to any cached weather snapshot. */
+export function assessWeatherCacheFreshness(
+  input: CacheFreshnessInput,
+): CacheFreshnessAssessment {
+  return assessCacheFreshness(input, WEATHER_CACHE_FRESHNESS_POLICY);
 }
 
 /** Convenience wrapper that makes the alert-currentness rule explicit at call sites. */

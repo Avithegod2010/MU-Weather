@@ -99,12 +99,25 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
   const reliabilityText = reliableBins
     ? t('rain_calibration_reliability').replace('{bins}', reliableBins)
     : null;
+  const leadTimeText = calibration?.status === 'ready'
+    ? calibration.leadTimeBuckets
+        .filter((bucket) => bucket.sufficientlyPopulated && bucket.brierScore !== null)
+        .map((bucket) => {
+          const report = t('rain_calibration_brier')
+            .replace('{score}', (bucket.brierScore ?? 0).toFixed(3))
+            .replace('{cases}', String(bucket.cases))
+            .replace('{days}', String(bucket.verifiedDays));
+          return `${bucket.startLeadHours}–${bucket.endLeadHours} h: ${report}`;
+        })
+        .join(' · ')
+    : '';
   const accessibilityLabel = [
     t('chart_rain_a11y')
       .replace('{time}', formatHourLabel(peak.time, false))
       .replace('{n}', String(Math.round(peak.precipProbability))),
     calibrationText,
     reliabilityText,
+    leadTimeText,
   ].filter(Boolean).join('. ');
 
   return (
@@ -211,6 +224,11 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
       {reliabilityText ? (
         <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
           {reliabilityText}
+        </Text>
+      ) : null}
+      {leadTimeText ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+          {leadTimeText}
         </Text>
       ) : null}
     </View>

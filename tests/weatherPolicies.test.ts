@@ -3,16 +3,24 @@ import {
   aggregateWeatherImpacts,
   type ImpactSignal,
 } from '../utils/impactTimeline';
+import { aggregateAlertHistoryImpacts } from '../utils/alertImpactHistory';
+import { buildCurrentImpactTimeline } from '../utils/currentImpactTimeline';
+import { parseWarnings } from '../utils/meteoalarm';
 import {
   DEFAULT_OUTDOOR_PREFERENCES,
   normalizeOutdoorPreferences,
   recommendOutdoorWindows,
+  stepOutdoorPreference,
   type OutdoorForecastHour,
   type OutdoorPreferences,
 } from '../utils/outdoorPlanPolicy';
+import { buildOutdoorForecastHours } from '../utils/outdoorPlanAdapter';
+import type { HourPoint } from '../api/types';
 import {
   assessAlertCacheFreshness,
   assessCacheFreshness,
+  assessWeatherCacheFreshness,
+  weatherLocationKey,
   type CacheFreshnessInput,
 } from '../utils/freshnessPolicy';
 
@@ -143,6 +151,128 @@ function testImpactAggregation(): void {
   assert(olderWins[0].expected.includes('Rain likely during the commute'), 'older duplicate cannot replace a newer update');
 }
 
+function testAlertHistoryIntegration(): void {
+  const grouped = aggregateAlertHistoryImpacts([
+    { key: 'rain', title: 'Rain expected', message: 'Bring a rain layer.', severity: 'warning', at: baseTime, city: 'Raipur' },
+    { key: 'rain', title: 'Heavy rainfall expected', message: 'Avoid flooded roads.', severity: 'severe', at: baseTime + 12 * 60_000, city: 'Raipur' },
+    { key: 'rain', title: 'Rain expected', message: 'Rain in Bilaspur.', severity: 'warning', at: baseTime + 15 * 60_000, city: 'Bilaspur' },
+    { key: 'wind', title: 'Windy', message: 'Secure loose items.', severity: 'warning', at: baseTime + 10 * 60_000, city: 'Raipur' },
+  ]);
+  equal(grouped.length, 3, 'only repeated notifications for the same rule and city group');
+  const raipurRain = grouped.find((impact) => impact.hazard === 'Raipur:rain');
+  assert(raipurRain, 'same-city rain group exists');
+  equal(raipurRain.signalIds.length, 2, 'repeated alert history rows collapse into one timeline item');
+  equal(raipurRain.severity, 'severe', 'history group keeps the strongest severity');
+  assert(raipurRain.safetyMessages.includes('Avoid flooded roads.'), 'severe history copy remains available');
+  assert(grouped.some((impact) => impact.hazard === 'Bilaspur:rain'), 'separate city history never merges');
+}
+
+function testCurrentImpactTimeline(): void {
+  const now = baseTime + 5 * 60_000;
+  const impacts = buildCurrentImpactTimeline(
+    [
+      { key: 'rain', title: 'Rain expected', message: '70% chance of rain.', severity: 'warning' },
+      { key: 'raineasing', title: 'Rain easing', message: 'Rain may ease soon.', severity: 'info' },
+    ],
+    [
+      {
+        id: 'official-flood-1',
+        event: 'Flood warning',
+        headline: 'Flood risk',
+        description: 'Flooding may affect low roads.',
+        instruction: 'Avoid flooded roads.',
+        severity: 'Severe',
+        levelColor: 'orange',
+        expires: new Date(baseTime + 2 * 60 * 60_000).toISOString(),
+        areaDesc: 'Central area',
+        senderName: 'Warning office',
+      },
+      {
+        id: 'official-localized',
+        event: 'Avis météorologique',
+        headline: '',
+        description: 'A separate local warning.',
+        severity: 'Moderate',
+        levelColor: 'yellow',
+        expires: new Date(baseTime + 2 * 60 * 60_000).toISOString(),
+        areaDesc: null,
+        senderName: null,
+      },
+    ],
+    baseTime,
+    baseTime,
+    now,
+    { forecast: 'Forecast', official: 'MeteoAlarm' },
+  );
+  const rain = impacts.find((impact) => impact.signalIds.includes('official:official-flood-1'));
+  assert(rain, 'current official and forecast rain signals share the timeline');
+  equal(rain.signalIds.length, 3, 'overlapping forecast/nowcast/official signals merge');
+  equal(rain.severity, 'severe', 'current timeline preserves official severe priority');
+  assert(rain.safetyMessages.includes('Avoid flooded roads.'), 'official safety instruction is preserved');
+  assert(impacts.some((impact) => impact.hazard === 'official:official-localized'), 'unrecognized localized warnings stay separate rather than risk a false merge');
+
+  const staleSources = buildCurrentImpactTimeline(
+    [{ key: 'rain', title: 'Old rain', message: 'Old forecast alert.', severity: 'warning' }],
+    [{
+      id: 'old-official',
+      event: 'Flood warning',
+      headline: 'Flood risk',
+      description: 'Old official warning.',
+      instruction: 'Avoid flooded roads.',
+      severity: 'Severe',
+      levelColor: 'orange',
+      expires: new Date(baseTime + 2 * 60 * 60_000).toISOString(),
+      areaDesc: null,
+      senderName: null,
+    }],
+    baseTime - 4 * 60 * 60_000,
+    baseTime - 20 * 60_000,
+    now,
+    { forecast: 'Forecast', official: 'MeteoAlarm' },
+  );
+  equal(staleSources.length, 0, 'stale forecast and official feeds are omitted even if the warning expiry is future');
+}
+
+function testMeteoAlarmInstructions(): void {
+  const expiry = new Date(baseTime + 60 * 60_000).toISOString();
+  const warnings = parseWarnings(
+    {
+      warnings: [
+        {
+          alert: {
+            status: 'Actual',
+            identifier: 'cap-instruction-1',
+            info: [
+              {
+                language: 'en-US',
+                event: 'Flood warning',
+                headline: 'Flood risk',
+                description: 'Flooding is possible.',
+                instruction: 'Avoid flooded roads.',
+                severity: 'Severe',
+                expires: expiry,
+              },
+              {
+                language: 'es-ES',
+                event: 'Aviso de inundación',
+                headline: 'Riesgo de inundación',
+                description: 'Es posible que haya inundaciones.',
+                instruction: 'Evite las carreteras inundadas.',
+                severity: 'Severe',
+                expires: expiry,
+              },
+            ],
+          },
+        },
+      ],
+    },
+    baseTime,
+    'es',
+  );
+  equal(warnings.length, 1, 'active CAP warning is parsed');
+  equal(warnings[0].instruction, 'Evite las carreteras inundadas.', 'language-matched protective instruction is carried through CAP parsing');
+}
+
 function outdoorHour(at: number, overrides: Partial<OutdoorForecastHour> = {}): OutdoorForecastHour {
   return {
     at,
@@ -169,6 +299,28 @@ function testOutdoorPlanning(): void {
   equal(normalized.minTemperatureC, DEFAULT_OUTDOOR_PREFERENCES.minTemperatureC, 'inverted temperature range restores safe defaults');
   equal(normalized.maxTemperatureC, DEFAULT_OUTDOOR_PREFERENCES.maxTemperatureC, 'both ends of an inverted range restore together');
   equal(normalized.minimumWindowHours, 8, 'window length is bounded');
+  equal(stepOutdoorPreference(null, 'rain', 1).maxRainProbability, 40, 'rain tolerance steps in 10-point increments');
+  equal(stepOutdoorPreference(null, 'wind', -1).maxWindKmh, 20, 'wind comfort threshold steps in 5 km/h increments');
+  const warmer = stepOutdoorPreference(null, 'temperature', 1);
+  equal(warmer.minTemperatureC, 16, 'temperature preference can shift warmer');
+  equal(warmer.maxTemperatureC, 28, 'temperature range width remains stable when shifted');
+
+  const adapted = buildOutdoorForecastHours(
+    [{
+      time: '2026-10-09T12:00',
+      apparent: 22,
+      precipProbability: 20,
+      windSpeed: 10,
+      windGusts: 15,
+      uvIndex: 4,
+    } as unknown as HourPoint],
+    [{ time: '2026-10-09T12:00', usAqi: 42, euAqi: 22, pm25: null, pm10: null }],
+    baseTime,
+    5.5 * 60 * 60,
+    'us',
+  );
+  equal(adapted[0].at, Date.UTC(2026, 9, 9, 6, 30), 'local forecast times convert to UTC using the location offset');
+  equal(adapted[0].aqi, 42, 'outdoor model joins the selected hourly AQI feed');
 
   const start = baseTime + 2 * 60 * 60_000;
   const good = recommendOutdoorWindows(
@@ -303,9 +455,22 @@ function testFreshnessPolicy(): void {
   equal(missingTime.state, 'expired', 'missing timestamp is not called fresh');
   const invalidPolicy = assessCacheFreshness(freshnessInput(), { freshForMs: 60_000, expireAfterMs: 30_000 });
   equal(invalidPolicy.reason, 'invalid-policy', 'invalid thresholds are rejected');
+
+  const appFresh = assessWeatherCacheFreshness(freshnessInput({ fetchedAt: baseTime - 2 * 60 * 60_000 }));
+  equal(appFresh.state, 'fresh', 'weather remains current inside the app three-hour window');
+  const appStale = assessWeatherCacheFreshness(freshnessInput({ fetchedAt: baseTime - 3 * 60 * 60_000 }));
+  equal(appStale.state, 'stale', 'weather alerts become non-current at the app stale boundary');
+  assert(!appStale.alertsMayBeTreatedAsCurrent, 'stale app cache cannot trigger current alerts');
+  const appExpired = assessWeatherCacheFreshness(freshnessInput({ fetchedAt: baseTime - 24 * 60 * 60_000 }));
+  equal(appExpired.state, 'expired', 'app weather cache expires at 24 hours');
+  equal(weatherLocationKey(21.25, 81.63), '21.25|81.63', 'weather cache keys are rounded location-scoped');
+  equal(weatherLocationKey(91, 0), null, 'invalid coordinates cannot create a cache identity');
 }
 
 testImpactAggregation();
+testAlertHistoryIntegration();
+testCurrentImpactTimeline();
+testMeteoAlarmInstructions();
 testOutdoorPlanning();
 testFreshnessPolicy();
 console.log('weather policy tests passed');

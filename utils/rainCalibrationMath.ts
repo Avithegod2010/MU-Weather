@@ -18,6 +18,16 @@ export const MIN_RAIN_CALIBRATION_CASES = 100;
 export const MIN_RAIN_CALIBRATION_DAYS = 14;
 /** Do not report a reliability-bin estimate from a handful of cases. */
 export const MIN_RAIN_RELIABILITY_BIN_CASES = 20;
+/** Lead-time scores need their own support threshold to avoid noisy slices. */
+export const MIN_RAIN_LEAD_BUCKET_CASES = 20;
+export const MIN_RAIN_LEAD_BUCKET_DAYS = 7;
+
+export const RAIN_LEAD_TIME_BUCKETS = [
+  { startLeadHours: 0, endLeadHours: 24 },
+  { startLeadHours: 24, endLeadHours: 48 },
+  { startLeadHours: 48, endLeadHours: 72 },
+  { startLeadHours: 72, endLeadHours: MAX_RAIN_LEAD_HOURS },
+] as const;
 
 export interface RainLocationAnchor {
   latitude: number;
@@ -56,12 +66,23 @@ export interface RainReliabilityBin {
   sufficientlyPopulated: boolean;
 }
 
+export interface RainLeadTimeBucket {
+  startLeadHours: number;
+  endLeadHours: number;
+  cases: number;
+  verifiedDays: number;
+  /** Null until this lead range has enough independent days and hourly cases. */
+  brierScore: number | null;
+  sufficientlyPopulated: boolean;
+}
+
 interface RainCalibrationSummaryBase {
   verifiedCases: number;
   verifiedDays: number;
   requiredCases: number;
   requiredDays: number;
   reliabilityBins: RainReliabilityBin[];
+  leadTimeBuckets: RainLeadTimeBucket[];
 }
 
 export type RainCalibrationSummary =
@@ -309,6 +330,29 @@ export function rainVerificationDateRange(
   return { startDate: dates[0], endDate: dates[dates.length - 1] };
 }
 
+function summarizeRainLeadTimes(samples: RainForecastLogEntry[]): RainLeadTimeBucket[] {
+  return RAIN_LEAD_TIME_BUCKETS.map(({ startLeadHours, endLeadHours }) => {
+    const bucket = samples.filter(
+      (sample) => sample.leadHours > startLeadHours && sample.leadHours <= endLeadHours,
+    );
+    const verifiedDays = new Set(bucket.map((sample) => sample.time.slice(0, 10))).size;
+    const sufficientlyPopulated =
+      bucket.length >= MIN_RAIN_LEAD_BUCKET_CASES && verifiedDays >= MIN_RAIN_LEAD_BUCKET_DAYS;
+    const squaredErrorSum = bucket.reduce((sum, sample) => {
+      const error = sample.probability - (sample.observed as 0 | 1);
+      return sum + error * error;
+    }, 0);
+    return {
+      startLeadHours,
+      endLeadHours,
+      cases: bucket.length,
+      verifiedDays,
+      brierScore: sufficientlyPopulated ? squaredErrorSum / bucket.length : null,
+      sufficientlyPopulated,
+    };
+  });
+}
+
 /**
  * Brier score and reliability bins for the raw hourly member-share forecasts.
  * This is hourly verification only: it does not multiply hourly dry
@@ -335,6 +379,7 @@ export function computeRainCalibrationSummary(
     requiredDays: MIN_RAIN_CALIBRATION_DAYS,
     brierScore: null,
     reliabilityBins: emptyBins,
+    leadTimeBuckets: summarizeRainLeadTimes([]),
   };
   if (!location || !isLocationAnchor(location)) return emptySummary;
 
@@ -350,10 +395,11 @@ export function computeRainCalibrationSummary(
       entry.validAt <= now,
   );
   const days = new Set(samples.map((entry) => entry.time.slice(0, 10)));
+  const leadTimeBuckets = summarizeRainLeadTimes(samples);
   const enoughHistory =
     samples.length >= MIN_RAIN_CALIBRATION_CASES && days.size >= MIN_RAIN_CALIBRATION_DAYS;
   if (!enoughHistory) {
-    return { ...emptySummary, verifiedCases: samples.length, verifiedDays: days.size };
+    return { ...emptySummary, verifiedCases: samples.length, verifiedDays: days.size, leadTimeBuckets };
   }
 
   const binCounts = Array.from({ length: 5 }, () => ({ count: 0, probabilitySum: 0, eventSum: 0 }));
@@ -385,6 +431,7 @@ export function computeRainCalibrationSummary(
     requiredDays: MIN_RAIN_CALIBRATION_DAYS,
     brierScore: squaredErrorSum / samples.length,
     reliabilityBins,
+    leadTimeBuckets,
   };
 }
 

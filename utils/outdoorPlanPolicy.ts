@@ -1,7 +1,6 @@
 /**
- * Pure outdoor-window scoring core. It is intentionally UI- and storage-free
- * so it can be integrated with the existing BestWindowCard/TripPlannerCard
- * after the project branches are reconciled.
+ * Pure outdoor-window scoring core. It stays UI- and storage-free so the same
+ * policy can be exercised by the Home planner and deterministic tests.
  */
 export interface OutdoorPreferences {
   maxRainProbability: number;
@@ -78,6 +77,38 @@ export interface OutdoorPlanOptions {
   staleAfterMs?: number;
   /** At least this many of the five forecast metrics must be available. */
   minimumKnownMetrics?: number;
+}
+
+export type OutdoorPreferenceControlKey = 'rain' | 'temperature' | 'wind' | 'uv' | 'aqi';
+
+/** Apply a bounded UI step to one user's outdoor comfort preference. */
+export function stepOutdoorPreference(
+  input: Partial<OutdoorPreferences> | null | undefined,
+  key: OutdoorPreferenceControlKey,
+  delta: number,
+): OutdoorPreferences {
+  const preferences = normalizeOutdoorPreferences(input);
+  if (!Number.isFinite(delta) || delta === 0) return preferences;
+  const step = delta > 0 ? 1 : -1;
+  switch (key) {
+    case 'rain':
+      preferences.maxRainProbability += step * 10;
+      break;
+    case 'temperature':
+      preferences.minTemperatureC += step;
+      preferences.maxTemperatureC += step;
+      break;
+    case 'wind':
+      preferences.maxWindKmh += step * 5;
+      break;
+    case 'uv':
+      preferences.maxUvIndex += step;
+      break;
+    case 'aqi':
+      preferences.maxAqi += step * 10;
+      break;
+  }
+  return normalizeOutdoorPreferences(preferences);
 }
 
 const HOUR_MS = 60 * 60 * 1000;
