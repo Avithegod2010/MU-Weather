@@ -1,4 +1,4 @@
-import { fetchHourlyPrecipitationActuals } from '../api/providers';
+import { fetchHourlyPrecipitationActuals, fetchHourlyWeatherActuals } from '../api/providers';
 import type { EnsembleSpread, GeoLocation } from '../api/types';
 import {
   MAX_RAIN_LOG_LOCATIONS,
@@ -209,6 +209,8 @@ async function testArchiveObservationProvider(): Promise<void> {
             '2026-03-12T03:00',
           ],
           precipitation: [0, 0.1, null, -1],
+          temperature_2m: [6, -2, null, 4],
+          wind_speed_10m: [0, 2, 5, -1],
         },
       }),
     } as unknown as Response;
@@ -222,8 +224,21 @@ async function testArchiveObservationProvider(): Promise<void> {
     );
     assert(observations?.length === 2, 'only complete, non-negative archive hours are accepted');
     assert(observations[0].precipitation === 0 && observations[1].precipitation === 0.1, 'dry zeroes are preserved');
+    const weatherObservations = await fetchHourlyWeatherActuals(
+      paris.latitude,
+      paris.longitude,
+      '2026-03-12',
+      '2026-03-13',
+    );
+    assert(weatherObservations?.length === 4, 'archive rows remain when only temperature or wind is populated');
+    assert(weatherObservations[0].temperature === 6 && weatherObservations[0].windSpeed === 0, 'temperature and calm-wind actuals retain zero/positive values');
+    assert(weatherObservations[1].temperature === -2, 'negative temperatures are valid archive observations');
+    assert(weatherObservations[3].precipitation === null && weatherObservations[3].windSpeed === null, 'invalid negative precipitation/wind values become missing, not actuals');
     const query = new URL(requestedUrl).searchParams;
-    assert(query.get('hourly') === 'precipitation', 'archive request asks for hourly precipitation');
+    assert(
+      query.get('hourly') === 'precipitation,temperature_2m,wind_speed_10m',
+      'one archive request supplies precipitation and the continuous verification variables',
+    );
     assert(query.get('timezone') === 'auto', 'archive request uses the forecast location timezone');
     assert(query.get('start_date') === '2026-03-12' && query.get('end_date') === '2026-03-13', 'archive date range is exact');
     const countBeforeInvalidDate = requestCount;

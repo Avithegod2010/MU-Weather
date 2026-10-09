@@ -7,7 +7,10 @@ import { ChevronLeft, ChevronRight, Clock, Settings } from '../utils/uiIcons';
 import { convertWind, formatTemp, formatTemperatureDelta, windUnitLabel } from '../utils/format';
 import { haptics } from '../utils/haptics';
 import type { OutdoorReasonCode, OutdoorPreferenceControlKey, OutdoorPreferences } from '../utils/outdoorPlanPolicy';
-import type { OutdoorWindowFeedbackVote } from '../utils/outdoorWindowFeedbackPolicy';
+import type {
+  OutdoorWindowFeedbackTrend,
+  OutdoorWindowFeedbackVote,
+} from '../utils/outdoorWindowFeedbackPolicy';
 import type { AppTheme } from '../theme/palettes';
 
 interface BestWindowCardProps {
@@ -22,6 +25,7 @@ interface BestWindowCardProps {
   /** Localized weekend verdict, e.g. "Saturday wins — plan outside then". `null` = no weekend data. */
   weekend?: string | null;
   windowFeedback: OutdoorWindowFeedbackVote | null;
+  windowFeedbackTrend: OutdoorWindowFeedbackTrend;
   onWindowFeedback: (vote: OutdoorWindowFeedbackVote) => void;
   journalSamples: number;
   journalSuggestionSamples: number;
@@ -109,6 +113,7 @@ export function BestWindowCard({
   onPreferenceStep,
   weekend,
   windowFeedback,
+  windowFeedbackTrend,
   onWindowFeedback,
   journalSamples,
   journalSuggestionSamples,
@@ -204,6 +209,14 @@ export function BestWindowCard({
         {windowFeedback ? (
           <Text style={[styles.windowFeedbackSaved, { color: theme.textTertiary }]}>
             {t('best_window_feedback_saved')}
+          </Text>
+        ) : null}
+        {windowFeedbackTrend.sufficientlySampled ? (
+          <Text style={[styles.windowFeedbackTrend, { color: theme.textTertiary }]}>
+            {t('outdoor_window_feedback_trend')
+              .replace('{good}', String(windowFeedbackTrend.goodFitCount))
+              .replace('{total}', String(windowFeedbackTrend.sampleCount))
+              .replace('{notForMe}', String(windowFeedbackTrend.notForMeCount))}
           </Text>
         ) : null}
       </View>
@@ -345,6 +358,11 @@ const styles = StyleSheet.create({
   },
   windowFeedbackSaved: {
     fontSize: 10.5,
+    fontFamily: F.regular,
+  },
+  windowFeedbackTrend: {
+    fontSize: 10.5,
+    lineHeight: 15,
     fontFamily: F.regular,
   },
   journalProgress: {
