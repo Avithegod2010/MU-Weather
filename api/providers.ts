@@ -2,6 +2,7 @@ import type {
   EnsembleSpread,
   EnsembleSpreadPoint,
   HourlyPrecipitationObservation,
+  HourlyWeatherObservation,
   PastDayActual,
   MonthlyNormal,
   OnThisDayYear,
@@ -131,6 +132,8 @@ async function requestArchiveWindow(
 interface ArchiveHourlyPayload {
   time?: string[];
   precipitation?: (number | null)[];
+  temperature_2m?: (number | null)[];
+  wind_speed_10m?: (number | null)[];
 }
 
 function isCalendarDate(value: string): boolean {
@@ -140,17 +143,18 @@ function isCalendarDate(value: string): boolean {
 }
 
 /**
- * Hourly precipitation observations for forecast verification. Times use the
- * same location-local timezone as `fetchWeather` and `fetchEnsembleSpread`, so
- * a forecast hour is matched directly rather than shifted into the phone's
- * timezone. Missing archive values are omitted, never interpreted as dry.
+ * Hourly observations used to verify ensemble precipitation, temperature, and
+ * wind forecasts. Times use the forecast location's timezone and remain
+ * location-local wall-clock strings, so archive hours match without shifting
+ * through the phone's timezone. Missing metrics stay null; they are never
+ * interpreted as dry, calm, or zero-degree observations.
  */
-export async function fetchHourlyPrecipitationActuals(
+export async function fetchHourlyWeatherActuals(
   lat: number,
   lon: number,
   startDate: string,
   endDate: string,
-): Promise<HourlyPrecipitationObservation[] | null> {
+): Promise<HourlyWeatherObservation[] | null> {
   if (!isCalendarDate(startDate) || !isCalendarDate(endDate) || startDate > endDate) {
     return null;
   }
@@ -159,7 +163,7 @@ export async function fetchHourlyPrecipitationActuals(
     longitude: lon.toFixed(4),
     start_date: startDate,
     end_date: endDate,
-    hourly: 'precipitation',
+    hourly: 'precipitation,temperature_2m,wind_speed_10m',
     timezone: 'auto',
   }).toString();
 
@@ -172,20 +176,20 @@ export async function fetchHourlyPrecipitationActuals(
     if (!response.ok) return null;
     const json = await response.json();
     const hourly: ArchiveHourlyPayload | undefined = json?.hourly;
-    if (!Array.isArray(hourly?.time) || !Array.isArray(hourly.precipitation)) return null;
-    const observations: HourlyPrecipitationObservation[] = [];
+    if (!Array.isArray(hourly?.time)) return null;
+    const observations: HourlyWeatherObservation[] = [];
+    const finiteOrNull = (value: number | null | undefined): number | null =>
+      typeof value === 'number' && Number.isFinite(value) ? value : null;
     for (let i = 0; i < hourly.time.length; i++) {
       const time = hourly.time[i];
-      const precipitation = hourly.precipitation[i];
-      if (
-        typeof time === 'string' &&
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time) &&
-        typeof precipitation === 'number' &&
-        Number.isFinite(precipitation) &&
-        precipitation >= 0
-      ) {
-        observations.push({ time, precipitation });
-      }
+      if (typeof time !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time)) continue;
+      const rawPrecipitation = finiteOrNull(hourly.precipitation?.[i]);
+      const rawTemperature = finiteOrNull(hourly.temperature_2m?.[i]);
+      const rawWind = finiteOrNull(hourly.wind_speed_10m?.[i]);
+      const precipitation = rawPrecipitation !== null && rawPrecipitation >= 0 ? rawPrecipitation : null;
+      const windSpeed = rawWind !== null && rawWind >= 0 ? rawWind : null;
+      if (precipitation === null && rawTemperature === null && windSpeed === null) continue;
+      observations.push({ time, precipitation, temperature: rawTemperature, windSpeed });
     }
     return observations;
   } catch {
@@ -193,6 +197,20 @@ export async function fetchHourlyPrecipitationActuals(
   } finally {
     clearTimeout(timer);
   }
+}
+
+/** Compatibility wrapper for callers that only need the rain archive field. */
+export async function fetchHourlyPrecipitationActuals(
+  lat: number,
+  lon: number,
+  startDate: string,
+  endDate: string,
+): Promise<HourlyPrecipitationObservation[] | null> {
+  const observations = await fetchHourlyWeatherActuals(lat, lon, startDate, endDate);
+  if (!observations) return null;
+  return observations.flatMap((row) =>
+    row.precipitation === null ? [] : [{ time: row.time, precipitation: row.precipitation }],
+  );
 }
 
 /**
@@ -557,6 +575,7 @@ async function fetchEnsembleSpreadImpl(lat: number, lon: number): Promise<Ensemb
         tP10: percentile(temps, 10),
         tMedian: percentile(temps, 50),
         tP90: percentile(temps, 90),
+        temperatureMembers: temps.length,
         ...(winds.length > 0
           ? {
               windP10: percentile(winds, 10),

@@ -150,6 +150,18 @@ export interface PastDayActual {
   windMax?: number | null;
 }
 
+/** One hourly weather observation returned by the Archive API. */
+export interface HourlyWeatherObservation {
+  /** Local ISO hour in the queried location's timezone. */
+  time: string;
+  /** Millimetres in the forecast hour; null means the archive has no value. */
+  precipitation: number | null;
+  /** Degrees Celsius; null means the archive has no value. */
+  temperature: number | null;
+  /** Kilometres per hour, matching the ensemble provider's default units. */
+  windSpeed: number | null;
+}
+
 /** One verified hourly precipitation value returned by the Archive API. */
 export interface HourlyPrecipitationObservation {
   /** Local ISO hour in the queried location's timezone. */
@@ -178,6 +190,8 @@ export interface EnsembleSpreadPoint {
   tMedian: number;
   /** 90th percentile 2 m temperature across ensemble members (°C). */
   tP90: number;
+  /** Number of members with temperature data at this hour (legacy cache rows omit it). */
+  temperatureMembers?: number;
   /** 10th-percentile 10 m wind speed across members (km/h), when supplied. */
   windP10?: number;
   /** Median 10 m wind speed across members (km/h), when supplied. */

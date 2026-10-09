@@ -45,6 +45,7 @@ import {
   } from '../utils/uiIcons';
 import { ShareCard } from '../components/ShareCard';
 import { TrendChart } from '../components/TrendChart';
+import { EnsembleCalibrationCard } from '../components/EnsembleCalibrationCard';
 import { PastWeekCard } from '../components/PastWeekCard';
 import { ActivityCard } from '../components/ActivityCard';
 import { TripPlannerCard } from '../components/TripPlannerCard';
@@ -105,7 +106,7 @@ import { ModelComparisonScreen } from './ModelComparisonScreen';
 import { useModelComparison } from '../hooks/useModelComparison';
 import { useModelAccuracyLog } from '../hooks/useModelAccuracyLog';
 import { useEnsemble } from '../hooks/useEnsemble';
-import { useRainCalibration } from '../hooks/useRainCalibration';
+import { useForecastCalibration } from '../hooks/useForecastCalibration';
 import { AlertsScreen } from './AlertsScreen';
 import { useAlerts } from '../hooks/useAlerts';
 import { useSettings } from '../hooks/useSettings';
@@ -170,7 +171,7 @@ export function HomeScreen() {
   const onThisDay = useOnThisDay(active);
   const meteoAlarm = useMeteoAlarm(active);
   const ensemble = useEnsemble(FEATURES.ensemble ? active : null);
-  const rainCalibration = useRainCalibration(
+  const forecastCalibration = useForecastCalibration(
     active,
     FEATURES.ensemble ? ensemble.spread : null,
     weather.data?.utcOffsetSeconds ?? null,
@@ -871,7 +872,7 @@ export function HomeScreen() {
                     <RainProbabilityChart
                       theme={theme}
                       hours={weather.data.hourly}
-                      calibration={rainCalibration}
+                      calibration={forecastCalibration.rain}
                     />
                   </Card>
                 </Reveal>
@@ -884,9 +885,14 @@ export function HomeScreen() {
               ) : null}
 
               {FEATURES.trendChart && showSection('trend') ? (
-                <Reveal delay={140} wipe>
-                  <TrendChart theme={theme} hours={weather.data.hourly} ensemble={ensemble.spread?.points ?? null} />
-                </Reveal>
+                <>
+                  <Reveal delay={140} wipe>
+                    <TrendChart theme={theme} hours={weather.data.hourly} ensemble={ensemble.spread?.points ?? null} />
+                  </Reveal>
+                  <Reveal delay={165}>
+                    <EnsembleCalibrationCard theme={theme} summary={forecastCalibration.ensemble} />
+                  </Reveal>
+                </>
               ) : null}
 
               {chapterWeek ? (
@@ -946,6 +952,7 @@ export function HomeScreen() {
                     preferences={effectiveOutdoorPreferences(settings.outdoorPreferences)}
                     onPreferenceStep={adjustOutdoorPreference}
                     windowFeedback={outdoorWindowFeedback.vote}
+                    windowFeedbackTrend={outdoorWindowFeedback.trend}
                     onWindowFeedback={(vote) => {
                       haptics.select();
                       outdoorWindowFeedback.submit(vote);

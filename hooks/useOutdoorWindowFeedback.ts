@@ -3,10 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   findOutdoorWindowFeedback,
   normalizeOutdoorWindowFeedback,
+  summarizeOutdoorWindowFeedback,
   upsertOutdoorWindowFeedback,
 } from '../utils/outdoorWindowFeedbackPolicy';
 import type {
   OutdoorWindowFeedbackRecord,
+  OutdoorWindowFeedbackTrend,
   OutdoorWindowFeedbackVote,
 } from '../utils/outdoorWindowFeedbackPolicy';
 
@@ -39,7 +41,14 @@ function saveRecords(records: OutdoorWindowFeedbackRecord[]): Promise<void> {
 export function useOutdoorWindowFeedback(
   scope: string | null,
   windowKey: string | null,
-): { vote: OutdoorWindowFeedbackVote | null; ready: boolean; submit: (vote: OutdoorWindowFeedbackVote) => void } {
+):
+  {
+    vote: OutdoorWindowFeedbackVote | null;
+    ready: boolean;
+    trend: OutdoorWindowFeedbackTrend;
+    submit: (vote: OutdoorWindowFeedbackVote) => void;
+  } {
+
   const [records, setRecords] = useState<OutdoorWindowFeedbackRecord[]>([]);
   const recordsRef = useRef<OutdoorWindowFeedbackRecord[]>([]);
   const [ready, setReady] = useState(false);
@@ -76,6 +85,9 @@ export function useOutdoorWindowFeedback(
   return {
     vote: ready ? findOutdoorWindowFeedback(records, scope, windowKey) : null,
     ready,
+    trend: ready
+      ? summarizeOutdoorWindowFeedback(records, scope)
+      : { sampleCount: 0, goodFitCount: 0, notForMeCount: 0, sufficientlySampled: false },
     submit,
   };
 }

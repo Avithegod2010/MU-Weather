@@ -64,6 +64,7 @@
     "postinstall": "node scripts/copy-canvaskit.mjs",
     "visual:capture": "python3 scripts/visual/capture.py",
     "test:rain-calibration": "node scripts/test-rain-calibration.mjs",
+    "test:ensemble-calibration": "node scripts/test-ensemble-calibration.mjs",
     "lint": "eslint ."
   },
   "private": true,
