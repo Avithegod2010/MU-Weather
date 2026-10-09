@@ -91,3 +91,27 @@ dependencies. Four others are kept on purpose and carry a disable comment with t
 pair does not refetch), and the two sliding effects, which drive shared values.
 Result: **0 errors, 188 warnings**, all from the five deferred compiler-era hook rules. Those are the follow-up. The smoke run after the cleanup still
 passes the journal probe in both styles.
+
+## 8. Hourly ICON-EPS rain calibration (collection and scoring)
+
+- Log one latest **raw** ensemble wet-member share for each future local forecast hour and rounded location.
+  Re-fetches replace only unverified rows; once an observation is attached, that forecast/outcome pair is
+  immutable. Each row retains the app retrieval time and lead hours. The API does not expose its model-cycle
+  initialization time, so `issuedAt` means client retrieval time, not a claimed model run time.
+- Keep the data on-device in AsyncStorage only: coordinates are rounded to 0.01 degrees, the log holds at most
+  30 days per location, and at most eight locations. No upload, backup, or data-export path was added.
+- After a 72-hour archive lag, match local ISO hours to hourly Archive API precipitation. Missing archive values
+  remain unverified (never treated as dry); attempts are throttled to once per location per six hours.
+  A wet observation uses the same 0.1 mm hourly threshold as the ensemble member share. These are archive-relative
+  reference values, not station-confirmed ground truth, so the score is not presented as an independent verification.
+- Withhold Brier and reliability results until there are at least 100 verified hourly cases over 14 distinct
+  local dates. Reliability bins are shown only with at least 20 cases each. The logged unit is an hourly forecast
+  case; multiple hours on one date are correlated, so the counts are not independent samples or a confidence
+  interval. No daily rain probability is derived by multiplying hourly dry probabilities. A supported reliability
+  bin can provide an empirical probability correction, but this pass does not apply a correction to live chart
+  values; the displayed score describes raw ICON-EPS probabilities.
+- The check-out used for this pass is the available `796a79f` snapshot. Its Home rain chart still contains the
+  primary-provider bars only; the handoff-described ensemble-dot overlay is not present in this checkout. The
+  calibration summary is kept explicitly labelled ICON-EPS and does not imply that the blue bars are calibrated.
+- The three new labels are present in all 14 locale dictionaries. This checks key and placeholder coverage only;
+  native-speaker translation review has not been performed.

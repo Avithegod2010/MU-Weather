@@ -78,6 +78,7 @@ built with React Native & Expo.
 - **Weather on this day** — what actually happened on today's date over the past 10 years
 - **Climate normals** — “what's normal here” for every month of the year, from the ERA5 archive, with a delta against today's forecast
 - **Forecast accuracy** — the app scores its own past predictions and shows the average miss
+- **Hourly rain calibration** — ICON-EPS rain probabilities are logged locally per rounded location and checked against later archive observations; Brier and reliability summaries stay hidden until there is enough history
 - **Model leaderboard** — ranks ECMWF, GFS, ICON, Météo-France, JMA and MET Nordic by hit rate and mean error over the last 30 days, scored per city
 - **Official warnings** — MeteoAlarm CAP feeds for European countries, with severity colour, description and expiry time
 
