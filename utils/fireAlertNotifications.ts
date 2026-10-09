@@ -11,6 +11,7 @@ import { evaluateCustomRules, loadCustomAlerts } from './customAlerts';
 import { computeNowcast } from './nowcast';
 import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
 import { appendAlertHistory } from './alertHistory';
+import { assessWeatherCacheFreshness, weatherLocationKey } from './freshnessPolicy';
 import { getLanguage, t } from './i18n';
 import type { WeatherBundle } from '../api/types';
 
@@ -347,6 +348,15 @@ export async function fireAlertNotifications(
   settings: AlertSettings,
   data: WeatherBundle,
 ): Promise<TriggeredAlert[]> {
+  const locationId = weatherLocationKey(data.location.latitude, data.location.longitude);
+  if (!locationId) return [];
+  const freshness = assessWeatherCacheFreshness({
+    snapshotLocationId: locationId,
+    currentLocationId: locationId,
+    fetchedAt: data.fetchedAt,
+  });
+  if (!freshness.alertsMayBeTreatedAsCurrent) return [];
+
   const extras = await buildAlertExtras(settings, data);
   const triggered = evaluateAlerts(
     settings,

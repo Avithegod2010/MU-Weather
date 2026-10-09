@@ -2,7 +2,7 @@ name: Typecheck
 
 on:
   push:
-    branches: [master]
+    branches: [master, 'arena/**']
   pull_request:
 
 # Least privilege: this workflow only reads the repo and installs deps — it
@@ -26,3 +26,15 @@ jobs:
 
       - name: TypeScript typecheck
         run: npx tsc --noEmit
+
+      - name: Weather policy tests
+        run: node scripts/test-weather-policies.mjs
+
+      - name: Rain calibration tests
+        run: node scripts/test-rain-calibration.mjs
+
+      - name: Visual API fixture audit
+        run: python3 scripts/visual/audit_fixtures.py
+
+      - name: Visual API fixture audit tests
+        run: python3 -m unittest tests/test_weather_fixture_audit.py

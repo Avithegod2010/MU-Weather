@@ -22,6 +22,11 @@ import {
   unregisterBackgroundAlerts,
 } from '../tasks/backgroundAlertTask';
 import { SETTINGS_KEY } from './useDigest';
+import {
+  assessWeatherCacheFreshness,
+  weatherLocationKey,
+  WEATHER_CACHE_FRESH_FOR_MS,
+} from '../utils/freshnessPolicy';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -77,14 +82,33 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
   useEffect(() => {
     if (!data || !ready) {
       setActiveAlerts([]);
-      return;
+      return undefined;
     }
+    const locationId = weatherLocationKey(data.location.latitude, data.location.longitude);
+    const isFresh = () => Boolean(
+      locationId && assessWeatherCacheFreshness({
+        snapshotLocationId: locationId,
+        currentLocationId: locationId,
+        fetchedAt: data.fetchedAt,
+      }).alertsMayBeTreatedAsCurrent,
+    );
+    if (!isFresh()) {
+      setActiveAlerts([]);
+      return undefined;
+    }
+    let cancelled = false;
     void fireAlertNotifications(settings, data).then((triggered) => {
-      setActiveAlerts(triggered);
+      setActiveAlerts(!cancelled && isFresh() ? triggered : []);
     });
     // Saved-city sweep, throttled to one pass every 20 minutes inside the util
     // (the background task fires it too, for the app-closed case).
     void fireFavoriteCityAlerts(settings, data);
+    const staleInMs = Math.max(0, data.fetchedAt + WEATHER_CACHE_FRESH_FOR_MS - Date.now() + 1);
+    const staleTimer = setTimeout(() => setActiveAlerts([]), staleInMs);
+    return () => {
+      cancelled = true;
+      clearTimeout(staleTimer);
+    };
   }, [data, settings, ready]);
 
   useEffect(() => {

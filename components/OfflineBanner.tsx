@@ -5,9 +5,7 @@ import { t } from '../utils/i18n';
 import { haptics } from '../utils/haptics';
 import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
-
-/** Even with a successful fetch, a bundle older than this is called out. */
-const STALE_AFTER_MS = 3 * 60 * 60 * 1000;
+import { assessWeatherCacheFreshness } from '../utils/freshnessPolicy';
 /** How often the "x min ago" label is recomputed while the banner is visible. */
 const TICK_MS = 30 * 1000;
 
@@ -30,23 +28,34 @@ export function describeAge(ageMs: number): string {
 export function OfflineBanner({
   theme,
   fetchedAt,
+  snapshotLocationId,
+  currentLocationId,
   offline,
   onRetry,
 }: {
   theme: AppTheme;
   fetchedAt: number | null;
+  snapshotLocationId: string | null;
+  currentLocationId: string | null;
   offline: boolean;
   onRetry: () => void;
 }) {
   const [now, setNow] = useState(() => Date.now());
-  const age = fetchedAt === null ? null : Math.max(0, now - fetchedAt);
-  const visible = offline || (age !== null && age > STALE_AFTER_MS);
+  const freshness = assessWeatherCacheFreshness({
+    snapshotLocationId,
+    currentLocationId,
+    fetchedAt,
+    now,
+  });
+  const age = freshness.ageMs;
+  const visible =
+    offline || freshness.state === 'stale' || freshness.state === 'expired';
   useEffect(() => {
     if (!visible) return undefined;
     setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), TICK_MS);
     return () => clearInterval(id);
-  }, [visible, fetchedAt]);
+  }, [visible, fetchedAt, snapshotLocationId, currentLocationId]);
   if (!visible) return null;
 
   const title = offline ? t('offline_banner_offline') : t('offline_banner_stale');

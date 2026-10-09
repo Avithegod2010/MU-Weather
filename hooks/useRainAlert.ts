@@ -4,6 +4,7 @@ import { computeNowcast } from '../utils/nowcast';
 import { isInQuietHoursNow } from '../utils/fireAlertNotifications';
 import { t } from '../utils/i18n';
 import type { WeatherBundle } from '../api/types';
+import { assessWeatherCacheFreshness, weatherLocationKey } from '../utils/freshnessPolicy';
 
 /** Cooldown between rain-start notifications (per rain event), in-memory only. */
 const COOLDOWN_MS = 90 * 60_000;
@@ -26,7 +27,13 @@ export function useRainAlert(enabled: boolean, data: WeatherBundle | null): void
   );
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !data) return;
+    const locationId = weatherLocationKey(data.location.latitude, data.location.longitude);
+    if (!locationId || !assessWeatherCacheFreshness({
+      snapshotLocationId: locationId,
+      currentLocationId: locationId,
+      fetchedAt: data.fetchedAt,
+    }).alertsMayBeTreatedAsCurrent) return;
     if (nowcast.kind !== 'starting') return;
     const minutes = nowcast.minutesUntilChange;
     if (minutes === null || minutes > LEAD_WINDOW_MIN) return;
@@ -57,5 +64,5 @@ export function useRainAlert(enabled: boolean, data: WeatherBundle | null): void
         // Best-effort - never crash over a notification.
       }
     })();
-  }, [enabled, nowcast, data?.fetchedAt]);
+  }, [enabled, nowcast, data]);
 }

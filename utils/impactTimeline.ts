@@ -1,8 +1,8 @@
 /**
- * Pure alert-to-impact grouping for a future UI adapter. Callers should map
- * forecast, nowcast and official warnings into the same hazard vocabulary
- * (for example, `rain`) before passing them here. This module has no storage,
- * translation or notification side effects.
+ * Pure alert-to-impact grouping shared by current and historical Alerts adapters.
+ * Callers map forecast, nowcast and official warnings into the same hazard
+ * vocabulary (for example, `rain`) before passing them here. This module has
+ * no storage, translation or notification side effects.
  */
 export type ImpactSeverity = 'info' | 'warning' | 'severe';
 

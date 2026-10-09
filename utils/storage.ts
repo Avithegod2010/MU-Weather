@@ -1,11 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { GeoLocation, WeatherBundle } from '../api/types';
+import {
+  assessWeatherCacheFreshness,
+  weatherLocationKey,
+} from './freshnessPolicy';
 
 const LAST_LOCATION_KEY = '@mu_weather/last_location_v1';
 const LAST_WEATHER_KEY = '@mu_weather/last_weather_v1';
-
-/** Cached weather older than this is useless even as a stale snapshot. */
-const LAST_WEATHER_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 export async function loadLastLocation(): Promise<GeoLocation | null> {
   try {
@@ -58,13 +59,19 @@ export async function loadLastWeather(): Promise<WeatherBundle | null> {
     // `fetchedAt` is an epoch-milliseconds number in api/types.ts, so it is
     // JSON-safe and needs no Date revival; every other field is plain
     // strings, numbers, nulls and arrays of those.
-    if (
-      typeof bundle.fetchedAt !== 'number' ||
-      !Number.isFinite(bundle.fetchedAt) ||
-      Date.now() - bundle.fetchedAt > LAST_WEATHER_MAX_AGE_MS
-    ) {
+    const locationId = weatherLocationKey(
+      bundle.location.latitude,
+      bundle.location.longitude,
+    );
+    if (typeof bundle.fetchedAt !== 'number' || !Number.isFinite(bundle.fetchedAt) || !locationId) {
       return null;
     }
+    const freshness = assessWeatherCacheFreshness({
+      snapshotLocationId: locationId,
+      currentLocationId: locationId,
+      fetchedAt: bundle.fetchedAt,
+    });
+    if (!freshness.mayDisplayCached) return null;
     return bundle;
   } catch {
     return null;

@@ -56,7 +56,12 @@ import { MarineCard } from '../components/MarineCard';
 import { useAurora } from '../hooks/useAurora';
 import { AuroraCard } from '../components/AuroraCard';
 import { BestWindowCard } from '../components/BestWindowCard';
-import { computeBestWindow, bestWindowLine } from '../utils/bestWindow';
+import { bestWindowLine } from '../utils/bestWindow';
+import { planOutdoorWeather } from '../utils/outdoorPlanAdapter';
+import {
+  stepOutdoorPreference,
+  type OutdoorPreferenceControlKey,
+} from '../utils/outdoorPlanPolicy';
 import { computeWearLine } from '../utils/whatToWear';
 import { useComfortJournal } from '../hooks/useComfortJournal';
 import { ComfortJournalCard } from '../components/ComfortJournalCard';
@@ -121,10 +126,21 @@ import { useFavorites } from '../hooks/useFavorites';
 import { useWeatherTheme } from '../hooks/useWeatherTheme';
 import { getCurrentLocation, LocationPermissionError } from '../hooks/useLocation';
 import { loadLastLocation, saveLastLocation } from '../utils/storage';
+import { assessWeatherCacheFreshness, weatherLocationKey } from '../utils/freshnessPolicy';
+import { buildCurrentImpactTimeline } from '../utils/currentImpactTimeline';
 import type { DayPoint, GeoLocation } from '../api/types';
+
+function forecastLocalIso(epoch: number, utcOffsetSeconds: number): string {
+  return new Date(epoch + utcOffsetSeconds * 1000).toISOString().slice(0, 16);
+}
 
 export function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const [planningNow, setPlanningNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setPlanningNow(Date.now()), 60 * 1000);
+    return () => clearInterval(timer);
+  }, []);
   const [active, setActive] = useState<GeoLocation | null>(null);
   const [bootstrapped, setBootstrapped] = useState(false);
   const [locating, setLocating] = useState(true);
@@ -285,6 +301,44 @@ export function HomeScreen() {
     ],
   );
   const alertState = useAlerts(weather.data, FEATURES.backgroundAlerts && settings.backgroundAlerts);
+  const forecastSourceLabel = t('src_forecast');
+  const officialSourceLabel = t('card_warnings');
+  const currentImpacts = useMemo(() => {
+    const freshness = weather.data
+      ? assessWeatherCacheFreshness({
+          snapshotLocationId: weatherLocationKey(
+            weather.data.location.latitude,
+            weather.data.location.longitude,
+          ),
+          currentLocationId: weatherLocationKey(active?.latitude, active?.longitude),
+          fetchedAt: weather.data.fetchedAt,
+          now: planningNow,
+        })
+      : null;
+    const officialLocationMatches = meteoAlarm.locationKey === weatherLocationKey(
+      active?.latitude,
+      active?.longitude,
+    );
+    return buildCurrentImpactTimeline(
+      freshness?.alertsMayBeTreatedAsCurrent ? alertState.activeAlerts : [],
+      officialLocationMatches ? meteoAlarm.warnings ?? [] : [],
+      weather.data?.fetchedAt ?? null,
+      meteoAlarm.updatedAt,
+      planningNow,
+      { forecast: forecastSourceLabel, official: officialSourceLabel },
+    );
+  }, [
+    active?.latitude,
+    active?.longitude,
+    alertState.activeAlerts,
+    meteoAlarm.locationKey,
+    meteoAlarm.updatedAt,
+    meteoAlarm.warnings,
+    planningNow,
+    forecastSourceLabel,
+    officialSourceLabel,
+    weather.data,
+  ]);
   const providerStatus = useProviderStatus(
     active,
     weather.data?.current.temperature ?? null,
@@ -358,11 +412,31 @@ export function HomeScreen() {
     [weather.data, nowcast],
   );
   // ── bot2: aurora + alerts + wear ──
-  const bestWindow = useMemo(
-    () => (FEATURES.bestWindow && weather.data ? computeBestWindow(weather.data.hourly) : null),
-    [weather.data],
+  const outdoorPlan = useMemo(
+    () =>
+      FEATURES.bestWindow && weather.data
+        ? planOutdoorWeather(
+            weather.data,
+            settings.outdoorPreferences,
+            settings.aqiScale,
+            { now: planningNow },
+          )
+        : null,
+    [weather.data, settings.outdoorPreferences, settings.aqiScale, planningNow],
   );
-  const bestWindowLabel = bestWindow ? bestWindowLine(bestWindow) : null;
+  const bestWindow = outdoorPlan?.windows[0] ?? null;
+  const bestWindowLabel = bestWindow && weather.data
+    ? bestWindowLine({
+        start: forecastLocalIso(bestWindow.startAt, weather.data.utcOffsetSeconds),
+        end: forecastLocalIso(bestWindow.endAt, weather.data.utcOffsetSeconds),
+        score: bestWindow.score,
+      })
+    : null;
+  const adjustOutdoorPreference = useCallback((key: OutdoorPreferenceControlKey, delta: number) => {
+    updateSettings({
+      outdoorPreferences: stepOutdoorPreference(settings.outdoorPreferences, key, delta),
+    });
+  }, [settings.outdoorPreferences, updateSettings]);
   const wearLine = useMemo(
     () =>
       weather.data
@@ -592,6 +666,11 @@ export function HomeScreen() {
           <OfflineBanner
             theme={theme}
             fetchedAt={weather.data?.fetchedAt ?? null}
+            snapshotLocationId={weatherLocationKey(
+              weather.data?.location.latitude,
+              weather.data?.location.longitude,
+            )}
+            currentLocationId={weatherLocationKey(active?.latitude, active?.longitude)}
             offline={weather.offline}
             onRetry={() => {
               haptics.light();
@@ -735,6 +814,8 @@ export function HomeScreen() {
                     theme={theme}
                     warnings={meteoAlarm.warnings}
                     status={meteoAlarm.status}
+                    updatedAt={meteoAlarm.updatedAt}
+                    now={planningNow}
                   />
                 </Reveal>
               ) : null}
@@ -818,7 +899,14 @@ export function HomeScreen() {
               {/* ── bot2: aurora + alerts + wear ── */}
               {FEATURES.bestWindow && showSection('bestWindow') && bestWindow && bestWindowLabel ? (
                 <Reveal delay={210}>
-                  <BestWindowCard theme={theme} line={bestWindowLabel} score={bestWindow.score} />
+                  <BestWindowCard
+                    theme={theme}
+                    line={bestWindowLabel}
+                    score={bestWindow.score}
+                    reasons={bestWindow.reasons}
+                    preferences={settings.outdoorPreferences}
+                    onPreferenceStep={adjustOutdoorPreference}
+                  />
                 </Reveal>
               ) : null}
 
@@ -833,6 +921,7 @@ export function HomeScreen() {
                   <TripPlannerCard
                     theme={theme}
                     favorites={favoritesState.favorites}
+                    outdoorPreferences={settings.outdoorPreferences}
                     onOpenFavorites={() => setFavoritesOpen(true)}
                   />
                 </Reveal>
@@ -1004,6 +1093,7 @@ export function HomeScreen() {
         onToggle={alertState.toggleAlert}
         onUpdateQuiet={alertState.updateQuietHours}
         ready={alertState.ready}
+        currentImpacts={currentImpacts}
       />
 
       <MapScreen

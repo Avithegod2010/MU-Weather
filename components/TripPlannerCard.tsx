@@ -29,10 +29,12 @@ import { ApiError, fetchWeather } from '../api/openMeteo';
 import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
 import type { DayPoint, GeoLocation, WeatherBundle } from '../api/types';
+import type { OutdoorPreferences } from '../utils/outdoorPlanPolicy';
 
 interface TripPlannerCardProps {
   theme: AppTheme;
   favorites: GeoLocation[];
+  outdoorPreferences: OutdoorPreferences;
   onOpenFavorites: () => void;
 }
 
@@ -43,8 +45,6 @@ const MIN_START_OFFSET = 1;
 const MAX_START_OFFSET = 16;
 const MIN_TRIP_LENGTH = 1;
 const MAX_TRIP_LENGTH = 7;
-/** A day counts as "wet" for the verdict at this rain probability. */
-const RAINY_PROB_THRESHOLD = 50;
 const PRECIP_COLOR = '#A5DBF9';
 
 /** Local calendar date (device timezone) shifted by N days, as YYYY-MM-DD. */
@@ -164,7 +164,7 @@ function StepperRow({
   );
 }
 
-export function TripPlannerCard({ theme, favorites, onOpenFavorites }: TripPlannerCardProps) {
+export function TripPlannerCard({ theme, favorites, outdoorPreferences, onOpenFavorites }: TripPlannerCardProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [startOffset, setStartOffset] = useState(MIN_START_OFFSET);
   const [tripLength, setTripLength] = useState(MIN_TRIP_LENGTH);
@@ -215,10 +215,10 @@ export function TripPlannerCard({ theme, favorites, onOpenFavorites }: TripPlann
     const rainiest = tripDays.reduce((a, b) => (b.precipSum > a.precipSum ? b : a));
     const warmest = tripDays.reduce((a, b) => (b.tMax > a.tMax ? b : a));
     const rainyCount = tripDays.filter(
-      (day) => day.precipProbabilityMax >= RAINY_PROB_THRESHOLD,
+      (day) => day.precipProbabilityMax >= outdoorPreferences.maxRainProbability,
     ).length;
     return { rainiest, warmest, rainyCount };
-  }, [tripDays]);
+  }, [tripDays, outdoorPreferences.maxRainProbability]);
 
   const verdict =
     summary && summary.rainyCount > 0
