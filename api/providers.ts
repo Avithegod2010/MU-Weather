@@ -1,4 +1,12 @@
-import type { EnsembleSpread, EnsembleSpreadPoint, PastDayActual, MonthlyNormal, OnThisDayYear } from './types';
+import type {
+  EnsembleSpread,
+  EnsembleSpreadPoint,
+  HourlyPrecipitationObservation,
+  PastDayActual,
+  MonthlyNormal,
+  OnThisDayYear,
+} from './types';
+import { RAIN_EVENT_THRESHOLD_MM } from './rain';
 
 export interface ProviderCheck {
   status: 'idle' | 'checking' | 'ok' | 'error';
@@ -112,6 +120,73 @@ async function requestArchiveWindow(
       });
     }
     return days;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+interface ArchiveHourlyPayload {
+  time?: string[];
+  precipitation?: (number | null)[];
+}
+
+function isCalendarDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+/**
+ * Hourly precipitation observations for forecast verification. Times use the
+ * same location-local timezone as `fetchWeather` and `fetchEnsembleSpread`, so
+ * a forecast hour is matched directly rather than shifted into the phone's
+ * timezone. Missing archive values are omitted, never interpreted as dry.
+ */
+export async function fetchHourlyPrecipitationActuals(
+  lat: number,
+  lon: number,
+  startDate: string,
+  endDate: string,
+): Promise<HourlyPrecipitationObservation[] | null> {
+  if (!isCalendarDate(startDate) || !isCalendarDate(endDate) || startDate > endDate) {
+    return null;
+  }
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    start_date: startDate,
+    end_date: endDate,
+    hourly: 'precipitation',
+    timezone: 'auto',
+  }).toString();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(`https://archive-api.open-meteo.com/v1/archive?${params}`, {
+      signal: controller.signal,
+    });
+    if (!response.ok) return null;
+    const json = await response.json();
+    const hourly: ArchiveHourlyPayload | undefined = json?.hourly;
+    if (!Array.isArray(hourly?.time) || !Array.isArray(hourly.precipitation)) return null;
+    const observations: HourlyPrecipitationObservation[] = [];
+    for (let i = 0; i < hourly.time.length; i++) {
+      const time = hourly.time[i];
+      const precipitation = hourly.precipitation[i];
+      if (
+        typeof time === 'string' &&
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(time) &&
+        typeof precipitation === 'number' &&
+        Number.isFinite(precipitation) &&
+        precipitation >= 0
+      ) {
+        observations.push({ time, precipitation });
+      }
+    }
+    return observations;
+  } catch {
+    return null;
   } finally {
     clearTimeout(timer);
   }
@@ -399,8 +474,6 @@ export async function fetchHistoricalDay(
 }
 
 const ENSEMBLE_URL = 'https://ensemble-api.open-meteo.com/v1/ensemble';
-/** Rain counts when at least this much precipitation falls in the hour. */
-const ENSEMBLE_RAIN_THRESHOLD_MM = 0.1;
 
 interface EnsembleApiResponse {
   hourly?: {
@@ -461,7 +534,7 @@ export async function fetchEnsembleSpread(lat: number, lon: number): Promise<Ens
           const precip = (precipArray as (number | null)[])[i];
           if (typeof precip === 'number') {
             precipMembers += 1;
-            if (precip >= ENSEMBLE_RAIN_THRESHOLD_MM) wetMembers += 1;
+            if (precip >= RAIN_EVENT_THRESHOLD_MM) wetMembers += 1;
           }
         }
       }

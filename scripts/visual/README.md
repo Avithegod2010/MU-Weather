@@ -90,3 +90,13 @@ environment, so no performance improvement is claimed. The `pageErrors: 1` entry
   rotating rays. Not measured on a device.
 - Lint: see DECISIONS.md section 7. `npm run lint` exits 0.
 
+
+## Hourly rain calibration follow-up
+
+- `npm run test:rain-calibration` checks the hourly Brier/reliability math, location bounds, refresh replacement,
+  archive-observation matching, missing-data handling and API request parsing with synthetic data.
+- The calibration history is on-device and archive-relative, not station-confirmed ground truth. It does not turn
+  hourly probabilities into a daily probability by assuming independent hours.
+- The existing browser harness requires Python Playwright and Chromium; neither is installed in this checkout.
+  TypeScript and web export checks passed, but no browser screenshot or displayed-frame claim was made for this
+  calibration summary.

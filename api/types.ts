@@ -140,6 +140,13 @@ export interface PastDayActual {
   windMax?: number | null;
 }
 
+/** One verified hourly precipitation value returned by the Archive API. */
+export interface HourlyPrecipitationObservation {
+  /** Local ISO hour in the queried location's timezone. */
+  time: string;
+  precipitation: number;
+}
+
 /** One month of 1991-2020 climate normals (JSON-safe), month 1-12. */
 export interface MonthlyNormal {
   month: number;

@@ -8,10 +8,12 @@ import type { HourPoint } from '../api/types';
 import { formatHourLabel } from '../utils/format';
 import { F } from '../theme/typography';
 import { useReducedMotion } from '../utils/reduceMotion';
+import type { RainCalibrationSummary } from '../utils/rainCalibrationMath';
 
 interface RainProbabilityChartProps {
   theme: AppTheme;
   hours: HourPoint[];
+  calibration?: RainCalibrationSummary;
 }
 
 const BAR_COUNT = 12;
@@ -23,7 +25,7 @@ const GUTTER_RIGHT = 4;
 const STAGGER_MS = 35;
 const GROW_MS = 520;
 
-export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps) {
+export function RainProbabilityChart({ theme, hours, calibration }: RainProbabilityChartProps) {
   const slice = hours.slice(0, BAR_COUNT);
   const reduced = useReducedMotion();
   const [plotWidth, setPlotWidth] = useState(0);
@@ -74,14 +76,42 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
   geometry.current = { plotLeft, columnWidth, count: slice.length };
   const scrubItem = scrubIndex !== null ? slice[scrubIndex] : undefined;
   const scrubLeft = scrubIndex !== null ? plotLeft + scrubIndex * columnWidth : 0;
+  const calibrationText = calibration
+    ? calibration.status === 'insufficient'
+      ? t('rain_calibration_insufficient')
+          .replace('{cases}', String(calibration.verifiedCases))
+          .replace('{requiredCases}', String(calibration.requiredCases))
+          .replace('{days}', String(calibration.verifiedDays))
+          .replace('{requiredDays}', String(calibration.requiredDays))
+      : t('rain_calibration_brier')
+          .replace('{score}', calibration.brierScore.toFixed(3))
+          .replace('{cases}', String(calibration.verifiedCases))
+          .replace('{days}', String(calibration.verifiedDays))
+    : null;
+  const reliableBins = calibration?.status === 'ready'
+    ? calibration.reliabilityBins
+        .filter((bin) => bin.sufficientlyPopulated && bin.meanForecast !== null && bin.observedFrequency !== null)
+        .map((bin) =>
+          `${bin.lowerPercent}–${bin.upperPercent}%: ${Math.round(bin.meanForecast! * 100)}→${Math.round(bin.observedFrequency! * 100)}% (n=${bin.cases})`,
+        )
+        .join(' · ')
+    : '';
+  const reliabilityText = reliableBins
+    ? t('rain_calibration_reliability').replace('{bins}', reliableBins)
+    : null;
+  const accessibilityLabel = [
+    t('chart_rain_a11y')
+      .replace('{time}', formatHourLabel(peak.time, false))
+      .replace('{n}', String(Math.round(peak.precipProbability))),
+    calibrationText,
+    reliabilityText,
+  ].filter(Boolean).join('. ');
 
   return (
     <View
       accessible={true}
       accessibilityRole="text"
-      accessibilityLabel={t('chart_rain_a11y')
-        .replace('{time}', formatHourLabel(peak.time, false))
-        .replace('{n}', String(Math.round(peak.precipProbability)))}
+      accessibilityLabel={accessibilityLabel}
     >
       <View
         style={[styles.chartArea, { height: CHART_HEIGHT }]}
@@ -173,6 +203,16 @@ export function RainProbabilityChart({ theme, hours }: RainProbabilityChartProps
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
         {t('chart_rain_caption')}
       </Text>
+      {calibrationText ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+          {calibrationText}
+        </Text>
+      ) : null}
+      {reliabilityText ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+          {reliabilityText}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -273,6 +313,12 @@ const styles = StyleSheet.create({
   caption: {
     fontSize: 11.5,
     marginTop: 8,
+    fontFamily: F.regular,
+  },
+  calibrationCaption: {
+    fontSize: 11,
+    lineHeight: 15,
+    marginTop: 5,
     fontFamily: F.regular,
   },
 });

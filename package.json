@@ -63,6 +63,7 @@
     "web": "expo start --web",
     "postinstall": "node scripts/copy-canvaskit.mjs",
     "visual:capture": "python3 scripts/visual/capture.py",
+    "test:rain-calibration": "node scripts/test-rain-calibration.mjs",
     "lint": "eslint ."
   },
   "private": true,

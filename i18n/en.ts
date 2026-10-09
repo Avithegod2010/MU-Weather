@@ -543,6 +543,9 @@ export const en = {
   rain_band_light: 'Light',
   chart_rain_caption: 'Chance of rain · next 12 hours',
   chart_rain_a11y: 'Chance of rain, next 12 hours. Peak around {time}, {n} percent.',
+  rain_calibration_insufficient: 'ICON-EPS rain share is raw (not calibrated): insufficient history ({cases}/{requiredCases} archive-matched hourly cases across {days}/{requiredDays} days).',
+  rain_calibration_brier: 'Raw ICON-EPS Brier score {score} (lower is better) · {cases} hourly cases across {days} days',
+  rain_calibration_reliability: 'Reliability by probability range: {bins}',
   card_nowcast_caption: '15-minute precipitation nowcast · {unit} per interval',
 
   // Nowcast headlines

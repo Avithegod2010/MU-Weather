@@ -97,6 +97,7 @@ import { ModelComparisonScreen } from './ModelComparisonScreen';
 import { useModelComparison } from '../hooks/useModelComparison';
 import { useModelAccuracyLog } from '../hooks/useModelAccuracyLog';
 import { useEnsemble } from '../hooks/useEnsemble';
+import { useRainCalibration } from '../hooks/useRainCalibration';
 import { AlertsScreen } from './AlertsScreen';
 import { useAlerts } from '../hooks/useAlerts';
 import { useSettings } from '../hooks/useSettings';
@@ -149,6 +150,12 @@ export function HomeScreen() {
   const onThisDay = useOnThisDay(active);
   const meteoAlarm = useMeteoAlarm(active);
   const ensemble = useEnsemble(FEATURES.ensemble ? active : null);
+  const rainCalibration = useRainCalibration(
+    active,
+    FEATURES.ensemble ? ensemble.spread : null,
+    weather.data?.utcOffsetSeconds ?? null,
+    weather.data?.fetchedAt ?? 0,
+  );
   const { settings, updateSettings } = useSettings();
   const weatherThemeResult = useWeatherTheme(weather.data, settings.themeMode, settings.styleMode);
   // Resolve once per session; null (Expo Go etc.) makes the theme fall back to
@@ -741,7 +748,11 @@ export function HomeScreen() {
               {showSection('rainChart') ? (
                 <Reveal delay={100} wipe>
                   <Card theme={theme} title={t('card_rain')}>
-                    <RainProbabilityChart theme={theme} hours={weather.data.hourly} />
+                    <RainProbabilityChart
+                      theme={theme}
+                      hours={weather.data.hourly}
+                      calibration={rainCalibration}
+                    />
                   </Card>
                 </Reveal>
               ) : null}
