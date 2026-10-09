@@ -365,7 +365,11 @@ export function AlertsScreen({
                 ...impact.reasons,
                 ...impact.actions,
               ].filter((detail, index, all) => Boolean(detail.trim()) && all.indexOf(detail) === index);
-              const updatedText = t('aurora_updated').replace('{time}', historyStamp(impact.sourceUpdatedAt));
+              const sourceUpdateText = impact.sourceUpdates
+                .map(({ source, updatedAt }) =>
+                  `${source} · ${t('aurora_updated').replace('{time}', historyStamp(updatedAt))}`,
+                )
+                .join(' · ');
               const untilText = impact.endsAt > impact.sourceUpdatedAt
                 ? t('warnings_until').replace('{t}', historyStamp(impact.endsAt))
                 : null;
@@ -376,6 +380,11 @@ export function AlertsScreen({
                     styles.historyRow,
                     { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
                   ]}
+                  accessible
+                  accessibilityRole="text"
+                  accessibilityLabel={[impact.title, ...details, sourceUpdateText, untilText]
+                    .filter(Boolean)
+                    .join(', ')}
                 >
                   <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
                     <Icon size={18} color={theme.textPrimary} strokeWidth={2} />
@@ -388,7 +397,7 @@ export function AlertsScreen({
                       {details.join('\n')}
                     </Text>
                     <Text style={[styles.historyMeta, { color: theme.textTertiary }]}>
-                      {impact.sources.join(' · ')} · {updatedText}{untilText ? ` · ${untilText}` : ''}
+                      {sourceUpdateText}{untilText ? ` · ${untilText}` : ''}
                     </Text>
                   </View>
                   <View
