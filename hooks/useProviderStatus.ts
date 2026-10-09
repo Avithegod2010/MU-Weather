@@ -46,13 +46,13 @@ export function useProviderStatus(
       return;
     }
     let cancelled = false;
-    setCheck({ status: 'checking', temperature: null });
+    setCheck({ status: 'checking', temperature: null, checkedAt: null });
     fetchMetNorway(lat, lon)
       .then((temperature) => {
-        if (!cancelled) setCheck({ status: 'ok', temperature });
+        if (!cancelled) setCheck({ status: 'ok', temperature, checkedAt: Date.now() });
       })
       .catch(() => {
-        if (!cancelled) setCheck({ status: 'error', temperature: null });
+        if (!cancelled) setCheck({ status: 'error', temperature: null, checkedAt: Date.now() });
       });
     return () => {
       cancelled = true;

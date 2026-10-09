@@ -158,10 +158,9 @@ const tooFewDates = Array.from({ length: 100 }, (_, index) => {
   const hour = String(index % 20).padStart(2, '0');
   return makeEntry(`2026-03-${date}T${hour}:00`, 0.2, index % 2 as 0 | 1);
 });
-assert(
-  computeRainCalibrationSummary(tooFewDates, paris, scoreNow).status === 'insufficient',
-  'case volume alone cannot bypass the distinct-date threshold',
-);
+const tooFewDatesSummary = computeRainCalibrationSummary(tooFewDates, paris, scoreNow);
+assert(tooFewDatesSummary.status === 'insufficient', 'case volume alone cannot bypass the distinct-date threshold');
+assert(!tooFewDatesSummary.leadTimeBuckets[0].reliabilityBins[1].sufficientlyPopulated, 'lead-time bins remain hidden when many same-day hours do not span enough dates');
 const summary = computeRainCalibrationSummary(scoredRows, paris, scoreNow);
 assert(summary.status === 'ready', 'enough cases across enough dates unlock scoring');
 assert(summary.verifiedCases === 112 && summary.verifiedDays === 14, 'hourly cases and distinct dates are counted');
@@ -172,7 +171,11 @@ assert(summary.leadTimeBuckets[0].cases === 112 && summary.leadTimeBuckets[0].ve
 closeTo(summary.leadTimeBuckets[0].brierScore ?? -1, 0.1875, 0.0001, 'lead bucket Brier score is computed only within that horizon');
 assert(summary.leadTimeBuckets[1].brierScore === null, 'unsupported lead bucket does not publish a score');
 assert(summary.reliabilityBins[1].sufficientlyPopulated, 'a populated 20-40% reliability bin is reported');
+assert(summary.reliabilityBins[1].verifiedDays === 14, 'probability reliability bins report distinct verification days');
 closeTo(summary.reliabilityBins[1].observedFrequency ?? -1, 0.25, 0.0001, 'bin reports observed wet frequency');
+assert(summary.leadTimeBuckets[0].reliabilityBins[1].sufficientlyPopulated, 'lead-time bucket exposes supported probability-band reliability');
+closeTo(summary.leadTimeBuckets[0].reliabilityBins[1].observedFrequency ?? -1, 0.25, 0.0001, 'lead-time probability band uses only that horizon');
+assert(summary.leadTimeBuckets[0].reliabilityBins[1].verifiedDays === 14, 'lead-time probability band retains independent-day support');
 closeTo(calibratedRainProbability(0.25, summary) ?? -1, 0.25, 0.0001, 'supported bin offers an empirical correction');
 assert(calibratedRainProbability(0.9, summary) === null, 'unsupported bins do not claim a calibration');
 const wrongLocation = computeRainCalibrationSummary(scoredRows, { ...paris, latitude: 51.5 }, scoreNow);

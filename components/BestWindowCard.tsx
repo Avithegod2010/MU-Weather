@@ -4,9 +4,10 @@ import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
 import { Card } from './Card';
 import { ChevronLeft, ChevronRight, Clock, Settings } from '../utils/uiIcons';
-import { convertWind, formatTemp, windUnitLabel } from '../utils/format';
+import { convertWind, formatTemp, formatTemperatureDelta, windUnitLabel } from '../utils/format';
 import { haptics } from '../utils/haptics';
 import type { OutdoorReasonCode, OutdoorPreferenceControlKey, OutdoorPreferences } from '../utils/outdoorPlanPolicy';
+import type { OutdoorWindowFeedbackVote } from '../utils/outdoorWindowFeedbackPolicy';
 import type { AppTheme } from '../theme/palettes';
 
 interface BestWindowCardProps {
@@ -18,6 +19,14 @@ interface BestWindowCardProps {
   reasons: OutdoorReasonCode[];
   preferences: OutdoorPreferences;
   onPreferenceStep: (key: OutdoorPreferenceControlKey, delta: number) => void;
+  windowFeedback: OutdoorWindowFeedbackVote | null;
+  onWindowFeedback: (vote: OutdoorWindowFeedbackVote) => void;
+  journalSamples: number;
+  journalSuggestionSamples: number;
+  journalSuggestionOffsetC: number | null;
+  journalAppliedOffsetC: number;
+  onApplyJournalSuggestion: (offsetC: number) => void;
+  onResetJournalSuggestion: () => void;
 }
 
 /** Comfort tint: green when the window is genuinely pleasant, amber/red as it degrades. */
@@ -96,10 +105,20 @@ export function BestWindowCard({
   reasons,
   preferences,
   onPreferenceStep,
+  windowFeedback,
+  onWindowFeedback,
+  journalSamples,
+  journalSuggestionSamples,
+  journalSuggestionOffsetC,
+  journalAppliedOffsetC,
+  onApplyJournalSuggestion,
+  onResetJournalSuggestion,
 }: BestWindowCardProps) {
   const [showPreferences, setShowPreferences] = useState(false);
   const clamped = Math.max(0, Math.min(100, Math.round(score)));
   const reasonKeys = [...new Set(reasons)];
+  const journalSuggestionPending =
+    journalSuggestionOffsetC !== null && Math.abs(journalSuggestionOffsetC - journalAppliedOffsetC) >= 0.1;
   const preferenceRows: {
     key: OutdoorPreferenceControlKey;
     label: string;
@@ -145,6 +164,83 @@ export function BestWindowCard({
       <Text style={[styles.score, { color: theme.textTertiary }]}>
         {t('best_window_score').replace('{n}', String(clamped))}
       </Text>
+      <View style={styles.windowFeedbackBlock}>
+        <Text style={[styles.windowFeedbackPrompt, { color: theme.textSecondary }]}>
+          {t('best_window_feedback_prompt')}
+        </Text>
+        <View style={styles.windowFeedbackButtons}>
+          {([
+            { vote: 'good-fit' as const, label: t('best_window_feedback_good') },
+            { vote: 'not-for-me' as const, label: t('best_window_feedback_bad') },
+          ]).map(({ vote, label }) => {
+            const selected = windowFeedback === vote;
+            return (
+              <Pressable
+                key={vote}
+                onPress={() => onWindowFeedback(vote)}
+                style={({ pressed }) => [
+                  styles.windowFeedbackButton,
+                  { backgroundColor: selected ? theme.cardBorder : theme.chipBg },
+                  pressed && { opacity: 0.65 },
+                ]}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                accessibilityLabel={label}
+              >
+                <Text style={[styles.windowFeedbackButtonText, { color: theme.textPrimary }]}>{label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        {windowFeedback ? (
+          <Text style={[styles.windowFeedbackSaved, { color: theme.textTertiary }]}>
+            {t('best_window_feedback_saved')}
+          </Text>
+        ) : null}
+      </View>
+      {journalSamples > 0 ? (
+        <Text style={[styles.journalProgress, { color: theme.textTertiary }]}>
+          {(journalSamples === 1 ? t('journal_progress_one') : t('journal_progress')).replace('{n}', String(journalSamples))}
+        </Text>
+      ) : null}
+      {journalSuggestionOffsetC !== null ? (
+        <View style={[styles.journalSuggestion, { borderColor: theme.cardBorder }]}>
+          <Text style={[styles.journalSuggestionText, { color: theme.textSecondary }]}>
+            {t('journal_preference_suggestion')
+              .replace('{offset}', formatTemperatureDelta(journalSuggestionOffsetC))
+              .replace('{samples}', String(journalSuggestionSamples))}
+          </Text>
+          {journalSuggestionPending ? (
+            <Pressable
+              onPress={() => onApplyJournalSuggestion(journalSuggestionOffsetC)}
+              style={({ pressed }) => [styles.journalButton, { backgroundColor: theme.chipBg }, pressed && { opacity: 0.65 }]}
+              accessibilityRole="button"
+              accessibilityLabel={t('journal_apply_suggestion')}
+            >
+              <Text style={[styles.journalButtonText, { color: theme.textPrimary }]}>{t('journal_apply_suggestion')}</Text>
+            </Pressable>
+          ) : null}
+          {journalAppliedOffsetC !== 0 ? (
+            <Pressable
+              onPress={onResetJournalSuggestion}
+              style={({ pressed }) => [styles.journalButton, { backgroundColor: theme.chipBg }, pressed && { opacity: 0.65 }]}
+              accessibilityRole="button"
+              accessibilityLabel={t('journal_reset_suggestion')}
+            >
+              <Text style={[styles.journalButtonText, { color: theme.textSecondary }]}>{t('journal_reset_suggestion')}</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : journalAppliedOffsetC !== 0 ? (
+        <Pressable
+          onPress={onResetJournalSuggestion}
+          style={({ pressed }) => [styles.journalButton, { backgroundColor: theme.chipBg, alignSelf: 'flex-start' }, pressed && { opacity: 0.65 }]}
+          accessibilityRole="button"
+          accessibilityLabel={t('journal_reset_suggestion')}
+        >
+          <Text style={[styles.journalButtonText, { color: theme.textSecondary }]}>{t('journal_reset_suggestion')}</Text>
+        </Pressable>
+      ) : null}
       <Pressable
         onPress={() => setShowPreferences((visible) => !visible)}
         style={({ pressed }) => [styles.preferencesToggle, { backgroundColor: theme.chipBg }, pressed && { opacity: 0.7 }]}
@@ -206,6 +302,62 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: F.medium,
     marginTop: 7,
+  },
+  windowFeedbackBlock: {
+    gap: 6,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(128,128,128,0.25)',
+    paddingTop: 9,
+    marginTop: 8,
+  },
+  windowFeedbackPrompt: {
+    fontSize: 11.5,
+    lineHeight: 16,
+    fontFamily: F.medium,
+  },
+  windowFeedbackButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  windowFeedbackButton: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  windowFeedbackButtonText: {
+    fontSize: 11,
+    fontFamily: F.semibold,
+  },
+  windowFeedbackSaved: {
+    fontSize: 10.5,
+    fontFamily: F.regular,
+  },
+  journalProgress: {
+    fontSize: 10.5,
+    fontFamily: F.regular,
+    marginTop: 4,
+  },
+  journalSuggestion: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    gap: 7,
+    paddingTop: 9,
+    marginTop: 8,
+  },
+  journalSuggestionText: {
+    fontSize: 11.5,
+    lineHeight: 16,
+    fontFamily: F.regular,
+  },
+  journalButton: {
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+  },
+  journalButtonText: {
+    fontSize: 11.5,
+    fontFamily: F.semibold,
   },
   preferencesToggle: {
     alignSelf: 'flex-start',

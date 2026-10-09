@@ -11,6 +11,8 @@ export interface OutdoorPreferences {
   maxAqi: number;
   minimumScore: number;
   minimumWindowHours: number;
+  /** Explicit, user-applied temperature shift learned from the local comfort journal. */
+  journalTemperatureOffsetC: number;
 }
 
 export const DEFAULT_OUTDOOR_PREFERENCES: OutdoorPreferences = {
@@ -22,6 +24,7 @@ export const DEFAULT_OUTDOOR_PREFERENCES: OutdoorPreferences = {
   maxAqi: 50,
   minimumScore: 65,
   minimumWindowHours: 2,
+  journalTemperatureOffsetC: 0,
 };
 
 export interface OutdoorForecastHour {
@@ -143,7 +146,23 @@ export function normalizeOutdoorPreferences(
     minimumWindowHours: Math.round(
       bounded(values.minimumWindowHours, DEFAULT_OUTDOOR_PREFERENCES.minimumWindowHours, 1, 8),
     ),
+    journalTemperatureOffsetC: Math.round(
+      bounded(values.journalTemperatureOffsetC, 0, -4, 4) * 10,
+    ) / 10,
   };
+}
+
+/** Apply a journal shift only after the user chooses the explicit suggestion. */
+export function effectiveOutdoorPreferences(
+  input: Partial<OutdoorPreferences> | null | undefined,
+): OutdoorPreferences {
+  const preferences = normalizeOutdoorPreferences(input);
+  const offset = preferences.journalTemperatureOffsetC;
+  return normalizeOutdoorPreferences({
+    ...preferences,
+    minTemperatureC: Math.max(-60, Math.min(60, preferences.minTemperatureC + offset)),
+    maxTemperatureC: Math.max(-60, Math.min(60, preferences.maxTemperatureC + offset)),
+  });
 }
 
 function validMetric(value: number | null): value is number {

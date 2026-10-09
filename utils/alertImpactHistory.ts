@@ -1,5 +1,7 @@
 import { aggregateWeatherImpacts } from './impactTimeline';
 import type { ImpactSeverity, ImpactSignal, WeatherImpact } from './impactTimeline';
+import { formatAlertEvidence } from './alertEvidence';
+import type { AlertEvidence } from './alertEvidence';
 
 /** Minimal history shape, kept independent of AsyncStorage and React Native. */
 export interface AlertHistorySignalInput {
@@ -9,6 +11,7 @@ export interface AlertHistorySignalInput {
   severity: ImpactSeverity;
   city?: string;
   at: number;
+  evidence?: AlertEvidence;
 }
 
 /**
@@ -36,6 +39,7 @@ export function aggregateAlertHistoryImpacts(
     }
     const scope = entry.city?.trim() || 'current-location';
     const at = entry.at;
+    const evidence = entry.evidence ? formatAlertEvidence(entry.evidence) : '';
     signals.push({
       id: `history:${scope}:${entry.key}:${at}:${index}`,
       // Different alert rules and cities are not assumed to be the same event.
@@ -47,7 +51,7 @@ export function aggregateAlertHistoryImpacts(
       sourceUpdatedAt: at,
       title: entry.title,
       expected: entry.message,
-      whyItMatters: entry.message,
+      whyItMatters: evidence ? `${entry.message} · ${evidence}` : entry.message,
       action: entry.message,
       ...(entry.severity === 'severe' ? { safetyCopy: entry.message } : {}),
     });

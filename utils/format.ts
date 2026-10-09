@@ -42,6 +42,15 @@ export function formatTemp(value: number | null | undefined): string {
   return `${Math.round(celsius)}°`;
 }
 
+/** Format a temperature difference (no +32 offset when converting to Fahrenheit). */
+export function formatTemperatureDelta(celsiusDelta: number): string {
+  if (!Number.isFinite(celsiusDelta)) return '--';
+  const value = unitState.temp === 'fahrenheit' ? celsiusDelta * (9 / 5) : celsiusDelta;
+  const rounded = Math.round(value * 10) / 10;
+  const signed = rounded > 0 ? `+${rounded}` : String(rounded);
+  return `${signed}°${unitState.temp === 'fahrenheit' ? 'F' : 'C'}`;
+}
+
 export function convertWind(value: number): number {
   return unitState.wind === 'mph' ? value * 0.621371 : value;
 }

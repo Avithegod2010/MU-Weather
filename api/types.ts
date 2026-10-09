@@ -9,6 +9,8 @@ export interface GeoLocation {
 }
 
 export interface CurrentConditions {
+  /** Provider-local observation timestamp; absent in legacy cached bundles. */
+  observationTime?: string;
   temperature: number;
   apparentTemperature: number;
   humidity: number;
@@ -71,6 +73,8 @@ export interface PollenInfo {
 }
 
 export interface AqiInfo {
+  /** Provider-local timestamp for the current air-quality observation. */
+  observationTime?: string;
   usAqi: number | null;
   euAqi: number | null;
   pm2_5: number | null;
@@ -110,7 +114,13 @@ export interface MinutelyPoint {
 
 export interface WeatherBundle {
   location: GeoLocation;
+  /** IANA timezone from the forecast provider; optional for older cached bundles. */
+  timezone?: string;
   utcOffsetSeconds: number;
+  /** Whether the separate air-quality provider returned a usable current payload. */
+  airQualityStatus?: 'available' | 'unavailable';
+  /** Fetch time for the separate air-quality provider, when successful. */
+  airQualityFetchedAt?: number | null;
   /** Altitude of the location above sea level, in metres (null when the API omits it). */
   elevation: number | null;
   current: CurrentConditions;
@@ -168,6 +178,14 @@ export interface EnsembleSpreadPoint {
   tMedian: number;
   /** 90th percentile 2 m temperature across ensemble members (°C). */
   tP90: number;
+  /** 10th-percentile 10 m wind speed across members (km/h), when supplied. */
+  windP10?: number;
+  /** Median 10 m wind speed across members (km/h), when supplied. */
+  windMedian?: number;
+  /** 90th-percentile 10 m wind speed across members (km/h), when supplied. */
+  windP90?: number;
+  /** Number of members with wind data at this hour. */
+  windMembers?: number;
   /** Member-derived rain probability 0-100 (share of members with precipitation >= 0.1 mm). */
   rainProb: number;
 }
@@ -267,6 +285,7 @@ export interface GeocodingResponse {
 
 export interface AirQualityResponse {
   current: {
+    time?: string;
     us_aqi: number | null;
     european_aqi: number | null;
     pm2_5: number | null;

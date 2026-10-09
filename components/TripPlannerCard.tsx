@@ -30,6 +30,8 @@ import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
 import type { DayPoint, GeoLocation, WeatherBundle } from '../api/types';
 import type { OutdoorPreferences } from '../utils/outdoorPlanPolicy';
+import { findLowerRiskTripDeparture } from '../utils/tripDeparture';
+import type { TripRiskMetric } from '../utils/tripDeparture';
 
 interface TripPlannerCardProps {
   theme: AppTheme;
@@ -47,13 +49,15 @@ const MIN_TRIP_LENGTH = 1;
 const MAX_TRIP_LENGTH = 7;
 const PRECIP_COLOR = '#A5DBF9';
 
-/** Local calendar date (device timezone) shifted by N days, as YYYY-MM-DD. */
-function isoDatePlusDays(offset: number): string {
-  const now = new Date();
-  const shifted = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
-  const month = String(shifted.getMonth() + 1).padStart(2, '0');
-  const day = String(shifted.getDate()).padStart(2, '0');
-  return `${shifted.getFullYear()}-${month}-${day}`;
+/** Add calendar days to an ISO date without device-timezone or DST drift. */
+function isoDatePlusDays(offset: number, baseDate?: string): string {
+  const localNow = new Date();
+  const fallback = `${localNow.getFullYear()}-${String(localNow.getMonth() + 1).padStart(2, '0')}-${String(localNow.getDate()).padStart(2, '0')}`;
+  const source = baseDate && /^\d{4}-\d{2}-\d{2}$/.test(baseDate) ? baseDate : fallback;
+  const date = new Date(`${source}T12:00:00Z`);
+  if (Number.isNaN(date.getTime())) return source;
+  date.setUTCDate(date.getUTCDate() + offset);
+  return date.toISOString().slice(0, 10);
 }
 
 /** Weekday index (0 = Sunday) of a plain YYYY-MM-DD date, noon-UTC anchored. */
@@ -196,7 +200,9 @@ export function TripPlannerCard({ theme, favorites, outdoorPreferences, onOpenFa
     }
   }, [selected]);
 
-  const startIso = isoDatePlusDays(startOffset);
+  const bundleMatchesSelection = Boolean(bundle && selected && bundle.location.id === selected.id);
+  const forecastLocalToday = bundleMatchesSelection ? bundle?.daily[0]?.date : undefined;
+  const startIso = isoDatePlusDays(startOffset, forecastLocalToday);
   const startLabel = `${tDay(weekdayOf(startIso))} ${shortDateLabel(startIso)}`;
 
   /** Trip slice of the destination forecast; re-sliced locally on stepper taps. */
@@ -226,6 +232,15 @@ export function TripPlannerCard({ theme, favorites, outdoorPreferences, onOpenFa
           .replace('{n}', String(summary.rainyCount))
           .replace('{total}', String(tripDays.length))
       : t('trip_verdict_dry');
+  const tripStartIndex = bundle && tripDays.length === tripLength
+    ? bundle.daily.findIndex((day) => day.date === tripDays[0]?.date)
+    : -1;
+  const departureSuggestion = bundle && tripStartIndex >= 0 && tripDays.length === tripLength
+    ? findLowerRiskTripDeparture(bundle.daily, tripStartIndex, tripLength, outdoorPreferences)
+    : null;
+  const suggestedRiskLabels = departureSuggestion?.lowerRiskMetrics.map((metric: TripRiskMetric) =>
+    metric === 'rain' ? t('cmp_rain') : metric === 'temperature' ? t('cmp_temp') : t('cmp_wind'),
+  ).join(', ') ?? '';
 
   return (
     <Card theme={theme} title={t('card_trip')} icon={Luggage}>
@@ -430,6 +445,26 @@ export function TripPlannerCard({ theme, favorites, outdoorPreferences, onOpenFa
                 </View>
               </View>
               <Text style={[styles.verdict, { color: theme.textSecondary }]}>{verdict}</Text>
+              {departureSuggestion ? (
+                <View style={[styles.departureSuggestion, { backgroundColor: theme.chipBg }]}>
+                  <Text style={[styles.departureText, { color: theme.textSecondary }]}>
+                    {t('trip_departure_suggestion')
+                      .replace('{metrics}', suggestedRiskLabels)
+                      .replace('{date}', `${tDay(weekdayOf(departureSuggestion.startDate))} ${shortDateLabel(departureSuggestion.startDate)}`)}
+                  </Text>
+                  <Pressable
+                    onPress={() => {
+                      haptics.select();
+                      setStartOffset(departureSuggestion.startIndex);
+                    }}
+                    style={({ pressed }) => [styles.departureButton, { backgroundColor: theme.cardBg }, pressed && { opacity: 0.65 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('trip_departure_use')}
+                  >
+                    <Text style={[styles.departureButtonText, { color: theme.textPrimary }]}>{t('trip_departure_use')}</Text>
+                  </Pressable>
+                </View>
+              ) : null}
             </Animated.View>
           ) : null}
         </>
@@ -616,5 +651,26 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginTop: 8,
     fontFamily: F.medium,
+  },
+  departureSuggestion: {
+    gap: 8,
+    borderRadius: 14,
+    padding: 10,
+    marginTop: 9,
+  },
+  departureText: {
+    fontSize: 11.5,
+    lineHeight: 16,
+    fontFamily: F.medium,
+  },
+  departureButton: {
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+  },
+  departureButtonText: {
+    fontSize: 11.5,
+    fontFamily: F.semibold,
   },
 });

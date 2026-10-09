@@ -4,10 +4,20 @@ import {
   type ImpactSignal,
 } from '../utils/impactTimeline';
 import { aggregateAlertHistoryImpacts } from '../utils/alertImpactHistory';
+import { normalizeFiredMap, shouldDeliverAlert } from '../utils/alertEscalation';
+import {
+  MAX_STORM_FEEDBACK_RECORDS,
+  normalizeStormFeedback,
+  stormFeedbackEventKey,
+  upsertStormFeedback,
+} from '../utils/stormFeedbackPolicy';
+import { DEFAULT_ALERT_SETTINGS, evaluateAlerts, isInsideQuietWindow, localMinutesOfDay } from '../utils/alertRules';
+import type { CurrentConditions, DayPoint, HourPoint } from '../api/types';
 import { buildCurrentImpactTimeline } from '../utils/currentImpactTimeline';
 import { parseWarnings } from '../utils/meteoalarm';
 import {
   DEFAULT_OUTDOOR_PREFERENCES,
+  effectiveOutdoorPreferences,
   normalizeOutdoorPreferences,
   recommendOutdoorWindows,
   stepOutdoorPreference,
@@ -15,7 +25,10 @@ import {
   type OutdoorPreferences,
 } from '../utils/outdoorPlanPolicy';
 import { buildOutdoorForecastHours } from '../utils/outdoorPlanAdapter';
-import type { HourPoint } from '../api/types';
+import { findLowerRiskTripDeparture } from '../utils/tripDeparture';
+import { buildForecastLogCsv, buildForecastLogJson } from '../utils/forecastLogExportFormat';
+import type { ForecastLogEntry } from '../utils/forecastLog';
+import { describeFreshness, widgetUpdatedLabel, WIDGET_STALE_AFTER_MS } from '../utils/widgetFreshness';
 import {
   assessAlertCacheFreshness,
   assessCacheFreshness,
@@ -23,6 +36,14 @@ import {
   weatherLocationKey,
   type CacheFreshnessInput,
 } from '../utils/freshnessPolicy';
+import { transitionWeatherOffline } from '../utils/weatherOfflinePolicy';
+import {
+  findOutdoorWindowFeedback,
+  MAX_OUTDOOR_WINDOW_FEEDBACK,
+  normalizeOutdoorWindowFeedback,
+  outdoorWindowFeedbackKey,
+  upsertOutdoorWindowFeedback,
+} from '../utils/outdoorWindowFeedbackPolicy';
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
@@ -33,6 +54,89 @@ function equal<T>(actual: T, expected: T, message: string): void {
 }
 
 const baseTime = Date.UTC(2026, 9, 9, 10);
+
+function testAlertEscalationAndFeedback(): void {
+  const legacy = normalizeFiredMap({ rain: baseTime, bad: 'x' });
+  equal(legacy.rain?.at, baseTime, 'legacy numeric cooldown timestamps are migrated');
+  equal(legacy.rain?.severity, null, 'legacy cooldown severity remains unknown');
+  equal(shouldDeliverAlert(baseTime + 5 * 60_000, legacy.rain, 'severe', 6 * 60 * 60_000), false, 'unknown legacy severity waits for its cooldown');
+
+  const warning = { at: baseTime, severity: 'warning' as const };
+  equal(shouldDeliverAlert(baseTime + 60_000, warning, 'warning', 6 * 60 * 60_000), false, 'same severity is deduplicated within cooldown');
+  equal(shouldDeliverAlert(baseTime + 60_000, warning, 'info', 6 * 60 * 60_000), false, 'severity reduction does not bypass cooldown');
+  equal(shouldDeliverAlert(baseTime + 60_000, warning, 'severe', 6 * 60 * 60_000), true, 'severity rise escalates immediately');
+  equal(shouldDeliverAlert(baseTime + 6 * 60 * 60_000, warning, 'warning', 6 * 60 * 60_000), true, 'same severity is allowed once cooldown expires');
+
+  const event = { hazard: 'storm', title: 'Thunderstorm warning', expected: ['Thunder around 14:00'] };
+  const key = stormFeedbackEventKey(event);
+  equal(stormFeedbackEventKey(event), key, 'storm feedback event keys survive refreshes');
+  const vote = { scope: 'geo-1', eventKey: key, vote: 'useful' as const, at: baseTime };
+  const replaced = upsertStormFeedback([vote], { ...vote, vote: 'not-useful', at: baseTime + 1 });
+  equal(replaced.length, 1, 'feedback is one vote per event and location');
+  equal(replaced[0].vote, 'not-useful', 'a changed vote replaces the previous local vote');
+  const otherCity = upsertStormFeedback(replaced, { ...vote, scope: 'geo-2' });
+  equal(otherCity.length, 2, 'storm usefulness history remains location-scoped');
+  const capped = normalizeStormFeedback(Array.from({ length: MAX_STORM_FEEDBACK_RECORDS + 4 }, (_, index) => ({
+    scope: 'geo-1', eventKey: `event-${index}`, vote: 'useful', at: baseTime + index,
+  })));
+  equal(capped.length, MAX_STORM_FEEDBACK_RECORDS, 'storm feedback retention is bounded');
+}
+
+function testQuietHoursAcrossDst(): void {
+  const springBeforeJump = new Date('2026-03-08T06:30:00Z');
+  const springAfterJump = new Date('2026-03-08T07:30:00Z');
+  const springMorning = new Date('2026-03-08T11:15:00Z');
+  equal(localMinutesOfDay(springBeforeJump), 90, 'spring DST time before the skipped hour is device-local');
+  equal(localMinutesOfDay(springAfterJump), 210, 'spring DST time after the skipped hour advances to 03:30');
+  assert(isInsideQuietWindow(localMinutesOfDay(springBeforeJump), 22 * 60, 7 * 60), 'quiet window holds before spring clock jump');
+  assert(isInsideQuietWindow(localMinutesOfDay(springAfterJump), 22 * 60, 7 * 60), 'quiet window holds after spring clock jump');
+  assert(!isInsideQuietWindow(localMinutesOfDay(springMorning), 22 * 60, 7 * 60), 'quiet window ends by local wall clock after spring DST');
+
+  const fallFirstOneThirty = new Date('2026-11-01T05:30:00Z');
+  const fallRepeatedOneThirty = new Date('2026-11-01T06:30:00Z');
+  equal(localMinutesOfDay(fallFirstOneThirty), 90, 'first repeated fall-back 01:30 is interpreted locally');
+  equal(localMinutesOfDay(fallRepeatedOneThirty), 90, 'second repeated fall-back 01:30 remains quiet');
+  assert(isInsideQuietWindow(localMinutesOfDay(fallRepeatedOneThirty), 22 * 60, 7 * 60), 'repeated DST hour cannot escape quiet hours');
+  assert(Number.isNaN(localMinutesOfDay(new Date(Number.NaN))), 'invalid device time fails closed');
+}
+
+function testAlertRuleEvidence(): void {
+  const current: CurrentConditions = {
+    observationTime: '2026-10-09T14:00',
+    temperature: 20,
+    apparentTemperature: 20,
+    humidity: 50,
+    isDay: true,
+    weatherCode: 3,
+    pressure: 1010,
+    cloudCover: 40,
+    windSpeed: 10,
+    windDirection: 0,
+    windGusts: 12,
+    precipitation: 0,
+    dewPoint: null,
+    visibility: 10000,
+    pressureTrend: null,
+  };
+  const hour: HourPoint = {
+    time: '2026-10-09T16:00', temperature: 21, apparent: 21, weatherCode: 61,
+    precipProbability: 72, precipitation: 1, isDay: true, isNow: false, dewPoint: null,
+    visibility: 9000, windSpeed: 12, windGusts: 14, windDirection: 90, uvIndex: 2,
+    humidity: 55, pressure: 1010, cape: null, snowDepthM: null, snowfallCm: null, freezingLevelM: null,
+  };
+  const today: DayPoint = {
+    date: '2026-10-09', weatherCode: 61, tMax: 25, tMin: 18,
+    sunrise: '2026-10-09T06:00', sunset: '2026-10-09T18:00', uvIndexMax: 3,
+    precipProbabilityMax: 72, precipSum: 2, windMax: 16,
+  };
+  const settings = { ...DEFAULT_ALERT_SETTINGS, rain: true, thunder: false };
+  const alerts = evaluateAlerts(settings, current, [hour], today, null);
+  const rain = alerts.find((alert) => alert.key === 'rain');
+  assert(rain?.evidence, 'numeric alert rules attach structured evidence');
+  equal(rain.evidence.actual, '72%', 'rain evidence retains the observed forecast probability');
+  equal(rain.evidence.threshold, '≥60%', 'rain evidence retains the exact trigger boundary');
+  equal(rain.evidence.observationTime, hour.time, 'forecast evidence retains the provider-local valid time');
+}
 
 function signal(overrides: Partial<ImpactSignal> & Pick<ImpactSignal, 'id'>): ImpactSignal {
   const { id, ...otherOverrides } = overrides;
@@ -159,7 +263,10 @@ function testImpactAggregation(): void {
 
 function testAlertHistoryIntegration(): void {
   const grouped = aggregateAlertHistoryImpacts([
-    { key: 'rain', title: 'Rain expected', message: 'Bring a rain layer.', severity: 'warning', at: baseTime, city: 'Raipur' },
+    {
+      key: 'rain', title: 'Rain expected', message: 'Bring a rain layer.', severity: 'warning', at: baseTime, city: 'Raipur',
+      evidence: { metricLabel: 'cmp_rain', actual: '70%', threshold: '≥60%', source: 'Open-Meteo hourly forecast', observationTime: '2026-10-09T14:00' },
+    },
     { key: 'rain', title: 'Heavy rainfall expected', message: 'Avoid flooded roads.', severity: 'severe', at: baseTime + 12 * 60_000, city: 'Raipur' },
     { key: 'rain', title: 'Rain expected', message: 'Rain in Bilaspur.', severity: 'warning', at: baseTime + 15 * 60_000, city: 'Bilaspur' },
     { key: 'wind', title: 'Windy', message: 'Secure loose items.', severity: 'warning', at: baseTime + 10 * 60_000, city: 'Raipur' },
@@ -170,6 +277,7 @@ function testAlertHistoryIntegration(): void {
   equal(raipurRain.signalIds.length, 2, 'repeated alert history rows collapse into one timeline item');
   equal(raipurRain.severity, 'severe', 'history group keeps the strongest severity');
   assert(raipurRain.safetyMessages.includes('Avoid flooded roads.'), 'severe history copy remains available');
+  assert(raipurRain.reasons.some((reason) => reason.includes('≥60%') && reason.includes('Open-Meteo')), 'alert history retains the observed value provenance and threshold');
   assert(grouped.some((impact) => impact.hazard === 'Bilaspur:rain'), 'separate city history never merges');
 }
 
@@ -177,7 +285,10 @@ function testCurrentImpactTimeline(): void {
   const now = baseTime + 5 * 60_000;
   const impacts = buildCurrentImpactTimeline(
     [
-      { key: 'rain', title: 'Rain expected', message: '70% chance of rain.', severity: 'warning' },
+      {
+        key: 'rain', title: 'Rain expected', message: '70% chance of rain.', severity: 'warning',
+        evidence: { metricLabel: 'cmp_rain', actual: '70%', threshold: '≥60%', source: 'Open-Meteo hourly forecast', observationTime: '2026-10-09T14:00' },
+      },
       { key: 'raineasing', title: 'Rain easing', message: 'Rain may ease soon.', severity: 'info' },
     ],
     [
@@ -213,9 +324,29 @@ function testCurrentImpactTimeline(): void {
   const rain = impacts.find((impact) => impact.signalIds.includes('official:official-flood-1'));
   assert(rain, 'current official and forecast rain signals share the timeline');
   equal(rain.signalIds.length, 3, 'overlapping forecast/nowcast/official signals merge');
+  assert(rain.reasons.some((reason) => reason.includes('≥60%') && reason.includes('2026-10-09 14:00')), 'active alert impact exposes its observation time and triggering threshold');
   equal(rain.severity, 'severe', 'current timeline preserves official severe priority');
   assert(rain.safetyMessages.includes('Avoid flooded roads.'), 'official safety instruction is preserved');
   assert(impacts.some((impact) => impact.hazard === 'official:official-localized'), 'unrecognized localized warnings stay separate rather than risk a false merge');
+
+  const expiryAt = baseTime + 30 * 60_000;
+  const expiringWarning = [{
+    id: 'expiring-storm',
+    event: 'Thunderstorm warning',
+    headline: 'Storm risk',
+    description: 'Strong thunderstorms are possible.',
+    instruction: 'Stay indoors during lightning.',
+    severity: 'Severe' as const,
+    levelColor: 'orange' as const,
+    expires: new Date(expiryAt).toISOString(),
+    areaDesc: null,
+    senderName: null,
+  }];
+  const officialUpdatedAt = expiryAt - 10 * 60_000;
+  const beforeExpiry = buildCurrentImpactTimeline([], expiringWarning, baseTime, officialUpdatedAt, expiryAt - 1, { forecast: 'Forecast', official: 'MeteoAlarm' });
+  const atExpiry = buildCurrentImpactTimeline([], expiringWarning, baseTime, officialUpdatedAt, expiryAt, { forecast: 'Forecast', official: 'MeteoAlarm' });
+  equal(beforeExpiry.length, 1, 'official warning remains visible immediately before its expiry');
+  equal(atExpiry.length, 0, 'official warning expires exactly at its CAP expiry timestamp');
 
   const staleSources = buildCurrentImpactTimeline(
     [{ key: 'rain', title: 'Old rain', message: 'Old forecast alert.', severity: 'warning' }],
@@ -292,6 +423,34 @@ function outdoorHour(at: number, overrides: Partial<OutdoorForecastHour> = {}): 
   };
 }
 
+function testTripDepartureSuggestions(): void {
+  const days: DayPoint[] = Array.from({ length: 9 }, (_, index) => ({
+    date: `2026-10-${String(index + 9).padStart(2, '0')}`,
+    weatherCode: 1,
+    tMax: 24,
+    tMin: 16,
+    sunrise: '',
+    sunset: '',
+    uvIndexMax: 3,
+    precipProbabilityMax: index === 2 ? 85 : 10,
+    precipSum: index === 2 ? 8 : 0,
+    windMax: 12,
+  }));
+  const suggestion = findLowerRiskTripDeparture(days, 1, 2, DEFAULT_OUTDOOR_PREFERENCES, 3);
+  assert(suggestion, 'nearby lower-risk departure is suggested');
+  equal(suggestion.startIndex, 3, 'suggestion shifts to the nearest window that is Pareto-better');
+  equal(suggestion.startDate, days[3].date, 'departure recommendation carries the location-local date');
+  assert(suggestion.lowerRiskMetrics.includes('rain'), 'suggestion names the improved risk dimensions');
+
+  const heatTradeoff = days.map((day, index) => ({
+    ...day,
+    precipProbabilityMax: index === 2 ? 85 : 10,
+    tMax: index === 3 || index === 4 ? 40 : 24,
+  }));
+  equal(findLowerRiskTripDeparture(heatTradeoff, 1, 2, DEFAULT_OUTDOOR_PREFERENCES, 3), null, 'planner refuses a hidden rain-for-heat tradeoff');
+  equal(findLowerRiskTripDeparture(days, 3, 2, DEFAULT_OUTDOOR_PREFERENCES, 3), null, 'planner offers no shift when every nearby option is equally comfortable');
+}
+
 function testOutdoorPlanning(): void {
   const normalized = normalizeOutdoorPreferences({
     maxRainProbability: 101,
@@ -310,6 +469,10 @@ function testOutdoorPlanning(): void {
   const warmer = stepOutdoorPreference(null, 'temperature', 1);
   equal(warmer.minTemperatureC, 16, 'temperature preference can shift warmer');
   equal(warmer.maxTemperatureC, 28, 'temperature range width remains stable when shifted');
+  const journalAdjusted = effectiveOutdoorPreferences({ ...DEFAULT_OUTDOOR_PREFERENCES, journalTemperatureOffsetC: 2.5 });
+  equal(journalAdjusted.minTemperatureC, DEFAULT_OUTDOOR_PREFERENCES.minTemperatureC + 2.5, 'explicit journal adjustment shifts the lower comfort boundary');
+  equal(journalAdjusted.maxTemperatureC, DEFAULT_OUTDOOR_PREFERENCES.maxTemperatureC + 2.5, 'journal adjustment keeps the comfort range width stable');
+  equal(effectiveOutdoorPreferences(DEFAULT_OUTDOOR_PREFERENCES).minTemperatureC, DEFAULT_OUTDOOR_PREFERENCES.minTemperatureC, 'journal feedback never changes preferences before user approval');
 
   const adapted = buildOutdoorForecastHours(
     [{
@@ -412,6 +575,39 @@ function testOutdoorPlanning(): void {
   assert(insufficient.missingMetrics.includes('rain'), 'missing metric summary is provided');
 }
 
+function testWidgetCacheAge(): void {
+  const now = baseTime;
+  const recent = describeFreshness(now - 12 * 60_000, now);
+  equal(recent.relative, '12 min ago', 'widget reports relative cache age');
+  equal(recent.stale, false, 'recent widget cache is not marked stale');
+  const boundary = describeFreshness(now - WIDGET_STALE_AFTER_MS, now);
+  equal(boundary.stale, false, 'widget stale warning starts strictly after its boundary');
+  const old = describeFreshness(now - WIDGET_STALE_AFTER_MS - 1, now);
+  equal(old.stale, true, 'old widget cache is explicitly marked stale');
+  assert(widgetUpdatedLabel(now - 2 * 60 * 60_000, now).includes('2 h ago'), 'widget label shows both update time and cache age');
+}
+
+function testPrivacyAwareForecastExport(): void {
+  const rows: ForecastLogEntry[] = [
+    { date: '2026-10-09', timezone: 'Asia/Kolkata', tMax: 31, tMin: 23, precipSum: 2.5 },
+    { date: '2026-10-10', timezone: 'UTC+05:30', tMax: 30, tMin: 22, precipSum: 0 },
+  ];
+  const tempOnly = buildForecastLogCsv(rows, { includeTemperature: true, includePrecipitation: false }, baseTime);
+  assert(tempOnly.includes('# schema_version=1') && tempOnly.includes('# coordinates_included=false'), 'CSV export declares schema and coordinate exclusion');
+  assert(tempOnly.includes('Asia/Kolkata') && tempOnly.includes('UTC+05:30'), 'CSV export retains timezone per forecast row');
+  assert(tempOnly.includes('t_max_c,t_min_c') && !tempOnly.includes('precip_sum_mm'), 'CSV category selection excludes unrequested precipitation');
+  const rainJson = JSON.parse(buildForecastLogJson(rows, { includeTemperature: false, includePrecipitation: true }, baseTime)) as {
+    schemaVersion: number;
+    metadata: { coordinatesIncluded: boolean; timeZone: string };
+    forecasts: Record<string, unknown>[];
+  };
+  equal(rainJson.schemaVersion, 1, 'JSON export has an explicit schema version');
+  equal(rainJson.metadata.coordinatesIncluded, false, 'JSON metadata confirms precise coordinates are excluded');
+  equal(rainJson.metadata.timeZone, 'mixed', 'JSON metadata discloses mixed timezone scope');
+  assert('precipitationMm' in rainJson.forecasts[0] && !('temperatureC' in rainJson.forecasts[0]), 'JSON export includes only selected categories');
+  equal(buildForecastLogCsv(rows, { includeTemperature: false, includePrecipitation: false }), '', 'empty category selection creates no misleading export');
+}
+
 function freshnessInput(overrides: Partial<CacheFreshnessInput> = {}): CacheFreshnessInput {
   return {
     snapshotLocationId: 'raipur',
@@ -420,6 +616,37 @@ function freshnessInput(overrides: Partial<CacheFreshnessInput> = {}): CacheFres
     now: baseTime,
     ...overrides,
   };
+}
+
+function testOutdoorWindowFeedback(): void {
+  const windowKey = outdoorWindowFeedbackKey(baseTime + 60_000, baseTime + 3_660_000);
+  assert(windowKey, 'valid recommended window has a stable feedback key');
+  equal(outdoorWindowFeedbackKey(baseTime, baseTime), null, 'zero-length windows cannot receive feedback');
+  const raipur = weatherLocationKey(21.25, 81.63);
+  assert(raipur, 'test city has a valid location scope');
+  const entry = { scope: raipur, windowKey, vote: 'good-fit' as const, at: baseTime };
+  const rows = upsertOutdoorWindowFeedback([], entry);
+  const revised = upsertOutdoorWindowFeedback(rows, { ...entry, vote: 'not-for-me', at: baseTime + 1 });
+  equal(revised.length, 1, 'a changed vote replaces feedback for the same location and window');
+  equal(findOutdoorWindowFeedback(revised, raipur, windowKey), 'not-for-me', 'window feedback is retrievable for its city');
+  equal(findOutdoorWindowFeedback(revised, '51.51|-0.13', windowKey), null, 'feedback never follows a window to another location');
+  const capped = normalizeOutdoorWindowFeedback(Array.from({ length: MAX_OUTDOOR_WINDOW_FEEDBACK + 3 }, (_, index) => ({
+    scope: raipur,
+    windowKey: `window-${index}`,
+    vote: 'good-fit',
+    at: baseTime + index,
+  })));
+  equal(capped.length, MAX_OUTDOOR_WINDOW_FEEDBACK, 'outdoor-window feedback retention is bounded');
+}
+
+function testOfflineRecovery(): void {
+  let offline = false;
+  offline = transitionWeatherOffline(offline, 'network-failure');
+  equal(offline, true, 'a network failure enables the offline state');
+  offline = transitionWeatherOffline(offline, 'success');
+  equal(offline, false, 'the next successful refresh clears the offline state');
+  offline = transitionWeatherOffline(offline, 'other-failure');
+  equal(offline, false, 'a server or parse failure is not mislabeled as offline');
 }
 
 function testFreshnessPolicy(): void {
@@ -473,10 +700,18 @@ function testFreshnessPolicy(): void {
   equal(weatherLocationKey(91, 0), null, 'invalid coordinates cannot create a cache identity');
 }
 
+testAlertEscalationAndFeedback();
+testQuietHoursAcrossDst();
+testAlertRuleEvidence();
 testImpactAggregation();
 testAlertHistoryIntegration();
 testCurrentImpactTimeline();
 testMeteoAlarmInstructions();
 testOutdoorPlanning();
+testTripDepartureSuggestions();
+testOutdoorWindowFeedback();
+testOfflineRecovery();
 testFreshnessPolicy();
+testPrivacyAwareForecastExport();
+testWidgetCacheAge();
 console.log('weather policy tests passed');

@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { AlertSeverity } from './alertRules';
+import { isValidAlertEvidence } from './alertEvidence';
+import type { AlertEvidence } from './alertEvidence';
 
 /**
  * One alert that actually fired (past its cooldown) on this device. The alert
@@ -17,6 +19,8 @@ export interface AlertHistoryEntry {
   city?: string;
   /** Delivery time, epoch milliseconds. */
   at: number;
+  /** Rule value, boundary, provider and observation time (legacy rows omit it). */
+  evidence?: AlertEvidence;
 }
 
 const HISTORY_KEY = '@mu_weather/alert_history_v1';
@@ -51,7 +55,8 @@ function isValidEntry(value: unknown): value is AlertHistoryEntry {
     isSeverity(entry.severity) &&
     typeof entry.at === 'number' &&
     Number.isFinite(entry.at) &&
-    (entry.city === undefined || typeof entry.city === 'string')
+    (entry.city === undefined || typeof entry.city === 'string') &&
+    (entry.evidence === undefined || isValidAlertEvidence(entry.evidence))
   );
 }
 

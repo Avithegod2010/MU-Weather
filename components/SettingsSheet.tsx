@@ -271,6 +271,8 @@ export function SettingsSheet({
   const inputColor = theme.isLight ? '#1C2431' : '#FFFFFF';
   const [view, setView] = useState<SheetView>('main');
   const [backupMsg, setBackupMsg] = useState<string | null>(null);
+  const [exportTemperature, setExportTemperature] = useState(true);
+  const [exportPrecipitation, setExportPrecipitation] = useState(true);
 
   const showBackupMsg = (message: string) => {
     setBackupMsg(message);
@@ -322,7 +324,14 @@ export function SettingsSheet({
   const onExportForecastLog = async (format: DataExportFormat) => {
     haptics.select();
     try {
-      const result = await writeForecastLogExport(format);
+      if (!exportTemperature && !exportPrecipitation) {
+        showBackupMsg(t('data_export_no_fields'));
+        return;
+      }
+      const result = await writeForecastLogExport(format, {
+        includeTemperature: exportTemperature,
+        includePrecipitation: exportPrecipitation,
+      });
       if (result.status === 'empty') {
         showBackupMsg(t('data_export_empty'));
         return;
@@ -1293,6 +1302,33 @@ export function SettingsSheet({
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>
             {t('data_export')}
           </Text>
+          <Text style={[styles.exportPrivacyNote, { color: theme.textTertiary }]}>
+            {t('data_export_privacy_note')}
+          </Text>
+          <View style={[styles.exportOptionRow, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <Text style={[styles.exportOptionLabel, { color: theme.textPrimary }]}>{t('cmp_temp')}</Text>
+            <SlidingSwitch
+              theme={theme}
+              value={exportTemperature}
+              onValueChange={setExportTemperature}
+              accessibilityLabel={t('cmp_temp')}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={exportTemperature ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
+          <View style={[styles.exportOptionRow, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <Text style={[styles.exportOptionLabel, { color: theme.textPrimary }]}>{t('cmp_rain')}</Text>
+            <SlidingSwitch
+              theme={theme}
+              value={exportPrecipitation}
+              onValueChange={setExportPrecipitation}
+              accessibilityLabel={t('cmp_rain')}
+              trackColor={{ true: theme.accent, false: theme.trackColor }}
+              thumbColor={exportPrecipitation ? '#FFFFFF' : theme.textTertiary}
+              ios_backgroundColor={theme.trackColor}
+            />
+          </View>
           <Pressable
             onPress={() => void onExportForecastLog('csv')}
             style={({ pressed }) => [
@@ -1677,6 +1713,28 @@ const styles = StyleSheet.create({
     fontFamily: F.regular,
     marginTop: 8,
     marginLeft: 24,
+  },
+  exportPrivacyNote: {
+    fontSize: 11.5,
+    lineHeight: 16,
+    paddingHorizontal: 24,
+    marginBottom: 4,
+  },
+  exportOptionRow: {
+    minHeight: 48,
+    borderRadius: 18,
+    borderWidth: 1,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  exportOptionLabel: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: F.medium,
   },
   sectionLabel: {
     fontSize: 11,

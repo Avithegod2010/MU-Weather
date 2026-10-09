@@ -603,6 +603,10 @@ export const en = {
   s_models_sub: 'ECMWF · GFS · ICON · Météo-France · JMA · MET Nordic',
   // ── bot2: aurora + alerts + wear ──
   best_window_score: 'Comfort {n}/100',
+  best_window_feedback_prompt: 'Does this recommended window look like a good fit?',
+  best_window_feedback_good: 'Good fit',
+  best_window_feedback_bad: 'Not for me',
+  best_window_feedback_saved: 'Feedback saved on this device for this location.',
   tile_aurora: 'Aurora',
   card_aurora: 'Aurora & space weather',
   aurora_now: 'Kp now',
@@ -924,6 +928,30 @@ export const en = {
   storm_listen_2: 'Count the seconds from flash to thunder.',
   storm_listen_3: 'Every three seconds is about one kilometre.',
   storm_listen_4: 'Stop counting the moment the thunder rumbles.',
+  // ── alert evidence, feedback, comparisons and privacy metadata ──
+  alert_evidence_line: '{metric}: {actual} · trigger {threshold} · {source} · time {time}',
+  alert_preview_title: 'Notification preview',
+  alert_preview_line: '{rules} enabled rules · permission {permission} · quiet hours {quiet}',
+  alert_preview_match: 'Current rule match: {title}',
+  alert_preview_no_match: 'No active alert currently matches an enabled rule.',
+  alert_permission_granted: 'granted',
+  alert_permission_not_granted: 'not granted',
+  alert_preview_off: 'off',
+  alert_storm_feedback_prompt: 'Was this storm alert useful?',
+  alert_storm_feedback_useful: 'Useful',
+  alert_storm_feedback_not_useful: 'Not useful',
+  alert_storm_feedback_saved: 'Feedback saved on this device',
+  journal_preference_suggestion: 'Your local journal suggests shifting your comfort range by {offset} (from {samples} ratings).',
+  journal_apply_suggestion: 'Apply suggestion',
+  journal_reset_suggestion: 'Reset journal adjustment',
+  trend_wind_band_label: 'Wind ensemble P10–P90',
+  trip_departure_suggestion: 'A nearby start date lowers {metrics} risk: {date}',
+  trip_departure_use: 'Use this start date',
+  c2_anomaly: 'Forecast vs normal',
+  c2_anomaly_note: "Today's forecast high minus each city's 1991–2020 monthly average.",
+  data_export_privacy_note: 'Choose the forecast fields to include. Coordinates are never included; each row keeps its forecast timezone.',
+
+  data_export_no_fields: 'Select temperature and/or precipitation to export.',
 };
 
 export type Strings = typeof en;

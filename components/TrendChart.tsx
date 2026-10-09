@@ -46,10 +46,18 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
         return point ? { p10: point.tP10, p90: point.tP90 } : null;
       })
     : null;
+  const windBand: ({ p10: number; p90: number } | null)[] | null = bandByTime
+    ? slice.map((hour) => {
+        const point = bandByTime.get(hour.time);
+        return point && typeof point.windP10 === 'number' && typeof point.windP90 === 'number'
+          ? { p10: point.windP10, p90: point.windP90 }
+          : null;
+      })
+    : null;
 
   const tempMin = Math.min(...temps, ...dews, ...(band?.flatMap((b) => (b ? [b.p10] : [])) ?? []));
   const tempMax = Math.max(...temps, ...dews, ...(band?.flatMap((b) => (b ? [b.p90] : [])) ?? []));
-  const windMax = Math.max(...winds, 5) * 1.15;
+  const windMax = Math.max(...winds, ...(windBand?.flatMap((entry) => (entry ? [entry.p90] : [])) ?? []), 5) * 1.15;
 
   const toPoints = (values: number[], min: number, max: number): CurvePoint[] =>
     values.map((value, index) => ({
@@ -74,6 +82,23 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
       const lowerReversed = [...lowerPoints].reverse();
       const lowerD = smoothPath(lowerReversed).replace(/^M/, 'L');
       bandPath = `${upperD} ${lowerD} Z`;
+    }
+  }
+
+  let windBandPath = '';
+  if (windBand) {
+    const upperPoints: CurvePoint[] = [];
+    const lowerPoints: CurvePoint[] = [];
+    windBand.forEach((entry, index) => {
+      if (!entry) return;
+      const x = index * COL_WIDTH + COL_WIDTH / 2;
+      upperPoints.push({ x, y: scaleY(entry.p90, 0, windMax, top, bottom) });
+      lowerPoints.push({ x, y: scaleY(entry.p10, 0, windMax, top, bottom) });
+    });
+    if (upperPoints.length >= 2) {
+      const upperD = smoothPath(upperPoints);
+      const lowerD = smoothPath([...lowerPoints].reverse()).replace(/^M/, 'L');
+      windBandPath = `${upperD} ${lowerD} Z`;
     }
   }
 
@@ -105,6 +130,12 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
             </Text>
           </View>
         ) : null}
+        {windBandPath ? (
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: WIND_COLOR, opacity: theme.isLight ? 0.3 : 0.4, borderRadius: 2 }]} />
+            <Text style={[styles.legendText, { color: theme.textTertiary }]}>{t('trend_wind_band_label')}</Text>
+          </View>
+        ) : null}
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} directionalLockEnabled>
@@ -124,9 +155,13 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
             ]}
             bandPath={bandPath || undefined}
             bandColor={theme.isLight ? 'rgba(245,169,98,0.16)' : 'rgba(245,169,98,0.22)'}
+            bands={windBandPath ? [{
+              path: windBandPath,
+              color: theme.isLight ? 'rgba(143,208,184,0.18)' : 'rgba(143,208,184,0.24)',
+            }] : []}
             columns={[]}
             dotFill={dotFill}
-            dataKey={`trend|${slice[0].time}|${temps.join(',')}|${dews.join(',')}|${winds.join(',')}|${bandPath}`}
+            dataKey={`trend|${slice[0].time}|${temps.join(',')}|${dews.join(',')}|${winds.join(',')}|${bandPath}|${windBandPath}`}
             scrub={false}
           />
           <View style={[styles.timeRow, { width }]}>
@@ -143,7 +178,7 @@ export function TrendChart({ theme, hours, ensemble }: TrendChartProps) {
 
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
         Next 48 hours · {formatTemp(tempMin)} to {formatTemp(tempMax)} · wind to {Math.round(convertWind(windMax / 1.15))} {windUnitLabel()}
-        {bandPath ? ` · ${t('trend_band_caption')}` : ''}
+        {bandPath || windBandPath ? ` · ${t('trend_band_caption')}` : ''}
       </Text>
     </Card>
   );
