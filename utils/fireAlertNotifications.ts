@@ -11,8 +11,9 @@ import type { AlertExtras, AlertSettings, TriggeredAlert } from './alertRules';
 import { evaluateCustomRules, loadCustomAlerts } from './customAlerts';
 import { computeNowcast } from './nowcast';
 import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
-import { appendAlertHistory } from './alertHistory';
-import { normalizeFiredMap, shouldDeliverAlert } from './alertEscalation';
+import { appendAlertHistory, type AlertDeliveryStatus } from './alertHistory';
+import { isAlertSeverityEscalation, normalizeFiredMap, shouldDeliverAlert } from './alertEscalation';
+import { forecastAlertExpiresAt } from './alertValidity';
 import type { AlertFireStamp } from './alertEscalation';
 import { assessWeatherCacheFreshness, weatherLocationKey } from './freshnessPolicy';
 import { getLanguage, t } from './i18n';
@@ -173,42 +174,48 @@ export interface DeliverAlertsOptions {
    * active location.
    */
   cooldownMs?: number;
+  /** Provider IANA timezone used to derive a cited forecast window's expiry. */
+  timezone?: string;
 }
 
 /**
  * Shared delivery path for every alert source (the active location and the
- * saved-city sweep): notification-permission gate, per-alert cooldown (6 h by
- * default, overridable per call), local notification, and an entry in the
- * in-app history (utils/alertHistory).
+ * saved-city sweep). Each cooldown-eligible alert gets an explicit local
+ * history outcome: scheduled, quiet-hours suppression, permission suppression,
+ * or scheduling failure. Permission/failure suppressions do not consume the
+ * cooldown, allowing a later refresh to retry. Quiet-hours suppression does
+ * consume it so the alert is not unexpectedly delivered after quiet hours.
  *
- * Quiet hours (alert-settings blob) skip the NOTIFICATION while the device
- * clock is inside the window - the alert itself is still stamped in the
- * cooldown map and appended to the history, so quiet means no notification,
- * not no alert. The daily digest (hooks/useDigest) schedules its own
- * notification on a separate path and is deliberately not gated here.
+ * A successful Expo scheduling call means the app handed the notification to
+ * the OS; it does not independently prove that the OS displayed it. The daily
+ * digest is a separate path and remains deliberately outside this gate.
  *
  * Returns the alerts it was handed - callers use that for in-app banners - so
- * the delivery outcome never changes what the UI reports as active.
+ * notification outcome never changes what the UI reports as active.
  */
 export async function deliverAlerts(
   triggered: TriggeredAlert[],
   options: DeliverAlertsOptions = {},
 ): Promise<TriggeredAlert[]> {
   if (!triggered.length) return [];
-  const { city, cooldownPrefix = '', titleFormatter, cooldownMs = COOLDOWN_MS } = options;
+  const { city, cooldownPrefix = '', titleFormatter, cooldownMs = COOLDOWN_MS, timezone } = options;
 
-  const { status } = await Notifications.getPermissionsAsync();
-  if (status !== 'granted') return triggered;
-  await ensureChannel();
-  // Action buttons ("Snooze 1 h" / "Dismiss"): language-aware and idempotent,
-  // so a stored-language change re-registers the category before delivering.
-  await ensureWeatherAlertCategory();
+  let permissionGranted = false;
+  try {
+    permissionGranted = (await Notifications.getPermissionsAsync()).status === 'granted';
+  } catch {
+    // Treat a permissions API failure as not granted; retain an explicit row.
+  }
+  if (permissionGranted) {
+    await ensureChannel();
+    // Action buttons ("Snooze 1 h" / "Dismiss"): language-aware and idempotent,
+    // so a stored-language change re-registers the category before delivery.
+    await ensureWeatherAlertCategory();
+  }
 
-  // Quiet hours: one gate shared by every notification path (the alert
-  // pipeline, the rain-nowcast hook and the golden-hour hook). The DAILY
-  // DIGEST is a separate path (hooks/useDigest schedules its own notification)
-  // and is deliberately not gated here.
-  const inQuietHours = await isInQuietHoursNow();
+  // Quiet hours share one gate with the notification pipeline. The daily
+  // digest is a separate path and is deliberately not gated here.
+  const inQuietHours = permissionGranted ? await isInQuietHoursNow() : false;
 
   await withFiredLock(async () => {
     let fired: Record<string, AlertFireStamp> = {};
@@ -220,19 +227,40 @@ export async function deliverAlerts(
     }
 
     const now = Date.now();
-    const delivered: TriggeredAlert[] = [];
+    const historyRows: {
+      key: string;
+      title: string;
+      message: string;
+      severity: TriggeredAlert['severity'];
+      city?: string;
+      at: number;
+      evidence?: TriggeredAlert['evidence'];
+      deliveryStatus: AlertDeliveryStatus;
+      escalated: boolean;
+      expiresAt?: number;
+    }[] = [];
     let changed = false;
+
     for (const alert of triggered) {
       const cooldownKey = `${cooldownPrefix}${alert.key}`;
       const previous = fired[cooldownKey];
       if (!shouldDeliverAlert(now, previous, alert.severity, cooldownMs)) continue;
-      fired[cooldownKey] = { at: now, severity: alert.severity };
-      changed = true;
-      delivered.push(alert);
-      // Quiet hours silence the notification only - the cooldown stamp and the
-      // history row below still happen, so a suppressed alert is never
-      // re-recorded on the next refresh and stays visible in the Alerts screen.
-      if (!inQuietHours) {
+      const escalated = isAlertSeverityEscalation(previous?.severity, alert.severity);
+      const expiresAt = alert.expiresAt ?? forecastAlertExpiresAt(alert.evidence, timezone) ?? undefined;
+      let deliveryStatus: AlertDeliveryStatus;
+
+      if (expiresAt !== undefined && expiresAt <= now) {
+        // A forecast-backed alert that is already out of date must never be
+        // scheduled retroactively. It does not consume the current alert key's
+        // cooldown, so a newer forecast event can still notify normally.
+        deliveryStatus = 'expired';
+      } else if (!permissionGranted) {
+        deliveryStatus = 'permission-denied';
+      } else if (inQuietHours) {
+        deliveryStatus = 'quiet-hours';
+        fired[cooldownKey] = { at: now, severity: alert.severity };
+        changed = true;
+      } else {
         try {
           await Notifications.scheduleNotificationAsync({
             content: {
@@ -242,15 +270,37 @@ export async function deliverAlerts(
               categoryIdentifier: WEATHER_ALERT_CATEGORY,
               // The response only knows the notification identifier - the
               // cooldown key (city prefix included) rides in `data` so the
-              // snooze action can target exactly this alert.
-              data: { alertKey: cooldownKey },
+              // snooze action can target exactly this key.
+              data: {
+                alertKey: cooldownKey,
+                ...(expiresAt !== undefined ? { alertExpiresAt: expiresAt } : {}),
+              },
             },
             trigger: null,
           });
+          deliveryStatus = 'scheduled';
+          fired[cooldownKey] = { at: now, severity: alert.severity };
+          changed = true;
         } catch {
-          // Delivery is best-effort.
+          // Leave cooldown open so a later refresh can retry.
+          deliveryStatus = 'scheduling-failed';
         }
       }
+
+      historyRows.push({
+        key: alert.key,
+        title: alert.title,
+        message: alert.message,
+        severity: alert.severity,
+        city,
+        at: now,
+        evidence: alert.evidence,
+        deliveryStatus,
+        escalated,
+        ...(typeof expiresAt === 'number' && Number.isFinite(expiresAt)
+          ? { expiresAt }
+          : {}),
+      });
     }
 
     if (changed) {
@@ -259,18 +309,8 @@ export async function deliverAlerts(
       } catch {
         // Non-critical bookkeeping.
       }
-      await appendAlertHistory(
-        delivered.map((alert) => ({
-          key: alert.key,
-          title: alert.title,
-          message: alert.message,
-          severity: alert.severity,
-          city,
-          at: now,
-          evidence: alert.evidence,
-        })),
-      );
     }
+    await appendAlertHistory(historyRows);
   });
 
   return triggered;
@@ -363,7 +403,7 @@ export async function fireAlertNotifications(
   const customTriggered = evaluateCustomRules(await loadCustomAlerts(), data);
   const all = [...triggered, ...customTriggered];
   if (!all.length) return [];
-  return deliverAlerts(all, { city: data.location.name });
+  return deliverAlerts(all, { city: data.location.name, timezone: data.timezone });
 }
 
 export async function loadAlertSettings(): Promise<Partial<AlertSettings>> {

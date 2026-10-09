@@ -156,7 +156,7 @@ export const hu: Strings = {
   outdoor_window_feedback_trend: 'Helyi visszajelzés: {total} ajánlásból {good} bevált ({notForMe} nem). A beállítások nem változnak, amíg te nem módosítod őket.',
   alert_outcome_scheduled: 'Értesítés ütemezve (a rendszer megjelenítése nem igazolt)',
   alert_outcome_quiet_hours: 'Csendes időszak miatt elnyomva',
-  alert_outcome_permission: 'Nem lett elküldve: az értesítési engedély ki van kapcsolva',
+  alert_outcome_permission: 'Nem lett elküldve: az értesítési engedély nincs megadva',
   alert_outcome_failed: 'Az ütemezés nem sikerült; újrapróbálható',
   alert_outcome_escalated: 'A súlyossági szint emelkedett',
   alert_outcome_expired: 'Lejárt',

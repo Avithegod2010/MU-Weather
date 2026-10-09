@@ -17,6 +17,14 @@ function isSeverity(value: unknown): value is AlertSeverity {
   return value === 'info' || value === 'warning' || value === 'severe';
 }
 
+export function isAlertSeverityEscalation(
+  previous: AlertSeverity | null | undefined,
+  current: AlertSeverity,
+): boolean {
+  return previous !== null && previous !== undefined &&
+    SEVERITY_RANK[current] > SEVERITY_RANK[previous];
+}
+
 /** Upgrade the old `{ key: epochMs }` map without discarding active cooldowns. */
 export function normalizeFiredMap(value: unknown): Record<string, AlertFireStamp> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
@@ -53,6 +61,6 @@ export function shouldDeliverAlert(
 ): boolean {
   if (!Number.isFinite(now) || !Number.isFinite(cooldownMs) || cooldownMs < 0) return false;
   if (!previous || !Number.isFinite(previous.at)) return true;
-  if (previous.severity && SEVERITY_RANK[severity] > SEVERITY_RANK[previous.severity]) return true;
+  if (isAlertSeverityEscalation(previous.severity, severity)) return true;
   return now - previous.at >= cooldownMs;
 }

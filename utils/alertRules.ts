@@ -74,6 +74,8 @@ export interface TriggeredAlert {
   severity: AlertSeverity;
   /** Structured explanation for the rule, preserved in local alert history. */
   evidence?: AlertEvidence;
+  /** End of the cited forecast interval, when its location timezone is known. */
+  expiresAt?: number;
 }
 
 /**

@@ -4,7 +4,13 @@ import {
   type ImpactSignal,
 } from '../utils/impactTimeline';
 import { aggregateAlertHistoryImpacts } from '../utils/alertImpactHistory';
-import { normalizeFiredMap, shouldDeliverAlert } from '../utils/alertEscalation';
+import {
+  isAlertDeliveryStatus,
+  mergeAlertHistoryOutcomes,
+  sameAlertHistoryOutcome,
+} from '../utils/alertHistoryPolicy';
+import { isAlertSeverityEscalation, normalizeFiredMap, shouldDeliverAlert } from '../utils/alertEscalation';
+import { forecastAlertExpiresAt } from '../utils/alertValidity';
 import {
   MAX_STORM_FEEDBACK_RECORDS,
   normalizeStormFeedback,
@@ -42,6 +48,7 @@ import {
   MAX_OUTDOOR_WINDOW_FEEDBACK,
   normalizeOutdoorWindowFeedback,
   outdoorWindowFeedbackKey,
+  summarizeOutdoorWindowFeedback,
   upsertOutdoorWindowFeedback,
 } from '../utils/outdoorWindowFeedbackPolicy';
 
@@ -55,6 +62,45 @@ function equal<T>(actual: T, expected: T, message: string): void {
 
 const baseTime = Date.UTC(2026, 9, 9, 10);
 
+function testAlertHistoryOutcomes(): void {
+  const evidence = {
+    metricLabel: 'cmp_rain' as const,
+    actual: '70%',
+    threshold: '≥60%',
+    source: 'Open-Meteo hourly forecast',
+    observationTime: '2026-10-09T12:00',
+  };
+  const permissionBlocked = {
+    key: 'rain', title: 'Rain expected', city: 'Raipur', at: baseTime,
+    evidence, deliveryStatus: 'permission-denied' as const,
+  };
+  const scheduled = {
+    ...permissionBlocked,
+    at: baseTime + 1,
+    deliveryStatus: 'scheduled' as const,
+    expiresAt: baseTime + 60 * 60_000,
+  };
+  assert(!sameAlertHistoryOutcome(permissionBlocked, scheduled), 'a permission suppression and later scheduled outcome are both retained');
+  equal(isAlertDeliveryStatus('quiet-hours'), true, 'quiet-hours is a persisted delivery outcome');
+  equal(isAlertDeliveryStatus('expired'), true, 'expired forecasts are persisted as non-delivery outcomes');
+  equal(isAlertDeliveryStatus('untracked'), false, 'unknown stored outcomes are rejected');
+
+  const history = mergeAlertHistoryOutcomes(
+    [permissionBlocked],
+    [
+      permissionBlocked,
+      scheduled,
+      { ...scheduled, escalated: true, at: baseTime + 2 },
+    ],
+    20,
+  );
+  equal(history.length, 3, 'repeat outcomes deduplicate while transitions and escalations remain visible');
+  equal(history[0].deliveryStatus, 'scheduled', 'new outcomes are prepended newest first');
+  const otherCity = { ...scheduled, city: 'Tokyo' };
+  assert(!sameAlertHistoryOutcome(scheduled, otherCity), 'history event identity includes its city scope');
+  equal(mergeAlertHistoryOutcomes(history, [otherCity], 3).length, 3, 'history remains bounded to its configured maximum');
+}
+
 function testAlertEscalationAndFeedback(): void {
   const legacy = normalizeFiredMap({ rain: baseTime, bad: 'x' });
   equal(legacy.rain?.at, baseTime, 'legacy numeric cooldown timestamps are migrated');
@@ -66,6 +112,24 @@ function testAlertEscalationAndFeedback(): void {
   equal(shouldDeliverAlert(baseTime + 60_000, warning, 'info', 6 * 60 * 60_000), false, 'severity reduction does not bypass cooldown');
   equal(shouldDeliverAlert(baseTime + 60_000, warning, 'severe', 6 * 60 * 60_000), true, 'severity rise escalates immediately');
   equal(shouldDeliverAlert(baseTime + 6 * 60 * 60_000, warning, 'warning', 6 * 60 * 60_000), true, 'same severity is allowed once cooldown expires');
+  equal(isAlertSeverityEscalation('warning', 'severe'), true, 'history can label immediate severity rises as escalations');
+  equal(isAlertSeverityEscalation(null, 'severe'), false, 'unknown legacy severity is not called an escalation');
+
+  const hourlyExpiry = forecastAlertExpiresAt({
+    metricLabel: 'cmp_temp', actual: '10°', threshold: '≥8°',
+    source: 'Open-Meteo hourly forecast', observationTime: '2026-01-01T12:00',
+  }, 'UTC');
+  equal(hourlyExpiry, Date.UTC(2026, 0, 1, 13), 'hourly alert expiry follows the cited location-local forecast hour');
+  const dailyExpiry = forecastAlertExpiresAt({
+    metricLabel: 'cmp_temp', actual: '0°', threshold: '≤0°',
+    source: 'Open-Meteo daily forecast', observationTime: '2026-01-01',
+  }, 'UTC');
+  equal(dailyExpiry, Date.UTC(2026, 0, 2), 'daily alert expiry is the next location-local midnight');
+  equal(forecastAlertExpiresAt({
+    metricLabel: 'cmp_temp', actual: '10°', threshold: '≥8°',
+    source: 'Open-Meteo hourly forecast', observationTime: '2026-10-25T02:30',
+  }, 'Europe/Paris'), null, 'ambiguous DST-fold expiries are omitted instead of guessed');
+  equal(forecastAlertExpiresAt(undefined, 'UTC'), null, 'alerts without valid forecast provenance have no invented expiry');
 
   const event = { hazard: 'storm', title: 'Thunderstorm warning', expected: ['Thunder around 14:00'] };
   const key = stormFeedbackEventKey(event);
@@ -630,6 +694,26 @@ function testOutdoorWindowFeedback(): void {
   equal(revised.length, 1, 'a changed vote replaces feedback for the same location and window');
   equal(findOutdoorWindowFeedback(revised, raipur, windowKey), 'not-for-me', 'window feedback is retrievable for its city');
   equal(findOutdoorWindowFeedback(revised, '51.51|-0.13', windowKey), null, 'feedback never follows a window to another location');
+  const trendRows = [
+    { ...entry, windowKey: 'trend-1', vote: 'good-fit' as const, at: baseTime - 2 },
+    { ...entry, windowKey: 'trend-2', vote: 'not-for-me' as const, at: baseTime - 1 },
+    { ...entry, scope: '51.51|-0.13', windowKey: 'other-city', vote: 'good-fit' as const, at: baseTime },
+    { ...entry, windowKey: 'old', vote: 'good-fit' as const, at: baseTime - 91 * 24 * 60 * 60 * 1000 },
+  ];
+  const initialTrend = summarizeOutdoorWindowFeedback(trendRows, raipur, baseTime);
+  equal(initialTrend.sampleCount, 2, 'feedback trends are recent and location-scoped');
+  equal(initialTrend.sufficientlySampled, false, 'feedback trend stays hidden below its three-response minimum');
+  const enoughFeedback = upsertOutdoorWindowFeedback(trendRows, {
+    ...entry,
+    windowKey: 'trend-3',
+    vote: 'good-fit',
+    at: baseTime,
+  });
+  const trend = summarizeOutdoorWindowFeedback(enoughFeedback, raipur, baseTime);
+  equal(trend.sampleCount, 3, 'recent location-scoped feedback count is exposed');
+  equal(trend.goodFitCount, 2, 'good-fit trend count is local to the current city');
+  equal(trend.notForMeCount, 1, 'not-for-me trend count is kept distinct');
+  equal(trend.sufficientlySampled, true, 'trend unlocks at three local responses');
   const capped = normalizeOutdoorWindowFeedback(Array.from({ length: MAX_OUTDOOR_WINDOW_FEEDBACK + 3 }, (_, index) => ({
     scope: raipur,
     windowKey: `window-${index}`,
@@ -701,6 +785,7 @@ function testFreshnessPolicy(): void {
 }
 
 testAlertEscalationAndFeedback();
+testAlertHistoryOutcomes();
 testQuietHoursAcrossDst();
 testAlertRuleEvidence();
 testImpactAggregation();

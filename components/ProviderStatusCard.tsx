@@ -22,7 +22,7 @@ interface ProviderStatusCardProps {
   now: number;
 }
 
-type RowStatus = 'fresh' | 'stale' | 'loading' | 'unavailable';
+type RowStatus = 'fresh' | 'stale' | 'loading' | 'unavailable' | 'error';
 
 interface ProviderRow {
   label: string;
@@ -52,6 +52,8 @@ function statusLabel(row: ProviderRow, now: number): string {
       return t('detail_loading');
     case 'unavailable':
       return t('unavailable');
+    case 'error':
+      return t('provider_status_error');
     case 'stale':
       return `${t('offline_banner_stale')} · ${ageLabel(row.updatedAt, now)}`;
     case 'fresh':
@@ -90,7 +92,9 @@ export function ProviderStatusCard({
       label: t('trend_band_label'),
       status: ensemble.spread
         ? timeStatus(ensembleAt, now, ENSEMBLE_TTL_MS)
-        : ensemble.status === 'loading' ? 'loading' : 'unavailable',
+        : ensemble.status === 'loading'
+          ? 'loading'
+          : ensemble.status === 'error' ? 'error' : 'unavailable',
       updatedAt: ensembleAt,
     },
     {
@@ -99,7 +103,7 @@ export function ProviderStatusCard({
         ? 'loading'
         : officialWarnings.status === 'ok'
           ? timeStatus(warningAt, now, METEOALARM_CACHE_TTL_MS)
-          : 'unavailable',
+          : officialWarnings.status === 'error' ? 'error' : 'unavailable',
       updatedAt: warningAt,
     },
     {
@@ -108,7 +112,7 @@ export function ProviderStatusCard({
         ? 'loading'
         : secondaryProvider.status === 'ok'
           ? timeStatus(secondaryAt, now, 60 * 60_000)
-          : 'unavailable',
+          : secondaryProvider.status === 'error' ? 'error' : 'unavailable',
       updatedAt: secondaryAt,
     },
   ];

@@ -149,6 +149,7 @@ export async function fireFavoriteCityAlerts(
         city: city.name,
         cooldownPrefix: `${city.id}|`,
         cooldownMs: FAVORITE_COOLDOWN_MS,
+        timezone: data.timezone,
         titleFormatter: (alert) =>
           t('alert_city_title')
             .split('{city}')

@@ -101,11 +101,14 @@ export function WarningsCard({
       <View style={styles.stack}>
         {warnings.slice(0, MAX_ROWS).map((warning) => {
           const title = warning.event || warning.headline || t('no_data');
+          const levelLabel = t(`warning_level_${warning.levelColor}` as
+            'warning_level_green' | 'warning_level_yellow' | 'warning_level_orange' | 'warning_level_red');
           const until = untilLabel(warning.expires);
           const untilText = until
             ? t('warnings_until').replace('{t}', until)
             : null;
           const composedLabel = [
+            levelLabel,
             title,
             warning.description || null,
             warning.instruction || null,
@@ -152,7 +155,12 @@ export function WarningsCard({
           );
         })}
       </View>
-      <View style={styles.footer}>
+      <View
+        style={styles.footer}
+        accessible
+        accessibilityRole="text"
+        accessibilityLabel={`${t('warnings_source')}, ${updatedText}`}
+      >
         <Text style={[styles.source, { color: theme.textTertiary }]}>{t('warnings_source')}</Text>
         <Text style={[styles.updated, { color: theme.textTertiary }]}>{updatedText}</Text>
       </View>

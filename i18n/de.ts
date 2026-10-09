@@ -156,7 +156,7 @@ export const de: Strings = {
   outdoor_window_feedback_trend: 'Lokales Feedback: {good} von {total} Empfehlungen passten gut ({notForMe} nicht). Deine Einstellungen bleiben unverändert, bis du sie selbst bearbeitest.',
   alert_outcome_scheduled: 'Benachrichtigung geplant (Anzeige durch das System nicht bestätigt)',
   alert_outcome_quiet_hours: 'Während der Ruhezeiten unterdrückt',
-  alert_outcome_permission: 'Nicht gesendet: Benachrichtigungsberechtigung ist deaktiviert',
+  alert_outcome_permission: 'Nicht gesendet: Benachrichtigungsberechtigung nicht erteilt',
   alert_outcome_failed: 'Planung fehlgeschlagen; ein erneuter Versuch ist möglich',
   alert_outcome_escalated: 'Warnstufe erhöht',
   alert_outcome_expired: 'Abgelaufen',

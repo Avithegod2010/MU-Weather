@@ -156,7 +156,7 @@ export const el: Strings = {
   outdoor_window_feedback_trend: 'Τοπική γνώμη: {good} από τις {total} προτάσεις ταίριαξαν ({notForMe} δεν ταίριαξαν). Οι προτιμήσεις δεν αλλάζουν αν δεν τις επεξεργαστείς.',
   alert_outcome_scheduled: 'Η ειδοποίηση προγραμματίστηκε (δεν επιβεβαιώνεται η εμφάνισή της από το σύστημα)',
   alert_outcome_quiet_hours: 'Αναστάλθηκε κατά τις ώρες ησυχίας',
-  alert_outcome_permission: 'Δεν στάλθηκε: η άδεια ειδοποιήσεων είναι απενεργοποιημένη',
+  alert_outcome_permission: 'Δεν στάλθηκε: δεν έχει δοθεί άδεια ειδοποιήσεων',
   alert_outcome_failed: 'Ο προγραμματισμός απέτυχε· μπορεί να γίνει νέα προσπάθεια',
   alert_outcome_escalated: 'Αυξήθηκε η σοβαρότητα',
   alert_outcome_expired: 'Έληξε',

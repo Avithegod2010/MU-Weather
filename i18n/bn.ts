@@ -156,7 +156,7 @@ export const bn: Strings = {
   outdoor_window_feedback_trend: 'স্থানীয় মতামত: {total}টি পরামর্শের মধ্যে {good}টি ভালো মানিয়েছে ({notForMe}টি মানায়নি)। আপনি না বদলালে পছন্দের সেটিং বদলাবে না।',
   alert_outcome_scheduled: 'বিজ্ঞপ্তি নির্ধারিত (সিস্টেমে দেখানো নিশ্চিত নয়)',
   alert_outcome_quiet_hours: 'নীরব সময়ে আটকে দেওয়া হয়েছে',
-  alert_outcome_permission: 'পাঠানো হয়নি: বিজ্ঞপ্তির অনুমতি বন্ধ',
+  alert_outcome_permission: 'পাঠানো হয়নি: বিজ্ঞপ্তির অনুমতি দেওয়া হয়নি',
   alert_outcome_failed: 'বিজ্ঞপ্তি নির্ধারণ ব্যর্থ; আবার চেষ্টা করা যাবে',
   alert_outcome_escalated: 'সতর্কতার মাত্রা বেড়েছে',
   alert_outcome_expired: 'মেয়াদ শেষ',

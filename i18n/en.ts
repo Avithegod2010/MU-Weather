@@ -526,7 +526,7 @@ export const en = {
   outdoor_window_feedback_trend: 'Local feedback: {good} of {total} recommendations were good fits ({notForMe} not for me). Preferences stay unchanged unless you edit them.',
   alert_outcome_scheduled: 'Notification scheduled (system display not confirmed)',
   alert_outcome_quiet_hours: 'Suppressed by quiet hours',
-  alert_outcome_permission: 'Not sent: notification permission is off',
+  alert_outcome_permission: 'Not sent: notification permission not granted',
   alert_outcome_failed: 'Notification scheduling failed; it can retry',
   alert_outcome_escalated: 'Severity escalated',
   alert_outcome_expired: 'Expired',

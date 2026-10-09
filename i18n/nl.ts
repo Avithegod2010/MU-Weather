@@ -156,7 +156,7 @@ export const nl: Strings = {
   outdoor_window_feedback_trend: 'Lokale feedback: {good} van {total} aanbevelingen pasten goed ({notForMe} niet). Je voorkeuren veranderen niet tenzij je ze zelf aanpast.',
   alert_outcome_scheduled: 'Melding gepland (weergave door het systeem niet bevestigd)',
   alert_outcome_quiet_hours: 'Onderdrukt tijdens stille uren',
-  alert_outcome_permission: 'Niet verzonden: meldingsmachtiging staat uit',
+  alert_outcome_permission: 'Niet verzonden: meldingsmachtiging niet verleend',
   alert_outcome_failed: 'Melding plannen is mislukt; opnieuw proberen kan',
   alert_outcome_escalated: 'Ernst is verhoogd',
   alert_outcome_expired: 'Verlopen',

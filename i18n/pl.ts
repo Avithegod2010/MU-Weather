@@ -457,7 +457,7 @@ export const pl: Strings = {
   outdoor_window_feedback_trend: 'Lokalna opinia: {good} z {total} rekomendacji pasowało ({notForMe} nie pasowało). Preferencje nie zmienią się, dopóki ich nie edytujesz.',
   alert_outcome_scheduled: 'Powiadomienie zaplanowane (systemowe wyświetlenie nie jest potwierdzone)',
   alert_outcome_quiet_hours: 'Wstrzymano w godzinach ciszy',
-  alert_outcome_permission: 'Nie wysłano: uprawnienia do powiadomień są wyłączone',
+  alert_outcome_permission: 'Nie wysłano: nie przyznano uprawnień do powiadomień',
   alert_outcome_failed: 'Nie udało się zaplanować powiadomienia; można ponowić próbę',
   alert_outcome_escalated: 'Podwyższono poziom zagrożenia',
   alert_outcome_expired: 'Wygasło',
