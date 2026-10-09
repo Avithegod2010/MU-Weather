@@ -1,0 +1,28 @@
+tier,device_model,ram_gib,soc,android_release,refresh_rate_hz,app_commit,build_type,network,scenario,run,trace_path,weather_fetch_span_ms,ensemble_fetch_span_ms,cache_read_ms,post_fetch_parent_span_ms,js_thread_observations,frametimeline_janky_frames,frametimeline_total_frames,summary_statistic,notes,status
+entry,,,,,,,,,cold launch with saved snapshot,1,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,cold launch with saved snapshot,2,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,cold launch with saved snapshot,3,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,warm weather refresh,1,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,warm weather refresh,2,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,warm weather refresh,3,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,ensemble refresh,1,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,ensemble refresh,2,,,,,,,,,,,pending — no device trace
+entry,,,,,,,,,ensemble refresh,3,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,cold launch with saved snapshot,1,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,cold launch with saved snapshot,2,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,cold launch with saved snapshot,3,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,warm weather refresh,1,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,warm weather refresh,2,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,warm weather refresh,3,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,ensemble refresh,1,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,ensemble refresh,2,,,,,,,,,,,pending — no device trace
+mid,,,,,,,,,ensemble refresh,3,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,cold launch with saved snapshot,1,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,cold launch with saved snapshot,2,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,cold launch with saved snapshot,3,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,warm weather refresh,1,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,warm weather refresh,2,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,warm weather refresh,3,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,ensemble refresh,1,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,ensemble refresh,2,,,,,,,,,,,pending — no device trace
+high,,,,,,,,,ensemble refresh,3,,,,,,,,,,,pending — no device trace

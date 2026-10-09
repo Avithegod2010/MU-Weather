@@ -76,3 +76,7 @@ public/canvaskit.wasm
 
 # Python caches
 __pycache__/
+
+# Device-only Perfetto traces and generated capture reports
+perfetto-captures/
+*.pftrace
