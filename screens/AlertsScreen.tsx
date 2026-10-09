@@ -51,7 +51,7 @@ import {
   MAX_ALERT_HISTORY,
   type AlertHistoryEntry,
 } from '../utils/alertHistory';
-import { aggregateAlertHistoryImpacts } from '../utils/alertImpactHistory';
+import { formatAlertEvidence } from '../utils/alertEvidence';
 import type { WeatherImpact } from '../utils/impactTimeline';
 import type { AppTheme } from '../theme/palettes';
 
@@ -89,6 +89,12 @@ function historyStamp(at: number): string {
   const date = new Date(at);
   const day = date.toLocaleDateString(getLanguage(), { month: 'short', day: 'numeric' });
   return `${day} · ${formatClockParts(date.getHours(), date.getMinutes())}`;
+}
+
+function alertSeverityLabel(severity: 'info' | 'warning' | 'severe'): string {
+  if (severity === 'severe') return t('alert_severity_severe');
+  if (severity === 'warning') return t('alert_severity_warning');
+  return t('alert_severity_info');
 }
 
 /** Quiet-hour steppers step in 30-minute jumps and wrap through midnight. */
@@ -282,6 +288,7 @@ export function AlertsScreen({
 }: AlertsScreenProps) {
   const insets = useSafeAreaInsets();
   const [history, setHistory] = useState<AlertHistoryEntry[]>([]);
+  const [clockNow, setClockNow] = useState(() => Date.now());
   const [stormFeedback, setStormFeedback] = useState<StormFeedbackRecord[]>([]);
   const [notificationPermission, setNotificationPermission] = useState<'checking' | 'granted' | 'not-granted'>('checking');
   const { rules, addRule, toggleRule, deleteRule, setNote } = useCustomAlerts();
@@ -295,9 +302,14 @@ export function AlertsScreen({
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (visible) {
-      haptics.select();
-    }
+    if (!visible) return;
+    haptics.select();
+    const initialRefresh = setTimeout(() => setClockNow(Date.now()), 0);
+    const timer = setInterval(() => setClockNow(Date.now()), 60_000);
+    return () => {
+      clearTimeout(initialRefresh);
+      clearInterval(timer);
+    };
   }, [visible]);
 
   // History is read fresh every time the screen opens: alerts fire from the
@@ -343,7 +355,6 @@ export function AlertsScreen({
     setHistory([]);
     void clearAlertHistory();
   }, []);
-  const historyImpacts = aggregateAlertHistoryImpacts(history);
   const enabledRuleNames = [
     ...ALERT_DEFINITIONS.filter((definition) => settings[definition.key]).map((definition) => t(definition.title)),
     ...rules.filter((rule) => rule.enabled).map((rule) =>
@@ -433,6 +444,7 @@ export function AlertsScreen({
                     ? 'frost'
                     : normalizedKey;
               const Icon = ALERT_ICONS[iconKey as AlertKey] ?? Bell;
+              const severityLabel = alertSeverityLabel(impact.severity);
               const details = [
                 ...impact.safetyMessages,
                 ...impact.expected,
@@ -461,7 +473,7 @@ export function AlertsScreen({
                   ]}
                   accessible={!isStormImpact}
                   accessibilityRole={isStormImpact ? undefined : 'text'}
-                  accessibilityLabel={isStormImpact ? undefined : [impact.title, ...details, sourceUpdateText, untilText]
+                  accessibilityLabel={isStormImpact ? undefined : [severityLabel, impact.title, ...details, sourceUpdateText, untilText]
                     .filter(Boolean)
                     .join(', ')}
                 >
@@ -469,7 +481,10 @@ export function AlertsScreen({
                     <Icon size={18} color={theme.textPrimary} strokeWidth={2} />
                   </View>
                   <View style={styles.rowTexts}>
-                    <Text style={[styles.historyRowTitle, { color: theme.textPrimary }]}>
+                    <Text
+                      style={[styles.historyRowTitle, { color: theme.textPrimary }]}
+                      accessibilityLabel={`${severityLabel}, ${impact.title}`}
+                    >
                       {impact.title}{impact.signalIds.length > 1 ? ` ×${impact.signalIds.length}` : ''}
                     </Text>
                     <Text style={[styles.historyRowBody, { color: theme.textSecondary }]}>
@@ -859,26 +874,54 @@ export function AlertsScreen({
               {t('alert_history_empty')}
             </Text>
           ) : (
-            // The whole stored history - the list scrolls, and a smaller slice
-            // would hide older rows with no way to reveal them.
-            [...historyImpacts].reverse().slice(0, MAX_ALERT_HISTORY).map((impact) => {
-              const key = impact.hazard.slice(impact.hazard.lastIndexOf(':') + 1);
+            // Keep each outcome row intact: merging repeated alert signals can
+            // hide whether delivery was scheduled, suppressed, or expired.
+            history.slice(0, MAX_ALERT_HISTORY).map((entry) => {
+              const key = entry.key.slice(entry.key.lastIndexOf(':') + 1);
               const Icon = ALERT_ICONS[key as AlertKey] ?? Bell;
               const details = [
-                ...impact.safetyMessages,
-                ...impact.reasons.filter((reason) => !impact.safetyMessages.includes(reason)),
-              ];
-              const timeLabel = impact.startsAt === impact.endsAt
-                ? historyStamp(impact.startsAt)
-                : `${historyStamp(impact.startsAt)} – ${historyStamp(impact.endsAt)}`;
-              const cityLabel = impact.sources.filter((source) => source !== 'current-location').join(', ');
+                entry.message,
+                entry.evidence ? formatAlertEvidence(entry.evidence) : null,
+              ].filter((detail): detail is string => Boolean(detail));
+              const cityLabel = entry.city?.trim() ?? '';
+              const outcome = entry.deliveryStatus === 'scheduled'
+                ? t('alert_outcome_scheduled')
+                : entry.deliveryStatus === 'quiet-hours'
+                  ? t('alert_outcome_quiet_hours')
+                  : entry.deliveryStatus === 'permission-denied'
+                    ? t('alert_outcome_permission')
+                    : entry.deliveryStatus === 'scheduling-failed'
+                      ? t('alert_outcome_failed')
+                      : entry.deliveryStatus === 'expired'
+                        ? t('alert_outcome_expired')
+                        : t('alert_outcome_legacy');
+              const expired = entry.deliveryStatus !== 'expired' &&
+                typeof entry.expiresAt === 'number' && entry.expiresAt <= clockNow;
+              const outcomeDetails = [
+                outcome,
+                entry.escalated ? t('alert_outcome_escalated') : null,
+                expired ? t('alert_outcome_expired') : null,
+              ].filter((value): value is string => Boolean(value));
+              const timeLabel = historyStamp(entry.at);
+              const severityLabel = alertSeverityLabel(entry.severity);
+              const accessibleLabel = [
+                severityLabel,
+                entry.title,
+                ...outcomeDetails,
+                ...details,
+                cityLabel,
+                timeLabel,
+              ].filter(Boolean).join(', ');
               return (
                 <View
-                  key={impact.id}
+                  key={`${entry.key}:${entry.at}:${entry.deliveryStatus ?? 'legacy'}`}
                   style={[
                     styles.historyRow,
                     { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
                   ]}
+                  accessible
+                  accessibilityRole="text"
+                  accessibilityLabel={accessibleLabel}
                 >
                   <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
                     <Icon size={18} color={theme.textPrimary} strokeWidth={2} />
@@ -888,21 +931,23 @@ export function AlertsScreen({
                       style={[styles.historyRowTitle, { color: theme.textPrimary }]}
                       numberOfLines={1}
                     >
-                      {impact.title}{impact.signalIds.length > 1 ? ` ×${impact.signalIds.length}` : ''}
+                      {entry.title}
                     </Text>
                     <Text style={[styles.historyRowBody, { color: theme.textSecondary }]}>
                       {details.join('\n')}
+                    </Text>
+                    <Text style={[styles.historyMeta, { color: theme.textTertiary }]}>
+                      {outcomeDetails.join(' · ')}
                     </Text>
                     <Text
                       style={[styles.historyMeta, { color: theme.textTertiary }]}
                       numberOfLines={1}
                     >
-                      {cityLabel ? `${cityLabel} · ` : ''}
-                      {timeLabel}
+                      {cityLabel ? `${cityLabel} · ` : ''}{timeLabel}
                     </Text>
                   </View>
                   <View
-                    style={[styles.severityDot, { backgroundColor: SEVERITY_COLORS[impact.severity] }]}
+                    style={[styles.severityDot, { backgroundColor: SEVERITY_COLORS[entry.severity] }]}
                   />
                 </View>
               );

@@ -156,7 +156,7 @@ export const id: Strings = {
   outdoor_window_feedback_trend: 'Masukan lokal: {good} dari {total} rekomendasi cocok ({notForMe} tidak cocok). Preferensi tidak berubah kecuali Anda mengeditnya.',
   alert_outcome_scheduled: 'Notifikasi dijadwalkan (tampilan sistem belum dipastikan)',
   alert_outcome_quiet_hours: 'Disenyapkan selama jam tenang',
-  alert_outcome_permission: 'Tidak dikirim: izin notifikasi nonaktif',
+  alert_outcome_permission: 'Tidak dikirim: izin notifikasi belum diberikan',
   alert_outcome_failed: 'Penjadwalan notifikasi gagal; akan dicoba lagi',
   alert_outcome_escalated: 'Tingkat keparahan meningkat',
   alert_outcome_expired: 'Kedaluwarsa',

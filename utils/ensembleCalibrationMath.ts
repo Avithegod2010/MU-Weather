@@ -1,6 +1,5 @@
 import type {
   EnsembleSpread,
-  GeoLocation,
   HourlyWeatherObservation,
 } from '../api/types';
 import { localTimestampAsUtc } from './rainCalibrationMath';

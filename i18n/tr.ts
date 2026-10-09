@@ -457,7 +457,7 @@ export const tr: Strings = {
   outdoor_window_feedback_trend: 'Yerel geri bildirim: {total} önerinin {good} tanesi uygundu ({notForMe} tanesi uygun değildi). Siz değiştirmedikçe tercihleriniz değişmez.',
   alert_outcome_scheduled: 'Bildirim planlandı (sistemde gösterildiği doğrulanmadı)',
   alert_outcome_quiet_hours: 'Sessiz saatlerde engellendi',
-  alert_outcome_permission: 'Gönderilmedi: bildirim izni kapalı',
+  alert_outcome_permission: 'Gönderilmedi: bildirim izni verilmemiş',
   alert_outcome_failed: 'Bildirim planlanamadı; yeniden denenebilir',
   alert_outcome_escalated: 'Uyarı seviyesi yükseltildi',
   alert_outcome_expired: 'Süresi doldu',

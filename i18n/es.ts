@@ -156,7 +156,7 @@ export const es: Strings = {
   outdoor_window_feedback_trend: 'Opiniones locales: {good} de {total} recomendaciones fueron adecuadas ({notForMe} no lo fueron). Tus preferencias no cambian a menos que las edites.',
   alert_outcome_scheduled: 'Notificación programada (no se confirma que el sistema la muestre)',
   alert_outcome_quiet_hours: 'Silenciada durante las horas de descanso',
-  alert_outcome_permission: 'No enviada: los permisos de notificación están desactivados',
+  alert_outcome_permission: 'No enviada: no se concedió el permiso de notificación',
   alert_outcome_failed: 'No se pudo programar la notificación; se reintentará',
   alert_outcome_escalated: 'Severidad aumentada',
   alert_outcome_expired: 'Caducada',

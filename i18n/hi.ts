@@ -156,7 +156,7 @@ export const hi: Strings = {
   outdoor_window_feedback_trend: 'स्थानीय प्रतिक्रिया: {total} सुझावों में से {good} अच्छे रहे ({notForMe} उपयुक्त नहीं थे)। आपकी प्राथमिकताएँ तब तक नहीं बदलेंगी जब तक आप स्वयं न बदलें।',
   alert_outcome_scheduled: 'सूचना निर्धारित (सिस्टम पर दिखना पुष्ट नहीं)',
   alert_outcome_quiet_hours: 'शांत समय के कारण रोका गया',
-  alert_outcome_permission: 'नहीं भेजा गया: सूचना अनुमति बंद है',
+  alert_outcome_permission: 'नहीं भेजा गया: सूचना अनुमति नहीं मिली',
   alert_outcome_failed: 'सूचना निर्धारित नहीं हो सकी; दोबारा प्रयास हो सकता है',
   alert_outcome_escalated: 'गंभीरता बढ़ी',
   alert_outcome_expired: 'समाप्त',

@@ -2,13 +2,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { AlertSeverity } from './alertRules';
 import { isValidAlertEvidence } from './alertEvidence';
 import type { AlertEvidence } from './alertEvidence';
+import {
+  isAlertDeliveryStatus,
+  mergeAlertHistoryOutcomes,
+  type AlertDeliveryStatus,
+} from './alertHistoryPolicy';
 
 /**
- * One alert that actually fired (past its cooldown) on this device. The alert
- * rules themselves are stateless - this is the only place the app remembers
- * what it told the user, so the Alerts screen can show a short history instead
- * of letting each notification vanish.
+ * One cooldown-eligible alert evaluation on this device. The row records the
+ * app-level notification outcome as well as the rule evidence, so the Alerts
+ * screen can distinguish scheduled, suppressed, failed, and expired alerts.
  */
+export type { AlertDeliveryStatus } from './alertHistoryPolicy';
+
 export interface AlertHistoryEntry {
   /** Stored as a plain string so rows survive an AlertKey rename. */
   key: string;
@@ -21,6 +27,12 @@ export interface AlertHistoryEntry {
   at: number;
   /** Rule value, boundary, provider and observation time (legacy rows omit it). */
   evidence?: AlertEvidence;
+  /** App-level notification outcome; legacy rows predate explicit outcome tracking. */
+  deliveryStatus?: AlertDeliveryStatus;
+  /** True when the severity rose above the previous cooldown stamp. */
+  escalated?: boolean;
+  /** Forecast validity end, when the rule points to a known forecast interval. */
+  expiresAt?: number;
 }
 
 const HISTORY_KEY = '@mu_weather/alert_history_v1';
@@ -56,7 +68,10 @@ function isValidEntry(value: unknown): value is AlertHistoryEntry {
     typeof entry.at === 'number' &&
     Number.isFinite(entry.at) &&
     (entry.city === undefined || typeof entry.city === 'string') &&
-    (entry.evidence === undefined || isValidAlertEvidence(entry.evidence))
+    (entry.evidence === undefined || isValidAlertEvidence(entry.evidence)) &&
+    (entry.deliveryStatus === undefined || isAlertDeliveryStatus(entry.deliveryStatus)) &&
+    (entry.escalated === undefined || typeof entry.escalated === 'boolean') &&
+    (entry.expiresAt === undefined || (typeof entry.expiresAt === 'number' && Number.isFinite(entry.expiresAt)))
   );
 }
 
@@ -74,7 +89,7 @@ export async function loadAlertHistory(): Promise<AlertHistoryEntry[]> {
 }
 
 /**
- * Prepend freshly delivered alerts and keep the newest MAX_ALERT_HISTORY.
+ * Prepend newly observed outcomes and keep the newest MAX_ALERT_HISTORY.
  * Serialized against every other writer of the blob (see withHistoryLock).
  * Fire-and-forget: history must never break alert delivery.
  */
@@ -82,7 +97,9 @@ export function appendAlertHistory(entries: AlertHistoryEntry[]): Promise<void> 
   if (entries.length === 0) return Promise.resolve();
   return withHistoryLock(async () => {
     try {
-      const next = [...entries, ...(await loadAlertHistory())].slice(0, MAX_ALERT_HISTORY);
+      const existing = await loadAlertHistory();
+      const next = mergeAlertHistoryOutcomes(existing, entries, MAX_ALERT_HISTORY);
+      if (next.length === existing.length && next.every((entry, index) => entry === existing[index])) return;
       await AsyncStorage.setItem(HISTORY_KEY, JSON.stringify(next));
     } catch {
       // Non-critical bookkeeping.

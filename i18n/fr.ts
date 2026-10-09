@@ -156,7 +156,7 @@ export const fr: Strings = {
   outdoor_window_feedback_trend: 'Avis local : {good} recommandations sur {total} convenaient ({notForMe} ne convenaient pas). Vos préférences ne changent que si vous les modifiez.',
   alert_outcome_scheduled: 'Notification programmée (affichage par le système non confirmé)',
   alert_outcome_quiet_hours: 'Ignorée pendant les heures silencieuses',
-  alert_outcome_permission: 'Non envoyée : autorisation de notification désactivée',
+  alert_outcome_permission: 'Non envoyée : autorisation de notification non accordée',
   alert_outcome_failed: 'Échec de programmation ; un nouvel essai est possible',
   alert_outcome_escalated: 'Niveau de gravité relevé',
   alert_outcome_expired: 'Expirée',
