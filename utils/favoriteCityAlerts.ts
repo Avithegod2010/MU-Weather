@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchWeather } from '../api/openMeteo';
-import { evaluateAlerts } from './alertRules';
-import type { AlertSettings, TriggeredAlert } from './alertRules';
+import { evaluateAlerts, type AlertExtras, type AlertSettings, type TriggeredAlert } from './alertRules';
 import { evaluateCustomRules, loadCustomAlerts } from './customAlerts';
 import { buildAlertExtras, deliverAlerts, COOLDOWN_MS } from './fireAlertNotifications';
 import { loadFavorites } from './favoritesStore';
@@ -10,8 +9,8 @@ import type { GeoLocation, WeatherBundle } from '../api/types';
 
 /** At most this many saved cities per sweep - every city costs a full fetch. */
 export const MAX_FAVORITE_CHECKS = 3;
-/** One sweep every 20 minutes; both the app refresh path and the background task call in. */
-const SWEEP_TTL_MS = 20 * 60 * 1000;
+const MINUTE_MS = 60 * 1000;
+const DEFAULT_SWEEP_INTERVAL_MINUTES = 20;
 /** Saved cities are quieter than the active location: 12 h per alert, not 6 h. */
 const FAVORITE_COOLDOWN_MS = 2 * COOLDOWN_MS;
 const SWEEP_STAMP_KEY = '@mu_weather/fav_alert_sweep_v1';
@@ -21,9 +20,31 @@ const SWEEP_STAMP_KEY = '@mu_weather/fav_alert_sweep_v1';
  * city the next sweep starts at. The offset is what lets more saved cities
  * exist than one sweep can check.
  */
-interface SweepState {
+export interface FavoriteCitySweepState {
   at: number;
   next: number;
+}
+
+type SweepState = FavoriteCitySweepState;
+
+/** Integration ports allow the persisted sweep and per-city failures to be tested deterministically. */
+export interface FavoriteCityAlertPorts {
+  now?: () => number;
+  loadSweepState?: () => Promise<FavoriteCitySweepState>;
+  saveSweepState?: (state: FavoriteCitySweepState) => Promise<void>;
+  loadFavorites?: () => Promise<GeoLocation[]>;
+  fetchWeather?: (city: GeoLocation) => Promise<WeatherBundle>;
+  loadCustomAlerts?: typeof loadCustomAlerts;
+  evaluateCityAlerts?: (settings: AlertSettings, data: WeatherBundle, extras: AlertExtras) => Promise<TriggeredAlert[]> | TriggeredAlert[];
+  buildAlertExtras?: (settings: AlertSettings, data: WeatherBundle) => Promise<AlertExtras>;
+  deliverAlerts?: (triggered: TriggeredAlert[], options: import('./fireAlertNotifications').DeliverAlertsOptions) => Promise<TriggeredAlert[]>;
+}
+
+/** User cadence affects saved-city work only; active-location notifications are not gated here. */
+export function favoriteCitySweepIntervalMs(settings: AlertSettings): number {
+  const requested = settings.favoriteRefreshIntervalMinutes;
+  const minutes = requested === 30 || requested === 60 ? requested : DEFAULT_SWEEP_INTERVAL_MINUTES;
+  return minutes * MINUTE_MS;
 }
 
 /**
@@ -78,8 +99,9 @@ async function saveSweepState(state: SweepState): Promise<void> {
  * "Rain starting in Paris in 40 min" while the user is somewhere else.
  *
  * Gated by the opt-in `favorites` alert key, capped at MAX_FAVORITE_CHECKS
- * cities per sweep, and rate-limited to one sweep every 20 minutes because both
- * the refresh path and the background task call it.
+ * cities per sweep, and rate-limited by the user's saved-city refresh cadence
+ * because both the refresh path and the background task call it. The default
+ * is 20 minutes; OS background scheduling may run less often.
  *
  * Rotation: a sweep starts where the previous one stopped and the offset
  * advances by the number of cities actually checked, so one sweep per 20
@@ -100,18 +122,21 @@ async function saveSweepState(state: SweepState): Promise<void> {
 export async function fireFavoriteCityAlerts(
   settings: AlertSettings,
   current: WeatherBundle,
+  ports: FavoriteCityAlertPorts = {},
 ): Promise<TriggeredAlert[]> {
   if (!settings.favorites) return [];
 
-  const sweep = await loadSweepState();
+  const now = ports.now ?? Date.now;
+  const sweep = await (ports.loadSweepState ?? loadSweepState)();
   // A legacy stamp (or none) is due; the state also holds the rotation offset.
-  if (sweep.at > 0 && Date.now() - sweep.at <= SWEEP_TTL_MS) return [];
+  if (sweep.at > 0 && now() - sweep.at <= favoriteCitySweepIntervalMs(settings)) return [];
 
-  const favorites = (await loadFavorites()).filter(
+  const favorites = (await (ports.loadFavorites ?? loadFavorites)()).filter(
     (favorite) => !isSamePlace(favorite, current.location),
   );
+  const saveState = ports.saveSweepState ?? saveSweepState;
   if (favorites.length === 0) {
-    await saveSweepState({ at: Date.now(), next: 0 });
+    await saveState({ at: now(), next: 0 });
     return [];
   }
 
@@ -127,25 +152,30 @@ export async function fireFavoriteCityAlerts(
   const allTriggered: TriggeredAlert[] = [];
   // Custom rules run for saved cities too - the quieter per-city cooldown
   // (12 h) keeps background cities quieter than the active one.
-  const customRules = await loadCustomAlerts();
+  const customRules = ports.evaluateCityAlerts ? [] : await (ports.loadCustomAlerts ?? loadCustomAlerts)();
+  const getExtras = ports.buildAlertExtras ?? buildAlertExtras;
+  const deliver = ports.deliverAlerts ?? deliverAlerts;
 
   for (const city of picks) {
     try {
-      const data = await fetchWeather(city);
-      const extras = await buildAlertExtras(citySettings, data);
-      const triggered = evaluateAlerts(
-        citySettings,
-        data.current,
-        data.hourly,
-        data.daily[0] ?? null,
-        data.aqi,
-        extras,
-      );
-      const customTriggered = evaluateCustomRules(customRules, data);
-      const cityTriggered = [...triggered, ...customTriggered];
+      const data = await (ports.fetchWeather ?? fetchWeather)(city);
+      const extras = await getExtras(citySettings, data);
+      const cityTriggered = ports.evaluateCityAlerts
+        ? await ports.evaluateCityAlerts(citySettings, data, extras)
+        : [
+            ...evaluateAlerts(
+              citySettings,
+              data.current,
+              data.hourly,
+              data.daily[0] ?? null,
+              data.aqi,
+              extras,
+            ),
+            ...evaluateCustomRules(customRules, data),
+          ];
       if (cityTriggered.length === 0) continue;
       allTriggered.push(...cityTriggered);
-      await deliverAlerts(cityTriggered, {
+      await deliver(cityTriggered, {
         city: city.name,
         cooldownPrefix: `${city.id}|`,
         cooldownMs: FAVORITE_COOLDOWN_MS,
@@ -162,6 +192,6 @@ export async function fireFavoriteCityAlerts(
     }
   }
 
-  await saveSweepState({ at: Date.now(), next: (start + count) % favorites.length });
+  await saveState({ at: now(), next: (start + count) % favorites.length });
   return allTriggered;
 }
