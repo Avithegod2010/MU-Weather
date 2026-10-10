@@ -36,8 +36,8 @@ import {
 } from '../utils/uiIcons';
 import { AnimatedBackground } from '../components/AnimatedBackground';
 import { haptics } from '../utils/haptics';
-import { ALERT_DEFINITIONS } from '../utils/alertRules';
-import type { AlertKey, AlertSettings, QuietHoursSettings } from '../utils/alertRules';
+import { ALERT_DEFINITIONS, FAVORITE_CITY_REFRESH_INTERVALS } from '../utils/alertRules';
+import type { AlertKey, AlertSettings, FavoriteCityRefreshInterval, QuietHoursSettings } from '../utils/alertRules';
 import * as Notifications from '../utils/notifications';
 import { loadStormAlertFeedback, saveStormAlertFeedback } from '../utils/stormAlertFeedback';
 import { stormFeedbackEventKey, upsertStormFeedback } from '../utils/stormFeedbackPolicy';
@@ -269,6 +269,7 @@ interface AlertsScreenProps {
   settings: AlertSettings;
   onToggle: (key: AlertKey) => void;
   onUpdateQuiet: (patch: Partial<QuietHoursSettings>) => void;
+  onUpdateFavoriteRefreshInterval: (minutes: FavoriteCityRefreshInterval) => void;
   ready: boolean;
   currentImpacts: WeatherImpact[];
   /** Stable, local city ID used to keep storm feedback scoped to this place. */
@@ -282,6 +283,7 @@ export function AlertsScreen({
   settings,
   onToggle,
   onUpdateQuiet,
+  onUpdateFavoriteRefreshInterval,
   ready,
   currentImpacts,
   feedbackScope,
@@ -451,11 +453,15 @@ export function AlertsScreen({
                 ...impact.reasons,
                 ...impact.actions,
               ].filter((detail, index, all) => Boolean(detail.trim()) && all.indexOf(detail) === index);
-              const sourceUpdateText = impact.sourceUpdates
-                .map(({ source, updatedAt }) =>
+              const basisLabels = impact.bases.includes('forecast-exposure')
+                ? [t('alert_forecast_exposure')]
+                : [];
+              const sourceUpdateText = [
+                ...basisLabels,
+                ...impact.sourceUpdates.map(({ source, updatedAt }) =>
                   `${source} · ${t('aurora_updated').replace('{time}', historyStamp(updatedAt))}`,
-                )
-                .join(' · ');
+                ),
+              ].filter((value, index, all) => value && all.indexOf(value) === index).join(' · ');
               const untilText = impact.endsAt > impact.sourceUpdatedAt
                 ? t('warnings_until').replace('{t}', historyStamp(impact.endsAt))
                 : null;
@@ -562,7 +568,8 @@ export function AlertsScreen({
                 { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
                 pressed && { opacity: 0.8 },
               ]}
-              accessibilityRole="button"
+              accessibilityRole="switch"
+              accessibilityLabel={t(definition.title)}
               accessibilityState={{ checked: enabled }}
             >
               <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
@@ -577,6 +584,7 @@ export function AlertsScreen({
                 </Text>
               </View>
               <SlidingSwitch theme={theme}
+                accessibilityLabel={t(definition.title)}
                 value={enabled}
                 onValueChange={() => {
                   if (settings[definition.key]) {
@@ -594,6 +602,36 @@ export function AlertsScreen({
           );
         })}
 
+        {ready && settings.favorites ? (
+          <View style={[styles.row, styles.refreshCadenceRow, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <MapPin size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.refreshCadenceContent}>
+              <Text style={[styles.rowTitle, { color: theme.textPrimary }]}>
+                {t('alert_favorites_refresh_title')}
+              </Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textSecondary }]}>
+                {t('alert_favorites_refresh_sub')}
+              </Text>
+              <Segmented
+                theme={theme}
+                options={FAVORITE_CITY_REFRESH_INTERVALS.map((minutes) => ({
+                  value: String(minutes),
+                  label: t('alert_favorites_refresh_minutes').replace('{n}', String(minutes)),
+                }))}
+                value={String(settings.favoriteRefreshIntervalMinutes)}
+                onChange={(value) => {
+                  const minutes = Number(value);
+                  if (FAVORITE_CITY_REFRESH_INTERVALS.includes(minutes as FavoriteCityRefreshInterval)) {
+                    onUpdateFavoriteRefreshInterval(minutes as FavoriteCityRefreshInterval);
+                  }
+                }}
+              />
+            </View>
+          </View>
+        ) : null}
+
         <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
           <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
             <Moon size={20} color={theme.textPrimary} strokeWidth={2} />
@@ -607,6 +645,7 @@ export function AlertsScreen({
             </Text>
           </View>
           <SlidingSwitch theme={theme}
+            accessibilityLabel={t('s_quiet_hours')}
             value={ready ? settings.quietHoursEnabled : false}
             onValueChange={(value) => {
               if (value) {
@@ -718,6 +757,7 @@ export function AlertsScreen({
                 ) : null}
               </View>
               <SlidingSwitch theme={theme}
+                accessibilityLabel={`${t(CUSTOM_METRIC_KEYS[rule.metric])} ${rule.op === 'gte' ? '≥' : '≤'} ${formatCustomValue(rule.metric, rule.value)}`}
                 value={rule.enabled}
                 onValueChange={() => {
                   if (rule.enabled) {
@@ -1043,6 +1083,13 @@ const styles = StyleSheet.create({
   rowTexts: {
     flex: 1,
     gap: 2,
+  },
+  refreshCadenceRow: {
+    alignItems: 'flex-start',
+  },
+  refreshCadenceContent: {
+    flex: 1,
+    gap: 8,
   },
   feedbackBlock: {
     gap: 6,

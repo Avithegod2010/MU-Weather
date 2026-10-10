@@ -309,6 +309,7 @@ export function HomeScreen() {
   const alertState = useAlerts(weather.data, FEATURES.backgroundAlerts && settings.backgroundAlerts);
   const forecastSourceLabel = t('src_forecast');
   const officialSourceLabel = t('card_warnings');
+  const observationSourceLabel = t('provider_current_observation');
   const currentImpacts = useMemo(() => {
     const freshness = weather.data
       ? assessWeatherCacheFreshness({
@@ -331,7 +332,11 @@ export function HomeScreen() {
       weather.data?.fetchedAt ?? null,
       meteoAlarm.updatedAt,
       planningNow,
-      { forecast: forecastSourceLabel, official: officialSourceLabel },
+      {
+        forecast: forecastSourceLabel,
+        official: officialSourceLabel,
+        observation: observationSourceLabel,
+      },
     );
   }, [
     active?.latitude,
@@ -343,6 +348,7 @@ export function HomeScreen() {
     planningNow,
     forecastSourceLabel,
     officialSourceLabel,
+    observationSourceLabel,
     weather.data,
   ]);
   const providerStatus = useProviderStatus(
@@ -639,6 +645,8 @@ export function HomeScreen() {
                   setMapOpen(true);
                 }}
                 style={({ pressed }) => [styles.iconButtonInner, pressed && { opacity: 0.6 }]}
+                accessibilityRole="button"
+                accessibilityLabel={t('a11y_open_map')}
               >
                 <MapIcon size={20} color={theme.textPrimary} strokeWidth={2.2} />
               </Pressable>
@@ -651,6 +659,8 @@ export function HomeScreen() {
                   haptics.select();
                   setFavoritesOpen(true);
                 }}
+                accessibilityRole="button"
+                accessibilityLabel={active.name}
               >
                 <MapPin size={15} color={theme.textSecondary} strokeWidth={2.4} />
                 <Text style={[styles.locationButtonText, { color: theme.textPrimary }]} numberOfLines={1}>
@@ -668,6 +678,8 @@ export function HomeScreen() {
                     setAlertsOpen(true);
                   }}
                   style={({ pressed }) => [styles.iconButtonInner, pressed && { opacity: 0.6 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('a11y_open_alerts')}
                 >
                   <Bell size={20} color={theme.textPrimary} strokeWidth={2.2} />
                 </Pressable>
@@ -679,6 +691,8 @@ export function HomeScreen() {
                     setSearchOpen(true);
                   }}
                   style={({ pressed }) => [styles.iconButtonInner, pressed && { opacity: 0.6 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('a11y_open_search')}
                 >
                   <SearchIcon size={20} color={theme.textPrimary} strokeWidth={2.2} />
                 </Pressable>
@@ -690,6 +704,8 @@ export function HomeScreen() {
                     setSettingsOpen(true);
                   }}
                   style={({ pressed }) => [styles.iconButtonInner, pressed && { opacity: 0.6 }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('a11y_open_settings')}
                 >
                   <SettingsIcon size={20} color={theme.textPrimary} strokeWidth={2.2} />
                 </Pressable>
@@ -757,6 +773,8 @@ export function HomeScreen() {
                           },
                           pressed && { opacity: 0.8 },
                         ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${alert.title}. ${alert.message}`}
                       >
                         <TriangleAlert
                           size={17}
@@ -879,6 +897,9 @@ export function HomeScreen() {
                       theme={theme}
                       hours={weather.data.hourly}
                       calibration={forecastCalibration.rain}
+                      rainEpisodes={ensemble.spread ? ensemble.spread.rainEpisodes ?? [] : null}
+                      ensembleFetchedAt={ensemble.spread?.fetchedAt ?? null}
+                      now={planningNow}
                     />
                   </Card>
                 </Reveal>
@@ -1115,6 +1136,7 @@ export function HomeScreen() {
           />
           <Pressable
             onPress={() => setSearchOpen(true)}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.pickButton,
               { backgroundColor: theme.chipBg, opacity: pressed ? 0.7 : 1 },
@@ -1157,9 +1179,10 @@ export function HomeScreen() {
         settings={alertState.settings}
         onToggle={alertState.toggleAlert}
         onUpdateQuiet={alertState.updateQuietHours}
+        onUpdateFavoriteRefreshInterval={alertState.updateFavoriteRefreshInterval}
         ready={alertState.ready}
         currentImpacts={currentImpacts}
-        feedbackScope={active?.id ?? 'current-location'}
+        feedbackScope={weatherLocationKey(active?.latitude, active?.longitude) ?? 'current-location'}
       />
 
       <MapScreen

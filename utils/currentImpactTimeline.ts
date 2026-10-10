@@ -1,5 +1,5 @@
 import { aggregateWeatherImpacts } from './impactTimeline';
-import type { ImpactSeverity, ImpactSignal, WeatherImpact } from './impactTimeline';
+import type { ImpactBasis, ImpactSeverity, ImpactSignal, WeatherImpact } from './impactTimeline';
 import type { TriggeredAlert } from './alertRules';
 import { formatAlertEvidence } from './alertEvidence';
 import { METEOALARM_CACHE_TTL_MS, type MeteoAlarmWarning } from './meteoalarm';
@@ -8,6 +8,7 @@ import { WEATHER_CACHE_FRESH_FOR_MS } from './freshnessPolicy';
 export interface ImpactSourceLabels {
   forecast: string;
   official: string;
+  observation?: string;
 }
 
 function hazardForAlert(key: string): string {
@@ -74,10 +75,17 @@ export function buildCurrentImpactTimeline(
       ) return;
       const hazard = hazardForAlert(alert.key);
       const evidence = alert.evidence ? formatAlertEvidence(alert.evidence) : '';
+      const evidenceSource = alert.evidence?.source ?? '';
+      const basis: ImpactBasis = /current conditions?|current observation/i.test(evidenceSource)
+        ? 'observed'
+        : 'forecast-exposure';
       signals.push({
         id: `forecast:${alert.key}:${index}:${freshForecastAt}`,
         hazard,
-        source: labels.forecast,
+        source: basis === 'observed'
+          ? labels.observation ?? (evidenceSource || labels.forecast)
+          : labels.forecast,
+        basis,
         severity: alert.severity,
         startsAt: freshForecastAt,
         endsAt: freshForecastAt,
@@ -103,6 +111,7 @@ export function buildCurrentImpactTimeline(
         id: `official:${warning.id}`,
         hazard: hazardForOfficialWarning(warning),
         source: labels.official,
+        basis: 'official-warning',
         severity,
         startsAt: now,
         endsAt: expiresAt,

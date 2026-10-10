@@ -11,7 +11,11 @@ import type { MeteoAlarmState } from '../hooks/useMeteoAlarm';
 import type { ProviderCheck } from '../api/providers';
 import { ENSEMBLE_TTL_MS } from '../utils/ensembleCache';
 import { METEOALARM_CACHE_TTL_MS } from '../utils/meteoalarm';
-import { WEATHER_CACHE_FRESH_FOR_MS } from '../utils/freshnessPolicy';
+import {
+  assessSignalFreshness,
+  providerLocalTimestampToEpoch,
+  WEATHER_CACHE_FRESH_FOR_MS,
+} from '../utils/freshnessPolicy';
 
 interface ProviderStatusCardProps {
   theme: AppTheme;
@@ -22,7 +26,7 @@ interface ProviderStatusCardProps {
   now: number;
 }
 
-type RowStatus = 'fresh' | 'stale' | 'loading' | 'unavailable' | 'error';
+type RowStatus = 'fresh' | 'stale' | 'loading' | 'unavailable' | 'unsupported' | 'error';
 
 interface ProviderRow {
   label: string;
@@ -52,10 +56,14 @@ function statusLabel(row: ProviderRow, now: number): string {
       return t('detail_loading');
     case 'unavailable':
       return t('unavailable');
+    case 'unsupported':
+      return t('warning_state_unsupported');
     case 'error':
       return t('provider_status_error');
-    case 'stale':
-      return `${t('offline_banner_stale')} · ${ageLabel(row.updatedAt, now)}`;
+    case 'stale': {
+      const age = ageLabel(row.updatedAt, now);
+      return age ? `${t('offline_banner_stale')} · ${age}` : t('offline_banner_stale');
+    }
     case 'fresh':
       return `${t('offline_banner_age')} · ${ageLabel(row.updatedAt, now)}`;
   }
@@ -70,14 +78,35 @@ export function ProviderStatusCard({
   now,
 }: ProviderStatusCardProps) {
   const weatherAt = weather?.fetchedAt ?? null;
+  const aqiAt = weather?.airQualityFetchedAt ??
+    (weather?.airQualityStatus === undefined && weather?.aqi ? weatherAt : null);
   const aqiAvailable = weather?.airQualityStatus === 'available' ||
     (weather?.airQualityStatus === undefined && weather?.aqi !== null && weather?.aqi !== undefined);
-  const aqiAt = weather?.airQualityFetchedAt ?? (aqiAvailable ? weatherAt : null);
+  const currentObservationAt = providerLocalTimestampToEpoch(
+    weather?.current.observationTime,
+    weather?.utcOffsetSeconds,
+  );
+  const aqiObservationAt = providerLocalTimestampToEpoch(
+    weather?.aqi?.observationTime,
+    weather?.utcOffsetSeconds,
+  );
+  const currentObservationFreshness = assessSignalFreshness(currentObservationAt, now, 90 * 60_000);
+  const aqiObservationFreshness = assessSignalFreshness(aqiObservationAt, now, 6 * 60 * 60_000);
   const ensembleAt = ensemble.spread?.fetchedAt ?? null;
   const warningAt = officialWarnings.updatedAt;
   const secondaryAt = secondaryProvider.checkedAt ?? null;
 
   const rows: ProviderRow[] = [
+    {
+      label: t('provider_current_observation'),
+      status: currentObservationFreshness.status,
+      updatedAt: currentObservationAt,
+    },
+    {
+      label: t('provider_aqi_observation'),
+      status: aqiAvailable ? aqiObservationFreshness.status : 'unavailable',
+      updatedAt: aqiAvailable ? aqiObservationAt : null,
+    },
     {
       label: t('card_hourly'),
       status: weather ? timeStatus(weatherAt, now, WEATHER_CACHE_FRESH_FOR_MS) : 'unavailable',
@@ -103,7 +132,11 @@ export function ProviderStatusCard({
         ? 'loading'
         : officialWarnings.status === 'ok'
           ? timeStatus(warningAt, now, METEOALARM_CACHE_TTL_MS)
-          : officialWarnings.status === 'error' ? 'error' : 'unavailable',
+          : officialWarnings.status === 'stale'
+            ? 'stale'
+            : officialWarnings.status === 'unsupported'
+              ? 'unsupported'
+              : officialWarnings.status === 'error' ? 'error' : 'unavailable',
       updatedAt: warningAt,
     },
     {

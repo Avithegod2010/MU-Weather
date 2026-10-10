@@ -55,6 +55,7 @@ export function FavoritesSheet({
               { backgroundColor: theme.chipBg },
               pressed && { opacity: 0.7 },
             ]}
+            accessibilityRole="button"
           >
             <Text style={[styles.compareButtonText, { color: theme.textPrimary }]}>
               {t('fav_compare')}
@@ -77,28 +78,34 @@ export function FavoritesSheet({
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => (
             <View style={styles.rowWrapper}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.row,
-                  {
-                    backgroundColor: pressed
-                      ? theme.isLight
-                        ? 'rgba(20,28,44,0.06)'
-                        : 'rgba(255,255,255,0.08)'
-                      : 'transparent',
-                  },
-                ]}
-                onPress={() => onSelect(item)}
-              >
-                <MapPin size={18} color={theme.textSecondary} strokeWidth={2} />
-                <View style={styles.rowTexts}>
-                  <Text style={[styles.rowTitle, { color: inputColor }]} numberOfLines={1}>
-                    {item.name}
-                  </Text>
-                  <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]} numberOfLines={1}>
-                    {formatLocationSubtitle(item) || 'Saved location'}
-                  </Text>
-                </View>
+              <View style={styles.rowOuter}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.row,
+                    styles.selectRow,
+                    {
+                      backgroundColor: pressed
+                        ? theme.isLight
+                          ? 'rgba(20,28,44,0.06)'
+                          : 'rgba(255,255,255,0.08)'
+                        : 'transparent',
+                    },
+                  ]}
+                  onPress={() => onSelect(item)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${item.name}, ${formatLocationSubtitle(item) || 'Saved location'}`}
+                >
+                  <MapPin size={18} color={theme.textSecondary} strokeWidth={2} />
+                  <View style={styles.rowTexts}>
+                    <Text style={[styles.rowTitle, { color: inputColor }]} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                    <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]} numberOfLines={1}>
+                      {formatLocationSubtitle(item) || 'Saved location'}
+                    </Text>
+                  </View>
+                  <ChevronRight size={18} color={theme.textTertiary} strokeWidth={2.2} />
+                </Pressable>
                 <Pressable
                   hitSlop={10}
                   onPress={() => {
@@ -107,12 +114,11 @@ export function FavoritesSheet({
                   }}
                   style={styles.iconButton}
                   accessibilityRole="button"
-                  accessibilityLabel={t('a11y_fav_remove')}
+                  accessibilityLabel={`${t('a11y_fav_remove')}: ${item.name}`}
                 >
                   <Star size={20} color="#F5C04E" fill="#F5C04E" strokeWidth={2} />
                 </Pressable>
-                <ChevronRight size={18} color={theme.textTertiary} strokeWidth={2.2} />
-              </Pressable>
+              </View>
             </View>
           )}
         />
@@ -160,6 +166,11 @@ const styles = StyleSheet.create({
   rowWrapper: {
     paddingHorizontal: 16,
   },
+  rowOuter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -167,6 +178,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 13,
+  },
+  selectRow: {
+    flex: 1,
   },
   rowTexts: {
     flex: 1,

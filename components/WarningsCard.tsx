@@ -14,11 +14,10 @@ import {
 
 interface WarningsCardProps {
   theme: AppTheme;
-  /** Active warnings for the location, or null while loading/failed. */
+  /** Current warnings, last-known stale warnings, or null while unavailable. */
   warnings: MeteoAlarmWarning[] | null;
-  /** Feed status from useMeteoAlarm; unused today - the card is simply
-   * absent while loading or after a failure (no skeleton). */
-  status: 'idle' | 'loading' | 'ok' | 'error';
+  /** Distinguishes a clear feed, unsupported region, failure, and stale snapshot. */
+  status: 'idle' | 'unsupported' | 'loading' | 'ok' | 'stale' | 'error';
   /** Original source-fetch time, not the UI's last render/check time. */
   updatedAt: number | null;
   now: number;
@@ -66,29 +65,42 @@ function untilLabel(iso: string): string {
 
 /**
  * Government-issued severe-weather warnings (MetoAlarm) for the active
- * location. Not pressable - there is no deep-dive behind it. Absent while
- * loading, after a failure, or when no warnings are active.
+ * location. Not pressable - there is no deep-dive behind it. Its state text
+ * explicitly distinguishes no warnings, unsupported regions, outages and stale data.
  */
 export function WarningsCard({
   theme,
   warnings,
+  status,
   updatedAt,
   now,
   style,
   revealDelay,
 }: WarningsCardProps) {
   const sourceAge = updatedAt === null ? Number.POSITIVE_INFINITY : now - updatedAt;
-  if (
-    !warnings ||
-    warnings.length === 0 ||
-    updatedAt === null ||
-    !Number.isFinite(updatedAt) ||
-    sourceAge < -5 * 60 * 1000 ||
-    sourceAge >= METEOALARM_CACHE_TTL_MS
-  ) return null;
-  const updatedDate = new Date(Math.min(updatedAt, now));
-  const updatedTime = `${updatedDate.toLocaleDateString(getLanguage(), { month: 'short', day: 'numeric' })} · ${formatHourLabel(localNaiveIso(updatedDate), false)}`;
-  const updatedText = t('aurora_updated').replace('{time}', updatedTime);
+  const validTimestamp = updatedAt !== null && Number.isFinite(updatedAt);
+  const stale = status === 'stale' || (status === 'ok' && (
+    !validTimestamp || sourceAge < -5 * 60 * 1000 || sourceAge >= METEOALARM_CACHE_TTL_MS
+  ));
+  const showWarnings = (status === 'ok' || status === 'stale') && validTimestamp;
+  if (status === 'idle') return null;
+  const updatedDate = validTimestamp ? new Date(Math.min(updatedAt, now)) : null;
+  const updatedTime = updatedDate
+    ? `${updatedDate.toLocaleDateString(getLanguage(), { month: 'short', day: 'numeric' })} · ${formatHourLabel(localNaiveIso(updatedDate), false)}`
+    : '';
+  const updatedText = updatedTime ? t('aurora_updated').replace('{time}', updatedTime) : '';
+  const stateMessage = status === 'loading'
+    ? t('warning_state_loading')
+    : status === 'unsupported'
+      ? t('warning_state_unsupported')
+      : status === 'error'
+        ? t('warning_state_unavailable')
+        : stale
+          ? t('warning_state_stale').replace('{time}', updatedTime || t('unavailable'))
+          : warnings?.length
+            ? null
+            : t('warning_state_none');
+  const visibleWarnings = showWarnings ? (warnings ?? []) : [];
 
   return (
     <Card
@@ -98,8 +110,17 @@ export function WarningsCard({
       style={style}
       revealDelay={revealDelay}
     >
+      {stateMessage ? (
+        <Text
+          style={[styles.stateMessage, { color: stale ? '#EFC25C' : theme.textSecondary }]}
+          accessible
+          accessibilityRole="text"
+        >
+          {stateMessage}
+        </Text>
+      ) : null}
       <View style={styles.stack}>
-        {warnings.slice(0, MAX_ROWS).map((warning) => {
+        {visibleWarnings.slice(0, MAX_ROWS).map((warning) => {
           const title = warning.event || warning.headline || t('no_data');
           const levelLabel = t(`warning_level_${warning.levelColor}` as
             'warning_level_green' | 'warning_level_yellow' | 'warning_level_orange' | 'warning_level_red');
@@ -159,16 +180,23 @@ export function WarningsCard({
         style={styles.footer}
         accessible
         accessibilityRole="text"
-        accessibilityLabel={`${t('warnings_source')}, ${updatedText}`}
+        accessibilityLabel={[t('warnings_source'), updatedText].filter(Boolean).join(', ')}
       >
         <Text style={[styles.source, { color: theme.textTertiary }]}>{t('warnings_source')}</Text>
-        <Text style={[styles.updated, { color: theme.textTertiary }]}>{updatedText}</Text>
+        {updatedText ? (
+          <Text style={[styles.updated, { color: theme.textTertiary }]}>{updatedText}</Text>
+        ) : null}
       </View>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
+  stateMessage: {
+    fontSize: 12,
+    lineHeight: 17,
+    marginBottom: 9,
+  },
   stack: {
     gap: 11,
   },

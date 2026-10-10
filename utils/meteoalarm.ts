@@ -8,8 +8,9 @@
  * module: gates on country membership BEFORE fetching, caches one parsed
  * feed in memory for 15 minutes, filters stale entries client-side and
  * narrows to the active coordinates via CAP polygon point-in-polygon.
- * Every fetch/parse failure returns null and never throws - the card is
- * simply absent.
+ * Fetch/parse failures return null; after a failed refresh, the hook may show
+ * still-valid last-known warnings only with an explicit stale label. Expired
+ * CAP warnings are removed from that fallback snapshot.
  */
 
 /** ISO2 (uppercase) -> feed slug for every MeteoAlarm member country. */
@@ -115,6 +116,24 @@ export function meteoAlarmCacheFetchedAt(
 ): number | null {
   const slug = meteoalarmSlugFor(countryCode);
   return slug && cache?.slug === slug && cache.language === language ? cache.fetchedAt : null;
+}
+
+/** Last location-filtered cache, even after TTL, so the UI can label it stale on fetch failure. */
+export function meteoAlarmCachedSnapshot(
+  countryCode: string | null | undefined,
+  lat: number,
+  lon: number,
+  language: string,
+  now = Date.now(),
+): { fetchedAt: number; warnings: MeteoAlarmWarning[] } | null {
+  const slug = meteoalarmSlugFor(countryCode);
+  if (!slug || !cache || cache.slug !== slug || cache.language !== language) return null;
+  return {
+    fetchedAt: cache.fetchedAt,
+    warnings: cache.warnings
+      .filter((warning) => Date.parse(warning.expires) > now && matchesLocation(warning, lat, lon))
+      .map(toPublicWarning),
+  };
 }
 
 function asRecord(value: unknown): Record<string, unknown> | null {

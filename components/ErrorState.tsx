@@ -41,6 +41,7 @@ export function ErrorState({
       {actionLabel && onAction ? (
         <Pressable
           onPress={onAction}
+          accessibilityRole="button"
           style={({ pressed }) => [
             styles.button,
             { backgroundColor: theme.chipBg, opacity: pressed ? 0.7 : 1 },
