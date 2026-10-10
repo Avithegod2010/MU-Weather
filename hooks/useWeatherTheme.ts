@@ -29,7 +29,6 @@ export function useWeatherTheme(
   const info = describeWmo(data?.current.weatherCode);
   const condition: WeatherCondition = data ? info.condition : 'clear';
 
-  const themeKey = `${condition}-${isDay ? 'day' : 'night'}-${styleMode}`;
   const theme = useMemo(
     () => buildTheme(getPalette(condition, isDay), styleMode),
     [condition, isDay, styleMode],
