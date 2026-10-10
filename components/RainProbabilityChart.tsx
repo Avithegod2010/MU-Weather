@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
-import { Canvas, LinearGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia';
+import { Canvas, Circle, LinearGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia';
 import { Easing, useDerivedValue, useSharedValue, withDelay, withTiming, type SharedValue } from 'react-native-reanimated';
 import { getLanguage, t } from '../utils/i18n';
 import type { AppTheme } from '../theme/palettes';
-import type { EnsembleRainEpisodePoint, HourPoint } from '../api/types';
+import type { EnsembleRainEpisodePoint, EnsembleSpreadPoint, HourPoint } from '../api/types';
+import { alignEnsembleRainProbabilities } from '../utils/rainChartOverlay';
 import { formatHourLabel } from '../utils/format';
 import { F } from '../theme/typography';
 import { useReducedMotion } from '../utils/reduceMotion';
@@ -18,6 +19,8 @@ interface RainProbabilityChartProps {
   calibration?: RainCalibrationSummary;
   /** Direct daily ensemble-event probabilities; null means no ensemble snapshot is available. */
   rainEpisodes?: EnsembleRainEpisodePoint[] | null;
+  /** Optional hourly raw ICON-EPS rain shares, aligned by local timestamp. */
+  ensemblePoints?: EnsembleSpreadPoint[] | null;
   ensembleFetchedAt?: number | null;
   now: number;
 }
@@ -36,6 +39,7 @@ export function RainProbabilityChart({
   hours,
   calibration,
   rainEpisodes,
+  ensemblePoints,
   ensembleFetchedAt = null,
   now,
 }: RainProbabilityChartProps) {
@@ -82,12 +86,24 @@ export function RainProbabilityChart({
     slice[0],
   );
   const peakIndex = slice.indexOf(peak);
+  const ensembleRain = alignEnsembleRainProbabilities(slice, ensemblePoints);
+  const hasEnsembleSnapshot = ensemblePoints !== undefined && ensemblePoints !== null;
+  const hasSupportedEnsembleRain = ensembleRain.some((point) => point !== null);
+  let ensemblePeakIndex: number | null = null;
+  ensembleRain.forEach((point, index) => {
+    if (point && (
+      ensemblePeakIndex === null ||
+      point.probability > (ensembleRain[ensemblePeakIndex]?.probability ?? -1)
+    )) ensemblePeakIndex = index;
+  });
+  const ensemblePeak = ensemblePeakIndex === null ? null : ensembleRain[ensemblePeakIndex];
   const plotLeft = GUTTER_LEFT;
   const plotRight = Math.max(plotWidth - GUTTER_RIGHT, plotLeft);
   const columnWidth = plotWidth > 0 ? (plotRight - plotLeft) / slice.length : 0;
   const barHeightFor = (value: number) => Math.max(6, (value / 100) * (CHART_HEIGHT - 34));
   geometry.current = { plotLeft, columnWidth, count: slice.length };
   const scrubItem = scrubIndex !== null ? slice[scrubIndex] : undefined;
+  const scrubEnsemblePoint = scrubIndex !== null ? ensembleRain[scrubIndex] : null;
   const scrubLeft = scrubIndex !== null ? plotLeft + scrubIndex * columnWidth : 0;
   const calibrationText = calibration
     ? calibration.status === 'insufficient'
@@ -137,14 +153,30 @@ export function RainProbabilityChart({
     : t('rain_daily_event_stale').replace('{time}', fetchedTimeLabel);
   const episodeForecastText = rainEpisodes === undefined || rainEpisodes === null
     ? null
-    : [
+    : rainEpisodes.length > 0
+      ? t('rain_daily_event_forecast').replace('{days}', rainEpisodes
+          .map((episode) => `${episode.date} ${Math.round(episode.probability * 100)}% (n=${episode.members}, ${episode.forecastHours} h)`)
+          .join(' · '))
+      : t('rain_daily_event_unavailable');
+  const ensemblePeakText = ensemblePeak
+    ? t('rain_hourly_ensemble_peak')
+        .replace('{probability}', String(Math.round(ensemblePeak.probability)))
+        .replace('{time}', formatHourLabel(slice[ensemblePeakIndex ?? 0].time, false))
+        .replace('{members}', String(ensemblePeak.members))
+    : null;
+  const ensembleCaptionText = hasEnsembleSnapshot
+    ? [
         freshnessNotice,
-        rainEpisodes.length > 0
-          ? t('rain_daily_event_forecast').replace('{days}', rainEpisodes
-              .map((episode) => `${episode.date} ${Math.round(episode.probability * 100)}% (n=${episode.members}, ${episode.forecastHours} h)`)
-              .join(' · '))
-          : t('rain_daily_event_unavailable'),
-      ].filter(Boolean).join(' ');
+        hasSupportedEnsembleRain ? t('rain_hourly_ensemble_note') : t('rain_hourly_ensemble_unavailable'),
+      ].filter(Boolean).join(' ')
+    : null;
+  const scrubReadoutText = scrubItem && hasEnsembleSnapshot
+    ? t('rain_hourly_ensemble_scrub')
+        .replace('{time}', formatHourLabel(scrubItem.time, scrubItem.isNow))
+        .replace('{provider}', String(Math.round(scrubItem.precipProbability)))
+        .replace('{ensemble}', scrubEnsemblePoint ? String(Math.round(scrubEnsemblePoint.probability)) : t('unavailable'))
+        .replace('{members}', scrubEnsemblePoint ? String(scrubEnsemblePoint.members) : t('unavailable'))
+    : null;
   const calibrationSourceNote = calibration ? t('rain_calibration_source_note') : null;
   const leadTimeText = calibration
     ? calibration.leadTimeBuckets
@@ -174,6 +206,9 @@ export function RainProbabilityChart({
     reliabilityText,
     leadTimeText,
     hourlyMethodNote,
+    ensembleCaptionText,
+    ensemblePeakText,
+    scrubReadoutText,
     episodeForecastText,
     calibrationSourceNote,
     episodeCalibrationText,
@@ -186,6 +221,26 @@ export function RainProbabilityChart({
       accessibilityRole="text"
       accessibilityLabel={accessibilityLabel}
     >
+      {hasEnsembleSnapshot ? (
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View style={styles.primaryLegendSwatch} />
+            <Text style={[styles.legendText, { color: theme.textTertiary }]}>
+              {t('rain_hourly_primary_legend')}
+            </Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.ensembleLegendSwatchOuter, {
+              borderColor: theme.isLight ? '#1C2431' : '#FFFFFF',
+            }]}>
+              <View style={styles.ensembleLegendSwatchInner} />
+            </View>
+            <Text style={[styles.legendText, { color: theme.textTertiary }]}>
+              {t('rain_hourly_ensemble_legend')}
+            </Text>
+          </View>
+        </View>
+      ) : null}
       <View
         style={[styles.chartArea, { height: CHART_HEIGHT }]}
         onLayout={(event: LayoutChangeEvent) => setPlotWidth(event.nativeEvent.layout.width)}
@@ -223,6 +278,22 @@ export function RainProbabilityChart({
                 grow={grow}
               />
             ))}
+            {ensembleRain.map((point, index) => point ? (
+              <React.Fragment key={`ensemble-rain:${slice[index].time}`}>
+                <Circle
+                  cx={plotLeft + index * columnWidth + columnWidth / 2}
+                  cy={CHART_HEIGHT - barHeightFor(point.probability)}
+                  r={5.5}
+                  color={theme.isLight ? '#1C2431' : '#FFFFFF'}
+                />
+                <Circle
+                  cx={plotLeft + index * columnWidth + columnWidth / 2}
+                  cy={CHART_HEIGHT - barHeightFor(point.probability)}
+                  r={3.25}
+                  color="#F5A962"
+                />
+              </React.Fragment>
+            ) : null)}
           </Canvas>
         ) : null}
 
@@ -273,9 +344,19 @@ export function RainProbabilityChart({
           </Text>
         ))}
       </View>
+      {scrubReadoutText ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+          {scrubReadoutText}
+        </Text>
+      ) : null}
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
         {t('chart_rain_caption')}
       </Text>
+      {ensembleCaptionText ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+          {ensembleCaptionText}
+        </Text>
+      ) : null}
       <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
         {hourlyMethodNote}
       </Text>
@@ -346,6 +427,43 @@ function RainBar({
 }
 
 const styles = StyleSheet.create({
+  legendRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    columnGap: 14,
+    rowGap: 5,
+    marginTop: 2,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  legendText: {
+    fontSize: 10.5,
+    fontFamily: F.medium,
+  },
+  primaryLegendSwatch: {
+    width: 10,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: '#4A7DD8',
+  },
+  ensembleLegendSwatchOuter: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ensembleLegendSwatchInner: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#F5A962',
+  },
   chartArea: {
     marginTop: 4,
   },
