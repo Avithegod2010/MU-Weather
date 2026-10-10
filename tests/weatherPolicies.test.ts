@@ -390,8 +390,24 @@ function testCurrentImpactTimeline(): void {
   equal(rain.signalIds.length, 3, 'overlapping forecast/nowcast/official signals merge');
   assert(rain.reasons.some((reason) => reason.includes('≥60%') && reason.includes('2026-10-09 14:00')), 'active alert impact exposes its observation time and triggering threshold');
   equal(rain.severity, 'severe', 'current timeline preserves official severe priority');
+  assert(rain.bases.includes('forecast-exposure') && rain.bases.includes('official-warning'),
+    'merged forecast exposure and official warnings retain distinct evidence bases');
   assert(rain.safetyMessages.includes('Avoid flooded roads.'), 'official safety instruction is preserved');
   assert(impacts.some((impact) => impact.hazard === 'official:official-localized'), 'unrecognized localized warnings stay separate rather than risk a false merge');
+
+  const observedImpact = buildCurrentImpactTimeline(
+    [{
+      key: 'fog', title: 'Fog observed', message: 'Visibility is low now.', severity: 'warning',
+      evidence: { metricLabel: 'about_visibility', actual: '500 m', threshold: '<1 km', source: 'Open-Meteo current conditions' },
+    }],
+    [],
+    baseTime,
+    null,
+    now,
+    { forecast: 'Forecast', official: 'MeteoAlarm', observation: 'Observed conditions' },
+  )[0];
+  assert(observedImpact?.bases.includes('observed'), 'current-condition evidence is not labeled as forecast exposure');
+  assert(observedImpact?.sources.includes('Observed conditions'), 'observation source is retained for display');
 
   const expiryAt = baseTime + 30 * 60_000;
   const expiringWarning = [{

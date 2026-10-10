@@ -92,7 +92,15 @@ export interface QuietHoursSettings {
   quietEndMinutes: number;
 }
 
-export type AlertSettings = Record<AlertKey, boolean> & QuietHoursSettings;
+export const FAVORITE_CITY_REFRESH_INTERVALS = [20, 30, 60] as const;
+export type FavoriteCityRefreshInterval = (typeof FAVORITE_CITY_REFRESH_INTERVALS)[number];
+
+export interface FavoriteCityRefreshSettings {
+  /** Saved-city sweep only; active-location checks keep their existing cadence. */
+  favoriteRefreshIntervalMinutes: FavoriteCityRefreshInterval;
+}
+
+export type AlertSettings = Record<AlertKey, boolean> & QuietHoursSettings & FavoriteCityRefreshSettings;
 
 /** Default window: 22:00 -> 07:00. */
 export const DEFAULT_QUIET_START_MINUTES = 22 * 60;
@@ -153,7 +161,33 @@ export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   quietHoursEnabled: false,
   quietStartMinutes: DEFAULT_QUIET_START_MINUTES,
   quietEndMinutes: DEFAULT_QUIET_END_MINUTES,
+  favoriteRefreshIntervalMinutes: 20,
 };
+
+/** Merge untrusted persisted alert preferences over defaults for cold/background starts. */
+export function normalizeAlertSettings(value: unknown): AlertSettings {
+  const source = value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+  const normalized: AlertSettings = { ...DEFAULT_ALERT_SETTINGS };
+  for (const definition of ALERT_DEFINITIONS) {
+    const enabled = source[definition.key];
+    if (typeof enabled === 'boolean') normalized[definition.key] = enabled;
+  }
+  if (typeof source.quietHoursEnabled === 'boolean') normalized.quietHoursEnabled = source.quietHoursEnabled;
+  for (const key of ['quietStartMinutes', 'quietEndMinutes'] as const) {
+    const minutes = source[key];
+    if (typeof minutes === 'number' && Number.isInteger(minutes) && minutes >= 0 && minutes < 24 * 60) {
+      normalized[key] = minutes;
+    }
+  }
+  if (FAVORITE_CITY_REFRESH_INTERVALS.includes(
+    source.favoriteRefreshIntervalMinutes as FavoriteCityRefreshInterval,
+  )) {
+    normalized.favoriteRefreshIntervalMinutes = source.favoriteRefreshIntervalMinutes as FavoriteCityRefreshInterval;
+  }
+  return normalized;
+}
 
 /**
  * Inputs the rules need that are NOT part of WeatherBundle, or that cost a

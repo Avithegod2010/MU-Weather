@@ -4,6 +4,7 @@ import * as Notifications from '../utils/notifications';
 import type { WeatherBundle } from '../api/types';
 import {
   DEFAULT_ALERT_SETTINGS,
+  normalizeAlertSettings,
   isAnyRuleEnabled,
   type AlertKey,
   type AlertSettings,
@@ -48,7 +49,7 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
       try {
         const stored = await loadAlertSettings();
         if (!cancelled && Object.keys(stored).length) {
-          setSettings({ ...DEFAULT_ALERT_SETTINGS, ...stored } as AlertSettings);
+          setSettings(normalizeAlertSettings(stored));
         }
       } catch {
         // Corrupt storage: fall back to defaults.
@@ -72,6 +73,10 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
   /** Quiet-hours toggle + start/end steppers (Alerts screen). */
   const updateQuietHours = useCallback((patch: Partial<QuietHoursSettings>) => {
     setSettings((previous) => ({ ...previous, ...patch }));
+  }, []);
+
+  const updateFavoriteRefreshInterval = useCallback((minutes: AlertSettings['favoriteRefreshIntervalMinutes']) => {
+    setSettings((previous) => ({ ...previous, favoriteRefreshIntervalMinutes: minutes }));
   }, []);
 
   useEffect(() => {
@@ -100,8 +105,9 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
     void fireAlertNotifications(settings, data).then((triggered) => {
       setActiveAlerts(!cancelled && isFresh() ? triggered : []);
     });
-    // Saved-city sweep, throttled to one pass every 20 minutes inside the util
-    // (the background task fires it too, for the app-closed case).
+    // Saved-city cadence is user-controlled inside the sweep utility; the
+    // background task also calls it for app-closed coverage. Active-location
+    // alert delivery above does not use this saved-city throttle.
     void fireFavoriteCityAlerts(settings, data);
     const staleInMs = Math.max(0, data.fetchedAt + WEATHER_CACHE_FRESH_FOR_MS - Date.now() + 1);
     const staleTimer = setTimeout(() => setActiveAlerts([]), staleInMs);
@@ -152,5 +158,5 @@ export function useAlerts(data: WeatherBundle | null, backgroundEnabled: boolean
     };
   }, [backgroundEnabled, settings, ready]);
 
-  return { settings, toggleAlert, updateQuietHours, activeAlerts, ready };
+  return { settings, toggleAlert, updateQuietHours, updateFavoriteRefreshInterval, activeAlerts, ready };
 }

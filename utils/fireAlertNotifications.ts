@@ -11,7 +11,7 @@ import type { AlertExtras, AlertSettings, TriggeredAlert } from './alertRules';
 import { evaluateCustomRules, loadCustomAlerts } from './customAlerts';
 import { computeNowcast } from './nowcast';
 import { AURORA_LATITUDE_MIN, fetchAuroraMaxKp } from './aurora';
-import { appendAlertHistory, type AlertDeliveryStatus } from './alertHistory';
+import { appendAlertHistory, type AlertDeliveryStatus, type AlertHistoryEntry } from './alertHistory';
 import { isAlertSeverityEscalation, normalizeFiredMap, shouldDeliverAlert } from './alertEscalation';
 import { forecastAlertExpiresAt } from './alertValidity';
 import type { AlertFireStamp } from './alertEscalation';
@@ -178,6 +178,30 @@ export interface DeliverAlertsOptions {
   timezone?: string;
 }
 
+export interface AlertNotificationScheduleRequest {
+  content: {
+    title: string;
+    body: string;
+    sound: boolean;
+    categoryIdentifier: string;
+    data: Record<string, unknown>;
+  };
+  trigger: null;
+}
+
+/** Side-effect ports keep the real delivery flow deterministic in integration tests. */
+export interface AlertDeliveryPorts {
+  now?: () => number;
+  getPermissionStatus?: () => Promise<string>;
+  ensureChannel?: () => Promise<void>;
+  ensureCategory?: () => Promise<void>;
+  inQuietHours?: () => Promise<boolean>;
+  loadFiredMap?: () => Promise<unknown>;
+  saveFiredMap?: (fired: Record<string, AlertFireStamp>) => Promise<void>;
+  scheduleNotification?: (request: AlertNotificationScheduleRequest) => Promise<unknown>;
+  appendHistory?: (entries: AlertHistoryEntry[]) => Promise<void>;
+}
+
 /**
  * Shared delivery path for every alert source (the active location and the
  * saved-city sweep). Each cooldown-eligible alert gets an explicit local
@@ -196,37 +220,45 @@ export interface DeliverAlertsOptions {
 export async function deliverAlerts(
   triggered: TriggeredAlert[],
   options: DeliverAlertsOptions = {},
+  ports: AlertDeliveryPorts = {},
 ): Promise<TriggeredAlert[]> {
   if (!triggered.length) return [];
   const { city, cooldownPrefix = '', titleFormatter, cooldownMs = COOLDOWN_MS, timezone } = options;
 
   let permissionGranted = false;
   try {
-    permissionGranted = (await Notifications.getPermissionsAsync()).status === 'granted';
+    const status = ports.getPermissionStatus
+      ? await ports.getPermissionStatus()
+      : (await Notifications.getPermissionsAsync()).status;
+    permissionGranted = status === 'granted';
   } catch {
     // Treat a permissions API failure as not granted; retain an explicit row.
   }
   if (permissionGranted) {
-    await ensureChannel();
+    await (ports.ensureChannel ?? ensureChannel)();
     // Action buttons ("Snooze 1 h" / "Dismiss"): language-aware and idempotent,
     // so a stored-language change re-registers the category before delivery.
-    await ensureWeatherAlertCategory();
+    await (ports.ensureCategory ?? ensureWeatherAlertCategory)();
   }
 
   // Quiet hours share one gate with the notification pipeline. The daily
   // digest is a separate path and is deliberately not gated here.
-  const inQuietHours = permissionGranted ? await isInQuietHoursNow() : false;
+  const inQuietHours = permissionGranted
+    ? await (ports.inQuietHours ?? isInQuietHoursNow)()
+    : false;
 
   await withFiredLock(async () => {
     let fired: Record<string, AlertFireStamp> = {};
     try {
-      const raw = await AsyncStorage.getItem(FIRED_KEY);
-      if (raw) fired = normalizeFiredMap(JSON.parse(raw));
+      const raw = ports.loadFiredMap
+        ? await ports.loadFiredMap()
+        : await AsyncStorage.getItem(FIRED_KEY);
+      fired = normalizeFiredMap(typeof raw === 'string' ? JSON.parse(raw) : raw);
     } catch {
       // Corrupt cooldown map: start fresh.
     }
 
-    const now = Date.now();
+    const now = ports.now?.() ?? Date.now();
     const historyRows: {
       key: string;
       title: string;
@@ -262,7 +294,7 @@ export async function deliverAlerts(
         changed = true;
       } else {
         try {
-          await Notifications.scheduleNotificationAsync({
+          const request: AlertNotificationScheduleRequest = {
             content: {
               title: titleFormatter ? titleFormatter(alert) : alert.title,
               body: alert.message,
@@ -277,7 +309,12 @@ export async function deliverAlerts(
               },
             },
             trigger: null,
-          });
+          };
+          if (ports.scheduleNotification) {
+            await ports.scheduleNotification(request);
+          } else {
+            await Notifications.scheduleNotificationAsync(request);
+          }
           deliveryStatus = 'scheduled';
           fired[cooldownKey] = { at: now, severity: alert.severity };
           changed = true;
@@ -305,12 +342,17 @@ export async function deliverAlerts(
 
     if (changed) {
       try {
-        await AsyncStorage.setItem(FIRED_KEY, JSON.stringify(fired));
+        if (ports.saveFiredMap) {
+          await ports.saveFiredMap(fired);
+        } else {
+          await AsyncStorage.setItem(FIRED_KEY, JSON.stringify(fired));
+        }
       } catch {
         // Non-critical bookkeeping.
       }
     }
-    await appendAlertHistory(historyRows);
+    const appendHistory = ports.appendHistory ?? appendAlertHistory;
+    await appendHistory(historyRows);
   });
 
   return triggered;
