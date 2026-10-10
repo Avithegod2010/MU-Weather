@@ -16,7 +16,7 @@ Run on a physical Android device with TalkBack and an iPhone/iPad with VoiceOver
 
 ## Native-speaker pass
 
-A fluent native reviewer should read the full UI in context, not just this table. Review the new strings for forecast-calibration statistics, recommendation feedback, warning severity, provider-check failures, and notification outcomes. Check placeholder order and grammar, common weather terminology, units, date/time conventions, and whether status wording distinguishes an app scheduling attempt from confirmed OS display. Report language issues even if the automated locale audit passes.
+A fluent native reviewer should read the full UI in context, not just this table. Review the new strings for hourly-versus-daily rain probability, forecast exposure versus observed conditions, forecast-calibration statistics, recommendation feedback, warning severity, provider-check failures, and notification outcomes. Check placeholder order and grammar, common weather terminology, units, date/time conventions, and whether status wording distinguishes an app scheduling attempt from confirmed OS display. Report language issues even if the automated locale audit passes.
 
 | Locale | Native reviewer | Date | Result / issue references |
 | --- | --- | --- | --- |
@@ -41,3 +41,7 @@ A fluent native reviewer should read the full UI in context, not just this table
 - [ ] Reviewer name/qualification, date, locale, and approved changes are recorded. An automated locale test or this checklist does not satisfy this review.
 
 **Overall sign-off: pending.** Do not describe translation quality, assistive-technology behavior, or storm-safety wording as human-reviewed until the table and review record are completed.
+
+## Release gate
+
+Before a release tag or publication, record each completed review in `scripts/reviews/review-signoffs.json` with status `approved`, reviewer, ISO date, and an evidence reference. The storm-safety entry also requires the reviewer's qualification. Run `npm run release:gate`; the `Release review gate` GitHub workflow also runs on `v*` tags and can be called by a release workflow. It intentionally fails while any required sign-off remains pending. Configure repository release rules/required checks to require the `Human review sign-offs` job; a tag-triggered workflow cannot prevent a separate publishing path that ignores its result. Do not replace human sign-offs with the static JSX audit or locale-key/placeholder audit.

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "screenReaders": [
+    {
+      "id": "talkback",
+      "status": "pending",
+      "reviewer": "",
+      "date": "",
+      "evidence": ""
+    },
+    {
+      "id": "voiceover",
+      "status": "pending",
+      "reviewer": "",
+      "date": "",
+      "evidence": ""
+    }
+  ],
+  "nativeSpeakers": [
+    { "locale": "en", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "hi", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "bn", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "es", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "fr", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "de", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "nl", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "el", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "hu", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "id", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "it", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "pt", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "pl", "status": "pending", "reviewer": "", "date": "", "evidence": "" },
+    { "locale": "tr", "status": "pending", "reviewer": "", "date": "", "evidence": "" }
+  ],
+  "stormSafety": {
+    "status": "pending",
+    "reviewer": "",
+    "qualification": "",
+    "date": "",
+    "evidence": ""
+  }
+}
