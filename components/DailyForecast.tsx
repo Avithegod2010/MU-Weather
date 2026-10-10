@@ -37,7 +37,7 @@ export const DailyForecast = React.memo(function DailyForecast({
   );
 
   // Single-pass computation of week min/max temperature range to avoid array allocations and multiple iterations.
-  const { weekMin, weekMax, range } = useMemo(() => {
+  const { weekMin, range } = useMemo(() => {
     let min = Infinity;
     let max = -Infinity;
     for (let i = 0; i < days.length; i++) {
@@ -46,7 +46,7 @@ export const DailyForecast = React.memo(function DailyForecast({
       if (day.tMax > max) max = day.tMax;
     }
     const r = Math.max(max - min, 1);
-    return { weekMin: min, weekMax: max, range: r };
+    return { weekMin: min, range: r };
   }, [days]);
 
   if (!days.length) return null;
