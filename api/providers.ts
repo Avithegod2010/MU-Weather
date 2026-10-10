@@ -1,4 +1,5 @@
 import type {
+  EnsembleRainEpisodePoint,
   EnsembleSpread,
   EnsembleSpreadPoint,
   HourlyPrecipitationObservation,
@@ -9,6 +10,10 @@ import type {
 } from './types';
 import { RAIN_EVENT_THRESHOLD_MM } from './rain';
 import { traceAsync } from '../utils/performanceTracing';
+import {
+  MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS,
+  summarizeEnsembleRainEpisodes,
+} from '../utils/ensembleRainEpisodeMath';
 
 export interface ProviderCheck {
   status: 'idle' | 'checking' | 'ok' | 'error';
@@ -512,8 +517,9 @@ function percentile(sorted: number[], p: number): number {
  * (ICON-EPS seamless: control + 39 members). Percentiles are computed
  * client-side over the member arrays. Returns null on any failure - the
  * caller hides the feature. Members that lack a precipitation array still
- * count toward temperature percentiles; rain probability uses only members
- * that reported precipitation.
+ * count toward temperature percentiles. Rain probability uses only valid
+ * precipitation members and is withheld below ten supported members; missing
+ * data is never represented as a zero-percent rain chance.
  */
 async function fetchEnsembleSpreadImpl(lat: number, lon: number): Promise<EnsembleSpread | null> {
   const params = new URLSearchParams({
@@ -543,6 +549,17 @@ async function fetchEnsembleSpreadImpl(lat: number, lon: number): Promise<Ensemb
     const memberWindKeys = Object.keys(hourly).filter(
       (key) => /^wind_speed_10m_member\d+$/.test(key) && Array.isArray(hourly[key]),
     );
+    const precipitationMembers = memberTempKeys.map((key) => {
+      const values = hourly[key.replace('temperature_2m', 'precipitation')];
+      return {
+        memberId: key,
+        precipitation: Array.isArray(values)
+          ? (values as unknown[]).map((value) =>
+              typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null,
+            )
+          : [],
+      };
+    });
     const points: EnsembleSpreadPoint[] = [];
     for (let i = 0; i < times.length; i++) {
       const temps: number[] = [];
@@ -552,15 +569,13 @@ async function fetchEnsembleSpreadImpl(lat: number, lon: number): Promise<Ensemb
       for (const key of memberTempKeys) {
         const tempsArray = hourly[key] as (number | null)[];
         const value = tempsArray[i];
-        if (typeof value === 'number') temps.push(value);
-        const precipKey = key.replace('temperature_2m', 'precipitation');
-        const precipArray = hourly[precipKey];
-        if (Array.isArray(precipArray)) {
-          const precip = (precipArray as (number | null)[])[i];
-          if (typeof precip === 'number') {
-            precipMembers += 1;
-            if (precip >= RAIN_EVENT_THRESHOLD_MM) wetMembers += 1;
-          }
+        if (typeof value === 'number' && Number.isFinite(value)) temps.push(value);
+      }
+      for (const member of precipitationMembers) {
+        const precip = member.precipitation[i];
+        if (typeof precip === 'number') {
+          precipMembers += 1;
+          if (precip >= RAIN_EVENT_THRESHOLD_MM) wetMembers += 1;
         }
       }
       for (const key of memberWindKeys) {
@@ -584,11 +599,15 @@ async function fetchEnsembleSpreadImpl(lat: number, lon: number): Promise<Ensemb
               windMembers: winds.length,
             }
           : {}),
-        rainProb: precipMembers > 0 ? (wetMembers / precipMembers) * 100 : 0,
+        rainProb: precipMembers >= MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS
+          ? (wetMembers / precipMembers) * 100
+          : null,
+        rainMembers: precipMembers,
       });
     }
     if (points.length === 0) return null;
-    return { points, members: memberTempKeys.length, fetchedAt: Date.now() };
+    const rainEpisodes: EnsembleRainEpisodePoint[] = summarizeEnsembleRainEpisodes(times, precipitationMembers);
+    return { points, rainEpisodes, members: memberTempKeys.length, fetchedAt: Date.now() };
   } catch {
     return null;
   } finally {

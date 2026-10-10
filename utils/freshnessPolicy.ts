@@ -43,6 +43,54 @@ export const WEATHER_CACHE_FRESH_FOR_MS = 3 * HOUR_MS;
 /** Align expired-cache behavior with the existing 24 h AsyncStorage cap. */
 export const WEATHER_CACHE_EXPIRE_AFTER_MS = 24 * HOUR_MS;
 
+export type SignalFreshnessStatus = 'fresh' | 'stale' | 'unavailable';
+
+export interface SignalFreshnessAssessment {
+  status: SignalFreshnessStatus;
+  ageMs: number | null;
+}
+
+/** Convert a provider's timezone-naive local timestamp to an epoch using its UTC offset. */
+export function providerLocalTimestampToEpoch(
+  value: string | null | undefined,
+  utcOffsetSeconds: number | null | undefined,
+): number | null {
+  if (typeof value !== 'string' || !Number.isFinite(utcOffsetSeconds)) return null;
+  if (/Z$|[+-]\d{2}:?\d{2}$/.test(value)) {
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(value);
+  if (!match) return null;
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText] = match;
+  const parts = [yearText, monthText, dayText, hourText, minuteText, secondText ?? '0'].map(Number);
+  const [year, month, day, hour, minute, second] = parts;
+  if (month < 1 || month > 12 || day < 1 || day > 31 || hour > 23 || minute > 59 || second > 59) return null;
+  const wallClock = Date.UTC(year, month - 1, day, hour, minute, second);
+  const check = new Date(wallClock);
+  if (check.getUTCFullYear() !== year || check.getUTCMonth() !== month - 1 ||
+      check.getUTCDate() !== day || check.getUTCHours() !== hour ||
+      check.getUTCMinutes() !== minute || check.getUTCSeconds() !== second) return null;
+  return wallClock - (utcOffsetSeconds as number) * 1000;
+}
+
+/** Assess a single signal's provider observation time, not the client fetch time. */
+export function assessSignalFreshness(
+  observedAt: number | null | undefined,
+  now = Date.now(),
+  freshForMs = 90 * 60 * 1000,
+  futureToleranceMs = 5 * 60 * 1000,
+): SignalFreshnessAssessment {
+  if (!Number.isFinite(observedAt) || !Number.isFinite(now) || !Number.isFinite(freshForMs) ||
+      !Number.isFinite(futureToleranceMs) || (freshForMs as number) < 0 || (futureToleranceMs as number) < 0) {
+    return { status: 'unavailable', ageMs: null };
+  }
+  const rawAge = (now as number) - (observedAt as number);
+  if (rawAge < -(futureToleranceMs as number)) return { status: 'stale', ageMs: rawAge };
+  const ageMs = Math.max(0, rawAge);
+  return { status: ageMs >= (freshForMs as number) ? 'stale' : 'fresh', ageMs };
+}
+
 export const WEATHER_CACHE_FRESHNESS_POLICY: CacheFreshnessPolicy = {
   freshForMs: WEATHER_CACHE_FRESH_FOR_MS,
   expireAfterMs: WEATHER_CACHE_EXPIRE_AFTER_MS,

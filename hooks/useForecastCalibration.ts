@@ -3,6 +3,7 @@ import { fetchHourlyWeatherActuals } from '../api/providers';
 import type { EnsembleSpread, GeoLocation } from '../api/types';
 import {
   computeRainCalibrationSummary,
+  rainEpisodeVerificationDateRange,
   rainVerificationDateRange,
   roundedRainCoord,
   type RainCalibrationSummary,
@@ -14,6 +15,7 @@ import {
 } from '../utils/ensembleCalibrationMath';
 import {
   isRainObservationFetchDue,
+  loadRainEpisodeLog,
   loadRainForecastLog,
   logRainForecast,
   markRainObservationFetchAttempt,
@@ -60,10 +62,10 @@ function emptySummary(location: GeoLocation | null): ForecastCalibrationSummary 
 }
 
 /**
- * Locally records ICON-EPS hourly rain probabilities and temperature/wind
- * distributions, then verifies eligible hours against the Archive API.
- * Logging is bounded and location-scoped; scoring waits for the usual archive
- * publication delay and requires many hourly cases across multiple dates.
+ * Locally records ICON-EPS hourly rain probabilities, joint-member local-day
+ * rain-event probabilities, and temperature/wind distributions, then verifies
+ * them against the Archive API. Daily event chances come from correlated
+ * member trajectories, never products of hourly dry probabilities.
  */
 export function useForecastCalibration(
   location: GeoLocation | null,
@@ -89,12 +91,13 @@ export function useForecastCalibration(
           ]);
         }
 
-        const [rainEntries, ensembleEntries] = await Promise.all([
+        const [rainEntries, rainEpisodes, ensembleEntries] = await Promise.all([
           loadRainForecastLog(anchor),
+          loadRainEpisodeLog(anchor),
           loadEnsembleCalibrationLog(anchor),
         ]);
         const range = mergeDateRanges(
-          rainVerificationDateRange(rainEntries),
+          mergeDateRanges(rainVerificationDateRange(rainEntries), rainEpisodeVerificationDateRange(rainEpisodes)),
           ensembleVerificationDateRange(ensembleEntries),
         );
         if (range && (await isRainObservationFetchDue(anchor))) {
@@ -126,15 +129,16 @@ export function useForecastCalibration(
         // Network/persistence issues only delay local calibration, never weather.
       }
 
-      const [currentRainEntries, currentEnsembleEntries] = await Promise.all([
+      const [currentRainEntries, currentRainEpisodes, currentEnsembleEntries] = await Promise.all([
         loadRainForecastLog(anchor),
+        loadRainEpisodeLog(anchor),
         loadEnsembleCalibrationLog(anchor),
       ]);
       if (!cancelled) {
         setSnapshot({
           locationKey: key,
           summary: {
-            rain: computeRainCalibrationSummary(currentRainEntries, anchor),
+            rain: computeRainCalibrationSummary(currentRainEntries, anchor, Date.now(), currentRainEpisodes),
             ensemble: computeEnsembleCalibrationSummary(currentEnsembleEntries, anchor),
           },
         });

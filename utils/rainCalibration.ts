@@ -1,16 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { EnsembleSpread, HourlyPrecipitationObservation } from '../api/types';
 import {
+  applyRainEpisodeObservations,
   applyRainObservations,
+  createRainEpisodeForecastEntries,
   createRainForecastEntries,
+  isRainEpisodeForecastLogEntry,
   isRainForecastLogEntry,
+  mergeRainEpisodeForecastEntries,
   mergeRainForecastEntries,
   roundedRainCoord,
+  type RainEpisodeForecastLogEntry,
   type RainForecastLogEntry,
   type RainLocationAnchor,
 } from './rainCalibrationMath';
 
-const RAIN_LOG_KEY = '@mu_weather/rain_calibration_v1';
+export const RAIN_LOG_KEY = '@mu_weather/rain_calibration_v1';
 /** Retry observation retrieval periodically; Archive rows may still be lagging. */
 const OBSERVATION_FETCH_TTL_MS = 6 * 60 * 60 * 1000;
 const MAX_VERIFICATION_STAMPS = 8;
@@ -22,12 +27,13 @@ interface VerificationStamp {
 }
 
 interface RainCalibrationFile {
-  version: 1;
+  version: 1 | 2;
   entries: RainForecastLogEntry[];
+  episodes: RainEpisodeForecastLogEntry[];
   verificationStamps: VerificationStamp[];
 }
 
-const EMPTY_FILE: RainCalibrationFile = { version: 1, entries: [], verificationStamps: [] };
+const EMPTY_FILE: RainCalibrationFile = { version: 2, entries: [], episodes: [], verificationStamps: [] };
 
 /** AsyncStorage is not transactional; serialize writers to avoid lost upserts. */
 let writeChain: Promise<unknown> = Promise.resolve();
@@ -63,19 +69,26 @@ async function loadFile(): Promise<RainCalibrationFile> {
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return EMPTY_FILE;
     const file = parsed as Partial<RainCalibrationFile>;
-    if (file.version !== 1 || !Array.isArray(file.entries)) return EMPTY_FILE;
+    if ((file.version !== 1 && file.version !== 2) || !Array.isArray(file.entries)) return EMPTY_FILE;
     const entries = mergeRainForecastEntries(
       file.entries.filter(isRainForecastLogEntry),
       [],
     );
-    const retainedLocations = new Set(entries.map((entry) => locationKey(entry)));
+    const episodes = mergeRainEpisodeForecastEntries(
+      Array.isArray(file.episodes) ? file.episodes.filter(isRainEpisodeForecastLogEntry) : [],
+      [],
+    );
+    const retainedLocations = new Set([
+      ...entries.map((entry) => locationKey(entry)),
+      ...episodes.map((entry) => locationKey(entry)),
+    ]);
     const verificationStamps = (Array.isArray(file.verificationStamps)
       ? file.verificationStamps.filter(isValidStamp)
       : [])
       .filter((stamp) => retainedLocations.has(locationKey(stamp)))
       .sort((a, b) => b.attemptedAt - a.attemptedAt)
       .slice(0, MAX_VERIFICATION_STAMPS);
-    return { version: 1, entries, verificationStamps };
+    return { version: 2, entries, episodes, verificationStamps };
   } catch {
     return EMPTY_FILE;
   }
@@ -100,8 +113,52 @@ export async function loadRainForecastLog(
     .sort((a, b) => a.validAt - b.validAt || a.issuedAt - b.issuedAt);
 }
 
+/** Direct joint-member daily rain-event forecasts for one rounded location. */
+export async function loadRainEpisodeLog(
+  location: RainLocationAnchor,
+): Promise<RainEpisodeForecastLogEntry[]> {
+  const file = await loadFile();
+  const key = locationKey(location);
+  return file.episodes
+    .filter((entry) => locationKey(entry) === key)
+    .sort((a, b) => a.validAt - b.validAt || a.issuedAt - b.issuedAt);
+}
+
+/** Snapshot used by the local-data manager; no calibration rows leave the device. */
+export async function loadAllRainCalibrationData(): Promise<{
+  hourly: RainForecastLogEntry[];
+  episodes: RainEpisodeForecastLogEntry[];
+}> {
+  const file = await loadFile();
+  return { hourly: file.entries, episodes: file.episodes };
+}
+
+/** Delete every rain-calibration record and retry stamp for one rounded location. */
+export function clearRainCalibrationLocation(
+  location: RainLocationAnchor,
+): Promise<{ hourly: number; episodes: number }> {
+  return withRainLogLock(async () => {
+    const file = await loadFile();
+    const key = locationKey(location);
+    const entries = file.entries.filter((entry) => locationKey(entry) !== key);
+    const episodes = file.episodes.filter((entry) => locationKey(entry) !== key);
+    const verificationStamps = file.verificationStamps.filter((stamp) => locationKey(stamp) !== key);
+    await persist({ version: 2, entries, episodes, verificationStamps });
+    return { hourly: file.entries.length - entries.length, episodes: file.episodes.length - episodes.length };
+  });
+}
+
+/** Delete all rain-calibration records and archive retry stamps. */
+export function clearAllRainCalibrationData(): Promise<{ hourly: number; episodes: number }> {
+  return withRainLogLock(async () => {
+    const file = await loadFile();
+    await persist(EMPTY_FILE);
+    return { hourly: file.entries.length, episodes: file.episodes.length };
+  });
+}
+
 /**
- * Log one latest raw ensemble probability per future hour. Coordinates are
+ * Log the hourly probabilities and any complete-day event distributions. Coordinates are
  * rounded locally; this history is never uploaded or included in data exports.
  */
 export function logRainForecast(
@@ -112,14 +169,19 @@ export function logRainForecast(
   return withRainLogLock(async () => {
     try {
       const additions = createRainForecastEntries(spread, location, utcOffsetSeconds);
-      if (additions.length === 0) return;
+      const episodeAdditions = createRainEpisodeForecastEntries(spread, location, utcOffsetSeconds);
+      if (additions.length === 0 && episodeAdditions.length === 0) return;
       const file = await loadFile();
       const entries = mergeRainForecastEntries(file.entries, additions);
-      const retainedLocations = new Set(entries.map((entry) => locationKey(entry)));
+      const episodes = mergeRainEpisodeForecastEntries(file.episodes, episodeAdditions);
+      const retainedLocations = new Set([
+        ...entries.map((entry) => locationKey(entry)),
+        ...episodes.map((entry) => locationKey(entry)),
+      ]);
       const verificationStamps = file.verificationStamps.filter((stamp) =>
         retainedLocations.has(locationKey(stamp)),
       );
-      await persist({ version: 1, entries, verificationStamps });
+      await persist({ version: 2, entries, episodes, verificationStamps });
     } catch {
       // Non-critical local logging must not break the forecast screen.
     }
@@ -137,7 +199,8 @@ export function saveRainObservations(
     try {
       const file = await loadFile();
       const entries = applyRainObservations(file.entries, location, observations, observedAt);
-      await persist({ ...file, entries });
+      const episodes = applyRainEpisodeObservations(file.episodes, location, observations, observedAt);
+      await persist({ ...file, version: 2, entries, episodes });
     } catch {
       // Non-critical local logging must not break the forecast screen.
     }

@@ -62,6 +62,10 @@ export interface ContinuousCalibrationBucket {
   medianAbsoluteError: number | null;
   /** Fraction of observations inside the forecast P10-P90 interval. */
   centralIntervalCoverage: number | null;
+  coveredCases: number;
+  /** 95% Wilson interval for observed coverage; this is sampling uncertainty, not a forecast band. */
+  coverageLower95: number | null;
+  coverageUpper95: number | null;
   meanIntervalWidth: number | null;
   sufficientlyPopulated: boolean;
 }
@@ -75,6 +79,10 @@ export interface ContinuousCalibrationMetricSummary {
   medianAbsoluteError: number | null;
   /** Fraction of observations inside the nominal 80% P10-P90 interval. */
   centralIntervalCoverage: number | null;
+  coveredCases: number;
+  /** 95% Wilson interval for observed coverage (sampling uncertainty). */
+  coverageLower95: number | null;
+  coverageUpper95: number | null;
   meanIntervalWidth: number | null;
   leadTimeBuckets: ContinuousCalibrationBucket[];
 }
@@ -305,6 +313,20 @@ function median(values: number[]): number | null {
   return sorted.length % 2 === 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
+/** Wilson score interval avoids impossible bounds and behaves better for small binomial samples. */
+function wilson95(successes: number, trials: number): { lower: number; upper: number } | null {
+  if (!Number.isInteger(successes) || !Number.isInteger(trials) || trials <= 0 || successes < 0 || successes > trials) {
+    return null;
+  }
+  const z = 1.959963984540054;
+  const proportion = successes / trials;
+  const zSquared = z * z;
+  const denominator = 1 + zSquared / trials;
+  const center = (proportion + zSquared / (2 * trials)) / denominator;
+  const margin = (z * Math.sqrt((proportion * (1 - proportion) / trials) + zSquared / (4 * trials * trials))) / denominator;
+  return { lower: Math.max(0, center - margin), upper: Math.min(1, center + margin) };
+}
+
 function summarizeBucket(
   samples: EnsembleCalibrationLogEntry[],
   startLeadHours: number,
@@ -318,6 +340,7 @@ function summarizeBucket(
   const covered = bucket.filter((sample) =>
     (sample.observed as number) >= sample.p10 && (sample.observed as number) <= sample.p90,
   ).length;
+  const coverageInterval = wilson95(covered, bucket.length);
   return {
     startLeadHours,
     endLeadHours,
@@ -325,6 +348,9 @@ function summarizeBucket(
     verifiedDays: days.size,
     medianAbsoluteError: median(absoluteErrors),
     centralIntervalCoverage: bucket.length > 0 ? covered / bucket.length : null,
+    coveredCases: covered,
+    coverageLower95: coverageInterval?.lower ?? null,
+    coverageUpper95: coverageInterval?.upper ?? null,
     meanIntervalWidth: bucket.length > 0
       ? bucket.reduce((sum, sample) => sum + sample.p90 - sample.p10, 0) / bucket.length
       : null,
@@ -342,6 +368,9 @@ function emptyMetricSummary(): ContinuousCalibrationMetricSummary {
     requiredDays: MIN_CONTINUOUS_CALIBRATION_DAYS,
     medianAbsoluteError: null,
     centralIntervalCoverage: null,
+    coveredCases: 0,
+    coverageLower95: null,
+    coverageUpper95: null,
     meanIntervalWidth: null,
     leadTimeBuckets: CONTINUOUS_LEAD_TIME_BUCKETS.map(({ startLeadHours, endLeadHours }) =>
       summarizeBucket([], startLeadHours, endLeadHours),
@@ -359,6 +388,7 @@ function summarizeMetric(
   const covered = samples.filter((sample) =>
     (sample.observed as number) >= sample.p10 && (sample.observed as number) <= sample.p90,
   ).length;
+  const coverageInterval = wilson95(covered, samples.length);
   const supported = samples.length >= MIN_CONTINUOUS_CALIBRATION_CASES &&
     verifiedDays >= MIN_CONTINUOUS_CALIBRATION_DAYS;
   return {
@@ -369,6 +399,9 @@ function summarizeMetric(
     requiredDays: MIN_CONTINUOUS_CALIBRATION_DAYS,
     medianAbsoluteError: supported ? median(absoluteErrors) : null,
     centralIntervalCoverage: supported ? covered / samples.length : null,
+    coveredCases: supported ? covered : 0,
+    coverageLower95: supported ? coverageInterval?.lower ?? null : null,
+    coverageUpper95: supported ? coverageInterval?.upper ?? null : null,
     meanIntervalWidth: supported
       ? samples.reduce((sum, sample) => sum + sample.p90 - sample.p10, 0) / samples.length
       : null,
