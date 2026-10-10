@@ -10,7 +10,7 @@ import {
 } from './ensembleCalibrationMath';
 import { roundedRainCoord } from './rainCalibrationMath';
 
-const ENSEMBLE_CALIBRATION_KEY = '@mu_weather/ensemble_calibration_v1';
+export const ENSEMBLE_CALIBRATION_KEY = '@mu_weather/ensemble_calibration_v1';
 
 interface EnsembleCalibrationFile {
   version: 1;
@@ -70,6 +70,33 @@ export async function loadEnsembleCalibrationLog(
   return (await loadFile()).entries
     .filter((entry) => locationKey(entry) === key)
     .sort((a, b) => a.validAt - b.validAt || a.issuedAt - b.issuedAt || a.metric.localeCompare(b.metric));
+}
+
+/** Snapshot used by the local-data manager; no calibration rows leave the device. */
+export async function loadAllEnsembleCalibrationData(): Promise<EnsembleCalibrationLogEntry[]> {
+  return (await loadFile()).entries;
+}
+
+/** Delete ensemble-calibration observations and forecasts for one rounded location. */
+export function clearEnsembleCalibrationLocation(
+  location: EnsembleCalibrationAnchor,
+): Promise<number> {
+  return withLogLock(async () => {
+    const file = await loadFile();
+    const key = locationKey(location);
+    const entries = file.entries.filter((entry) => locationKey(entry) !== key);
+    await persist({ version: 1, entries });
+    return file.entries.length - entries.length;
+  });
+}
+
+/** Delete all device-local ensemble calibration observations and forecasts. */
+export function clearAllEnsembleCalibrationData(): Promise<number> {
+  return withLogLock(async () => {
+    const file = await loadFile();
+    await persist(EMPTY_FILE);
+    return file.entries.length;
+  });
 }
 
 /** Store one latest temperature/wind distribution for each valid ensemble hour. */

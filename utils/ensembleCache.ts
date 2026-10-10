@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { EnsembleSpread, EnsembleSpreadPoint } from '../api/types';
+import type { EnsembleRainEpisodePoint, EnsembleSpread, EnsembleSpreadPoint } from '../api/types';
+import {
+  MIN_COMPLETE_RAIN_EPISODE_HOURS,
+  MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS,
+} from './ensembleRainEpisodeMath';
 
 const ENSEMBLE_CACHE_KEY = '@mu_weather/ensemble_v1';
 /** Cap on persisted locations; the oldest fetch is dropped when full. */
@@ -31,10 +35,11 @@ function isValidPoint(value: unknown): value is EnsembleSpreadPoint {
   const point = value as Partial<EnsembleSpreadPoint>;
   return (
     typeof point.time === 'string' &&
-    typeof point.tP10 === 'number' &&
-    typeof point.tMedian === 'number' &&
-    typeof point.tP90 === 'number' &&
-    typeof point.rainProb === 'number' &&
+    typeof point.tP10 === 'number' && Number.isFinite(point.tP10) &&
+    typeof point.tMedian === 'number' && Number.isFinite(point.tMedian) &&
+    typeof point.tP90 === 'number' && Number.isFinite(point.tP90) &&
+    (point.rainProb === null || (typeof point.rainProb === 'number' && Number.isFinite(point.rainProb) && point.rainProb >= 0 && point.rainProb <= 100)) &&
+    (point.rainMembers === undefined || (typeof point.rainMembers === 'number' && Number.isInteger(point.rainMembers) && point.rainMembers >= 0)) &&
     (point.windP10 === undefined || (typeof point.windP10 === 'number' && Number.isFinite(point.windP10))) &&
     (point.windMedian === undefined || (typeof point.windMedian === 'number' && Number.isFinite(point.windMedian))) &&
     (point.windP90 === undefined || (typeof point.windP90 === 'number' && Number.isFinite(point.windP90))) &&
@@ -42,18 +47,32 @@ function isValidPoint(value: unknown): value is EnsembleSpreadPoint {
   );
 }
 
+function isValidRainEpisode(value: unknown): value is EnsembleRainEpisodePoint {
+  if (!value || typeof value !== 'object') return false;
+  const row = value as Partial<EnsembleRainEpisodePoint>;
+  if (typeof row.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(row.date)) return false;
+  const midnight = Date.parse(`${row.date}T00:00:00.000Z`);
+  return Number.isFinite(midnight) && new Date(midnight).toISOString().slice(0, 10) === row.date &&
+    typeof row.probability === 'number' && Number.isFinite(row.probability) && row.probability >= 0 && row.probability <= 1 &&
+    typeof row.members === 'number' && Number.isInteger(row.members) && row.members >= MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS &&
+    typeof row.forecastHours === 'number' && row.forecastHours === MIN_COMPLETE_RAIN_EPISODE_HOURS;
+}
+
 function isValidRow(value: unknown): value is EnsembleCacheRow {
   if (!value || typeof value !== 'object') return false;
   const row = value as Partial<EnsembleCacheRow>;
-  return (
-    typeof row.lat === 'number' &&
-    typeof row.lon === 'number' &&
-    typeof row.fetchedAt === 'number' &&
-    typeof row.members === 'number' &&
-    Array.isArray(row.points) &&
-    row.points.length > 0 &&
-    row.points.every(isValidPoint)
-  );
+  if (
+    typeof row.lat !== 'number' || !Number.isFinite(row.lat) || row.lat < -90 || row.lat > 90 ||
+    typeof row.lon !== 'number' || !Number.isFinite(row.lon) || row.lon < -180 || row.lon > 180 ||
+    typeof row.fetchedAt !== 'number' || !Number.isFinite(row.fetchedAt) || row.fetchedAt <= 0 ||
+    typeof row.members !== 'number' || !Number.isInteger(row.members) || row.members <= 0 ||
+    !Array.isArray(row.points) || row.points.length === 0
+  ) return false;
+  const memberCount = row.members;
+  return row.points.every((point) => isValidPoint(point) &&
+    (point.rainMembers === undefined || point.rainMembers <= memberCount)) &&
+    (row.rainEpisodes === undefined ||
+      (Array.isArray(row.rainEpisodes) && row.rainEpisodes.every(isValidRainEpisode)));
 }
 
 async function loadAllRows(): Promise<EnsembleCacheRow[]> {

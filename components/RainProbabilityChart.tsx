@@ -2,18 +2,24 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import { Canvas, LinearGradient, Rect, RoundedRect, vec } from '@shopify/react-native-skia';
 import { Easing, useDerivedValue, useSharedValue, withDelay, withTiming, type SharedValue } from 'react-native-reanimated';
-import { t } from '../utils/i18n';
+import { getLanguage, t } from '../utils/i18n';
 import type { AppTheme } from '../theme/palettes';
-import type { HourPoint } from '../api/types';
+import type { EnsembleRainEpisodePoint, HourPoint } from '../api/types';
 import { formatHourLabel } from '../utils/format';
 import { F } from '../theme/typography';
 import { useReducedMotion } from '../utils/reduceMotion';
 import type { RainCalibrationSummary } from '../utils/rainCalibrationMath';
+import { ENSEMBLE_TTL_MS } from '../utils/ensembleCache';
+import { assessSignalFreshness } from '../utils/freshnessPolicy';
 
 interface RainProbabilityChartProps {
   theme: AppTheme;
   hours: HourPoint[];
   calibration?: RainCalibrationSummary;
+  /** Direct daily ensemble-event probabilities; null means no ensemble snapshot is available. */
+  rainEpisodes?: EnsembleRainEpisodePoint[] | null;
+  ensembleFetchedAt?: number | null;
+  now: number;
 }
 
 const BAR_COUNT = 12;
@@ -25,7 +31,14 @@ const GUTTER_RIGHT = 4;
 const STAGGER_MS = 35;
 const GROW_MS = 520;
 
-export function RainProbabilityChart({ theme, hours, calibration }: RainProbabilityChartProps) {
+export function RainProbabilityChart({
+  theme,
+  hours,
+  calibration,
+  rainEpisodes,
+  ensembleFetchedAt = null,
+  now,
+}: RainProbabilityChartProps) {
   const slice = hours.slice(0, BAR_COUNT);
   const reduced = useReducedMotion();
   const [plotWidth, setPlotWidth] = useState(0);
@@ -99,6 +112,40 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
   const reliabilityText = reliableBins
     ? t('rain_calibration_reliability').replace('{bins}', reliableBins)
     : null;
+  const episodeCalibrationText = calibration
+    ? calibration.episode.status === 'ready'
+      ? t('rain_episode_calibration_ready')
+          .replace('{score}', (calibration.episode.brierScore ?? 0).toFixed(3))
+          .replace('{cases}', String(calibration.episode.verifiedCases))
+          .replace('{events}', String(calibration.episode.observedEpisodes))
+          .replace('{probability}', `${Math.round((calibration.episode.meanForecastProbability ?? 0) * 100)}%`)
+      : t('rain_episode_calibration_insufficient')
+          .replace('{cases}', String(calibration.episode.verifiedCases))
+          .replace('{requiredDays}', String(calibration.episode.requiredDays))
+          .replace('{events}', String(calibration.episode.observedEpisodes))
+    : null;
+  const episodeNote = calibration ? t('rain_episode_probability_note') : null;
+  const hourlyMethodNote = t('rain_probability_method_note');
+  const ensembleFreshness = assessSignalFreshness(ensembleFetchedAt, now, ENSEMBLE_TTL_MS);
+  const fetchedTimeLabel = typeof ensembleFetchedAt === 'number' && Number.isFinite(ensembleFetchedAt)
+    ? new Date(ensembleFetchedAt).toLocaleString(getLanguage(), {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+      })
+    : t('unavailable');
+  const freshnessNotice = ensembleFreshness.status === 'fresh'
+    ? null
+    : t('rain_daily_event_stale').replace('{time}', fetchedTimeLabel);
+  const episodeForecastText = rainEpisodes === undefined || rainEpisodes === null
+    ? null
+    : [
+        freshnessNotice,
+        rainEpisodes.length > 0
+          ? t('rain_daily_event_forecast').replace('{days}', rainEpisodes
+              .map((episode) => `${episode.date} ${Math.round(episode.probability * 100)}% (n=${episode.members}, ${episode.forecastHours} h)`)
+              .join(' · '))
+          : t('rain_daily_event_unavailable'),
+      ].filter(Boolean).join(' ');
+  const calibrationSourceNote = calibration ? t('rain_calibration_source_note') : null;
   const leadTimeText = calibration
     ? calibration.leadTimeBuckets
         .filter((bucket) => bucket.sufficientlyPopulated && bucket.brierScore !== null)
@@ -126,6 +173,11 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
     calibrationText,
     reliabilityText,
     leadTimeText,
+    hourlyMethodNote,
+    episodeForecastText,
+    calibrationSourceNote,
+    episodeCalibrationText,
+    episodeNote,
   ].filter(Boolean).join('. ');
 
   return (
@@ -224,6 +276,19 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
       <Text style={[styles.caption, { color: theme.textTertiary }]}>
         {t('chart_rain_caption')}
       </Text>
+      <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+        {hourlyMethodNote}
+      </Text>
+      {episodeForecastText ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+          {episodeForecastText}
+        </Text>
+      ) : null}
+      {calibrationSourceNote ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textTertiary }]}>
+          {calibrationSourceNote}
+        </Text>
+      ) : null}
       {calibrationText ? (
         <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
           {calibrationText}
@@ -237,6 +302,16 @@ export function RainProbabilityChart({ theme, hours, calibration }: RainProbabil
       {leadTimeText ? (
         <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
           {leadTimeText}
+        </Text>
+      ) : null}
+      {episodeCalibrationText ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textSecondary }]}>
+          {episodeCalibrationText}
+        </Text>
+      ) : null}
+      {episodeNote ? (
+        <Text style={[styles.calibrationCaption, { color: theme.textTertiary }]}>
+          {episodeNote}
         </Text>
       ) : null}
     </View>

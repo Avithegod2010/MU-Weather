@@ -200,13 +200,26 @@ export interface EnsembleSpreadPoint {
   windP90?: number;
   /** Number of members with wind data at this hour. */
   windMembers?: number;
-  /** Member-derived rain probability 0-100 (share of members with precipitation >= 0.1 mm). */
-  rainProb: number;
+  /** Member-derived rain probability 0-100; null when hourly precipitation support is too small. */
+  rainProb: number | null;
+  /** Number of members with valid hourly precipitation, so missing support is not mistaken for zero rain. */
+  rainMembers?: number;
+}
+
+/** Joint-member estimate that any hour in one complete local day exceeds the rain threshold. */
+export interface EnsembleRainEpisodePoint {
+  date: string;
+  /** Probability in 0-1, computed by counting members with at least one wet hour that day. */
+  probability: number;
+  members: number;
+  forecastHours: number;
 }
 
 /** Ensemble spread for one location, fetched from the Ensemble API (JSON-safe). */
 export interface EnsembleSpread {
   points: EnsembleSpreadPoint[];
+  /** Direct day-event probabilities from joint member trajectories; optional for legacy caches. */
+  rainEpisodes?: EnsembleRainEpisodePoint[];
   /** Number of members the percentiles were computed over. */
   members: number;
   /** Epoch ms of the fetch - ensembles go stale, cache entries expire. */

@@ -51,6 +51,7 @@ export function useEnsemble(location: GeoLocation | null): EnsembleState {
       if (cached) {
         const spread: EnsembleSpread = {
           points: cached.points,
+          ...(cached.rainEpisodes ? { rainEpisodes: cached.rainEpisodes } : {}),
           members: cached.members,
           fetchedAt: cached.fetchedAt,
         };

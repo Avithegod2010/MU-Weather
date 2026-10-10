@@ -1,5 +1,9 @@
 import type { EnsembleSpread, GeoLocation, HourlyPrecipitationObservation } from '../api/types';
 import { RAIN_EVENT_THRESHOLD_MM } from '../api/rain';
+import {
+  MIN_COMPLETE_RAIN_EPISODE_HOURS,
+  MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS,
+} from './ensembleRainEpisodeMath';
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
@@ -23,6 +27,8 @@ export const MIN_RAIN_RELIABILITY_BIN_DAYS = 7;
 /** Lead-time scores need their own support threshold to avoid noisy slices. */
 export const MIN_RAIN_LEAD_BUCKET_CASES = 20;
 export const MIN_RAIN_LEAD_BUCKET_DAYS = 7;
+/** Daily event scoring has one sample per local date; suppress estimates before two weeks. */
+export const MIN_RAIN_EPISODE_VERIFIED_DAYS = 14;
 
 export const RAIN_LEAD_TIME_BUCKETS = [
   { startLeadHours: 0, endLeadHours: 24 },
@@ -59,6 +65,34 @@ export interface RainForecastLogEntry {
   observedAt?: number;
 }
 
+/** One direct, correlated-member probability for any rain event during a complete local calendar day. */
+export interface RainEpisodeForecastLogEntry {
+  lat: number;
+  lon: number;
+  date: string;
+  validAt: number;
+  issuedAt: number;
+  /** Lead to the local-day midpoint, in hours. */
+  leadHours: number;
+  /** Joint-member event chance (0-1), never synthesized by multiplying hourly chances. */
+  probability: number;
+  members: number;
+  forecastHours: number;
+  observed: 0 | 1 | null;
+  observedAt?: number;
+}
+
+export interface RainEpisodeCalibrationSummary {
+  status: 'insufficient' | 'ready';
+  verifiedCases: number;
+  verifiedDays: number;
+  requiredDays: number;
+  observedEpisodes: number;
+  meanForecastProbability: number | null;
+  /** Brier score for directly estimated complete-day event probabilities. */
+  brierScore: number | null;
+}
+
 export interface RainReliabilityBin {
   lowerPercent: number;
   upperPercent: number;
@@ -88,6 +122,8 @@ interface RainCalibrationSummaryBase {
   requiredDays: number;
   reliabilityBins: RainReliabilityBin[];
   leadTimeBuckets: RainLeadTimeBucket[];
+  /** Local-day event score uses joint member trajectories and complete archive days. */
+  episode: RainEpisodeCalibrationSummary;
 }
 
 export type RainCalibrationSummary =
@@ -174,9 +210,10 @@ export function createRainForecastEntries(
   for (const point of spread.points) {
     if (
       typeof point.time !== 'string' ||
-      !Number.isFinite(point.rainProb) ||
-      point.rainProb < 0 ||
-      point.rainProb > 100
+      typeof point.rainProb !== 'number' || !Number.isFinite(point.rainProb) ||
+      point.rainProb < 0 || point.rainProb > 100 ||
+      typeof point.rainMembers !== 'number' || !Number.isInteger(point.rainMembers) ||
+      point.rainMembers < MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS
     ) {
       continue;
     }
@@ -236,6 +273,68 @@ function forecastKey(entry: Pick<RainForecastLogEntry, 'lat' | 'lon' | 'time'>):
   return `${locationKey(entry)}|${entry.time}`;
 }
 
+function episodeForecastKey(entry: Pick<RainEpisodeForecastLogEntry, 'lat' | 'lon' | 'date'>): string {
+  return `${locationKey(entry)}|${entry.date}`;
+}
+
+/** Validate a daily event row loaded from local JSON. */
+export function isRainEpisodeForecastLogEntry(value: unknown): value is RainEpisodeForecastLogEntry {
+  if (!value || typeof value !== 'object') return false;
+  const entry = value as Partial<RainEpisodeForecastLogEntry>;
+  return (
+    typeof entry.lat === 'number' && Number.isFinite(entry.lat) && entry.lat >= -90 && entry.lat <= 90 &&
+    typeof entry.lon === 'number' && Number.isFinite(entry.lon) && entry.lon >= -180 && entry.lon <= 180 &&
+    typeof entry.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(entry.date) &&
+    localTimestampAsUtc(`${entry.date}T00:00`) !== null &&
+    typeof entry.validAt === 'number' && Number.isFinite(entry.validAt) &&
+    typeof entry.issuedAt === 'number' && Number.isFinite(entry.issuedAt) && entry.issuedAt > 0 &&
+    typeof entry.leadHours === 'number' && Number.isFinite(entry.leadHours) &&
+    entry.leadHours > 0 && entry.leadHours <= MAX_RAIN_LEAD_HOURS &&
+    typeof entry.probability === 'number' && Number.isFinite(entry.probability) && entry.probability >= 0 && entry.probability <= 1 &&
+    typeof entry.members === 'number' && Number.isInteger(entry.members) && entry.members >= MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS &&
+    typeof entry.forecastHours === 'number' && Number.isInteger(entry.forecastHours) && entry.forecastHours === MIN_COMPLETE_RAIN_EPISODE_HOURS &&
+    (entry.observed === null || entry.observed === 0 || entry.observed === 1) &&
+    (entry.observed === null
+      ? entry.observedAt === undefined
+      : typeof entry.observedAt === 'number' && Number.isFinite(entry.observedAt) && entry.observedAt > 0)
+  );
+}
+
+/** Build one direct daily event forecast from joint ensemble-member trajectories. */
+export function createRainEpisodeForecastEntries(
+  spread: EnsembleSpread,
+  location: RainLocationAnchor,
+  utcOffsetSeconds: number,
+): RainEpisodeForecastLogEntry[] {
+  if (!isLocationAnchor(location) || !Number.isFinite(utcOffsetSeconds) ||
+      !Number.isFinite(spread.fetchedAt) || spread.fetchedAt <= 0 || !Array.isArray(spread.rainEpisodes)) return [];
+  const rows: RainEpisodeForecastLogEntry[] = [];
+  for (const episode of spread.rainEpisodes) {
+    if (typeof episode.date !== 'string' || localTimestampAsUtc(`${episode.date}T00:00`) === null ||
+        !Number.isFinite(episode.probability) || episode.probability < 0 || episode.probability > 1 ||
+        !Number.isInteger(episode.members) || episode.members < MIN_RAIN_EPISODE_ENSEMBLE_MEMBERS ||
+        !Number.isInteger(episode.forecastHours) || episode.forecastHours !== MIN_COMPLETE_RAIN_EPISODE_HOURS) continue;
+    const localMidnight = localTimestampAsUtc(`${episode.date}T00:00`);
+    if (localMidnight === null) continue;
+    const validAt = localMidnight - utcOffsetSeconds * 1000;
+    const midpointLead = (validAt + 12 * HOUR_MS - spread.fetchedAt) / HOUR_MS;
+    if (midpointLead <= 0 || midpointLead > MAX_RAIN_LEAD_HOURS) continue;
+    rows.push({
+      lat: roundedRainCoord(location.latitude),
+      lon: roundedRainCoord(location.longitude),
+      date: episode.date,
+      validAt,
+      issuedAt: spread.fetchedAt,
+      leadHours: Number(midpointLead.toFixed(3)),
+      probability: episode.probability,
+      members: episode.members,
+      forecastHours: episode.forecastHours,
+      observed: null,
+    });
+  }
+  return rows;
+}
+
 /**
  * Keep one latest pre-event forecast per location/hour. Repeated refreshes
  * replace only unverified forecasts, so the same observation is never counted
@@ -283,6 +382,46 @@ export function mergeRainForecastEntries(
     .slice(-MAX_RAIN_LOG_ROWS);
 }
 
+/** Keep the latest unverified daily event forecast per location/date. */
+export function mergeRainEpisodeForecastEntries(
+  existing: RainEpisodeForecastLogEntry[],
+  additions: RainEpisodeForecastLogEntry[],
+  now = Date.now(),
+): RainEpisodeForecastLogEntry[] {
+  const byDate = new Map<string, RainEpisodeForecastLogEntry>();
+  for (const entry of existing) {
+    if (isRainEpisodeForecastLogEntry(entry)) byDate.set(episodeForecastKey(entry), entry);
+  }
+  for (const addition of additions) {
+    if (!isRainEpisodeForecastLogEntry(addition)) continue;
+    const key = episodeForecastKey(addition);
+    const previous = byDate.get(key);
+    if (previous?.observed !== null && previous?.observed !== undefined) continue;
+    if (!previous || addition.issuedAt > previous.issuedAt) byDate.set(key, addition);
+  }
+
+  const cutoff = now - MAX_RAIN_LOG_DAYS * DAY_MS;
+  const futureLimit = now + MAX_RAIN_LEAD_HOURS * HOUR_MS;
+  const byLocation = new Map<string, RainEpisodeForecastLogEntry[]>();
+  for (const entry of byDate.values()) {
+    if (entry.validAt < cutoff || entry.validAt > futureLimit) continue;
+    const key = locationKey(entry);
+    const group = byLocation.get(key);
+    if (group) group.push(entry);
+    else byLocation.set(key, [entry]);
+  }
+  return [...byLocation.entries()]
+    .map(([key, entries]) => ({
+      key,
+      entries: entries.sort((a, b) => a.validAt - b.validAt || a.issuedAt - b.issuedAt).slice(-MAX_RAIN_LOG_DAYS),
+      latestIssue: Math.max(...entries.map((entry) => entry.issuedAt)),
+    }))
+    .sort((a, b) => b.latestIssue - a.latestIssue)
+    .slice(0, MAX_RAIN_LOG_LOCATIONS)
+    .flatMap((row) => row.entries)
+    .sort((a, b) => a.validAt - b.validAt || a.issuedAt - b.issuedAt);
+}
+
 /** Attach each real hourly observation to its matching, still-unverified forecast. */
 export function applyRainObservations(
   entries: RainForecastLogEntry[],
@@ -320,6 +459,69 @@ export function applyRainObservations(
 }
 
 /** Date range for complete, not-yet-verified hours within the archive lookback. */
+/** Attach a complete local-day rain event without converting partial archive days into dry outcomes. */
+export function applyRainEpisodeObservations(
+  entries: RainEpisodeForecastLogEntry[],
+  location: RainLocationAnchor,
+  observations: HourlyPrecipitationObservation[],
+  observedAt = Date.now(),
+): RainEpisodeForecastLogEntry[] {
+  if (!isLocationAnchor(location) || !Number.isFinite(observedAt) || observedAt <= 0) return entries;
+  const lat = roundedRainCoord(location.latitude);
+  const lon = roundedRainCoord(location.longitude);
+  const days = new Map<string, { precipitationByHour: Map<number, number>; hasDuplicateHour: boolean }>();
+  for (const row of observations) {
+    if (typeof row.time !== 'string' || localTimestampAsUtc(row.time) === null ||
+        typeof row.precipitation !== 'number' || !Number.isFinite(row.precipitation) || row.precipitation < 0) continue;
+    const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}):00(?::00)?$/.exec(row.time);
+    if (!match) continue;
+    const date = match[1];
+    const hour = Number(match[2]);
+    const day = days.get(date) ?? { precipitationByHour: new Map<number, number>(), hasDuplicateHour: false };
+    if (day.precipitationByHour.has(hour)) {
+      day.hasDuplicateHour = true;
+    } else {
+      day.precipitationByHour.set(hour, row.precipitation);
+    }
+    days.set(date, day);
+  }
+  const observedByDate = new Map<string, 0 | 1>();
+  for (const [date, day] of days) {
+    const complete = day.precipitationByHour.size === MIN_COMPLETE_RAIN_EPISODE_HOURS &&
+      !day.hasDuplicateHour &&
+      Array.from({ length: MIN_COMPLETE_RAIN_EPISODE_HOURS }, (_, hour) => hour)
+        .every((hour) => day.precipitationByHour.has(hour));
+    if (complete) {
+      const wet = [...day.precipitationByHour.values()].some((precipitation) =>
+        precipitation >= RAIN_EVENT_THRESHOLD_MM,
+      );
+      observedByDate.set(date, wet ? 1 : 0);
+    }
+  }
+  const eligibleAt = observedAt - RAIN_OBSERVATION_DELAY_MS;
+  const oldest = observedAt - MAX_RAIN_LOG_DAYS * DAY_MS;
+  return entries.map((entry) => {
+    if (roundedRainCoord(entry.lat) !== lat || roundedRainCoord(entry.lon) !== lon || entry.observed !== null ||
+        entry.validAt > eligibleAt || entry.validAt < oldest) return entry;
+    const observed = observedByDate.get(entry.date);
+    return observed === undefined ? entry : { ...entry, observed, observedAt };
+  });
+}
+
+/** Date range for complete, archive-ready unverified daily event forecasts. */
+export function rainEpisodeVerificationDateRange(
+  entries: RainEpisodeForecastLogEntry[],
+  now = Date.now(),
+): { startDate: string; endDate: string } | null {
+  const cutoff = now - RAIN_OBSERVATION_DELAY_MS;
+  const oldest = now - MAX_RAIN_LOG_DAYS * DAY_MS;
+  const dates = entries
+    .filter((entry) => entry.observed === null && entry.validAt <= cutoff && entry.validAt >= oldest)
+    .map((entry) => entry.date)
+    .sort();
+  return dates.length > 0 ? { startDate: dates[0], endDate: dates[dates.length - 1] } : null;
+}
+
 export function rainVerificationDateRange(
   entries: RainForecastLogEntry[],
   now = Date.now(),
@@ -394,15 +596,61 @@ function summarizeRainLeadTimes(samples: RainForecastLogEntry[]): RainLeadTimeBu
   });
 }
 
+/** Sample-gated Brier summary for the direct, joint-member daily rain-event probability. */
+export function computeRainEpisodeCalibrationSummary(
+  entries: RainEpisodeForecastLogEntry[],
+  location: GeoLocation | RainLocationAnchor | null,
+  now = Date.now(),
+): RainEpisodeCalibrationSummary {
+  const empty: RainEpisodeCalibrationSummary = {
+    status: 'insufficient',
+    verifiedCases: 0,
+    verifiedDays: 0,
+    requiredDays: MIN_RAIN_EPISODE_VERIFIED_DAYS,
+    observedEpisodes: 0,
+    meanForecastProbability: null,
+    brierScore: null,
+  };
+  if (!location || !isLocationAnchor(location)) return empty;
+  const lat = roundedRainCoord(location.latitude);
+  const lon = roundedRainCoord(location.longitude);
+  const cutoff = now - MAX_RAIN_LOG_DAYS * DAY_MS;
+  const verified = entries.filter((entry) =>
+    roundedRainCoord(entry.lat) === lat && roundedRainCoord(entry.lon) === lon &&
+    entry.observed !== null && entry.validAt >= cutoff && entry.validAt <= now,
+  );
+  const days = new Set(verified.map((entry) => entry.date));
+  const observedEpisodes = verified.filter((entry) => entry.observed === 1).length;
+  const supported = verified.length >= MIN_RAIN_EPISODE_VERIFIED_DAYS &&
+    days.size >= MIN_RAIN_EPISODE_VERIFIED_DAYS;
+  return {
+    status: supported ? 'ready' : 'insufficient',
+    verifiedCases: verified.length,
+    verifiedDays: days.size,
+    requiredDays: MIN_RAIN_EPISODE_VERIFIED_DAYS,
+    observedEpisodes,
+    meanForecastProbability: supported
+      ? verified.reduce((sum, entry) => sum + entry.probability, 0) / verified.length
+      : null,
+    brierScore: supported
+      ? verified.reduce((sum, entry) => {
+          const error = entry.probability - (entry.observed as 0 | 1);
+          return sum + error * error;
+        }, 0) / verified.length
+      : null,
+  };
+}
+
 /**
- * Brier score and reliability bins for the raw hourly member-share forecasts.
- * This is hourly verification only: it does not multiply hourly dry
- * probabilities or otherwise infer a daily rain probability.
+ * Brier score and reliability bins for raw hourly member-share forecasts,
+ * alongside a separately computed local-day event summary from joint member
+ * trajectories. The hourly metric itself never infers a daily probability.
  */
 export function computeRainCalibrationSummary(
   entries: RainForecastLogEntry[],
   location: GeoLocation | RainLocationAnchor | null,
   now = Date.now(),
+  episodeEntries: RainEpisodeForecastLogEntry[] = [],
 ): RainCalibrationSummary {
   const emptyBins = emptyReliabilityBins();
   const emptySummary: RainCalibrationSummary = {
@@ -414,6 +662,7 @@ export function computeRainCalibrationSummary(
     brierScore: null,
     reliabilityBins: emptyBins,
     leadTimeBuckets: summarizeRainLeadTimes([]),
+    episode: computeRainEpisodeCalibrationSummary(episodeEntries, location, now),
   };
   if (!location || !isLocationAnchor(location)) return emptySummary;
 
@@ -452,6 +701,7 @@ export function computeRainCalibrationSummary(
     brierScore: squaredErrorSum / samples.length,
     reliabilityBins,
     leadTimeBuckets,
+    episode: computeRainEpisodeCalibrationSummary(episodeEntries, location, now),
   };
 }
 

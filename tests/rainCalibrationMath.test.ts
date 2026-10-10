@@ -1,16 +1,28 @@
-import { fetchHourlyPrecipitationActuals, fetchHourlyWeatherActuals } from '../api/providers';
+import {
+  fetchEnsembleSpread,
+  fetchHourlyPrecipitationActuals,
+  fetchHourlyWeatherActuals,
+} from '../api/providers';
 import type { EnsembleSpread, GeoLocation } from '../api/types';
+import { summarizeEnsembleRainEpisodes } from '../utils/ensembleRainEpisodeMath';
 import {
   MAX_RAIN_LOG_LOCATIONS,
   MAX_RAIN_LOG_ROWS_PER_LOCATION,
   MIN_RAIN_CALIBRATION_CASES,
+  applyRainEpisodeObservations,
   applyRainObservations,
   calibratedRainProbability,
+  computeRainEpisodeCalibrationSummary,
   computeRainCalibrationSummary,
+  createRainEpisodeForecastEntries,
   createRainForecastEntries,
+  isRainEpisodeForecastLogEntry,
   localTimestampAsUtc,
+  mergeRainEpisodeForecastEntries,
   mergeRainForecastEntries,
+  rainEpisodeVerificationDateRange,
   rainVerificationDateRange,
+  type RainEpisodeForecastLogEntry,
   type RainForecastLogEntry,
 } from '../utils/rainCalibrationMath';
 
@@ -63,24 +75,33 @@ const spread: EnsembleSpread = {
   fetchedAt: issuedAt,
   members: 40,
   points: [
-    { time: '2026-03-14T08:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 90 },
-    { time: '2026-03-14T10:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 25 },
-    { time: '2026-03-14T12:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 75 },
-    { time: 'bad-time', tP10: 3, tMedian: 5, tP90: 8, rainProb: 50 },
-    { time: '2026-03-14T14:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 101 },
+    { time: '2026-03-14T08:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 90, rainMembers: 40 },
+    { time: '2026-03-14T10:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 25, rainMembers: 40 },
+    { time: '2026-03-14T12:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 75, rainMembers: 40 },
+    { time: 'bad-time', tP10: 3, tMedian: 5, tP90: 8, rainProb: 50, rainMembers: 40 },
+    { time: '2026-03-14T14:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 101, rainMembers: 40 },
   ],
 };
 const forecasts = createRainForecastEntries(spread, paris, 60 * 60);
 assert(forecasts.length === 2, 'past, malformed and out-of-range forecast points are skipped');
 assert(forecasts[0].time === '2026-03-14T10:00', 'future hourly point is retained');
+const unsupportedRain = createRainForecastEntries({
+  ...spread,
+  points: [{ ...spread.points[1], rainProb: null, rainMembers: 0 }],
+}, paris, 60 * 60);
+assert(unsupportedRain.length === 0, 'missing precipitation-member support cannot be logged as a zero-percent forecast');
+const legacyRainPoint = { ...spread.points[1], rainProb: 0 };
+delete legacyRainPoint.rainMembers;
+assert(createRainForecastEntries({ ...spread, points: [legacyRainPoint] }, paris, 60 * 60).length === 0,
+  'legacy ensemble cache rows without per-hour rain support are not treated as calibrated dry forecasts');
 // Europe/Paris repeats local 02:00 when daylight-saving time ends on 2026-10-25.
 const ambiguous = createRainForecastEntries(
   {
     ...spread,
     fetchedAt: Date.UTC(2026, 9, 24, 22),
     points: [
-      { time: '2026-10-25T02:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 25 },
-      { time: '2026-10-25T02:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 75 },
+      { time: '2026-10-25T02:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 25, rainMembers: 40 },
+      { time: '2026-10-25T02:00', tP10: 3, tMedian: 5, tP90: 8, rainProb: 75, rainMembers: 40 },
     ],
   },
   paris,
@@ -190,6 +211,76 @@ assert(
   'archive verification requests a bounded range of eligible, lagged forecast dates',
 );
 
+function testJointMemberRainEpisodeVerification(): void {
+  const date = '2026-01-02';
+  const times = Array.from({ length: 24 }, (_, hour) => `${date}T${String(hour).padStart(2, '0')}:00`);
+  const members = Array.from({ length: 10 }, (_, memberIndex) => ({
+    memberId: `member-${memberIndex}`,
+    precipitation: times.map((_, hour) => memberIndex < 3 && (hour === 5 || hour === 6) ? 0.2 : 0),
+  }));
+  const joint = summarizeEnsembleRainEpisodes(times, members);
+  assert(joint.length === 1 && joint[0].forecastHours === 24, 'only a complete local day produces an event forecast');
+  closeTo(joint[0].probability, 0.3, 1e-12, 'correlated wet members count once for a local-day event instead of multiplying hourly probabilities');
+  assert(summarizeEnsembleRainEpisodes(times.slice(1), members).length === 0, 'a partial local day is not scored as a full-day event');
+  const missingHourWithDuplicate = [...times.filter((_, index) => index !== 17), times[16]];
+  assert(summarizeEnsembleRainEpisodes(missingHourWithDuplicate, members).length === 0,
+    'a duplicated hour cannot make an incomplete ensemble day look complete');
+  assert(summarizeEnsembleRainEpisodes([...times, times[16]], members).length === 0,
+    'a 25-row day with a duplicate hour is not treated as full hourly coverage');
+  const halfHourTimes = times.map((time, index) => index === 10 ? `${date}T10:30` : time);
+  assert(summarizeEnsembleRainEpisodes(halfHourTimes, members).length === 0,
+    'non-top-of-hour timestamps cannot fill missing full-hour coverage');
+
+  const fetchedAt = Date.UTC(2026, 0, 1, 10);
+  const location = { latitude: 48.86, longitude: 2.35 };
+  const spread: EnsembleSpread = {
+    fetchedAt,
+    members: 10,
+    points: [],
+    rainEpisodes: joint,
+  };
+  const created = createRainEpisodeForecastEntries(spread, location, 0);
+  assert(created.length === 1 && isRainEpisodeForecastLogEntry(created[0]), 'joint daily event estimate is persisted as a validated forecast row');
+  closeTo(created[0].probability, 0.3, 1e-12, 'daily event forecast retains the member-derived probability without an independence transform');
+  const newer = { ...created[0], issuedAt: fetchedAt + 1, probability: 0.5 };
+  const merged = mergeRainEpisodeForecastEntries(created, [newer], fetchedAt + 2);
+  assert(merged.length === 1 && merged[0].probability === 0.5, 'unverified daily event forecasts keep the latest issue for that place/date');
+
+  const observedAt = Date.UTC(2026, 0, 5);
+  const observations = times.map((time, hour) => ({ time, precipitation: hour === 7 ? 0.2 : 0 }));
+  const oldEnough = { ...created[0], validAt: Date.UTC(2026, 0, 2), observed: null };
+  const partial = applyRainEpisodeObservations([oldEnough], location, observations.slice(0, 12), observedAt);
+  assert(partial[0].observed === null, 'partial archive data never becomes a false dry-day outcome');
+  const missingArchiveHourWithDuplicate = [...observations.filter((_, index) => index !== 17), observations[16]];
+  const duplicateCoverage = applyRainEpisodeObservations([oldEnough], location, missingArchiveHourWithDuplicate, observedAt);
+  assert(duplicateCoverage[0].observed === null,
+    'duplicate archive hours cannot turn an incomplete local day into an observation');
+  const overcompleteDuplicate = applyRainEpisodeObservations([oldEnough], location, [...observations, observations[16]], observedAt);
+  assert(overcompleteDuplicate[0].observed === null, 'an extra duplicate archive row invalidates daily verification');
+  const complete = applyRainEpisodeObservations([oldEnough], location, observations, observedAt);
+  assert(complete[0].observed === 1, 'one or more wet archive hours verifies one local-day rain episode');
+  assert(rainEpisodeVerificationDateRange([oldEnough], observedAt)?.startDate === date, 'daily verification requests use the event date');
+
+  const monthEnd = Date.UTC(2026, 0, 31);
+  const verifiedDays: RainEpisodeForecastLogEntry[] = Array.from({ length: 14 }, (_, index) => {
+    const dayDate = new Date(Date.UTC(2026, 0, 1 + index)).toISOString().slice(0, 10);
+    const validAt = Date.UTC(2026, 0, 1 + index);
+    return {
+      ...oldEnough,
+      date: dayDate,
+      validAt,
+      issuedAt: validAt - 12 * 60 * 60 * 1000,
+      observed: index < 4 ? 1 : 0,
+      observedAt: validAt + 4 * 24 * 60 * 60 * 1000,
+    };
+  });
+  const eventSummary = computeRainEpisodeCalibrationSummary(verifiedDays, location, monthEnd);
+  assert(eventSummary.status === 'ready' && eventSummary.verifiedDays === 14, 'daily event scoring is gated on fourteen complete dates');
+  assert(eventSummary.brierScore !== null && eventSummary.meanForecastProbability !== null, 'supported local-day events report Brier and mean probability');
+  assert(computeRainEpisodeCalibrationSummary(verifiedDays, { latitude: 40, longitude: -74 }, monthEnd).verifiedCases === 0,
+    'daily event calibration is scoped to its rounded location');
+}
+
 async function testArchiveObservationProvider(): Promise<void> {
   const originalFetch = globalThis.fetch;
   let requestedUrl = '';
@@ -258,7 +349,54 @@ async function testArchiveObservationProvider(): Promise<void> {
   }
 }
 
+async function testEnsembleRainSupport(): Promise<void> {
+  const originalFetch = globalThis.fetch;
+  const times = Array.from({ length: 24 }, (_, hour) => `2026-03-11T${String(hour).padStart(2, '0')}:00`);
+  const makePayload = (precipitationMembers: number) => {
+    const hourly: Record<string, unknown> = { time: times };
+    for (let member = 0; member < 10; member++) {
+      hourly[`temperature_2m_member${member}`] = Array(24).fill(12);
+      if (member < precipitationMembers) {
+        hourly[`precipitation_member${member}`] = times.map((_, hour) =>
+          member < 3 && hour === 7 ? 0.2 : 0,
+        );
+      }
+    }
+    return { hourly };
+  };
+  try {
+    globalThis.fetch = (async () => ({
+      ok: true,
+      status: 200,
+      json: async () => makePayload(5),
+    }) as Response) as typeof fetch;
+    const lowSupport = await fetchEnsembleSpread(paris.latitude, paris.longitude);
+    assert(lowSupport?.points[0].rainProb === null && lowSupport.points[0].rainMembers === 5,
+      'fewer than ten hourly precipitation members yield unavailable, not zero, rain probability');
+    assert(lowSupport?.rainEpisodes?.length === 0,
+      'daily event estimates are omitted below the minimum complete-day member support');
+
+    globalThis.fetch = (async () => ({
+      ok: true,
+      status: 200,
+      json: async () => makePayload(10),
+    }) as Response) as typeof fetch;
+    const supported = await fetchEnsembleSpread(paris.latitude, paris.longitude);
+    assert(supported?.points[7].rainProb === 30 && supported.points[7].rainMembers === 10,
+      'hourly event probability uses only supported precipitation members');
+    assert(supported?.rainEpisodes?.length === 1 && supported.rainEpisodes[0].members === 10,
+      'a complete local day produces a joint-member daily event probability with its support count');
+    closeTo(supported?.rainEpisodes?.[0].probability ?? -1, 0.3, 1e-12,
+      'daily chance counts members with any wet hour instead of multiplying hourly chances');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
+testJointMemberRainEpisodeVerification();
+
 void testArchiveObservationProvider()
+  .then(() => testEnsembleRainSupport())
   .then(() => console.log('rain calibration math and archive-provider tests passed'))
   .catch((error: unknown) => {
     console.error(error);
