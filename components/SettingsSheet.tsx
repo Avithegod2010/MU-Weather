@@ -70,6 +70,7 @@ import { formatClockParts } from '../utils/format';
 import { exportSettings, importSettings } from '../utils/backup';
 import { writeForecastLogExport, type DataExportFormat } from '../utils/dataExport';
 import { writeDiagnosticsReport } from '../utils/debugBundle';
+import { LocalQualityDataManager } from './LocalQualityDataManager';
 import type { ProviderCheck } from '../api/providers';
 import type { AppTheme } from '../theme/palettes';
 
@@ -435,6 +436,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_haptics')}
               value={ready ? settings.hapticsEnabled : true}
               onValueChange={(value) => {
                 if (value) {
@@ -461,6 +463,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_sky_motion')}
               value={ready ? settings.skyMotion : true}
               onValueChange={(value) => onUpdate({ skyMotion: value })}
               trackColor={{ true: theme.accent, false: theme.trackColor }}
@@ -493,6 +496,8 @@ export function SettingsSheet({
                   }}
                   style={styles.themeGridItem}
                   pressedOpacity={0.7}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
                 >
                   <SlidingTarget style={[styles.themeSwatchRing, { borderColor: 'transparent' }]}>
                     <View style={[styles.themeSwatch, { backgroundColor: option.swatch }]} />
@@ -545,6 +550,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_weather_accent')}
               value={settings.weatherAccentEnabled}
               onValueChange={(value) => {
                 haptics.select();
@@ -614,6 +620,8 @@ export function SettingsSheet({
                     }}
                     style={styles.bgSwatchWrap}
                     pressedOpacity={0.75}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
                   >
                     <SlidingTarget>
                     <LinearGradient
@@ -764,6 +772,7 @@ export function SettingsSheet({
               haptics.select();
               setView('tiles');
             }}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -794,6 +803,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_bgalerts')}
               value={ready ? settings.backgroundAlerts : true}
               onValueChange={(value) => {
                 if (value) {
@@ -820,6 +830,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_digest')}
               value={ready ? settings.digestEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -864,6 +875,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_golden')}
               value={ready ? settings.goldenHourEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -893,6 +905,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('rain_alert')}
               value={ready ? settings.rainAlertEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -922,6 +935,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_rain_ongoing')}
               value={ready ? settings.rainOngoingEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -951,6 +965,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_sunrise_alarm')}
               value={ready ? settings.sunriseAlarmEnabled : false}
               onValueChange={(value) => {
                 if (value) {
@@ -991,6 +1006,7 @@ export function SettingsSheet({
               haptics.select();
               setView('language');
             }}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1116,6 +1132,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_beaufort')}
               value={ready ? settings.windBeaufort : false}
               onValueChange={(value) => {
                 if (value) {
@@ -1188,6 +1205,7 @@ export function SettingsSheet({
               </Text>
             </View>
             <SlidingSwitch theme={theme}
+              accessibilityLabel={t('s_snark')}
               value={ready ? settings.snarkMode : false}
               onValueChange={(value) => {
                 if (value) {
@@ -1208,6 +1226,7 @@ export function SettingsSheet({
               haptics.select();
               setView('sources');
             }}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1231,6 +1250,7 @@ export function SettingsSheet({
               haptics.select();
               setView('about');
             }}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1254,6 +1274,7 @@ export function SettingsSheet({
           </Text>
           <Pressable
             onPress={onExportBackup}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1272,6 +1293,7 @@ export function SettingsSheet({
           </Pressable>
           <Pressable
             onPress={onImportBackup}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1331,6 +1353,7 @@ export function SettingsSheet({
           </View>
           <Pressable
             onPress={() => void onExportForecastLog('csv')}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1351,6 +1374,7 @@ export function SettingsSheet({
           </Pressable>
           <Pressable
             onPress={() => void onExportForecastLog('json')}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1367,8 +1391,11 @@ export function SettingsSheet({
             </View>
           </Pressable>
 
+          <LocalQualityDataManager theme={theme} visible={visible && view === 'main'} />
+
           <Pressable
             onPress={() => void onExportDiagnostics()}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.row,
               { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
@@ -1482,6 +1509,7 @@ export function SettingsSheet({
                           </Text>
                         </View>
                         <SlidingSwitch theme={theme}
+                          accessibilityLabel={t(TILE_LABEL_KEYS[tile.key])}
                           value={ready ? visible : true}
                           onValueChange={(value) => {
                             if (value) {

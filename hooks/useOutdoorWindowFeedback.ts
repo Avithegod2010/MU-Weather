@@ -1,41 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   findOutdoorWindowFeedback,
   normalizeOutdoorWindowFeedback,
   summarizeOutdoorWindowFeedback,
   upsertOutdoorWindowFeedback,
 } from '../utils/outdoorWindowFeedbackPolicy';
+import {
+  loadOutdoorWindowFeedback,
+  saveOutdoorWindowFeedback,
+  subscribeOutdoorWindowFeedback,
+} from '../utils/outdoorWindowFeedback';
 import type {
   OutdoorWindowFeedbackRecord,
   OutdoorWindowFeedbackTrend,
   OutdoorWindowFeedbackVote,
 } from '../utils/outdoorWindowFeedbackPolicy';
-
-const STORAGE_KEY = '@mu_weather/outdoor_window_feedback_v1';
-
-async function loadRecords(): Promise<OutdoorWindowFeedbackRecord[]> {
-  try {
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    return raw ? normalizeOutdoorWindowFeedback(JSON.parse(raw)) : [];
-  } catch {
-    return [];
-  }
-}
-
-let storageWrite: Promise<void> = Promise.resolve();
-
-function saveRecords(records: OutdoorWindowFeedbackRecord[]): Promise<void> {
-  const serialized = JSON.stringify(records);
-  storageWrite = storageWrite.then(async () => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, serialized);
-    } catch {
-      // Feedback is best-effort local personalization; never block the forecast.
-    }
-  });
-  return storageWrite;
-}
 
 /** Device-local feedback for the currently shown, location-scoped window. */
 export function useOutdoorWindowFeedback(
@@ -55,17 +34,28 @@ export function useOutdoorWindowFeedback(
 
   useEffect(() => {
     let cancelled = false;
-    void loadRecords().then((stored) => {
-      if (cancelled) return;
-      // Preserve a response tapped before AsyncStorage finished hydrating.
-      const merged = normalizeOutdoorWindowFeedback([...stored, ...recordsRef.current]);
-      recordsRef.current = merged;
-      setRecords(merged);
+    let changedAfterLoadStarted = false;
+    const unsubscribe = subscribeOutdoorWindowFeedback((updated) => {
+      changedAfterLoadStarted = true;
+      recordsRef.current = updated;
+      setRecords(updated);
       setReady(true);
-      void saveRecords(merged);
+    });
+    void loadOutdoorWindowFeedback().then((stored) => {
+      if (cancelled) return;
+      // Preserve a response tapped before AsyncStorage finished hydrating. A
+      // later manager clear/save wins over a read that began before that write.
+      if (!changedAfterLoadStarted) {
+        const merged = normalizeOutdoorWindowFeedback([...stored, ...recordsRef.current]);
+        recordsRef.current = merged;
+        setRecords(merged);
+        void saveOutdoorWindowFeedback(merged);
+      }
+      setReady(true);
     });
     return () => {
       cancelled = true;
+      unsubscribe();
     };
   }, []);
 
@@ -79,7 +69,7 @@ export function useOutdoorWindowFeedback(
     });
     recordsRef.current = next;
     setRecords(next);
-    void saveRecords(next);
+    void saveOutdoorWindowFeedback(next);
   }, [scope, windowKey]);
 
   return {
