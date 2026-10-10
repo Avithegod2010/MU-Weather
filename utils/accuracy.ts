@@ -1,5 +1,5 @@
 import type { ForecastLogEntry } from './forecastLog';
-import { roundedCoord, type LocationAnchor, type ModelLogEntry } from './modelAccuracyLog';
+import type { LocationAnchor, ModelLogEntry } from './modelAccuracyLog';
 import type { ModelKey } from '../api/providers';
 import type { PastDayActual } from '../api/types';
 
@@ -20,6 +20,10 @@ export interface AccuracyStats {
 
 /** Rain-day threshold, matching the 30-day "wet days" definition. */
 const RAIN_DAY_MM = 1.0;
+
+function roundedCoord(value: number): number {
+  return Math.round(value * 100) / 100;
+}
 
 /**
  * Personal forecast accuracy over the matched days: mean absolute errors for
@@ -92,11 +96,12 @@ export const MODEL_HIT_TOLERANCE_C = 2;
 export const MODEL_WIND_TOLERANCE_KMH = 8;
 
 /**
- * A model cannot be ranked from a single scored day - one lucky (or unlucky)
- * comparison would decide the whole leaderboard. Below this it is omitted and
- * the view keeps showing the "still collecting" empty state.
+ * Individual estimates need two scored dates before display. They remain
+ * provisional and alphabetic until models share a full week of matched dates.
  */
 export const MIN_MODEL_COMPARED_DAYS = 2;
+/** Rank only after every displayed model shares at least one complete week. */
+export const MIN_MODEL_RANKING_DAYS = 7;
 
 export interface ModelMetricRow {
   model: ModelKey;
@@ -104,15 +109,21 @@ export interface ModelMetricRow {
   compared: number;
   /** Share of `compared` days the model called right (0-1) */
   hitRate: number;
+  /** 95% Wilson interval for the hit-rate estimate, not an interval for the weather forecast. */
+  hitRateLower95: number;
+  hitRateUpper95: number;
   /** Mean |actual - predicted| in the metric's raw unit (°C, km/h, mm) */
   mae: number;
 }
 
 export interface ModelMetricSummary {
-  /** Ranked models, best first. Empty until a model has enough scored days. */
+  /** Estimates are alphabetic until ranking has enough shared dates; ranked rows are best first. */
   rows: ModelMetricRow[];
   /** Distinct dates scored for this metric - the "last {n} days" caption. */
   comparedDays: number;
+  /** True only when at least two models share MIN_MODEL_RANKING_DAYS dates. */
+  rankingReady: boolean;
+  commonDays: number;
 }
 
 /** One scored day: the two numbers compared and whether the model called it. */
@@ -174,28 +185,35 @@ const METRIC_SCORERS: Record<
 };
 
 /**
- * Rank the comparison models for one metric, counting only days this device
- * logged for that model AT THE ACTIVE LOCATION (utils/modelAccuracyLog stores
- * the coordinates with every entry, so a Paris prediction is never scored
- * against London observations), and only models with at least
- * MIN_MODEL_COMPARED_DAYS scored days. Ties break on the mean error, then on
- * the number of scored days. An empty `rows` means "keep collecting".
+ * Compare only predictions logged at the active location. Rows can expose
+ * provisional estimates after two samples, but rank only on the dates shared
+ * by every candidate model once at least a full week is common. Wilson bounds
+ * expose the wide sampling uncertainty of small hit-rate samples.
  */
+function wilsonHitRateInterval(hits: number, samples: number): { lower: number; upper: number } {
+  const z = 1.959963984540054;
+  const proportion = hits / samples;
+  const zSquared = z * z;
+  const denominator = 1 + zSquared / samples;
+  const center = (proportion + zSquared / (2 * samples)) / denominator;
+  const margin = (z * Math.sqrt(proportion * (1 - proportion) / samples + zSquared / (4 * samples * samples))) / denominator;
+  return { lower: Math.max(0, center - margin), upper: Math.min(1, center + margin) };
+}
+
 export function computeModelMetricAccuracy(
   log: ModelLogEntry[],
   actuals: PastDayActual[],
   location: LocationAnchor | null,
   metric: ModelMetric,
 ): ModelMetricSummary {
-  if (!location || log.length === 0 || actuals.length === 0) {
-    return { rows: [], comparedDays: 0 };
-  }
+  const empty: ModelMetricSummary = { rows: [], comparedDays: 0, rankingReady: false, commonDays: 0 };
+  if (!location || log.length === 0 || actuals.length === 0) return empty;
 
   const lat = roundedCoord(location.latitude);
   const lon = roundedCoord(location.longitude);
   const scorer = METRIC_SCORERS[metric];
   const actualByDate = new Map(actuals.map((actual) => [actual.date, actual]));
-  const byModel = new Map<ModelKey, { compared: number; hits: number; errorSum: number }>();
+  const pairsByModel = new Map<ModelKey, Map<string, MetricPair>>();
   const comparedDates = new Set<string>();
 
   for (const entry of log) {
@@ -205,25 +223,42 @@ export function computeModelMetricAccuracy(
     const pair = scorer(entry, actual);
     if (!pair) continue;
     comparedDates.add(entry.date);
-    const bucket = byModel.get(entry.model) ?? { compared: 0, hits: 0, errorSum: 0 };
-    bucket.compared += 1;
-    bucket.errorSum += Math.abs(pair.actual - pair.predicted);
-    if (pair.hit) bucket.hits += 1;
-    byModel.set(entry.model, bucket);
+    const dates = pairsByModel.get(entry.model) ?? new Map<string, MetricPair>();
+    dates.set(entry.date, pair);
+    pairsByModel.set(entry.model, dates);
   }
 
+  const candidates = [...pairsByModel.entries()]
+    .filter(([, dates]) => dates.size >= MIN_MODEL_COMPARED_DAYS);
+  let commonDates = candidates.length > 1
+    ? [...candidates[0][1].keys()].filter((date) => candidates.every(([, dates]) => dates.has(date))).sort()
+    : [];
+  const rankingReady = candidates.length > 1 && commonDates.length >= MIN_MODEL_RANKING_DAYS;
+
   const rows: ModelMetricRow[] = [];
-  for (const [model, bucket] of byModel) {
-    if (bucket.compared < MIN_MODEL_COMPARED_DAYS) continue;
+  for (const [model, allDates] of candidates) {
+    const pairs = rankingReady
+      ? commonDates.map((date) => allDates.get(date)).filter((pair): pair is MetricPair => pair !== undefined)
+      : [...allDates.values()];
+    const compared = pairs.length;
+    if (compared < MIN_MODEL_COMPARED_DAYS) continue;
+    const hits = pairs.filter((pair) => pair.hit).length;
+    const interval = wilsonHitRateInterval(hits, compared);
     rows.push({
       model,
-      compared: bucket.compared,
-      hitRate: bucket.hits / bucket.compared,
-      mae: bucket.errorSum / bucket.compared,
+      compared,
+      hitRate: hits / compared,
+      hitRateLower95: interval.lower,
+      hitRateUpper95: interval.upper,
+      mae: pairs.reduce((sum, pair) => sum + Math.abs(pair.actual - pair.predicted), 0) / compared,
     });
   }
-  rows.sort((a, b) => b.hitRate - a.hitRate || a.mae - b.mae || b.compared - a.compared);
-  return { rows, comparedDays: comparedDates.size };
+  if (rankingReady) {
+    rows.sort((a, b) => b.hitRate - a.hitRate || a.mae - b.mae || b.compared - a.compared);
+  } else {
+    rows.sort((a, b) => a.model.localeCompare(b.model));
+  }
+  return { rows, comparedDays: comparedDates.size, rankingReady, commonDays: commonDates.length };
 }
 
 /** The original temperature leaderboard shape, kept for existing callers. */

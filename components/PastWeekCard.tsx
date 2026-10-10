@@ -13,6 +13,7 @@ import { loadModelLog, type ModelLogEntry } from '../utils/modelAccuracyLog';
 import {
   computeAccuracy,
   computeModelMetricAccuracy,
+  MIN_MODEL_RANKING_DAYS,
   MODEL_METRICS,
   type ModelMetric,
 } from '../utils/accuracy';
@@ -386,7 +387,7 @@ function ModelLeaderboard({
   location: GeoLocation | null;
 }) {
   const [metric, setMetric] = useState<ModelMetric>('temp');
-  const { rows, comparedDays } = computeModelMetricAccuracy(modelLog, days, location, metric);
+  const { rows, comparedDays, rankingReady, commonDays } = computeModelMetricAccuracy(modelLog, days, location, metric);
 
   // The switcher stays visible even with nothing scored yet, so the user can
   // tell the other two metrics apart from a missing-data bug.
@@ -448,9 +449,19 @@ function ModelLeaderboard({
         </>
       ) : (
         <>
+          {!rankingReady ? (
+            <Text style={[styles.footnote, { color: theme.textTertiary }]}>
+              {t('acc_models_collecting')
+                .replace('{common}', String(commonDays))
+                .replace('{required}', String(MIN_MODEL_RANKING_DAYS))}
+            </Text>
+          ) : null}
           <View style={styles.accRows}>
             {rows.map((row) => {
               const hitPct = Math.round(row.hitRate * 100);
+              const hitRateUncertainty = t('acc_models_uncertainty')
+                .replace('{lower}', `${Math.round(row.hitRateLower95 * 100)}%`)
+                .replace('{upper}', `${Math.round(row.hitRateUpper95 * 100)}%`);
               // Wind is stored in km/h and rain in mm, so each metric formats its
               // own mean error through the unit helpers.
               const error =
@@ -465,8 +476,8 @@ function ModelLeaderboard({
                     <Text style={[styles.modelName, { color: theme.textPrimary }]} numberOfLines={1}>
                       {MODEL_LABELS[row.model]}
                     </Text>
-                    <Text style={[styles.modelSub, { color: theme.textTertiary }]} numberOfLines={1}>
-                      {error} · {t('trip_days').replace('{n}', String(row.compared))}
+                    <Text style={[styles.modelSub, { color: theme.textTertiary }]} numberOfLines={2}>
+                      {error} · {t('trip_days').replace('{n}', String(row.compared))} · {hitRateUncertainty}
                     </Text>
                   </View>
                   <View style={[styles.modelTrack, { backgroundColor: theme.chipBg }]}>
