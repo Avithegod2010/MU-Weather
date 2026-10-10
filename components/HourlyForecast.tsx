@@ -134,7 +134,7 @@ export const HourlyForecast = React.memo(function HourlyForecast({
 
   const stats = useMemo(() => {
     if (!selectedHour) return [];
-    const list: Array<{ label: string; value: string }> = [
+    const list: { label: string; value: string }[] = [
       {
         label: t('feels_like'),
         value: formatTemp(selectedHour.apparent ?? selectedHour.temperature),
