@@ -89,8 +89,7 @@ one unused `useMemo` (`moonTimesToday`, never read) and one unused constant remo
 dependencies. Four others are kept on purpose and carry a disable comment with the reason: `useRainOngoing`
 (data is a refresh trigger), `useCityComparison` (`cityKey` is the stable identity, so re-picking the same
 pair does not refetch), and the two sliding effects, which drive shared values.
-Result: **0 errors, 188 warnings**, all from the five deferred compiler-era hook rules. Those are the follow-up. The smoke run after the cleanup still
-passes the journal probe in both styles.
+Result at that cleanup point: **0 errors, 188 warnings**, all from the five deferred compiler-era hook rules. A later full lint run on the current c5 branch reported **0 errors, 184 warnings**, all from the five intentionally visible compiler-era hook rules; they should not be broadly suppressed. The smoke run after the cleanup still passes the journal probe in both styles.
 
 ## 8. Hourly ICON-EPS rain calibration (collection and scoring)
 
@@ -110,9 +109,25 @@ passes the journal probe in both styles.
   interval. No daily rain probability is derived by multiplying hourly dry probabilities. A supported reliability
   bin can provide an empirical probability correction, but this pass does not apply a correction to live chart
   values; the displayed score describes raw ICON-EPS probabilities.
-- The Home rain chart's hourly bars remain the primary-provider series; direct complete-day ICON-EPS event
-  probabilities are shown separately with member counts. Calibration summaries are explicitly labeled ICON-EPS
-  and do not imply that the blue hourly bars are calibrated. The handoff-described ensemble-dot overlay is not
-  present in this checkout.
-- Rain-method and forecast-exposure strings are present in all 14 locale dictionaries. Automated checks cover
-  keys/placeholders only; native-speaker translation review has not been performed.
+- The Home rain chart keeps the primary-provider hourly bars and overlays amber dots for raw ICON-EPS hourly
+  rain-member shares. A dot is shown only with at least 10 precipitation-reporting members and a unique,
+  unambiguous local-hour match; unsupported or repeated local times are omitted. The legend and scrub readout
+  distinguish the two sources and show member support. These dots are raw, not calibrated, and do not change the
+  primary-provider bars. Direct complete-day ICON-EPS event probabilities remain separate, use joint member paths,
+  and are shown with member counts; no daily chance is synthesized by multiplying hourly probabilities.
+- Overlay alignment, support gating, and ambiguous-time omission have unit coverage. A fresh browser screenshot
+  and physical-device visual review have not been performed. Rain-method and forecast-exposure strings are present
+  in all 14 locale dictionaries. Automated checks cover keys/placeholders only; native-speaker review of these new
+  labels, existing translations, and storm-safety wording has not been performed.
+
+## 9. Dependency audit (patch-only updates; remaining risk)
+
+- The initial audit reported 25 high and one critical vulnerability. A non-forced `npm audit fix --ignore-scripts`
+  updated available semver-compatible lockfile patches and removed the critical finding; it did not change
+  `package.json` or use `--force`. The resulting audit still reports 21 high and zero critical vulnerabilities.
+- The remaining findings include Expo/Metro/React Native dependency paths. The suggested automatic remedy for
+  some Metro findings is a breaking downgrade to React Native 0.72.17, which is not appropriate for this app's
+  React Native 0.86 / Expo SDK 57 stack; `node-forge` has no fix listed. Do not force this downgrade. Plan a
+  compatible upstream toolchain update and re-run the audit before release.
+- `npx expo install --check` could not verify Expo package compatibility: the registry request ended with a TLS
+  disconnect before the connection was established. No successful compatibility check is claimed.
