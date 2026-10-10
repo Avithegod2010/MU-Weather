@@ -1,0 +1,23 @@
+name: Release review gate
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  human-review-signoffs:
+    name: Human review sign-offs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate release review records
+        run: node scripts/check-release-reviews.mjs

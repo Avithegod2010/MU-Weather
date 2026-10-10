@@ -16,26 +16,47 @@ Keep the same physical device assigned to a tier between baseline and later comp
 
 1. Install the same app commit/build type on the selected device. Use a physical device and a development/profiling build when validating `MUWeather:` JS trace markers. Record app version, build type, Android version, network, and location/scenario. A development trace is not evidence of production performance.
 2. Enable USB debugging and confirm `adb devices -l` shows exactly one authorized device, or pass `--serial`. Keep the device awake, use the same orientation/brightness/power mode, and let it cool to a comparable thermal state. Do not run another benchmark or screen recording at the same time.
-3. For each tier and each scenario below, collect at least **three separate runs**. Use the same city, location permission, cache state, connectivity, and scenario duration for comparisons. Record airplane/offline/cache behavior when that is specifically the scenario. Do not combine cold launch and warm refresh in one result group.
+3. For each tier, scenario, and revision (baseline and candidate), collect at least **three separate runs**. Use the same city, location permission, cache state, connectivity, and scenario duration for comparisons. Record airplane/offline/cache behavior when that is specifically the scenario. Do not combine cold launch and warm refresh in one result group.
 4. From the repository root, run:
 
    ```sh
    scripts/perfetto/capture-android.sh \
      --tier entry \
+     --revision-role baseline \
      --scenario "warm weather refresh" \
      --build profile \
-     --network "Wi-Fi, stable"
+     --network "Wi-Fi, stable" \
+     --device-label "entry-phone-1" \
+     --cache-state "warm forecast loaded"
    ```
 
-   Use `--tier mid` or `--tier high` for the other cohort devices. Add `--serial DEVICE_SERIAL` when more than one device is connected. The script records device/build metadata and writes a 30-second `.pftrace` plus a `.md` run sheet under `perfetto-captures/`, which is ignored by Git. During the capture, perform only the named scenario on the physical device. The script does not launch the app, select a city, or invent result values.
+   Use `--tier mid` or `--tier high` for the other cohort devices. Assign the same non-identifying `--device-label` to the same physical handset for every run; do not use an ADB serial as the label. `--cache-state` must describe the cache condition (for example, `warm forecast loaded` or `saved snapshot cold launch`) and match exactly for comparisons. Add `--serial DEVICE_SERIAL` when more than one device is connected. The script records device/build metadata and writes a 30-second `.pftrace` plus a `.md` run sheet under `perfetto-captures/`, which is ignored by Git. During the capture, perform only the named scenario on the physical device. The script does not launch the app, select a city, or invent result values. Comparisons require a clean source tree; captures from a dirty worktree are retained as evidence but intentionally rejected by the comparison tool.
 5. Open the trace in Perfetto. Confirm the app process and search its timeline for `MUWeather:`. The markers are conditional on React Native trace support being active; a system trace does not guarantee that they will appear. If absent, note “markers unavailable” and do not report zero-duration spans. On devices where command-line Perfetto or a data source is unsupported, use Android Studio Profiler/System Trace, export the trace, and complete the same metadata template.
-6. Fill the matching row in `device-tier-template.csv` and the run sheet. Preserve the raw `.pftrace` locally with its metadata; check for unrelated personal/device data before sharing. Compare only matching scenario/build/network/cache conditions.
+6. Fill the matching row in `device-tier-template.csv` and the run sheet, including source commit/tree state, `revision_role` (`baseline` or `candidate`), stable device label, cache state, the transcribed values, and who reviewed the raw trace. Mark `status=reviewed` only after the `.pftrace` has been inspected; keep pending rows out of comparisons. Preserve the raw `.pftrace` locally with its metadata; check for unrelated personal/device data before sharing. Compare only matching device/scenario/build/network/cache conditions.
 
 ### Minimum scenario set
 
 - **Cold launch, saved snapshot:** force-stop before capture; launch the app and note whether the saved weather snapshot appears before the network refresh completes.
 - **Warm weather refresh:** start from a loaded forecast and trigger one pull-to-refresh; do not change city or screen mid-run.
 - **Ensemble refresh:** use a loaded forecast, then capture the refresh that obtains or replaces ensemble data. Record cache/freshness state so a cache hit is not mislabeled as a network fetch.
+
+## Compare only reviewed, matched runs
+
+Transcribe values from the reviewed Perfetto trace into `device-tier-template.csv`. A comparison row must have `status=reviewed`, a trace reviewer/date, `tree_state=clean`, and an existing `.pftrace` under the ignored `perfetto-captures/` directory (at least 1 KiB). The tool does not parse trace files or infer metrics from a run sheet: the reviewer transcribes each measurement from its indicated track. A trace reference without a reviewed on-disk file is refused.
+
+Each side must contain at least three distinct runs, and every row's `revision_role` must agree with its `app_commit` group. The tool requires the same tier, stable device label, physical model/product, RAM, SoC, Android release/SDK, refresh rate, build type, network description, scenario, and cache-state label. It reports median and nearest-rank p95 for each supported metric; a metric needs at least three transcribed values on both sides. Missing support is shown as insufficient, never as zero. The default regression threshold is a greater-than-10% median increase; it is configurable.
+
+```sh
+node scripts/perfetto/compare-runs.mjs \
+  --tier entry \
+  --device-label "entry-phone-1" \
+  --scenario "warm weather refresh" \
+  --cache-state "warm forecast loaded" \
+  --baseline 796a79f \
+  --candidate abc1234
+```
+
+The commit values must match the `app_commit` column. The command exits non-zero when evidence is missing/mismatched or a supported metric exceeds the threshold. It cannot establish a baseline without actual physical-device traces; the checked-in ledger is intentionally empty/pending.
 
 ## Read the right track
 

@@ -1,28 +1,55 @@
-tier,device_model,ram_gib,soc,android_release,refresh_rate_hz,app_commit,build_type,network,scenario,run,trace_path,weather_fetch_span_ms,ensemble_fetch_span_ms,cache_read_ms,post_fetch_parent_span_ms,js_thread_observations,frametimeline_janky_frames,frametimeline_total_frames,summary_statistic,notes,status
-entry,,,,,,,,,cold launch with saved snapshot,1,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,cold launch with saved snapshot,2,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,cold launch with saved snapshot,3,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,warm weather refresh,1,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,warm weather refresh,2,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,warm weather refresh,3,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,ensemble refresh,1,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,ensemble refresh,2,,,,,,,,,,,pending — no device trace
-entry,,,,,,,,,ensemble refresh,3,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,cold launch with saved snapshot,1,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,cold launch with saved snapshot,2,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,cold launch with saved snapshot,3,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,warm weather refresh,1,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,warm weather refresh,2,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,warm weather refresh,3,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,ensemble refresh,1,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,ensemble refresh,2,,,,,,,,,,,pending — no device trace
-mid,,,,,,,,,ensemble refresh,3,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,cold launch with saved snapshot,1,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,cold launch with saved snapshot,2,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,cold launch with saved snapshot,3,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,warm weather refresh,1,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,warm weather refresh,2,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,warm weather refresh,3,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,ensemble refresh,1,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,ensemble refresh,2,,,,,,,,,,,pending — no device trace
-high,,,,,,,,,ensemble refresh,3,,,,,,,,,,,pending — no device trace
+tier,device_label,device_model,device_product,ram_gib,soc,android_release,android_sdk,refresh_rate_hz,app_version,app_commit,revision_role,tree_state,build_type,network,scenario,cache_state,run,trace_path,weather_fetch_span_ms,ensemble_fetch_span_ms,cache_read_ms,post_fetch_parent_span_ms,frametimeline_janky_frames,frametimeline_total_frames,js_thread_observations,trace_reviewed_by,trace_reviewed_on,summary_statistic,notes,status
+entry,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,1,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,2,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,3,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,1,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,2,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,3,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,warm weather refresh,,1,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,warm weather refresh,,2,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,warm weather refresh,,3,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,warm weather refresh,,1,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,warm weather refresh,,2,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,warm weather refresh,,3,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,ensemble refresh,,1,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,ensemble refresh,,2,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,baseline,,,,ensemble refresh,,3,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,ensemble refresh,,1,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,ensemble refresh,,2,,,,,,,,,,,,,pending
+entry,,,,,,,,,,,candidate,,,,ensemble refresh,,3,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,1,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,2,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,3,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,1,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,2,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,3,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,warm weather refresh,,1,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,warm weather refresh,,2,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,warm weather refresh,,3,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,warm weather refresh,,1,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,warm weather refresh,,2,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,warm weather refresh,,3,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,ensemble refresh,,1,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,ensemble refresh,,2,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,baseline,,,,ensemble refresh,,3,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,ensemble refresh,,1,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,ensemble refresh,,2,,,,,,,,,,,,,pending
+mid,,,,,,,,,,,candidate,,,,ensemble refresh,,3,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,1,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,2,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,cold launch with saved snapshot,,3,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,1,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,2,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,cold launch with saved snapshot,,3,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,warm weather refresh,,1,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,warm weather refresh,,2,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,warm weather refresh,,3,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,warm weather refresh,,1,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,warm weather refresh,,2,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,warm weather refresh,,3,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,ensemble refresh,,1,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,ensemble refresh,,2,,,,,,,,,,,,,pending
+high,,,,,,,,,,,baseline,,,,ensemble refresh,,3,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,ensemble refresh,,1,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,ensemble refresh,,2,,,,,,,,,,,,,pending
+high,,,,,,,,,,,candidate,,,,ensemble refresh,,3,,,,,,,,,,,,,pending

@@ -30,11 +30,35 @@ jobs:
       - name: Locale key and placeholder audit
         run: node scripts/audit-locales.mjs
 
+      - name: Static accessibility audit
+        run: node scripts/audit-accessibility.mjs
+
       - name: Weather policy tests
         run: node scripts/test-weather-policies.mjs
 
       - name: Rain calibration tests
         run: node scripts/test-rain-calibration.mjs
+
+      - name: Ensemble calibration tests
+        run: node scripts/test-ensemble-calibration.mjs
+
+      - name: Alert pipeline tests
+        run: node scripts/test-alert-pipeline.mjs
+
+      - name: Local data manager tests
+        run: node scripts/test-local-data-manager.mjs
+
+      - name: Model accuracy tests
+        run: node scripts/test-model-accuracy.mjs
+
+      - name: Provider failure tests
+        run: node scripts/test-provider-failures.mjs
+
+      - name: Release review gate logic tests
+        run: node tests/releaseReviewGate.test.mjs
+
+      - name: Perfetto comparison policy tests
+        run: node tests/perfettoCompare.test.mjs
 
       - name: Visual API fixture audit
         run: python3 scripts/visual/audit_fixtures.py

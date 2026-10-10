@@ -10,14 +10,20 @@ TIER=""
 SCENARIO=""
 BUILD_TYPE=""
 NETWORK=""
+DEVICE_LABEL=""
+CACHE_STATE=""
+REVISION_ROLE=""
 
 usage() {
   cat <<'EOF'
 Usage: scripts/perfetto/capture-android.sh \
   --tier entry|mid|high \
-  --scenario "cold launch" \
+  --revision-role baseline|candidate \
+  --scenario "cold launch" \\
   --build dev|profile|release \
   --network "Wi-Fi, stable" \
+  --device-label "entry-phone-1" \
+  --cache-state "warm forecast loaded" \
   [--serial DEVICE_SERIAL]
 
 The script captures one 30-second Perfetto trace and writes a .pftrace plus a
@@ -31,23 +37,30 @@ while (($#)); do
   case "$1" in
     --serial) SERIAL="${2:?Missing value for --serial}"; shift 2 ;;
     --tier) TIER="${2:?Missing value for --tier}"; shift 2 ;;
+    --revision-role) REVISION_ROLE="${2:?Missing value for --revision-role}"; shift 2 ;;
     --scenario) SCENARIO="${2:?Missing value for --scenario}"; shift 2 ;;
     --build) BUILD_TYPE="${2:?Missing value for --build}"; shift 2 ;;
     --network) NETWORK="${2:?Missing value for --network}"; shift 2 ;;
+    --device-label) DEVICE_LABEL="${2:?Missing value for --device-label}"; shift 2 ;;
+    --cache-state) CACHE_STATE="${2:?Missing value for --cache-state}"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
 done
 
-[[ -n "$TIER" && -n "$SCENARIO" && -n "$BUILD_TYPE" && -n "$NETWORK" ]] || {
-  echo "--tier, --scenario, --build, and --network are required." >&2
+[[ -n "$TIER" && -n "$REVISION_ROLE" && -n "$SCENARIO" && -n "$BUILD_TYPE" && -n "$NETWORK" && -n "$DEVICE_LABEL" && -n "$CACHE_STATE" ]] || {
+  echo "--tier, --revision-role, --scenario, --build, --network, --device-label, and --cache-state are required." >&2
   usage >&2
   exit 2
 }
 case "$TIER" in entry|mid|high) ;; *) echo "Tier must be entry, mid, or high." >&2; exit 2 ;; esac
+case "$REVISION_ROLE" in baseline|candidate) ;; *) echo "Revision role must be baseline or candidate." >&2; exit 2 ;; esac
 case "$BUILD_TYPE" in dev|profile|release) ;; *) echo "Build must be dev, profile, or release." >&2; exit 2 ;; esac
 command -v adb >/dev/null || { echo "adb is required on the capture workstation." >&2; exit 1; }
 [[ -f "$CONFIG_FILE" ]] || { echo "Missing Perfetto config: $CONFIG_FILE" >&2; exit 1; }
+
+SOURCE_COMMIT_START="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+SOURCE_STATUS_START="$(git -C "$ROOT_DIR" status --porcelain --untracked-files=all 2>/dev/null || echo unavailable)"
 
 if [[ -z "$SERIAL" ]]; then
   mapfile -t ONLINE_DEVICES < <(adb devices | awk 'NR > 1 && $2 == "device" { print $1 }')
@@ -96,8 +109,10 @@ SOC="$(getprop ro.soc.model)"
 MEMORY="$(run_adb shell awk '/MemTotal:/ { printf "%.1f GiB", $2 / 1048576 }' /proc/meminfo 2>/dev/null | tr -d '\r' || true)"
 APP_VERSION="$(run_adb shell dumpsys package "$APP_ID" 2>/dev/null | sed -n 's/^[[:space:]]*versionName=//p' | head -n 1 | tr -d '\r' || true)"
 APP_VERSION="${APP_VERSION:-unknown}"
-APP_COMMIT="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
-if [[ -z "$(git -C "$ROOT_DIR" status --porcelain)" ]]; then
+SOURCE_COMMIT_END="$(git -C "$ROOT_DIR" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+SOURCE_STATUS_END="$(git -C "$ROOT_DIR" status --porcelain --untracked-files=all 2>/dev/null || echo unavailable)"
+APP_COMMIT="$SOURCE_COMMIT_START"
+if [[ "$SOURCE_COMMIT_START" == "$SOURCE_COMMIT_END" && -z "$SOURCE_STATUS_START" && -z "$SOURCE_STATUS_END" ]]; then
   TREE_STATE="clean"
 else
   TREE_STATE="dirty"
@@ -108,7 +123,10 @@ cat > "$META_LOCAL" <<EOF
 
 - UTC capture label: $STAMP
 - Tier label (assigned by tester): $TIER
+- Revision role (required): $REVISION_ROLE
+- Stable pseudonymous device label (assigned by tester): $DEVICE_LABEL
 - Scenario: $SCENARIO
+- Cache state supplied by tester: $CACHE_STATE
 - Device model / product: $MODEL / $DEVICE
 - RAM reported by Android: ${MEMORY:-record manually}
 - SoC: $SOC
@@ -120,7 +138,9 @@ cat > "$META_LOCAL" <<EOF
 - Trace: $(basename "$TRACE_LOCAL")
 - Device display refresh rate: record from device settings / profiler
 - Perfetto marker check: search for MUWeather: in the app-process timeline
-- Raw trace inspected by / date: pending
+- Raw trace review status: pending
+- Raw trace reviewed by: pending
+- Raw trace review date (YYYY-MM-DD): pending
 
 ## Measurements
 
