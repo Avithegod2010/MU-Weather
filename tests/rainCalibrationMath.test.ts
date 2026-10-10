@@ -5,6 +5,7 @@ import {
 } from '../api/providers';
 import type { EnsembleSpread, GeoLocation } from '../api/types';
 import { summarizeEnsembleRainEpisodes } from '../utils/ensembleRainEpisodeMath';
+import { alignEnsembleRainProbabilities } from '../utils/rainChartOverlay';
 import {
   MAX_RAIN_LOG_LOCATIONS,
   MAX_RAIN_LOG_ROWS_PER_LOCATION,
@@ -94,6 +95,41 @@ const legacyRainPoint = { ...spread.points[1], rainProb: 0 };
 delete legacyRainPoint.rainMembers;
 assert(createRainForecastEntries({ ...spread, points: [legacyRainPoint] }, paris, 60 * 60).length === 0,
   'legacy ensemble cache rows without per-hour rain support are not treated as calibrated dry forecasts');
+
+const overlayHours = [
+  { time: '2026-03-14T10:00' },
+  { time: '2026-03-14T11:00' },
+  { time: '2026-03-14T12:00' },
+  { time: '2026-03-14T13:00' },
+  { time: '2026-03-14T14:00' },
+  { time: '2026-03-14T15:00' },
+];
+const overlay = alignEnsembleRainProbabilities(overlayHours, [
+  { time: '2026-03-14T11:00', rainProb: 70, rainMembers: 20 },
+  { time: '2026-03-14T10:00', rainProb: 25, rainMembers: 10 },
+  { time: '2026-03-14T12:00', rainProb: 40, rainMembers: 9 },
+  { time: '2026-03-14T13:00', rainProb: null, rainMembers: 20 },
+  { time: '2026-03-14T14:00', rainProb: 101, rainMembers: 20 },
+  { time: '2026-03-14T15:00', rainProb: 50 },
+]);
+assert(overlay[0]?.probability === 25 && overlay[1]?.probability === 70,
+  'hourly ensemble rain shares align by local timestamp rather than array order');
+assert(overlay[0]?.members === 10, 'hourly overlay retains its support count');
+assert(overlay.slice(2).every((point) => point === null),
+  'null, malformed, or under-supported hourly ensemble shares are omitted from the overlay');
+const repeatedLocalHour = '2026-10-25T02:00';
+assert(alignEnsembleRainProbabilities(
+  [{ time: repeatedLocalHour }, { time: repeatedLocalHour }],
+  [{ time: repeatedLocalHour, rainProb: 50, rainMembers: 20 }],
+).every((point) => point === null), 'repeated local forecast hours are omitted instead of ambiguously aligned');
+assert(alignEnsembleRainProbabilities(
+  [{ time: repeatedLocalHour }],
+  [
+    { time: repeatedLocalHour, rainProb: 25, rainMembers: 20 },
+    { time: repeatedLocalHour, rainProb: 75, rainMembers: 20 },
+  ],
+)[0] === null, 'duplicate ensemble timestamps are omitted instead of selecting one member share');
+
 // Europe/Paris repeats local 02:00 when daylight-saving time ends on 2026-10-25.
 const ambiguous = createRainForecastEntries(
   {

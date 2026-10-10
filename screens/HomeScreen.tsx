@@ -896,6 +896,7 @@ export function HomeScreen() {
                       hours={weather.data.hourly}
                       calibration={forecastCalibration.rain}
                       rainEpisodes={ensemble.spread ? ensemble.spread.rainEpisodes ?? [] : null}
+                      ensemblePoints={ensemble.spread?.points ?? null}
                       ensembleFetchedAt={ensemble.spread?.fetchedAt ?? null}
                       now={planningNow}
                     />

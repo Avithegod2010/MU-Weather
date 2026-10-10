@@ -78,7 +78,7 @@ built with React Native & Expo.
 - **Weather on this day** — what actually happened on today's date over the past 10 years
 - **Climate normals** — “what's normal here” for every month of the year, from the ERA5 archive, with a delta against today's forecast
 - **Forecast accuracy** — the app scores its own past predictions and shows the average miss
-- **Rain probabilities** — raw hourly ICON-EPS member shares are checked against later Archive API observations (not station ground truth); direct complete-day event chances count joint members (hourly probabilities are not multiplied), with support-gated Brier/reliability summaries
+- **Rain probabilities** — the Home chart overlays raw ICON-EPS hourly member shares (amber dots) on the primary-provider hourly chances (blue bars), only when member support and local-time alignment are adequate. These shares are checked against later Archive API observations (not station ground truth); direct complete-day event chances count joint members (hourly probabilities are not multiplied), with support-gated Brier/reliability summaries
 - **Ensemble coverage** — temperature and wind P10–P90 forecasts are checked against later archive observations, with sample counts, lead-time breakdowns and approximate coverage uncertainty
 - **Model leaderboard** — compares ECMWF, GFS, ICON, Météo-France, JMA and MET Nordic by metric and city; rankings wait for seven shared dates and show approximate Wilson hit-rate intervals (adjacent weather dates may be correlated)
 - **Official warnings** — MeteoAlarm CAP feeds for supported countries, with stated severity/source, expiry, last-check time and a clear stale/unavailable state
@@ -131,7 +131,7 @@ Translations are **strictly typed against the English catalog** (`i18n/en.ts`), 
 | --- | --- |
 | Framework | [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/) · React Native 0.86 (Hermes) · React 19 |
 | Language | TypeScript in **strict** mode — no `any` in app code |
-| UI | Hand-built themed components · design tokens in `theme/tokens.ts` · `react-native-svg` charts and sky effects · `react-native-reanimated` motion · `expo-linear-gradient` · `lucide-react-native` icons · Outfit font |
+| UI | Hand-built themed components · design tokens in `theme/tokens.ts` · Skia charts and sky effects · `react-native-reanimated` motion · `expo-linear-gradient` · `lucide-react-native` icons · Outfit font |
 | Radar & maps | Custom Web-Mercator tile renderer — **no map SDK** |
 | Widgets | `react-native-android-widget` · five home-screen widgets rendered as RemoteViews, so they are static (no animation); colours come from the sky palette in `utils/widgetPalette.ts` |
 | Theming | 10 themes, including `react-native-material-you-colors` for the Android 12+ wallpaper palette |
