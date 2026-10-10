@@ -60,17 +60,17 @@ built with React Native & Expo.
 - **Aurora** — Kp now, Kp forecast, visibility chance for your latitude, **live solar wind speed and Bz**, and a **Kp last-24-hours sparkline**. Auto-hides below ~45° latitude
 - **Storm index** — CAPE storm-building row with peak hour, plus a **storm distance meter** that times the gap between lightning and thunder
 - **Sun & moon** — moon phase disc with full/new countdown, illumination and cycle day; golden-hour windows
-- **Best time outdoors** — a scored 2-hour window from rain, wind, UV and apparent temperature
+- **Best time outdoors** — scored 2-hour windows from rain, wind, UV and apparent temperature, with adjustable local preferences and optional on-device fit feedback
 - **What to wear** — a one-line, unit-aware suggestion under the hero
 - **Health indices** — migraine, respiratory and flu risk estimated from pressure trend, AQI and humidity *(heuristic, not medical advice)*
 
-### 🔔 Alerts that actually reach you
+### 🔔 Alerts with clear delivery outcomes
 
 - **17 opt-in alert rules** — rain, thunderstorm, frost, heat, high UV, strong wind, CAPE storm building, rapid pressure drop, pollen, air quality, aurora, fog, black ice, cold snap, rapid temperature drop, stargazing and rain easing
-- **Saved-city alerts** — the same rules can run for your saved cities, so a notification can say *“Rain starting in Paris in 40 min”* while you are somewhere else (rotating sweep, per-city cooldowns, your language)
-- **Alert history** — the last 20 delivered alerts with severity, city and local time, on the Alerts screen
+- **Saved-city alerts** — the same rules can run for saved cities with rotating sweeps and per-city cooldowns; choose a 20, 30 or 60-minute in-app cadence. When the app is closed, Android may defer background work (the task requests a 30-minute minimum; it is not an exact schedule)
+- **Alert history** — the last 20 notification outcomes with trigger evidence, severity, city and local time; “scheduled” does not prove the operating system displayed the notification
 - **Spoken forecast** — the app reads your forecast aloud in the app language; the daily digest notification carries a **“Read my forecast”** action
-- **Background checks** — the weather, widgets, digest and alerts refresh even while the app is closed
+- **Background checks** — weather, widgets, digest and alerts can refresh while the app is closed when Android grants background execution; timing is best-effort and may be deferred
 
 ### 📊 History, climate & accuracy
 
@@ -78,9 +78,10 @@ built with React Native & Expo.
 - **Weather on this day** — what actually happened on today's date over the past 10 years
 - **Climate normals** — “what's normal here” for every month of the year, from the ERA5 archive, with a delta against today's forecast
 - **Forecast accuracy** — the app scores its own past predictions and shows the average miss
-- **Hourly rain calibration** — ICON-EPS rain probabilities are logged locally per rounded location and checked against later archive observations; Brier and reliability summaries stay hidden until there is enough history
-- **Model leaderboard** — ranks ECMWF, GFS, ICON, Météo-France, JMA and MET Nordic by hit rate and mean error over the last 30 days, scored per city
-- **Official warnings** — MeteoAlarm CAP feeds for European countries, with severity colour, description and expiry time
+- **Rain probabilities** — raw hourly ICON-EPS member shares are checked against later Archive API observations (not station ground truth); direct complete-day event chances count joint members (hourly probabilities are not multiplied), with support-gated Brier/reliability summaries
+- **Ensemble coverage** — temperature and wind P10–P90 forecasts are checked against later archive observations, with sample counts, lead-time breakdowns and approximate coverage uncertainty
+- **Model leaderboard** — compares ECMWF, GFS, ICON, Météo-France, JMA and MET Nordic by metric and city; rankings wait for seven shared dates and show approximate Wilson hit-rate intervals (adjacent weather dates may be correlated)
+- **Official warnings** — MeteoAlarm CAP feeds for supported countries, with stated severity/source, expiry, last-check time and a clear stale/unavailable state
 
 ### 🗺️ Radar & maps
 
@@ -93,6 +94,7 @@ built with React Native & Expo.
 - **Trip planner** — pick a saved city, a start date and a trip length for a day-by-day outlook with a *“2 of 5 days look wet”* verdict
 - **Calendar integration** — upcoming events with their forecast
 - **Saved cities** — favourites with live conditions, one tap away
+- **Local quality data** — inspect rain/ensemble calibration and outdoor/storm feedback counts by rounded location, and clear one location or all records on-device
 - **Settings backup & restore** — export and import your settings as JSON
 - **Data export** — CSV and JSON export of the app's own forecast log
 - **Deep dives** — dedicated screens for wind, air quality, UV, humidity, visibility, pressure, precipitation, moon, pollen, day detail and the graph explorer

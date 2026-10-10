@@ -110,8 +110,9 @@ passes the journal probe in both styles.
   interval. No daily rain probability is derived by multiplying hourly dry probabilities. A supported reliability
   bin can provide an empirical probability correction, but this pass does not apply a correction to live chart
   values; the displayed score describes raw ICON-EPS probabilities.
-- The check-out used for this pass is the available `796a79f` snapshot. Its Home rain chart still contains the
-  primary-provider bars only; the handoff-described ensemble-dot overlay is not present in this checkout. The
-  calibration summary is kept explicitly labelled ICON-EPS and does not imply that the blue bars are calibrated.
-- The three new labels are present in all 14 locale dictionaries. This checks key and placeholder coverage only;
-  native-speaker translation review has not been performed.
+- The Home rain chart's hourly bars remain the primary-provider series; direct complete-day ICON-EPS event
+  probabilities are shown separately with member counts. Calibration summaries are explicitly labeled ICON-EPS
+  and do not imply that the blue hourly bars are calibrated. The handoff-described ensemble-dot overlay is not
+  present in this checkout.
+- Rain-method and forecast-exposure strings are present in all 14 locale dictionaries. Automated checks cover
+  keys/placeholders only; native-speaker translation review has not been performed.

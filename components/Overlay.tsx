@@ -57,6 +57,7 @@ export function Overlay({
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={onClose}
+          accessibilityRole="button"
           accessibilityLabel={t('a11y_close')}
         />
       </Animated.View>

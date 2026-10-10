@@ -5,6 +5,7 @@
  * no storage, translation or notification side effects.
  */
 export type ImpactSeverity = 'info' | 'warning' | 'severe';
+export type ImpactBasis = 'observed' | 'forecast-exposure' | 'official-warning';
 
 export interface ImpactSignal {
   /** Stable global ID, usually namespaced by its feed/rule; repeated IDs are upserted. */
@@ -13,6 +14,8 @@ export interface ImpactSignal {
   hazard: string;
   /** Human-readable source name, e.g. forecast, nowcast or official warning. */
   source: string;
+  /** Evidence basis; optional for generic/historical callers without a current-source classification. */
+  basis?: ImpactBasis;
   severity: ImpactSeverity;
   startsAt: number;
   endsAt: number;
@@ -43,6 +46,8 @@ export interface WeatherImpact {
   endsAt: number;
   /** Unique source names, sorted for stable presentation. */
   sources: string[];
+  /** Observation, forecast exposure, or official-warning bases contributing to this impact. */
+  bases: ImpactBasis[];
   /** Latest update from each source, preserving mixed-age provenance in UI. */
   sourceUpdates: ImpactSourceUpdate[];
   /** Latest source update in the group, epoch milliseconds. */
@@ -67,6 +72,10 @@ function isSeverity(value: unknown): value is ImpactSeverity {
   return value === 'info' || value === 'warning' || value === 'severe';
 }
 
+function isImpactBasis(value: unknown): value is ImpactBasis {
+  return value === 'observed' || value === 'forecast-exposure' || value === 'official-warning';
+}
+
 function isUsableSignal(value: unknown): value is ImpactSignal {
   if (!value || typeof value !== 'object') return false;
   const signal = value as Partial<ImpactSignal>;
@@ -74,6 +83,7 @@ function isUsableSignal(value: unknown): value is ImpactSignal {
     typeof signal.id === 'string' && signal.id.trim().length > 0 &&
     typeof signal.hazard === 'string' && signal.hazard.trim().length > 0 &&
     typeof signal.source === 'string' && signal.source.trim().length > 0 &&
+    (signal.basis === undefined || isImpactBasis(signal.basis)) &&
     isSeverity(signal.severity) &&
     typeof signal.startsAt === 'number' && Number.isFinite(signal.startsAt) &&
     typeof signal.endsAt === 'number' && Number.isFinite(signal.endsAt) && signal.endsAt >= signal.startsAt &&
@@ -136,6 +146,7 @@ function makeImpact(group: ImpactSignal[]): WeatherImpact {
     startsAt: Math.min(...group.map((signal) => signal.startsAt)),
     endsAt: Math.max(...group.map((signal) => signal.endsAt)),
     sources: sourceUpdates.map((update) => update.source),
+    bases: [...new Set(group.map((signal) => signal.basis).filter(isImpactBasis))].sort(),
     sourceUpdates,
     sourceUpdatedAt: Math.max(...sourceUpdates.map((update) => update.updatedAt)),
     expected: uniqueStrings(group.map((signal) => signal.expected)),

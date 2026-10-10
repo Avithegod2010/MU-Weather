@@ -8,6 +8,7 @@ import { RADIUS } from '../theme/tokens';
 import { Sheen } from './Sheen';
 import { PressScale } from './PressScale';
 import { Reveal } from './Reveal';
+import { t } from '../utils/i18n';
 
 interface CardProps {
   theme: AppTheme;
@@ -63,6 +64,7 @@ export function Card({ theme, title, icon: Icon, style, revealDelay, headerRight
       android_ripple={{ color: 'rgba(255,255,255,0.12)', borderless: false, radius: 400 }}
       style={styles.pressWrap}
       accessibilityRole="button"
+      accessibilityLabel={title ?? t('sec_details')}
     >
       {inner}
     </PressScale>

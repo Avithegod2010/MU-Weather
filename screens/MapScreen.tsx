@@ -103,6 +103,8 @@ export function MapScreen({ theme, location, visible, onClose, onOpenRadar }: Ma
             { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
             pressed && { opacity: 0.7 },
           ]}
+          accessibilityRole="button"
+          accessibilityLabel={t('a11y_back')}
         >
           <ChevronLeft size={24} color={theme.textPrimary} strokeWidth={2.4} />
         </Pressable>
@@ -146,6 +148,8 @@ export function MapScreen({ theme, location, visible, onClose, onOpenRadar }: Ma
               }}
               style={styles.chip}
               pressedOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isActive }}
             >
               <Icon
                 size={19}

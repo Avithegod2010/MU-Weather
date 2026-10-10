@@ -4,13 +4,14 @@ import {
   fetchMeteoAlarmWarnings,
   meteoalarmSlugFor,
   meteoAlarmCacheFetchedAt,
+  meteoAlarmCachedSnapshot,
   type MeteoAlarmWarning,
 } from '../utils/meteoalarm';
 import type { GeoLocation } from '../api/types';
 import { weatherLocationKey } from '../utils/freshnessPolicy';
 
 export interface MeteoAlarmState {
-  status: 'idle' | 'loading' | 'ok' | 'error';
+  status: 'idle' | 'unsupported' | 'loading' | 'ok' | 'stale' | 'error';
   warnings: MeteoAlarmWarning[] | null;
   updatedAt: number | null;
   locationKey: string | null;
@@ -27,7 +28,8 @@ const REFRESH_CHECK_MS = 5 * 60 * 1000;
  * module-level TTL cache in utils/meteoalarm.ts decides when to refetch:
  * 'idle' instantly for non-member countries (zero network churn), otherwise
  * a fetch now plus a periodic check that refetches once the TTL expires.
- * Failures leave the card absent (no crash, never throws).
+ * Feed outcomes remain explicit: no active warning, unsupported region,
+ * unavailable, and stale last-known data are not conflated in the card.
  */
 export function useMeteoAlarm(location: GeoLocation | null): MeteoAlarmState {
   const [state, setState] = useState<MeteoAlarmState>({
@@ -57,15 +59,20 @@ export function useMeteoAlarm(location: GeoLocation | null): MeteoAlarmState {
         const warnings = await fetchMeteoAlarmWarnings(countryCode, lat, lon, language);
         if (cancelled) return;
         setState(() => {
-          // A failed refresh is not evidence that old warnings are still active.
           if (warnings === null) {
-            return {
-              status: 'error',
-              warnings: null,
-              updatedAt: null,
-              locationKey,
-              requestKey,
-            };
+            const cached = meteoAlarmCachedSnapshot(countryCode, lat, lon, language);
+            // A previous feed is displayed only as explicitly stale, and any
+            // CAP warning whose own expiry passed is removed from that snapshot.
+            if (cached) {
+              return {
+                status: 'stale',
+                warnings: cached.warnings,
+                updatedAt: cached.fetchedAt,
+                locationKey,
+                requestKey,
+              };
+            }
+            return { status: 'error', warnings: null, updatedAt: null, locationKey, requestKey };
           }
           return {
             status: 'ok',
@@ -87,11 +94,13 @@ export function useMeteoAlarm(location: GeoLocation | null): MeteoAlarmState {
   }, [countryCode, lat, lon, language, locationKey, requestKey]);
 
   if (!requestKey) {
+    const hasCoordinates = lat !== null && lon !== null && locationKey !== null;
+    const unsupported = hasCoordinates && Boolean(countryCode) && !meteoalarmSlugFor(countryCode);
     return {
-      status: 'idle',
+      status: unsupported ? 'unsupported' : 'idle',
       warnings: null,
       updatedAt: null,
-      locationKey: null,
+      locationKey: locationKey,
       requestKey: null,
     };
   }

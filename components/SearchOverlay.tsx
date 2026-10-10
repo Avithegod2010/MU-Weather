@@ -61,9 +61,12 @@ export function SearchOverlay({
         <Pressable
           style={({ pressed }) => [
             styles.row,
+            styles.selectRow,
             { backgroundColor: pressed ? surfaceBg : 'transparent' },
           ]}
           onPress={() => onSelect(item)}
+          accessibilityRole="button"
+          accessibilityLabel={`${item.name}, ${formatLocationSubtitle(item) || 'Coordinates location'}`}
         >
           <MapPin size={18} color={theme.textSecondary} strokeWidth={2} />
           <View style={styles.rowTexts}>
@@ -74,30 +77,30 @@ export function SearchOverlay({
               {formatLocationSubtitle(item) || 'Coordinates location'}
             </Text>
           </View>
-          {showStar ? (
-            <Pressable
-              hitSlop={12}
-              onPress={() => {
-                if (fav) {
-                  haptics.light();
-                } else {
-                  haptics.success();
-                }
-                onToggleFavorite(item);
-              }}
-              style={styles.starButton}
-              accessibilityRole="button"
-              accessibilityLabel={fav ? t('a11y_fav_remove') : t('a11y_fav_add')}
-            >
-              <Star
-                size={20}
-                color={fav ? '#F5C04E' : theme.textTertiary}
-                fill={fav ? '#F5C04E' : 'transparent'}
-                strokeWidth={2}
-              />
-            </Pressable>
-          ) : null}
         </Pressable>
+        {showStar ? (
+          <Pressable
+            hitSlop={12}
+            onPress={() => {
+              if (fav) {
+                haptics.light();
+              } else {
+                haptics.success();
+              }
+              onToggleFavorite(item);
+            }}
+            style={styles.starButton}
+            accessibilityRole="button"
+            accessibilityLabel={`${fav ? t('a11y_fav_remove') : t('a11y_fav_add')}: ${item.name}`}
+          >
+            <Star
+              size={20}
+              color={fav ? '#F5C04E' : theme.textTertiary}
+              fill={fav ? '#F5C04E' : 'transparent'}
+              strokeWidth={2}
+            />
+          </Pressable>
+        ) : null}
       </View>
     );
   };
@@ -120,6 +123,7 @@ export function SearchOverlay({
           <View style={[styles.inputWrap, { backgroundColor: surfaceBg }]}>
             <Search size={19} color={theme.textTertiary} strokeWidth={2.2} />
             <TextInput
+              accessibilityLabel={t('search_placeholder')}
               value={query}
               onChangeText={setQuery}
               placeholder={t('search_placeholder')}
@@ -215,6 +219,9 @@ const styles = StyleSheet.create({
   },
   rowWrapper: {
     paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   row: {
     flexDirection: 'row',
@@ -223,6 +230,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 13,
+  },
+  selectRow: {
+    flex: 1,
   },
   rowTexts: {
     flex: 1,

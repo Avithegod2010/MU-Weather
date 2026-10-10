@@ -29,6 +29,7 @@ export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
               haptics.select();
               onEnable();
             }}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.button,
               { backgroundColor: theme.chipBg },

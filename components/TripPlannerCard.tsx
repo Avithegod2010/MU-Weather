@@ -254,6 +254,7 @@ export function TripPlannerCard({ theme, favorites, outdoorPreferences, onOpenFa
               haptics.select();
               onOpenFavorites();
             }}
+            accessibilityRole="button"
             style={({ pressed }) => [
               styles.pillButton,
               { backgroundColor: theme.chipBg },
@@ -336,6 +337,8 @@ export function TripPlannerCard({ theme, favorites, outdoorPreferences, onOpenFa
               haptics.light();
               void loadTrip();
             }}
+            accessibilityRole="button"
+            accessibilityLabel={`${t('trip_show')}${selected ? `: ${selected.name}` : ''}`}
             disabled={!selected || status === 'loading'}
             style={({ pressed }) => [
               styles.showButton,
@@ -359,6 +362,7 @@ export function TripPlannerCard({ theme, favorites, outdoorPreferences, onOpenFa
                   haptics.light();
                   void loadTrip();
                 }}
+                accessibilityRole="button"
                 style={({ pressed }) => [
                   styles.retryButton,
                   { backgroundColor: theme.chipBg },

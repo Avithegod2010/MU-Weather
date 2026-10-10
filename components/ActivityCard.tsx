@@ -1,11 +1,10 @@
 import { t } from '../utils/i18n';
 import React from 'react';
 import { F } from '../theme/typography';
-import { StyleSheet, Text, View , Pressable } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Footprints, Bike, Shirt, Moon, Camera } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import { Card } from './Card';
-import { haptics } from '../utils/haptics';
 import type { AppTheme } from '../theme/palettes';
 import { computeActivities } from '../utils/activity';
 import type { ActivityKey } from '../utils/activity';
@@ -35,11 +34,7 @@ export function ActivityCard({ theme, data }: ActivityCardProps) {
           const scoreColor =
             activity.score >= 70 ? '#5BC98C' : activity.score >= 45 ? '#E8D05A' : '#E85F5F';
           return (
-            <Pressable
-              key={activity.key}
-              onPress={() => haptics.select()}
-              style={({ pressed }) => [styles.row, pressed && { opacity: 0.7 }]}
-            >
+            <View key={activity.key} style={styles.row}>
               <View style={[styles.iconChip, { backgroundColor: theme.chipBg }]}>
                 <Icon size={16} color={theme.textPrimary} strokeWidth={2} />
               </View>
@@ -55,7 +50,7 @@ export function ActivityCard({ theme, data }: ActivityCardProps) {
                   {activity.reason}
                 </Text>
               </View>
-            </Pressable>
+            </View>
           );
         })}
       </View>
