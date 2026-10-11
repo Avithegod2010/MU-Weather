@@ -14,7 +14,7 @@ import Animated from 'react-native-reanimated';
 import { Clock, Thermometer, Umbrella, Wind, X } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
-import { scaleY, type CurvePoint } from '../utils/curve';
+import { scaleY, smoothPath, type CurvePoint } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
 import {

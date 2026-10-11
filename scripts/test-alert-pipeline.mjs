@@ -27,7 +27,11 @@ const runner = `
   };
   Module._load = function(request, parent, isMain) {
     if (request === '@react-native-async-storage/async-storage') return { __esModule: true, default: storage };
-    if (request === './notifications' && parent?.filename?.endsWith('/utils/fireAlertNotifications.js')) return notifications;
+    // Separator-agnostic: tsc emits backslash requires on Windows, so a bare
+    // '/utils/...' endsWith would never match there and the real
+    // expo-notifications deep import would blow up the sandbox.
+    const parentPath = (parent?.filename ?? '').split(String.fromCharCode(92)).join('/');
+    if (request === './notifications' && parentPath.endsWith('/utils/fireAlertNotifications.js')) return notifications;
     return originalLoad.call(this, request, parent, isMain);
   };
   require(process.argv[1]);

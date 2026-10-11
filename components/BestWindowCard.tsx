@@ -155,6 +155,7 @@ export function BestWindowCard({
       {line ? (
         <Text style={[styles.line, { color: theme.textPrimary }]}>{line}</Text>
       ) : null}
+      {reasonKeys.length ? (
       <View style={styles.reasonRow}>
         {reasonKeys.map((code) => (
           <Text
@@ -171,6 +172,9 @@ export function BestWindowCard({
           </Text>
         ))}
       </View>
+      ) : null}
+      {clamped !== null ? (
+      <>
       <View style={[styles.track, { backgroundColor: theme.chipBg }]}>
         <View style={[styles.fill, { flex: Math.max(clamped, 1), backgroundColor: scoreColor(clamped) }]} />
         <View style={{ flex: Math.max(100 - clamped, 0) }} />
