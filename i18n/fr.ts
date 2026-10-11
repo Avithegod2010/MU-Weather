@@ -513,7 +513,7 @@ export const fr: Strings = {
   hl_swing: 'Forte amplitude thermique aujourd’hui — de {low} à {high}, habille-toi en couches',
   hl_gusts: 'Conditions venteuses — rafales jusqu’à {n} {unit}',
   hl_uv: 'UV très élevé aujourd’hui ({n}) — crème solaire entre {from} et {to}',
-  hl_frost: 'Gel probable cette nuit — minimale vers {t}',
+  hl_frost: 'Gel probable cette nuit — minimale vers {t}.',
   hl_aqi: 'La qualité de l’air est mauvaise (AQI {n}) — limite les efforts dehors',
   // ── home chapters ──
   chapter_now: 'Maintenant',

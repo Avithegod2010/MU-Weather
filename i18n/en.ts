@@ -995,7 +995,7 @@ export const en = {
   hl_swing: 'Big temperature swing today — {low} to {high}, dress in layers',
   hl_gusts: 'Gusty conditions — gusts reaching {n} {unit}',
   hl_uv: 'Very high UV today ({n}) — sunscreen between {from} and {to}',
-  hl_frost: 'Frost likely tonight — lows near {t}',
+  hl_frost: 'Frost likely tonight — lows near {t}.',
   hl_aqi: 'Air quality is poor (AQI {n}) — limit outdoor exertion',
   // ── home chapters ──
   chapter_now: 'Now',

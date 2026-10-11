@@ -513,7 +513,7 @@ export const de: Strings = {
   hl_swing: 'Große Temperaturspanne heute — {low} bis {high}, kleide dich in Schichten',
   hl_gusts: 'Böige Bedingungen — Böen bis {n} {unit}',
   hl_uv: 'Heute sehr hoher UV ({n}) — Sonnencreme zwischen {from} und {to}',
-  hl_frost: 'Wahrscheinlich Frost heute Nacht — Tiefstwerte um {t}',
+  hl_frost: 'Wahrscheinlich Frost heute Nacht — Tiefstwerte um {t}.',
   hl_aqi: 'Schlechte Luftqualität (AQI {n}) — Anstrengung im Freien einschränken',
   // ── home chapters ──
   chapter_now: 'Jetzt',

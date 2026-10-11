@@ -513,7 +513,7 @@ export const id: Strings = {
   hl_swing: 'Ayunan suhu besar hari ini — {low} hingga {high}, berpakaianlah berlapis',
   hl_gusts: 'Kondisi berangin — hembusan hingga {n} {unit}',
   hl_uv: 'UV sangat tinggi hari ini ({n}) — tabir surya antara {from} dan {to}',
-  hl_frost: 'Kemungkinan embun beku malam ini — terendah sekitar {t}',
+  hl_frost: 'Kemungkinan embun beku malam ini — terendah sekitar {t}.',
   hl_aqi: 'Kualitas udara buruk (AQI {n}) — batasi aktivitas luar ruangan',
   // ── home chapters ──
   chapter_now: 'Sekarang',

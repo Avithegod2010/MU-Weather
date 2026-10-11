@@ -14,7 +14,7 @@ import Animated from 'react-native-reanimated';
 import { Clock, Thermometer, Umbrella, Wind, X } from '../utils/uiIcons';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
-import { scaleY, smoothPath, type CurvePoint } from '../utils/curve';
+import { scaleY, type CurvePoint } from '../utils/curve';
 import type { AppTheme } from '../theme/palettes';
 import { WeatherIcon } from './WeatherIcon';
 import {
@@ -81,7 +81,7 @@ export const HourlyForecast = React.memo(function HourlyForecast({
     }
   }, [focus, slice]);
 
-  const { points, lineColor, formatValue, path } = useMemo(() => {
+  const { points, lineColor, formatValue } = useMemo(() => {
     let pts: CurvePoint[];
     let color: string;
     let fmt: (hour: HourPoint) => string;
@@ -127,7 +127,6 @@ export const HourlyForecast = React.memo(function HourlyForecast({
       points: pts,
       lineColor: color,
       formatValue: fmt,
-      path: smoothPath(pts),
     };
   }, [slice, view, theme.isLight]);
 

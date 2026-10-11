@@ -513,7 +513,7 @@ export const nl: Strings = {
   hl_swing: 'Grote temperatuurschommeling vandaag — {low} tot {high}, kleed je in lagen',
   hl_gusts: 'Vlaagweer — windstoten tot {n} {unit}',
   hl_uv: 'Vandaag zeer hoge UV ({n}) — zonnebrand tussen {from} en {to}',
-  hl_frost: 'Waarschijnlijk vorst vannacht — minima rond {t}',
+  hl_frost: 'Waarschijnlijk vorst vannacht — minima rond {t}.',
   hl_aqi: 'Slechte luchtkwaliteit (AQI {n}) — beperk inspanning buiten',
   // ── home chapters ──
   chapter_now: 'Nu',

@@ -1,7 +1,6 @@
 import { t } from './i18n';
 import { formatTemp, convertWind, windUnitLabel, formatClockParts } from './format';
 import { describeWmo } from './wmo';
-import { computeNowcast } from './nowcast';
 import { windshieldFrostLine } from './frostLine';
 import type { Nowcast } from './nowcast';
 import type { WeatherBundle } from '../api/types';
@@ -78,7 +77,7 @@ export function computeHighlights(data: WeatherBundle, nowcast: Nowcast): Highli
   if (today && today.tMin <= 0) {
     const base = t('hl_frost').replace('{t}', formatTemp(today.tMin));
     const scrape = windshieldFrostLine(today, data.hourly);
-    highlights.push({ icon: 'frost', text: scrape ? base + '. ' + scrape : base });
+    highlights.push({ icon: 'frost', text: scrape ? base + ' ' + scrape : base });
   }
 
   if (data.aqi?.usAqi != null && data.aqi.usAqi > 150) {

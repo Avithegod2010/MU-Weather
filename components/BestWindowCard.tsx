@@ -268,7 +268,9 @@ export function BestWindowCard({
         </Pressable>
       ) : null}
       </>
+
       ) : null}
+      {clamped !== null ? (
       <Pressable
         onPress={() => setShowPreferences((visible) => !visible)}
         style={({ pressed }) => [styles.preferencesToggle, { backgroundColor: theme.chipBg }, pressed && { opacity: 0.7 }]}
@@ -279,7 +281,8 @@ export function BestWindowCard({
         <Settings size={15} color={theme.textSecondary} strokeWidth={2.1} />
         <Text style={[styles.preferencesToggleText, { color: theme.textSecondary }]}>{t('s_title')}</Text>
       </Pressable>
-      {showPreferences ? (
+      ) : null}
+      {showPreferences && clamped !== null ? (
         <View style={[styles.preferences, { borderTopColor: theme.cardBorder }]}>
           {preferenceRows.map((row) => (
             <PreferenceStepper

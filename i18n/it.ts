@@ -513,7 +513,7 @@ export const it: Strings = {
   hl_swing: 'Forte escursione termica oggi — da {low} a {high}, vestiti a strati',
   hl_gusts: 'Condizioni ventose — raffiche fino a {n} {unit}',
   hl_uv: 'UV molto alto oggi ({n}) — protezione solare tra {from} e {to}',
-  hl_frost: 'Probabile gelo stanotte — minima intorno a {t}',
+  hl_frost: 'Probabile gelo stanotte — minima intorno a {t}.',
   hl_aqi: 'Qualità dell’aria scarsa (AQI {n}) — limita lo sforzo all’aperto',
   // ── home chapters ──
   chapter_now: 'Ora',

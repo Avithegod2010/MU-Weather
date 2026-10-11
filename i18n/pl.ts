@@ -844,7 +844,7 @@ export const pl: Strings = {
   hl_swing: 'Duża dobowa amplituda dziś — {low} do {high}, ubierz się warstwowo',
   hl_gusts: 'Wietrznie — porywy do {n} {unit}',
   hl_uv: 'Dziś bardzo wysoki UV ({n}) — krem z filtrem między {from} a {to}',
-  hl_frost: 'Prawdopodobny mróz dziś w nocy — minimum około {t}',
+  hl_frost: 'Prawdopodobny mróz dziś w nocy — minimum około {t}.',
   hl_aqi: 'Słaba jakość powietrza (AQI {n}) — ogranicz wysiłek na zewnątrz',
   // ── home chapters ──
   chapter_now: 'Teraz',

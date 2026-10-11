@@ -844,7 +844,7 @@ export const tr: Strings = {
   hl_swing: 'Bugün büyük sıcaklık farkı — {low} ile {high} arası, kat kat giyin',
   hl_gusts: 'Rüzgarlı hava — rüzgar hamleleri {n} {unit} seviyesine ulaşıyor',
   hl_uv: 'Bugün çok yüksek UV ({n}) — {from} ile {to} arasında güneş kremi',
-  hl_frost: 'Bu gece don bekleniyor — en düşük {t} civarında',
+  hl_frost: 'Bu gece don bekleniyor — en düşük {t} civarında.',
   hl_aqi: 'Hava kalitesi kötü (AQI {n}) — dışarıda eforu sınırla',
   // ── home chapters ──
   chapter_now: 'Şimdi',

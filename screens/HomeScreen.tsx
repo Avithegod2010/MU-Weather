@@ -144,7 +144,11 @@ export function HomeScreen() {
   const insets = useSafeAreaInsets();
   const [planningNow, setPlanningNow] = useState(() => Date.now());
   useEffect(() => {
-    const timer = setInterval(() => setPlanningNow(Date.now()), 60 * 1000);
+    // Plan windows only move in whole minutes, and the screen isn't visible in
+    // the background — skip the state churn while backgrounded.
+    const timer = setInterval(() => {
+      if (AppState.currentState === 'active') setPlanningNow(Date.now());
+    }, 60 * 1000);
     return () => clearInterval(timer);
   }, []);
   const [active, setActive] = useState<GeoLocation | null>(null);

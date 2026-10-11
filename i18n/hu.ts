@@ -513,7 +513,7 @@ export const hu: Strings = {
   hl_swing: 'Nagy hőingás ma — {low} és {high} között, öltözz rétegesen',
   hl_gusts: 'Szeles idő — széllökések akár {n} {unit}',
   hl_uv: 'Ma nagyon magas UV ({n}) — naptej {from} és {to} között',
-  hl_frost: 'Valószínű fagy ma éjjel — minimum {t} körül',
+  hl_frost: 'Valószínű fagy ma éjjel — minimum {t} körül.',
   hl_aqi: 'Rossz levegőminőség (AQI {n}) — mérsékeld a kinti terhelést',
   // ── home chapters ──
   chapter_now: 'Most',

@@ -513,7 +513,7 @@ export const es: Strings = {
   hl_swing: 'Gran cambio de temperatura hoy — de {low} a {high}, vístete por capas',
   hl_gusts: 'Condiciones ventosas — ráfagas de hasta {n} {unit}',
   hl_uv: 'UV muy alto hoy ({n}) — protector solar entre {from} y {to}',
-  hl_frost: 'Probable helada esta noche — mínima cerca de {t}',
+  hl_frost: 'Probable helada esta noche — mínima cerca de {t}.',
   hl_aqi: 'La calidad del aire es mala (AQI {n}) — limita el esfuerzo al aire libre',
   // ── home chapters ──
   chapter_now: 'Ahora',

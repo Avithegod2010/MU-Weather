@@ -47,10 +47,13 @@ built with React Native & Expo.
 ### 🌡️ Forecast & conditions
 
 - **Live conditions** — temperature, feels-like, condition, wind, humidity and pressure with animated weather icons
+- **Feels-like, explained** — when the “feels like” gap is large, a one-line cause is appended (wind, humidity or a clear-sky sun), localized in every language
+- **Highlights card** — up to four plain-language call-outs: rain starting soon, storms, big temperature swings, gusts, very high UV, poor air quality, and frost tonight (with a windshield-scrape nudge)
 - **Hourly strip** — tap any hour for an inline panel (condition, temp, feels-like, rain chance & amount, wind/gusts/direction, humidity, dew point, pressure, UV, visibility)
 - **16-day forecast** — tap any day for a full breakdown: 24-hour temperature curve, rain-probability curve, sunrise/sunset, UV max & band, precipitation total, rain hours and max wind
 - **Trend charts** — 48-hour trends for temperature, rain probability, pressure and more
 - **Minute-level nowcast** — rain bands arriving, easing or passing, with plain-language headlines
+- **Chaptered home screen** — sections grouped under sticky chapter headers (Now · Today · This week · Plan · Insights), each shown only when its tiles are enabled
 - **Graph explorer** — pick any metric (temperature, feels-like, rain chance, precipitation, wind, gusts, direction, pressure, humidity, UV, visibility, CAPE) × any range (24 h / 7 days / past 30 days) with a **scrubbing crosshair** that reads out values as you drag
 
 ### 🌫️ Air, sky & space
@@ -59,8 +62,8 @@ built with React Native & Expo.
 - **Pollen** — 6-species pollen levels and a worst-species deep dive (Europe only — CAMS coverage)
 - **Aurora** — Kp now, Kp forecast, visibility chance for your latitude, **live solar wind speed and Bz**, and a **Kp last-24-hours sparkline**. Auto-hides below ~45° latitude
 - **Storm index** — CAPE storm-building row with peak hour, plus a **storm distance meter** that times the gap between lightning and thunder
-- **Sun & moon** — moon phase disc with full/new countdown, illumination and cycle day; golden-hour windows
-- **Best time outdoors** — scored 2-hour windows from rain, wind, UV and apparent temperature, with adjustable local preferences and optional on-device fit feedback
+- **Sun & moon** — moon phase disc with full/new countdown, illumination and cycle day; golden-hour windows; a folklore line per moon phase (clearly labelled “old lore, not science”)
+- **Best time outdoors** — scored 2-hour windows from rain, wind, UV and apparent temperature, with adjustable local preferences and optional on-device fit feedback; on weekends a **Saturday-vs-Sunday verdict** crowns the better day for outdoor plans
 - **What to wear** — a one-line, unit-aware suggestion under the hero
 - **Health indices** — migraine, respiratory and flu risk estimated from pressure trend, AQI and humidity *(heuristic, not medical advice)*
 
@@ -75,6 +78,7 @@ built with React Native & Expo.
 ### 📊 History, climate & accuracy
 
 - **30-day history** — archive-based actuals vs. the forecasts the app logged itself, with a 7/30-day toggle, a temperature-range sparkline, rain totals and variability stats
+- **Streaks** — the current dry or wet run in the past-days view, compared against the longest spell in the same window
 - **Weather on this day** — what actually happened on today's date over the past 10 years
 - **Climate normals** — “what's normal here” for every month of the year, from the ERA5 archive, with a delta against today's forecast
 - **Forecast accuracy** — the app scores its own past predictions and shows the average miss
@@ -92,7 +96,7 @@ built with React Native & Expo.
 ### 🛠️ Tools & planning
 
 - **Trip planner** — pick a saved city, a start date and a trip length for a day-by-day outlook with a *“2 of 5 days look wet”* verdict
-- **Calendar integration** — upcoming events with their forecast
+- **Calendar integration** — upcoming events with their forecast, plus a rain-risk line (“40% rain — bring an umbrella”) on high-risk events
 - **Saved cities** — favourites with live conditions, one tap away
 - **Local quality data** — inspect rain/ensemble calibration and outdoor/storm feedback counts by rounded location, and clear one location or all records on-device
 - **Settings backup & restore** — export and import your settings as JSON
