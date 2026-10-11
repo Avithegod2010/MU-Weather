@@ -433,4 +433,38 @@ export const bn: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'ডায়াগনস্টিক রিপোর্ট',
   diagnostics_report_sub: 'বাগ রিপোর্টের সাথে যুক্ত করতে একটি টেক্সট ফাইল শেয়ার করুন',
+
+
+
+
+  // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
+  cal_rain_risk: '{chance}% বৃষ্টি — {advice}',
+  cal_rain_high: 'ছাতা নিয়ে যান',
+  cal_rain_low: 'ছাতার দরকার নেই',
+  streak_dry: 'টানা {n} শুকনো দিন',
+  streak_wet: 'টানা {n} ভেজা দিন',
+  streak_dry_record: 'এখানে সবচেয়ে লম্বা শুকনো সময়: {n} দিন',
+  streak_wet_record: 'এখানে সবচেয়ে লম্বা ভেজা সময়: {n} দিন',
+  feels_colder: 'আসলের চেয়ে {n}° ঠান্ডা লাগছে',
+  feels_warmer: 'আসলের চেয়ে {n}° গরম লাগছে',
+  feels_cause_wind: '— হাওয়ার কেরামতি',
+  feels_cause_humidity: '— আর্দ্রতার কথা',
+  feels_cause_sun: '— রোদের প্রভাব',
+  weekend_winner: '{day} জিতেছে — বাইরের পরিকল্পনা তখনই করুন',
+  weekend_even: '{sat} আর {sun} সমান দেখাচ্ছে',
+  frost_windshield: 'উইন্ডশিল্ড পরিষ্কার করতে ৫ মিনিট আগে বের হোন।',
+  moon_lore_title: 'পুরনো লোককথা (বিজ্ঞান নয়)',
+  moon_lore_new: 'অমাবস্যা: পুরনো চাষিরা কিছু বুনতেন না, যন্ত্রপাতি সারাতেন।',
+  moon_lore_sprout: 'বাড়ন্ত চাঁদ: পঞ্জিকা বলত মাটির ওপরের ফসল লাগাও।',
+  moon_lore_quarter: 'প্রথম চতুর্থাংশ: জোয়ার বেশি আর মালিরা ছাঁটাই করতেন।',
+  moon_lore_full: 'পূর্ণিমা: ফসলের চাঁদ একসময় সন্ধ্যার পরও মাঠ আলোকিত করত।',
+
+  // moon lore phase keys required by utils/moonLore.ts
+  moon_lore_crescent: 'বাড়ন্ত চাঁদ: পঞ্জিকা বলত মাটির ওপরের ফসল লাগাও।',
+  moon_lore_gibbous: 'বাড়ন্ত পূর্ণচাঁদ: চাঁদ বাড়ছে আর মাঠ শান্ত হয়ে যাচ্ছে।',
+  moon_lore_waning: 'ক্ষয়িষ্ণু চাঁদ: আগাছা, বিশ্রাম আর পরিকল্পনার ভালো সপ্তাহ।',
+  moon_lore_last_quarter: 'শেষ চতুর্থাংশ: পুরনো নৌকারা জোয়ার বদলাতে দেখতেন।',
+  moon_lore_old: 'পুরনো চাঁদ: নতুন চক্রের আগে আকাশ সবচেয়ে অন্ধকার।',
+  moon_lore_harvest: 'ক্ষয়িষ্ণু চাঁদ: আগাছা, বিশ্রাম আর পরিকল্পনার ভালো সপ্তাহ।',
+
 };

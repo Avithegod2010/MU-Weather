@@ -433,4 +433,38 @@ export const hu: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Diagnosztikai jelentés',
   diagnostics_report_sub: 'Oszszon meg egy szöveges fájlt, hogy csatolhassa egy hibajegyhez',
+
+
+
+
+  // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
+  cal_rain_risk: '{chance}% eső – {advice}',
+  cal_rain_high: 'hozzáadó esernyő',
+  cal_rain_low: 'nincs esernyő kellő',
+  streak_dry: '{n} száraz nap egymást követően',
+  streak_wet: '{n} nedves nap egymást követően',
+  streak_dry_record: 'Leghosszabb száraz folyam itt: {n} nap',
+  streak_wet_record: 'Leghosszabb fürdő folyam itt: {n} nap',
+  feels_colder: 'érzi, hogy {n}° hidegebb, mint amilyen',
+  feels_warmer: 'érza, hogy {n}° melegebb, mint amilyen',
+  feels_cause_wind: '– a szélét ele',
+  feels_cause_humidity: '– a páratartalom beszél',
+  feels_cause_sun: '– a nap viszi',
+  weekend_winner: '{day} nyer – plánoljon ki kint akkor',
+  weekend_even: '{sat} és {sun} egyenlőnek tűnik',
+  frost_windshield: 'Hagyjon 5 percet a feszegetéshez.',
+  moon_lore_title: 'Órélet (nem tudomány)',
+  moon_lore_new: 'Új hold: a régi parasztok sem szántak valamit, és javították a kézikönyveket.',
+  moon_lore_sprout: 'Növekvő hold: a földön lévő gazdálkodás jövedelmét mondták a naptárak.',
+  moon_lore_quarter: 'Első negyed: a hullámmagasan és a kertész visszavonult.',
+  moon_lore_full: 'Telő hold: az ásványolt hold fényesen világította a mezőket a sötétben.',
+
+  // moon lore phase keys required by utils/moonLore.ts
+  moon_lore_crescent: 'Növekvő hold: a földön lévő gazdálkodás jövedelmét mondták a naptárak.',
+  moon_lore_gibbous: 'Növekvő hold: a hold nő és a mezők csendesek lesznek.',
+  moon_lore_waning: 'Lecsökkent hold: egy jó hét a kaszálás, pihenés és tervezéshez.',
+  moon_lore_last_quarter: 'Utolsó negyed: a régi tengerészek látták a dagályt megfordulni.',
+  moon_lore_old: 'Öreg hold: az ég a legsötétebb az új ciklus előtt.',
+  moon_lore_harvest: 'Lecsökkent holding: egy jó hét a kaszálás, pihenés és tervezéshez.',
+
 };

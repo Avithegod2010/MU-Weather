@@ -433,4 +433,38 @@ export const de: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Diagnosebericht',
   diagnostics_report_sub: 'Teile eine Textdatei, um sie an einen Fehlerbericht anzuhängen',
+
+
+
+
+  // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
+  cal_rain_risk: '{chance}% Regen — {advice}',
+  cal_rain_high: 'nimm einen Schirm mit',
+  cal_rain_low: 'kein Schirm nötig',
+  streak_dry: '{n} trockene Tage in Folge',
+  streak_wet: '{n} nasse Tage in Folge',
+  streak_dry_record: 'Längste Trockenphase hier: {n} Tage',
+  streak_wet_record: 'Längste Nassphase hier: {n} Tage',
+  feels_colder: 'fühlt sich {n}° kälter an als es ist',
+  feels_warmer: 'fühlt sich {n}° wärmer an als es ist',
+  feels_cause_wind: '— der Wind ist schuld',
+  feels_cause_humidity: '— die Feuchte macht’s',
+  feels_cause_sun: '— die Sonne gleicht es aus',
+  weekend_winner: '{day} gewinnt — dann rausgehen',
+  weekend_even: '{sat} und {sun} sind gleichauf',
+  frost_windshield: 'Fahr 5 Min früher los, um die Scheibe freizukratzen.',
+  moon_lore_title: 'Alte Bauernweisheit (keine Wissenschaft)',
+  moon_lore_new: 'Neumond: Die alten Bauern säten nichts und flickten Werkzeug.',
+  moon_lore_sprout: 'Zunehmende Sichel: Oberirdisches pflanzen, sagten die Kalender.',
+  moon_lore_quarter: 'Erstes Viertel: Springflut, und die Gärtner schnitten zurück.',
+  moon_lore_full: 'Vollmond: Der Erntemond erhellte einst die Felder bis in die Nacht.',
+
+  // moon lore phase keys required by utils/moonLore.ts
+  moon_lore_crescent: 'Zunehmende Sichel: Oberirdisches pflanzen, sagten die Kalender.',
+  moon_lore_gibbous: 'Zunehmender Mond: Der Mond wächst und die Felder werden still.',
+  moon_lore_waning: 'Abnehmender Mond: gute Woche zum Jäten, Ruhen und Planen.',
+  moon_lore_last_quarter: 'Letztes Viertel: Die alten Seeleute sahen die Flut sich wenden.',
+  moon_lore_old: 'Alter Mond: Der Himmel ist am dunkelsten vor dem neuen Zyklus.',
+  moon_lore_harvest: 'Abnehmender Mond: gute Woche zum Jäten, Ruhen und Planen.',
+
 };

@@ -890,6 +890,37 @@ export const en = {
   // ── diagnostics report ──
   diagnostics_report: 'Diagnostics report',
   diagnostics_report_sub: 'Share a text file to attach to a bug report',
+
+
+  // ── small batch: calendar rain risk + streaks + feels delta + weekend + frost + moon lore ──
+  cal_rain_risk: '{chance}% rain — {advice}',
+  cal_rain_high: 'bring an umbrella',
+  cal_rain_low: 'no umbrella needed',
+  streak_dry: '{n} dry days in a row',
+  streak_wet: '{n} wet days in a row',
+  streak_dry_record: 'Longest dry run here: {n} days',
+  streak_wet_record: 'Longest wet run here: {n} days',
+  feels_colder: 'feels {n}° colder than it is',
+  feels_warmer: 'feels {n}° warmer than it is',
+  feels_cause_wind: "— the wind's doing",
+  feels_cause_humidity: '— the humidity talking',
+  feels_cause_sun: '— the sun carrying it',
+  weekend_winner: '{day} wins — plan outside then',
+  weekend_even: '{sat} and {sun} look even',
+  frost_windshield: 'Leave 5 min early to scrape the windshield.',
+  moon_lore_title: 'Old lore (not science)',
+  moon_lore_new: 'New moon: old farmers sowed nothing and mended tools.',
+  moon_lore_sprout: 'Waxing crescent: plant above-ground crops, said the almanacs.',
+  moon_lore_quarter: 'First quarter: tides run high and gardeners pruned.',
+  moon_lore_full: 'Full moon: the harvest moon once lit the fields past dusk.',
+
+  // moon lore phase keys required by utils/moonLore.ts
+  moon_lore_crescent: 'Waxing crescent: plant above-ground crops, said the almanacs.',
+  moon_lore_gibbous: 'Waxing gibbous: the moon grows full and the fields grow quiet.',
+  moon_lore_waning: 'Waning moon: a good week to weed, rest and plan.',
+  moon_lore_last_quarter: 'Last quarter: old sailors watched the tide turn.',
+  moon_lore_old: 'Old moon: the sky is darkest before the new cycle.',
+  moon_lore_harvest: 'Waning moon: a good week to weed, rest and plan.',
 };
 
 export type Strings = typeof en;

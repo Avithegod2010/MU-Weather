@@ -1,6 +1,7 @@
 import { formatTemp, convertWind, windUnitLabel } from './format';
 import { describeWmo } from './wmo';
 import { computeNowcast } from './nowcast';
+import { windshieldFrostLine } from './frostLine';
 import type { Nowcast } from './nowcast';
 import type { WeatherBundle } from '../api/types';
 
@@ -74,7 +75,9 @@ export function computeHighlights(data: WeatherBundle, nowcast: Nowcast): Highli
   }
 
   if (today && today.tMin <= 0) {
-    highlights.push({ icon: 'frost', text: `Frost likely tonight — lows near ${formatTemp(today.tMin)}` });
+    const base = `Frost likely tonight — lows near ${formatTemp(today.tMin)}`;
+    const scrape = windshieldFrostLine(today, data.hourly);
+    highlights.push({ icon: 'frost', text: scrape ? base + '. ' + scrape : base });
   }
 
   if (data.aqi?.usAqi != null && data.aqi.usAqi > 150) {

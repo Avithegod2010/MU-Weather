@@ -42,6 +42,7 @@ import {
 } from '../utils/format';
 import { beaufortForce, beaufortText } from '../utils/beaufort';
 import { moonPhase } from '../utils/moon';
+import { moonLoreLine } from '../utils/moonLore';
 import { moonTimes } from '../utils/sunCalc';
 import {
   aqiBandForScale,
@@ -895,6 +896,7 @@ let windRose: React.ReactNode = null;
       { label: t('f_moonset'), value: times.set ? clock(times.set) : t('tomorrow') },
       { label: t('f_cycle_day'), value: `${moon.ageDays.toFixed(1)} of 29.5` },
       { label: t('f_illumination'), value: `${moon.illumination}% lit` },
+      { label: t('moon_lore_title'), value: moonLoreLine(moon.ageDays) },
     ];
     about = t('about_moon');
   } else if (view.topic === 'pollen') {

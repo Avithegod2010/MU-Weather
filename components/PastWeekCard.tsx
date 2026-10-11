@@ -16,6 +16,7 @@ import {
   type ModelMetric,
 } from '../utils/accuracy';
 import { MODEL_LABELS } from '../api/providers';
+import { currentStreak, longestStreak } from '../utils/streaks';
 import { haptics } from '../utils/haptics';
 import { F } from '../theme/typography';
 import type { AppTheme } from '../theme/palettes';
@@ -185,6 +186,9 @@ function SevenDayBody({
     .map((d) => Math.round(d.tMax - (byDate.get(d.date) as ForecastLogEntry).tMax));
   const anyDelta = deltas.length > 0;
   const hasUnloggedDays = days.some((d) => !byDate.has(d.date));
+  const liveStreak = currentStreak(days);
+  const liveStreakKey: StringKey | null = liveStreak ? (liveStreak.kind === 'dry' ? 'streak_dry' : 'streak_wet') : null;
+  const longestDry = longestStreak(days, 'dry');
 
   return (
     <>
@@ -245,6 +249,11 @@ function SevenDayBody({
       {hasUnloggedDays ? (
         <Text style={[styles.footnote, { color: theme.textTertiary }]}>
           {t('past_week_note')}
+        </Text>
+      ) : null}
+      {liveStreak && liveStreakKey ? (
+        <Text style={[styles.streakNote, { color: theme.textTertiary }]}>
+          {t(liveStreakKey).replace('{n}', String(liveStreak.days))}{longestDry > liveStreak.days ? ` · ${t('streak_dry_record').replace('{n}', String(longestDry))}` : ''}
         </Text>
       ) : null}
     </>
@@ -657,6 +666,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 3,
     fontFamily: F.regular,
+  },
+  streakNote: {
+    fontSize: 11.5,
+    fontFamily: F.medium,
+    marginTop: 4,
   },
   accHeadline: {
     fontSize: 13.5,

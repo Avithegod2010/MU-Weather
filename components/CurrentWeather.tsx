@@ -66,6 +66,7 @@ import { F } from '../theme/typography';
 import { haptics } from '../utils/haptics';
 import { buildSpokenForecast, speakForecast, stopForecastSpeech } from '../utils/speech';
 import { isDigestSpeaking, stopDigestSpeech } from '../utils/spokenDigest';
+import { feelsDeltaLine } from '../utils/feelsDelta';
 import type { CurrentConditions, DayPoint, GeoLocation } from '../api/types';
 
 interface CurrentWeatherProps {
@@ -98,11 +99,14 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
   }, [floatY]);
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: floatY.value }] }));
 
+  const feelsDelta = feelsDeltaLine(current.temperature, current.apparentTemperature);
+
   const heroLabel = [
     location.name,
     conditionLabel,
     `${formatTemp(current.temperature)}`,
     `${t('feels_like')} ${formatTemp(current.apparentTemperature)}`,
+    feelsDelta ?? null,
     today ? `${formatTemp(today.tMax)} / ${formatTemp(today.tMin)}` : null,
     commentary ?? null,
   ]
@@ -177,6 +181,11 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
         {t('feels_like')} {formatTemp(current.apparentTemperature)}
       </Text>
 
+      {feelsDelta ? (
+        <Text style={{ fontSize: 14.5, fontFamily: F.regular, color: theme.textTertiary }}>
+          {feelsDelta}
+        </Text>
+      ) : null}
       {commentary ? (
         <Text style={[styles.commentary, { color: theme.textTertiary }]}>{commentary}</Text>
       ) : null}

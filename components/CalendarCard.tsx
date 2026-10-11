@@ -7,16 +7,20 @@ import { WeatherIcon } from './WeatherIcon';
 import { Card } from './Card';
 import { haptics } from '../utils/haptics';
 import { formatTemp } from '../utils/format';
+import { calendarEventRainChance, calendarRainRisk } from '../utils/calendarRisk';
 import type { AppTheme } from '../theme/palettes';
 import type { CalendarWeatherState } from '../hooks/useCalendarWeather';
+import type { WeatherBundle } from '../api/types';
 
 interface CalendarCardProps {
   theme: AppTheme;
   state: CalendarWeatherState;
+  /** Forecast bundle for rain-risk lookup (shared with the daily/hourly used by calendar risk). */
+  data?: WeatherBundle | null;
   onEnable: () => void;
 }
 
-export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
+export function CalendarCard({ theme, state, data, onEnable }: CalendarCardProps) {
   return (
     <Card theme={theme} title={t('card_week')} icon={CalendarDays}>
       {state.status === 'denied' || state.status === 'idle' ? (
@@ -49,6 +53,13 @@ export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
         <View style={styles.stack}>
           {state.events.map((event) => {
             const code = event.icon ? Number(event.icon) : null;
+            const rainChance = calendarEventRainChance({
+              start: event.start,
+              allDay: event.allDay,
+              daily: data?.daily ?? [],
+              hourly: data?.hourly ?? [],
+            });
+            const rainRisk = calendarRainRisk(rainChance);
             return (
               <View key={event.id} style={styles.row}>
                 <View style={[styles.iconChip, { backgroundColor: theme.chipBg }]}>
@@ -66,6 +77,11 @@ export function CalendarCard({ theme, state, onEnable }: CalendarCardProps) {
                 {event.tMax !== null ? (
                   <Text style={[styles.temps, { color: theme.textSecondary }]}>
                     {formatTemp(event.tMax)} / {formatTemp(event.tMin ?? event.tMax)}
+                  </Text>
+                ) : null}
+                {rainRisk === 'high' ? (
+                  <Text style={[styles.rainRisk, { color: theme.textTertiary }]}>
+                    {t('cal_rain_risk').replace('{advice}', '').replace('{chance}', String(rainChance ?? 0)).replace('—', '').trim()}
                   </Text>
                 ) : null}
               </View>
@@ -130,6 +146,10 @@ const styles = StyleSheet.create({
   },
   temps: {
     fontSize: 13,
+    fontFamily: F.semibold,
+  },
+  rainRisk: {
+    fontSize: 12,
     fontFamily: F.semibold,
   },
 });

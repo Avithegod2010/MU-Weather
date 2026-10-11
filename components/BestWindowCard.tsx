@@ -12,6 +12,8 @@ interface BestWindowCardProps {
   line: string;
   /** 0-100 comfort score for the window. */
   score: number;
+  /** Localized weekend verdict, e.g. "Saturday wins — plan outside then". `null` = no weekend data. */
+  weekend?: string | null;
 }
 
 /** Comfort tint: green when the window is genuinely pleasant, amber/red as it degrades. */
@@ -27,7 +29,7 @@ function scoreColor(score: number): string {
  * The card only renders when a window exists, so it disappears in the evening
  * rather than advertise a slot that has already passed.
  */
-export function BestWindowCard({ theme, line, score }: BestWindowCardProps) {
+export function BestWindowCard({ theme, line, score, weekend }: BestWindowCardProps) {
   const clamped = Math.max(0, Math.min(100, Math.round(score)));
   return (
     <Card theme={theme} title={t('card_best_window')} icon={Clock}>
@@ -40,6 +42,9 @@ export function BestWindowCard({ theme, line, score }: BestWindowCardProps) {
       <Text style={[styles.score, { color: theme.textTertiary }]}>
         {t('best_window_score').replace('{n}', String(clamped))}
       </Text>
+      {weekend ? (
+        <Text style={[styles.weekend, { color: theme.textTertiary }]}>{weekend}</Text>
+      ) : null}
     </Card>
   );
 }
@@ -64,5 +69,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: F.medium,
     marginTop: 7,
+  },
+  weekend: {
+    fontSize: 12.5,
+    fontFamily: F.medium,
+    marginTop: 8,
+    lineHeight: 17,
   },
 });

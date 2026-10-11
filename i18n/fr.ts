@@ -433,4 +433,38 @@ export const fr: Strings = {
   // ── diagnostics report ──
   diagnostics_report: 'Rapport de diagnostic',
   diagnostics_report_sub: 'Partagez un fichier texte à joindre à un rapport de bug',
+
+
+
+
+  // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
+  cal_rain_risk: '{chance}% de pluie — {advice}',
+  cal_rain_high: 'prends un parapluie',
+  cal_rain_low: 'pas besoin de parapluie',
+  streak_dry: '{n} jours secs de suite',
+  streak_wet: '{n} jours pluvieux de suite',
+  streak_dry_record: 'Plus longue sécheresse ici : {n} jours',
+  streak_wet_record: 'Plus longue période pluvieuse ici : {n} jours',
+  feels_colder: 'ressenti {n}° de moins qu’en réalité',
+  feels_warmer: 'ressenti {n}° de plus qu’en réalité',
+  feels_cause_wind: '— la faute au vent',
+  feels_cause_humidity: '— l’humidité s’en mêle',
+  feels_cause_sun: '— le soleil compense',
+  weekend_winner: '{day} gagne — prévois de sortir à ce moment-là',
+  weekend_even: '{sat} et {sun} se valent',
+  frost_windshield: 'Pars 5 min plus tôt pour gratter le pare-brise.',
+  moon_lore_title: 'Sagesse ancienne (pas de la science)',
+  moon_lore_new: 'Nouvelle lune : les vieux fermiers ne semaient rien et réparaient les outils.',
+  moon_lore_sprout: 'Premier croissant : plante les cultures de surface, disaient les almanachs.',
+  moon_lore_quarter: 'Premier quartier : grandes marées et les jardiniers taillaient.',
+  moon_lore_full: 'Pleine lune : la lune des moissons éclairait les champs après le crépuscule.',
+
+  // moon lore phase keys required by utils/moonLore.ts
+  moon_lore_crescent: 'Premier croissant : plante les cultures de surface, disaient les almanachs.',
+  moon_lore_gibbous: 'Croissant gibbeux : la lune croît et les champs se taisent.',
+  moon_lore_waning: 'Décroissante : bonne semaine pour désherber, se reposer et planifier.',
+  moon_lore_last_quarter: 'Dernier quartier : les vieux marins regardaient la marée tourner.',
+  moon_lore_old: 'Vieille lune : le ciel est plus sombre avant le nouveau cycle.',
+  moon_lore_harvest: 'Lune décroissante : bonne semaine pour désherber, se reposer et planifier.',
+
 };

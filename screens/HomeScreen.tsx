@@ -115,6 +115,7 @@ import { NowcastCard } from '../components/NowcastCard';
 import { HighlightsCard } from '../components/HighlightsCard';
 import { computeNowcast } from '../utils/nowcast';
 import { computeHighlights } from '../utils/highlights';
+import { weekendVerdict } from '../utils/weekendScore';
 import { Reveal, ScrollYProvider } from '../components/Reveal';
 import { Surface } from '../components/Surface';
 import { SkeletonDashboard } from '../components/Skeleton';
@@ -390,6 +391,7 @@ export function HomeScreen() {
     [weather.data],
   );
   const bestWindowLabel = bestWindow ? bestWindowLine(bestWindow) : null;
+  const weekend = FEATURES.bestWindow && weather.data ? weekendVerdict(weather.data.hourly) : null;
   const wearLine = useMemo(
     () =>
       weather.data
@@ -826,6 +828,7 @@ export function HomeScreen() {
                   <CalendarCard
                     theme={theme}
                     state={calendarWeather}
+                    data={weather.data}
                     onEnable={() => setCalendarEnabled(true)}
                   />
                 </Reveal>
@@ -855,7 +858,7 @@ export function HomeScreen() {
               {/* ── bot2: aurora + alerts + wear ── */}
               {FEATURES.bestWindow && showSection('bestWindow') && bestWindow && bestWindowLabel ? (
                 <Reveal delay={210}>
-                  <BestWindowCard theme={theme} line={bestWindowLabel} score={bestWindow.score} />
+                  <BestWindowCard theme={theme} line={bestWindowLabel} score={bestWindow.score} weekend={weekend?.line} />
                 </Reveal>
               ) : null}
 

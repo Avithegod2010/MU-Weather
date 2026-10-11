@@ -764,4 +764,38 @@ export const pt: Strings = {
   cmp_sky: 'Céu',
   diagnostics_report: 'Relatório de diagnóstico',
   diagnostics_report_sub: 'Partilhe um ficheiro de texto para anexar a um relatório de erro',
+
+
+
+
+  // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
+  cal_rain_risk: '{chance}% de chuva - {advice}',
+  cal_rain_high: 'leve um guarda-chuva',
+  cal_rain_low: 'não precisa de guarda-chuva',
+  streak_dry: '{n} dias secos seguidos',
+  streak_wet: '{n} dias chuvosos seguidos',
+  streak_dry_record: 'Maior sequência seca aqui: {n} dias',
+  streak_wet_record: 'Maior sequência chuvosa aqui: {n} dias',
+  feels_colder: 'sente {n}° mais frio do que é',
+  feels_warmer: 'sente {n}° mais quente do que é',
+  feels_cause_wind: '- a vento faz',
+  feels_cause_humidity: '- a umidade fala',
+  feels_cause_sun: '- o sol compensa',
+  weekend_winner: '{day} ganha - planeje fora então',
+  weekend_even: '{sat} e {sun} parecem iguais',
+  frost_windshield: 'Deixe 5 min cedo para ralar o para-brisa.',
+  moon_lore_title: 'Velhos ditos (não é ciência)',
+  moon_lore_new: 'Lua nova: antigos fazendeiros não plantavam e consertavam ferramentas.',
+  moon_lore_sprout: 'Lua crescente: planta cultivos acima do solo, diziam os almanaque.',
+  moon_lore_quarter: 'Primeiro quadrante: marés altas e o jardineiro podava.',
+  moon_lore_full: 'Lua cheia: a lua da colheita acendia os campos no crepúsculo.',
+
+  // moon lore phase keys required by utils/moonLore.ts
+  moon_lore_crescent: 'Lua crescente: planta cultivos acima do solo, diziam os almanaques.',
+  moon_lore_gibbous: 'Lua crescente gibosa: a lua cresce e os campos ficam calados.',
+  moon_lore_waning: 'Lua minguante: boa semana para limpar, descansar e planejar.',
+  moon_lore_last_quarter: 'Último quarto: os velhos marinheiros viam a maré virar.',
+  moon_lore_old: 'Lua velha: o céu está mais escuro antes do novo ciclo.',
+  moon_lore_harvest: 'Lua minguante: boa semana para limpar, descansar e planejar.',
+
 };
