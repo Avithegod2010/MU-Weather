@@ -5,44 +5,59 @@ export type CalendarRainRisk = 'low' | 'high';
 /**
  * Rain risk of a calendar event from the forecast already on screen.
  *
- * A timed event reads the hourly bucket covering its start hour; an all-day
- * event (or a timed event whose hour fell out of the cached hourly slice)
- * falls back to the day's max probability. Nothing here fetches — the hook
- * hands in the same `daily` array the card already renders plus `hourly`.
+ * A timed event's instant is shifted into the forecast location's wall clock
+ * (via the bundle's UTC offset) before its hourly bucket is matched, so a
+ * saved city in another timezone reads the right hour; an all-day event
+ * matches on the calendar date the user sees on their device. A timed event
+ * whose hour fell out of the cached hourly slice falls back to that location
+ * day's max probability. Nothing here fetches — the hook hands in the same
+ * `daily` array the card already renders plus `hourly`.
  */
 export interface CalendarRainInput {
   start: Date;
   allDay: boolean;
   daily: DayPoint[];
   hourly: HourPoint[];
+  /** WeatherBundle.utcOffsetSeconds — enables cross-timezone hour matching. */
+  utcOffsetSeconds?: number;
 }
 
 const HIGH_RISK_THRESHOLD = 40;
 
-function dayIndexFor(daily: DayPoint[], date: Date): number {
-  const stamp = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  return daily.findIndex((day) => day.date === stamp);
+const pad2 = (value: number) => String(value).padStart(2, '0');
+
+/** Calendar date the user sees (device wall clock) — how an all-day event is dated. */
+function deviceStamp(date: Date): string {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 }
 
-function hourIndexFor(hourly: HourPoint[], date: Date): number {
-  return hourly.findIndex((hour) => {
-    const point = new Date(hour.time);
-    return (
-      point.getFullYear() === date.getFullYear() &&
-      point.getMonth() === date.getMonth() &&
-      point.getDate() === date.getDate() &&
-      point.getHours() === date.getHours()
-    );
-  });
+/**
+ * Wall-clock date + hour of an instant in the forecast location's timezone.
+ * Without an explicit offset this degrades to the device's own wall clock
+ * (the old behaviour), which is correct when device and location agree.
+ */
+function locationWall(date: Date, utcOffsetSeconds?: number): { stamp: string; hour: string } {
+  const offset = utcOffsetSeconds ?? -date.getTimezoneOffset() * 60;
+  const shifted = new Date(date.getTime() + offset * 1000);
+  return {
+    stamp: `${shifted.getUTCFullYear()}-${pad2(shifted.getUTCMonth() + 1)}-${pad2(shifted.getUTCDate())}`,
+    hour: pad2(shifted.getUTCHours()),
+  };
 }
 
 /** Chance of rain (0-100) during the event, or null when it cannot be read. */
 export function calendarEventRainChance(input: CalendarRainInput): number | null {
   if (!input.allDay) {
-    const hourIndex = hourIndexFor(input.hourly, input.start);
-    if (hourIndex >= 0) return input.hourly[hourIndex]?.precipProbability ?? null;
+    const wall = locationWall(input.start, input.utcOffsetSeconds);
+    const hit = input.hourly.find(
+      (hour) => hour.time.slice(0, 10) === wall.stamp && hour.time.slice(11, 13) === wall.hour,
+    );
+    if (hit) return hit.precipProbability;
+    const dayIndex = input.daily.findIndex((day) => day.date === wall.stamp);
+    if (dayIndex < 0) return null;
+    return input.daily[dayIndex]?.precipProbabilityMax ?? null;
   }
-  const dayIndex = dayIndexFor(input.daily, input.start);
+  const dayIndex = input.daily.findIndex((day) => day.date === deviceStamp(input.start));
   if (dayIndex < 0) return null;
   return input.daily[dayIndex]?.precipProbabilityMax ?? null;
 }

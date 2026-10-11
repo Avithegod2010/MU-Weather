@@ -440,11 +440,10 @@ export const de: Strings = {
   // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
   cal_rain_risk: '{chance}% Regen — {advice}',
   cal_rain_high: 'nimm einen Schirm mit',
-  cal_rain_low: 'kein Schirm nötig',
   streak_dry: '{n} trockene Tage in Folge',
   streak_wet: '{n} nasse Tage in Folge',
-  streak_dry_record: 'Längste Trockenphase hier: {n} Tage',
-  streak_wet_record: 'Längste Nassphase hier: {n} Tage',
+  streak_dry_record: 'Längste Trockenphase: {n} Tage',
+  streak_wet_record: 'Längste Nassphase: {n} Tage',
   feels_colder: 'fühlt sich {n}° kälter an als es ist',
   feels_warmer: 'fühlt sich {n}° wärmer an als es ist',
   feels_cause_wind: '— der Wind ist schuld',
@@ -455,7 +454,6 @@ export const de: Strings = {
   frost_windshield: 'Fahr 5 Min früher los, um die Scheibe freizukratzen.',
   moon_lore_title: 'Alte Bauernweisheit (keine Wissenschaft)',
   moon_lore_new: 'Neumond: Die alten Bauern säten nichts und flickten Werkzeug.',
-  moon_lore_sprout: 'Zunehmende Sichel: Oberirdisches pflanzen, sagten die Kalender.',
   moon_lore_quarter: 'Erstes Viertel: Springflut, und die Gärtner schnitten zurück.',
   moon_lore_full: 'Vollmond: Der Erntemond erhellte einst die Felder bis in die Nacht.',
 
@@ -465,6 +463,5 @@ export const de: Strings = {
   moon_lore_waning: 'Abnehmender Mond: gute Woche zum Jäten, Ruhen und Planen.',
   moon_lore_last_quarter: 'Letztes Viertel: Die alten Seeleute sahen die Flut sich wenden.',
   moon_lore_old: 'Alter Mond: Der Himmel ist am dunkelsten vor dem neuen Zyklus.',
-  moon_lore_harvest: 'Abnehmender Mond: gute Woche zum Jäten, Ruhen und Planen.',
 
 };

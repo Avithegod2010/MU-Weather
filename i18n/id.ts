@@ -440,11 +440,10 @@ export const id: Strings = {
   // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
   cal_rain_risk: '{chance}% hujan - {advice}',
   cal_rain_high: 'bawa kanopi',
-  cal_rain_low: 'tidak perlu kanopi',
   streak_dry: '{n} hari kering berurutan',
   streak_wet: '{n} hari basah berurutan',
-  streak_dry_record: 'Rantai kering terpanjang di sini: {n} hari',
-  streak_wet_record: 'Rantai basah terpanjang di sini: {n} hari',
+  streak_dry_record: 'Rantai kering terpanjang: {n} hari',
+  streak_wet_record: 'Rantai basah terpanjang: {n} hari',
   feels_colder: 'terasa {n}° lebih dingin dari yang sebenarnya',
   feels_warmer: 'terasa {n}° lebih hangat dari yang sebenarnya',
   feels_cause_wind: '- angin yang meningkat',
@@ -455,7 +454,6 @@ export const id: Strings = {
   frost_windshield: 'Bersiaplah 5 menit lebih awal untuk membersihkan kaca.',
   moon_lore_title: 'Legenda kuno (bukan sains)',
   moon_lore_new: 'Bulan baru: petani tua tidak menanam dan memperbaiki alat.',
-  moon_lore_sprout: 'Bulanan tumbuh: tanam tanaman di atas tanah, kata almanakh.',
   moon_lore_quarter: 'Kuartal pertama: pasang surut tinggi dan pekerja taman memangkas.',
   moon_lore_full: 'Purnama: bulan panen terang membangunkan ladang saat senja.',
 
@@ -465,6 +463,5 @@ export const id: Strings = {
   moon_lore_waning: 'Bulanan menurun: minggu baik untuk merapikan, beristirahat dan merencanakan.',
   moon_lore_last_quarter: 'Kuartal terakhir: pelaut tua melihat pasang surut berbalik.',
   moon_lore_old: 'Bulan tua: langit lebih gelap sebelum siklus baru.',
-  moon_lore_harvest: 'Bulanan menurun: minggu baik untuk merapikan, beristirahat dan merencanakan.',
 
 };

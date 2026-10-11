@@ -440,13 +440,12 @@ export const nl: Strings = {
   // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
   cal_rain_risk: '{chance}% regen - {advice}',
   cal_rain_high: 'neem een paraplu mee',
-  cal_rain_low: 'geen paraplu nodig',
   streak_dry: '{n} droge dagen in rij',
   streak_wet: '{n} natte dagen in rij',
-  streak_dry_record: 'Langste droge periode hier: {n} dagen',
-  streak_wet_record: 'Langste natte periode hier: {n} dagen',
-  feels_colder: 'voelt {n} grad colder dan het is',
-  feels_warmer: 'voelt {n} grad warmer dan het is',
+  streak_dry_record: 'Langste droge periode: {n} dagen',
+  streak_wet_record: 'Langste natte periode: {n} dagen',
+  feels_colder: 'voelt {n} graden kouder dan het is',
+  feels_warmer: 'voelt {n} graden warmer dan het is',
   feels_cause_wind: '- de wind doet het',
   feels_cause_humidity: '- de vocht spreekt',
   feels_cause_sun: '- de zon maakt het',
@@ -454,10 +453,9 @@ export const nl: Strings = {
   weekend_even: '{sat} en {sun} zien er gelijk uit',
   frost_windshield: 'Laat 5 min vroeg vertrekken om het ventiel te schrapen.',
   moon_lore_title: 'Oude folklores (geen wetenschap)',
-  moon_lore_new: 'Nieuwe maan: oude boeren planten niets en reparatie gereedschap.',
-  moon_lore_sprout: 'Wassende maan: plant bovengrond gewassen, zei de kalenders.',
+  moon_lore_new: 'Nieuwe maan: oude boeren plantten niets en repareerden hun gereedschap.',
   moon_lore_quarter: 'Eerste kwartier: de stroming loopt hoog en de tuinman snijdt.',
-  moon_lore_full: 'Volle maan: de oogstmaan liet eens de veldcjes licht van naartoe.',
+  moon_lore_full: 'Volle maan: de oogstmaan verlichtte ooit de velden tot in de nacht.',
 
   // moon lore phase keys required by utils/moonLore.ts
   moon_lore_crescent: 'Wassende maan: plant bovengrond gewassen, zei de kalenders.',
@@ -465,6 +463,5 @@ export const nl: Strings = {
   moon_lore_waning: 'Afnemende maan: een goede week om opruimen, rusten en plannen.',
   moon_lore_last_quarter: 'Laatste kwartier: De oude zeelieden zagen de vloed keren.',
   moon_lore_old: 'Oude maan: De hemel is het donkerst voor de nieuwe cyclus.',
-  moon_lore_harvest: 'Afnemende maan: een goedeWeek om opruimen, rusten en plannen.',
 
 };

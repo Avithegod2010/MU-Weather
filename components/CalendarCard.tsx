@@ -58,6 +58,7 @@ export function CalendarCard({ theme, state, data, onEnable }: CalendarCardProps
               allDay: event.allDay,
               daily: data?.daily ?? [],
               hourly: data?.hourly ?? [],
+              utcOffsetSeconds: data?.utcOffsetSeconds,
             });
             const rainRisk = calendarRainRisk(rainChance);
             return (
@@ -81,7 +82,9 @@ export function CalendarCard({ theme, state, data, onEnable }: CalendarCardProps
                 ) : null}
                 {rainRisk === 'high' ? (
                   <Text style={[styles.rainRisk, { color: theme.textTertiary }]}>
-                    {t('cal_rain_risk').replace('{advice}', '').replace('{chance}', String(rainChance ?? 0)).replace('—', '').trim()}
+                    {t('cal_rain_risk')
+                      .replace('{chance}', String(rainChance ?? 0))
+                      .replace('{advice}', t('cal_rain_high'))}
                   </Text>
                 ) : null}
               </View>

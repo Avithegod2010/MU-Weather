@@ -99,7 +99,12 @@ export function CurrentWeather({ theme, location, current, today, conditionLabel
   }, [floatY]);
   const floatStyle = useAnimatedStyle(() => ({ transform: [{ translateY: floatY.value }] }));
 
-  const feelsDelta = feelsDeltaLine(current.temperature, current.apparentTemperature);
+  const feelsDelta = feelsDeltaLine(current.temperature, current.apparentTemperature, {
+    windSpeed: current.windSpeed,
+    humidity: current.humidity,
+    cloudCover: current.cloudCover,
+    isDay: current.isDay,
+  });
 
   const heroLabel = [
     location.name,

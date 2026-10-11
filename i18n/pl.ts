@@ -771,13 +771,12 @@ export const pl: Strings = {
   // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
   cal_rain_risk: '{chance}% deszczu - {advice}',
   cal_rain_high: 'bierzesz parasol',
-  cal_rain_low: 'nie trzeba parasola',
   streak_dry: '{n} suchych dnów pod rząd',
   streak_wet: '{n} deszczowych dnów pod rząd',
-  streak_dry_record: 'Najdłuższa sucha fala tutaj: {n} dni',
-  streak_wet_record: 'Najdłuższa deszczowa fala tutaj: {n} dni',
+  streak_dry_record: 'Najdłuższa sucha passa: {n} dni',
+  streak_wet_record: 'Najdłuższa deszczowa passa: {n} dni',
   feels_colder: 'czuje {n}° zimniej niż jest',
-  feels_warmer: 'czuje {n}° ciwiej niż jest',
+  feels_warmer: 'czuje {n}° cieplej niż jest',
   feels_cause_wind: '- wiatr dnije',
   feels_cause_humidity: '- wilgoć mówi',
   feels_cause_sun: '- słońce to kompensuje',
@@ -785,8 +784,7 @@ export const pl: Strings = {
   weekend_even: '{sat} i {sun} wyglądają tak samo',
   frost_windshield: 'Zostaw 5 min na wcześniejszy zmywanie parowania.',
   moon_lore_title: 'Stare powiedzenia (nie nauka)',
-  moon_lore_new: 'Nowie księżyice: starych chowałowie nie sialiło nic i naprawiali narzędzia.',
-  moon_lore_sprout: 'Księżyc księżyca: sadźrośliny powyżej ziemi, powiedzali kalendarze.',
+  moon_lore_new: 'Nowy księżyc: starzy rolnicy nie siali nic i naprawiali narzędzia.',
   moon_lore_quarter: 'Pierwszy ćwiartki: morskie fale wysokie i ogrodnicy cięłosery.',
   moon_lore_full: 'Pełnia: księżyc zbiór światłem oświetlało po polu.',
 
@@ -796,6 +794,5 @@ export const pl: Strings = {
   moon_lore_waning: 'Księżyc ubywający: dobry tydzień na pielenie, odpoczynek i planowanie.',
   moon_lore_last_quarter: 'Ostatnia kwadra: starzy żeglarze widzieli, jak odpływ się zmienia.',
   moon_lore_old: 'Stary księżyc: niebo jest najciemniejsze przed nowym cyklem.',
-  moon_lore_harvest: 'Księżyc zejmujący: dobry tydzień na czyszczenie, odpoczynek i plany.',
 
 };

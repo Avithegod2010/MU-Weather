@@ -771,11 +771,10 @@ export const tr: Strings = {
   // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
   cal_rain_risk: '{chance}% yağış - {advice}',
   cal_rain_high: 'şemsiyeyi al',
-  cal_rain_low: 'şemsiye gerek yok',
   streak_dry: '{n} kurak gün sırayla',
   streak_wet: '{n} ıslak gün sırayla',
-  streak_dry_record: 'Burada en uzun kurak dönüş: {n} gün',
-  streak_wet_record: 'Burada en uzun yağışlı dönüş: {n} gün',
+  streak_dry_record: 'En uzun kuraklık: {n} gün',
+  streak_wet_record: 'En uzun yağışlı seri: {n} gün',
   feels_colder: 'gerçekten {n}° daha soğuk hissediyorsun',
   feels_warmer: 'gerçekten {n}° daha sıcak hissediyorsun',
   feels_cause_wind: '- rüzgârı yaptı',
@@ -785,17 +784,15 @@ export const tr: Strings = {
   weekend_even: '{sat} ve {sun} eşit görünüyor',
   frost_windshield: 'Rüzgar camını silmek için 5 dakika erken çıkın.',
   moon_lore_title: 'Eski gelenekler (bilim değildir)',
-  moon_lore_new: 'Yeni ay: eski çiftçiler hiçbir şey suladı ve aletleri onardı.',
-  moon_lore_sprout: 'Artan ay: yeryüzündeki ürünleri ekilir, almanaclar söylediklerine göre.',
-  moon_lore_quarter: 'Birinci çeyrek: yüksek alevler ve bahçıvanlar kesti.',
-  moon_lore_full: 'Dolunay: hasat ayısı geceye kadar alanları parlatırdı.',
+  moon_lore_new: 'Yeni ay: eski çiftçiler hiçbir şey ekmedi ve aletlerini onardı.',
+  moon_lore_quarter: 'Birinci çeyrek: gelgit yükselir ve bahçıvan budar.',
+  moon_lore_full: 'Dolunay: hasat ayı bir zamanlar tarlaları gece boyu aydınlatırdı.',
 
   // moon lore phase keys required by utils/moonLore.ts
   moon_lore_crescent: 'Artan ay: yeryüzündeki ürünleri ekilir, almanaclar söylediklerine göre.',
   moon_lore_gibbous: 'Artan dolgun ay: ay büyür ve tarlalar sessizleşir.',
-  moon_lore_waning: 'Azalan ay: ezen, dinlenmek ve planlamak için iyi bir hafta.',
+  moon_lore_waning: 'Azalan ay: ayıklamak, dinlenmek ve planlamak için iyi bir hafta.',
   moon_lore_last_quarter: 'Son çeyrek: eski denizciler gelgitin döndüğünü görürlerdi.',
   moon_lore_old: 'Yaşlı ay: gökyüzü yeni döngüden önce en karanlıktır.',
-  moon_lore_harvest: 'Azalan ay: ezen, dinlenmek ve planlamak için iyi bir hafta.',
 
 };

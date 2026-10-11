@@ -8,10 +8,10 @@ import type { AppTheme } from '../theme/palettes';
 
 interface BestWindowCardProps {
   theme: AppTheme;
-  /** Localized "2 PM – 4 PM looks best today" line from bestWindowLine(). */
-  line: string;
-  /** 0-100 comfort score for the window. */
-  score: number;
+  /** Localized "2 PM – 4 PM looks best today" line from bestWindowLine(); null in the evening when no window remains. */
+  line?: string | null;
+  /** 0-100 comfort score for the window; null when there is no window to score. */
+  score?: number | null;
   /** Localized weekend verdict, e.g. "Saturday wins — plan outside then". `null` = no weekend data. */
   weekend?: string | null;
 }
@@ -26,22 +26,30 @@ function scoreColor(score: number): string {
 /**
  * "Best time outdoors" — the best 2-hour daylight window scored from
  * precipitation, UV, wind and apparent temperature (see utils/bestWindow.ts).
- * The card only renders when a window exists, so it disappears in the evening
- * rather than advertise a slot that has already passed.
+ * The window line and score bar hide once no window remains today, but the
+ * card still renders for the weekend verdict, so that chip never disappears
+ * just because it got late.
  */
 export function BestWindowCard({ theme, line, score, weekend }: BestWindowCardProps) {
-  const clamped = Math.max(0, Math.min(100, Math.round(score)));
+  if (!line && !weekend) return null;
+  const clamped = score === null || score === undefined ? null : Math.max(0, Math.min(100, Math.round(score)));
   return (
     <Card theme={theme} title={t('card_best_window')} icon={Clock}>
-      <Text style={[styles.line, { color: theme.textPrimary }]}>{line}</Text>
-      {/* Two flex weights instead of a percentage width, so no CSS-string typing. */}
-      <View style={[styles.track, { backgroundColor: theme.chipBg }]}>
-        <View style={[styles.fill, { flex: Math.max(clamped, 1), backgroundColor: scoreColor(clamped) }]} />
-        <View style={{ flex: Math.max(100 - clamped, 0) }} />
-      </View>
-      <Text style={[styles.score, { color: theme.textTertiary }]}>
-        {t('best_window_score').replace('{n}', String(clamped))}
-      </Text>
+      {line ? (
+        <Text style={[styles.line, { color: theme.textPrimary }]}>{line}</Text>
+      ) : null}
+      {clamped !== null ? (
+        <>
+          {/* Two flex weights instead of a percentage width, so no CSS-string typing. */}
+          <View style={[styles.track, { backgroundColor: theme.chipBg }]}>
+            <View style={[styles.fill, { flex: Math.max(clamped, 1), backgroundColor: scoreColor(clamped) }]} />
+            <View style={{ flex: Math.max(100 - clamped, 0) }} />
+          </View>
+          <Text style={[styles.score, { color: theme.textTertiary }]}>
+            {t('best_window_score').replace('{n}', String(clamped))}
+          </Text>
+        </>
+      ) : null}
       {weekend ? (
         <Text style={[styles.weekend, { color: theme.textTertiary }]}>{weekend}</Text>
       ) : null}

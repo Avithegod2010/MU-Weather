@@ -391,7 +391,7 @@ export function HomeScreen() {
     [weather.data],
   );
   const bestWindowLabel = bestWindow ? bestWindowLine(bestWindow) : null;
-  const weekend = FEATURES.bestWindow && weather.data ? weekendVerdict(weather.data.hourly) : null;
+  const weekend = FEATURES.bestWindow && weather.data ? weekendVerdict(weather.data.hourlyAll) : null;
   const wearLine = useMemo(
     () =>
       weather.data
@@ -856,9 +856,14 @@ export function HomeScreen() {
               ) : null}
 
               {/* ── bot2: aurora + alerts + wear ── */}
-              {FEATURES.bestWindow && showSection('bestWindow') && bestWindow && bestWindowLabel ? (
+              {FEATURES.bestWindow && showSection('bestWindow') && (bestWindowLabel || weekend) ? (
                 <Reveal delay={210}>
-                  <BestWindowCard theme={theme} line={bestWindowLabel} score={bestWindow.score} weekend={weekend?.line} />
+                  <BestWindowCard
+                    theme={theme}
+                    line={bestWindowLabel ?? null}
+                    score={bestWindow?.score ?? null}
+                    weekend={weekend?.line ?? null}
+                  />
                 </Reveal>
               ) : null}
 

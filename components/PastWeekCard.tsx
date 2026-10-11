@@ -188,7 +188,12 @@ function SevenDayBody({
   const hasUnloggedDays = days.some((d) => !byDate.has(d.date));
   const liveStreak = currentStreak(days);
   const liveStreakKey: StringKey | null = liveStreak ? (liveStreak.kind === 'dry' ? 'streak_dry' : 'streak_wet') : null;
-  const longestDry = longestStreak(days, 'dry');
+  // The record line always reports the same kind as the live streak, so a wet
+  // streak is never compared against a dry record (and vice versa).
+  const recordStreak = liveStreak ? longestStreak(days, liveStreak.kind) : 0;
+  const recordKey: StringKey | null = liveStreak
+    ? (liveStreak.kind === 'dry' ? 'streak_dry_record' : 'streak_wet_record')
+    : null;
 
   return (
     <>
@@ -251,9 +256,9 @@ function SevenDayBody({
           {t('past_week_note')}
         </Text>
       ) : null}
-      {liveStreak && liveStreakKey ? (
+      {liveStreak && liveStreakKey && recordKey && recordStreak > liveStreak.days ? (
         <Text style={[styles.streakNote, { color: theme.textTertiary }]}>
-          {t(liveStreakKey).replace('{n}', String(liveStreak.days))}{longestDry > liveStreak.days ? ` · ${t('streak_dry_record').replace('{n}', String(longestDry))}` : ''}
+          {t(liveStreakKey).replace('{n}', String(liveStreak.days))} · {t(recordKey).replace('{n}', String(recordStreak))}
         </Text>
       ) : null}
     </>

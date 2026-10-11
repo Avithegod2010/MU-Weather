@@ -440,11 +440,10 @@ export const hi: Strings = {
   // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
   cal_rain_risk: '{chance}% बारिश — {advice}',
   cal_rain_high: 'छाता ले जाएँ',
-  cal_rain_low: 'छाते की ज़रूरत नहीं',
   streak_dry: 'लगातार {n} सूखे दिन',
   streak_wet: 'लगातार {n} गीले दिन',
-  streak_dry_record: 'यहाँ सबसे लंबा सूखा: {n} दिन',
-  streak_wet_record: 'यहाँ सबसे लंबी बारिश: {n} दिन',
+  streak_dry_record: 'सबसे लंबा सूखा: {n} दिन',
+  streak_wet_record: 'सबसे लंबी बारिश: {n} दिन',
   feels_colder: 'असल से {n}° ठंडा लग रहा',
   feels_warmer: 'असल से {n}° गर्म लग रहा',
   feels_cause_wind: '— हवा का कमाल',
@@ -455,7 +454,6 @@ export const hi: Strings = {
   frost_windshield: 'विंडशील्ड साफ़ करने के लिए 5 मिनट जल्दी निकलें।',
   moon_lore_title: 'पुरानी मान्यताएँ (विज्ञान नहीं)',
   moon_lore_new: 'अमावस्या: पुराने किसान कुछ नहीं बोते थे, औज़ार सुधारते थे।',
-  moon_lore_sprout: 'बढ़ता चाँद: पंचांग कहते थे ज़मीन के ऊपर की फ़सल लगाओ।',
   moon_lore_quarter: 'प्रथम चरण: ज्वार ऊँचा और माली छँटाई करते थे।',
   moon_lore_full: 'पूर्णिमा: फ़सल वाला चाँद कभी खेतों को शाम तक रोशन करता था।',
 
@@ -465,6 +463,5 @@ export const hi: Strings = {
   moon_lore_waning: 'घटता चाँद: निराई, आराम और योजना का अच्छा हफ़्ता।',
   moon_lore_last_quarter: 'अंतिम चरण: पुराने नाविक ज्वार बदलते देखते थे।',
   moon_lore_old: 'पुराना चाँद: नए चक्र से पहले आसमान सबसे अँधेरा होता है।',
-  moon_lore_harvest: 'घटता चाँद: निराई, आराम और योजना का अच्छा हफ़्ता।',
 
 };

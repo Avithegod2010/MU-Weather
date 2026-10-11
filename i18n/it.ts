@@ -440,22 +440,20 @@ export const it: Strings = {
   // Small batch: calendar risk + streaks + feels + weekend + frost + moon lore
   cal_rain_risk: '{chance}% pioggia - {advice}',
   cal_rain_high: 'porta un ombrellone',
-  cal_rain_low: 'non hai bisogno di ombrellone',
   streak_dry: '{n} giorni asciutti di fila',
   streak_wet: '{n} giorni piovosi di fila',
-  streak_dry_record: 'Più lungo periodo asciutto qui: {n} giorni',
-  streak_wet_record: 'Più lungo periodo piovoso qui: {n} giorni',
+  streak_dry_record: 'Più lungo periodo asciutto: {n} giorni',
+  streak_wet_record: 'Più lungo periodo piovoso: {n} giorni',
   feels_colder: 'si sente {n}° più freddo della realtà',
   feels_warmer: 'si sente {n}° più caldo della realtà',
   feels_cause_wind: '- la colpa del vento',
   feels_cause_humidity: '- la parola umidità',
   feels_cause_sun: '- il sole lo compensa',
   weekend_winner: '{day} vince - pianifica fuori allora',
-  weekend_even: '{sat} E {sun} sembrano uguali',
+  weekend_even: '{sat} e {sun} sembrano uguali',
   frost_windshield: 'Lascia 5 min prima per strofinare il parafulmine.',
   moon_lore_title: 'Vecchia saggezza (non scienza)',
-  moon_lore_new: 'Luna nuova: i vecchi contadini non sembravano e riparavano gli strumenti.',
-  moon_lore_sprout: 'Luna crescente: si piantano colture di superficie, dicevano gli almanacchi.',
+  moon_lore_new: 'Luna nuova: i vecchi contadini non seminavano e riparavano gli strumenti.',
   moon_lore_quarter: 'Primo quarto: maree alte e i giardinieri podavano.',
   moon_lore_full: 'Luna piena: la luna di raccolta illuminava i campi dopo il tramonto.',
 
@@ -465,6 +463,5 @@ export const it: Strings = {
   moon_lore_waning: 'Luna calante: bella settimana per diserbare, riposare e pianificare.',
   moon_lore_last_quarter: 'Ultimo quarto: i vecchi marinai vedevano la marea cambiare.',
   moon_lore_old: 'Luna vecchia: il cielo è più scuro prima del nuovo ciclo.',
-  moon_lore_harvest: 'Luna calante: bella settimana per diserbare, riposare e pianificare.',
 
 };
