@@ -70,11 +70,9 @@
     "test:local-data-manager": "node scripts/test-local-data-manager.mjs",
     "test:model-accuracy": "node scripts/test-model-accuracy.mjs",
     "test:provider-failures": "node scripts/test-provider-failures.mjs",
-    "test:release-gate": "node tests/releaseReviewGate.test.mjs",
     "test:perfetto-compare": "node tests/perfettoCompare.test.mjs",
     "audit:locales": "node scripts/audit-locales.mjs",
     "audit:accessibility": "node scripts/audit-accessibility.mjs",
-    "release:gate": "node scripts/check-release-reviews.mjs",
     "lint": "eslint ."
   },
   "private": true,

@@ -40,8 +40,4 @@ A fluent native reviewer should read the full UI in context, not just this table
 - [ ] A qualified severe-weather/storm-safety reviewer checks the storm, lightning, hail, wind, and official-warning action text against the intended geography and severity.
 - [ ] Reviewer name/qualification, date, locale, and approved changes are recorded. An automated locale test or this checklist does not satisfy this review.
 
-**Overall sign-off: pending.** Do not describe translation quality, assistive-technology behavior, or storm-safety wording as human-reviewed until the table and review record are completed.
-
-## Release gate
-
-Before a release tag or publication, record each completed review in `scripts/reviews/review-signoffs.json` with status `approved`, reviewer, ISO date, and an evidence reference. The storm-safety entry also requires the reviewer's qualification. Run `npm run release:gate`; the `Release review gate` GitHub workflow also runs on `v*` tags and can be called by a release workflow. It intentionally fails while any required sign-off remains pending. Configure repository release rules/required checks to require the `Human review sign-offs` job; a tag-triggered workflow cannot prevent a separate publishing path that ignores its result. Do not replace human sign-offs with the static JSX audit or locale-key/placeholder audit.
+**Overall sign-off: pending.** Do not describe translation quality, assistive-technology behavior, or storm-safety wording as human-reviewed until the checklist items above are completed by actual human reviewers. The former automated release gate was removed on 2026-10-11 as over-engineering for a solo project; the honest reminder that storm strings were AI-translated and need a native-speaker pass lives in `DECISIONS.md`.
