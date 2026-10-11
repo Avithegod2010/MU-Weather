@@ -29,6 +29,7 @@ export function PressScale({
 
   return (
     <Pressable
+      accessibilityRole={rest.accessibilityRole ?? 'button'}
       {...rest}
       onPressIn={(event) => {
         if (!reducedMotion) scale.value = withSpring(pressedScale, SPRING.press);

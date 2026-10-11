@@ -529,6 +529,7 @@ export function SlidingItem({ index, style, pressedOpacity, children, ...pressab
   return (
     <ItemContext.Provider value={index}>
       <Pressable
+        accessibilityRole={pressable.accessibilityRole ?? 'button'}
         {...pressable}
         ref={ref}
         onLayout={(event: LayoutChangeEvent) => group?.report(index, event.nativeEvent.layout, 'item')}
