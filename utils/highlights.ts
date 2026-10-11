@@ -1,4 +1,5 @@
-import { formatTemp, convertWind, windUnitLabel } from './format';
+import { t } from './i18n';
+import { formatTemp, convertWind, windUnitLabel, formatClockParts } from './format';
 import { describeWmo } from './wmo';
 import { computeNowcast } from './nowcast';
 import { windshieldFrostLine } from './frostLine';
@@ -31,57 +32,57 @@ export function computeHighlights(data: WeatherBundle, nowcast: Nowcast): Highli
     highlights.push({
       icon: 'rain',
       text: nowcast.minutesUntilChange <= 45
-        ? `Umbrella alert — rain begins in about ${nowcast.minutesUntilChange} minutes`
-        : `Rain is on its way — expect it within the next ${Math.round(nowcast.minutesUntilChange / 15) * 15} minutes`,
+        ? t('hl_rain_soon').replace('{n}', String(nowcast.minutesUntilChange))
+        : t('hl_rain_incoming').replace('{n}', String(Math.round(nowcast.minutesUntilChange / 15) * 15)),
     });
   } else if (nowcast.wet) {
     highlights.push({
       icon: 'rain',
       text: nowcast.kind === 'stopping'
-        ? 'Rain is falling now but should ease off soon'
-        : 'Steady rain right now — keep the umbrella handy',
+        ? t('hl_rain_easing')
+        : t('hl_rain_steady'),
     });
   }
 
   if (window.length) {
     const storm = window.find((hour) => describeWmo(hour.weatherCode).condition === 'thunder');
     if (storm) {
-      highlights.push({ icon: 'thunder', text: 'Thunderstorms appear in today\'s forecast — best to plan indoor time' });
+      highlights.push({ icon: 'thunder', text: t('hl_thunder') });
     }
   }
 
   if (today && tomorrow) {
     const diff = Math.round(tomorrow.tMax - today.tMax);
     if (diff >= 2) {
-      highlights.push({ icon: 'tempUp', text: `Warmer tomorrow — up to ${formatTemp(tomorrow.tMax)} (today ${formatTemp(today.tMax)})` });
+      highlights.push({ icon: 'tempUp', text: t('hl_warmer').replace('{high}', formatTemp(tomorrow.tMax)).replace('{low}', formatTemp(today.tMax)) });
     } else if (diff <= -2) {
-      highlights.push({ icon: 'tempDown', text: `Cooler tomorrow — topping out near ${formatTemp(tomorrow.tMax)}` });
+      highlights.push({ icon: 'tempDown', text: t('hl_cooler').replace('{high}', formatTemp(tomorrow.tMax)) });
     }
   }
 
   if (today) {
     const swing = Math.round(today.tMax - today.tMin);
     if (swing >= 14) {
-      highlights.push({ icon: 'swing', text: `Big temperature swing today — ${formatTemp(today.tMin)} to ${formatTemp(today.tMax)}, dress in layers` });
+      highlights.push({ icon: 'swing', text: t('hl_swing').replace('{low}', formatTemp(today.tMin)).replace('{high}', formatTemp(today.tMax)) });
     }
   }
 
   if (data.current.windGusts >= 40) {
-    highlights.push({ icon: 'wind', text: `Gusty conditions — gusts reaching ${Math.round(convertWind(data.current.windGusts))} ${windUnitLabel()}` });
+    highlights.push({ icon: 'wind', text: t('hl_gusts').replace('{n}', String(Math.round(convertWind(data.current.windGusts)))).replace('{unit}', windUnitLabel()) });
   }
 
   if (today && today.uvIndexMax >= 6) {
-    highlights.push({ icon: 'uv', text: `Very high UV today (${Math.round(today.uvIndexMax)}) — sunscreen between 11 AM and 3 PM` });
+    highlights.push({ icon: 'uv', text: t('hl_uv').replace('{n}', String(Math.round(today.uvIndexMax))).replace('{from}', formatClockParts(11, 0)).replace('{to}', formatClockParts(15, 0)) });
   }
 
   if (today && today.tMin <= 0) {
-    const base = `Frost likely tonight — lows near ${formatTemp(today.tMin)}`;
+    const base = t('hl_frost').replace('{t}', formatTemp(today.tMin));
     const scrape = windshieldFrostLine(today, data.hourly);
     highlights.push({ icon: 'frost', text: scrape ? base + '. ' + scrape : base });
   }
 
   if (data.aqi?.usAqi != null && data.aqi.usAqi > 150) {
-    highlights.push({ icon: 'aqi', text: `Air quality is poor (AQI ${Math.round(data.aqi.usAqi)}) — limit outdoor exertion` });
+    highlights.push({ icon: 'aqi', text: t('hl_aqi').replace('{n}', String(Math.round(data.aqi.usAqi))) });
   }
 
   return highlights.slice(0, 4);

@@ -464,4 +464,18 @@ export const es: Strings = {
   moon_lore_last_quarter: 'Último cuarto: los viejos marineros veían la marea cambiar.',
   moon_lore_old: 'Luna vieja: el cielo está más oscuro antes del nuevo ciclo.',
 
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Alerta de paraguas — la lluvia empieza en unos {n} minutos',
+  hl_rain_incoming: 'La lluvia viene en camino — espérala en los próximos {n} minutos',
+  hl_rain_easing: 'Está lloviendo ahora, pero debería aflojar pronto',
+  hl_rain_steady: 'Lluvia constante ahora mismo — ten el paraguas a mano',
+  hl_thunder: 'Hay tormentas en el pronóstico de hoy — mejor planear en interiores',
+  hl_warmer: 'Mañana más calor — hasta {high} (hoy {low})',
+  hl_cooler: 'Mañana más frío — máxima cerca de {high}',
+  hl_swing: 'Gran cambio de temperatura hoy — de {low} a {high}, vístete por capas',
+  hl_gusts: 'Condiciones ventosas — ráfagas de hasta {n} {unit}',
+  hl_uv: 'UV muy alto hoy ({n}) — protector solar entre {from} y {to}',
+  hl_frost: 'Probable helada esta noche — mínima cerca de {t}',
+  hl_aqi: 'La calidad del aire es mala (AQI {n}) — limita el esfuerzo al aire libre',
 };

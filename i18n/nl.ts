@@ -464,4 +464,18 @@ export const nl: Strings = {
   moon_lore_last_quarter: 'Laatste kwartier: De oude zeelieden zagen de vloed keren.',
   moon_lore_old: 'Oude maan: De hemel is het donkerst voor de nieuwe cyclus.',
 
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Paraplu-alarm — regen begint over ongeveer {n} minuten',
+  hl_rain_incoming: 'Regen is onderweg — verwacht het binnen {n} minuten',
+  hl_rain_easing: 'Het regent nu, maar het zou snel moeten afnemen',
+  hl_rain_steady: 'Nu gestage regen — houd de paraplu bij de hand',
+  hl_thunder: 'Onweer in de voorspelling van vandaag — plan liever binnen',
+  hl_warmer: 'Morgen warmer — tot {high} (vandaag {low})',
+  hl_cooler: 'Morgen koeler — maximum rond {high}',
+  hl_swing: 'Grote temperatuurschommeling vandaag — {low} tot {high}, kleed je in lagen',
+  hl_gusts: 'Vlaagweer — windstoten tot {n} {unit}',
+  hl_uv: 'Vandaag zeer hoge UV ({n}) — zonnebrand tussen {from} en {to}',
+  hl_frost: 'Waarschijnlijk vorst vannacht — minima rond {t}',
+  hl_aqi: 'Slechte luchtkwaliteit (AQI {n}) — beperk inspanning buiten',
 };

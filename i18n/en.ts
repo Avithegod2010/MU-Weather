@@ -918,6 +918,20 @@ export const en = {
   moon_lore_waning: 'Waning moon: a good week to weed, rest and plan.',
   moon_lore_last_quarter: 'Last quarter: old sailors watched the tide turn.',
   moon_lore_old: 'Old moon: the sky is darkest before the new cycle.',
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Umbrella alert — rain begins in about {n} minutes',
+  hl_rain_incoming: 'Rain is on its way — expect it within the next {n} minutes',
+  hl_rain_easing: 'Rain is falling now but should ease off soon',
+  hl_rain_steady: 'Steady rain right now — keep the umbrella handy',
+  hl_thunder: "Thunderstorms appear in today's forecast — best to plan indoor time",
+  hl_warmer: 'Warmer tomorrow — up to {high} (today {low})',
+  hl_cooler: 'Cooler tomorrow — topping out near {high}',
+  hl_swing: 'Big temperature swing today — {low} to {high}, dress in layers',
+  hl_gusts: 'Gusty conditions — gusts reaching {n} {unit}',
+  hl_uv: 'Very high UV today ({n}) — sunscreen between {from} and {to}',
+  hl_frost: 'Frost likely tonight — lows near {t}',
+  hl_aqi: 'Air quality is poor (AQI {n}) — limit outdoor exertion',
 };
 
 export type Strings = typeof en;

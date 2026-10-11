@@ -795,4 +795,18 @@ export const pl: Strings = {
   moon_lore_last_quarter: 'Ostatnia kwadra: starzy żeglarze widzieli, jak odpływ się zmienia.',
   moon_lore_old: 'Stary księżyc: niebo jest najciemniejsze przed nowym cyklem.',
 
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Alarm parasolowy — deszcz zacznie się za około {n} minut',
+  hl_rain_incoming: 'Deszcz nadciąga — spodziewaj się go w ciągu {n} minut',
+  hl_rain_easing: 'Teraz pada, ale wkrótce powinno przestać',
+  hl_rain_steady: 'Właśnie pada równo — trzymaj parasol pod ręką',
+  hl_thunder: 'Burze w dzisiejszej prognozie — lepiej zostać w domu',
+  hl_warmer: 'Jutro cieplej — do {high} (dziś {low})',
+  hl_cooler: 'Jutro chłodniej — maksymalnie około {high}',
+  hl_swing: 'Duża dobowa amplituda dziś — {low} do {high}, ubierz się warstwowo',
+  hl_gusts: 'Wietrznie — porywy do {n} {unit}',
+  hl_uv: 'Dziś bardzo wysoki UV ({n}) — krem z filtrem między {from} a {to}',
+  hl_frost: 'Prawdopodobny mróz dziś w nocy — minimum około {t}',
+  hl_aqi: 'Słaba jakość powietrza (AQI {n}) — ogranicz wysiłek na zewnątrz',
 };

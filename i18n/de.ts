@@ -464,4 +464,18 @@ export const de: Strings = {
   moon_lore_last_quarter: 'Letztes Viertel: Die alten Seeleute sahen die Flut sich wenden.',
   moon_lore_old: 'Alter Mond: Der Himmel ist am dunkelsten vor dem neuen Zyklus.',
 
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Regenschirm-Alarm — Regen beginnt in etwa {n} Minuten',
+  hl_rain_incoming: 'Regen ist unterwegs — rechne in den nächsten {n} Minuten damit',
+  hl_rain_easing: 'Es regnet gerade, sollte aber bald nachlassen',
+  hl_rain_steady: 'Gerade Dauerregen — Regenschirm griffbereit halten',
+  hl_thunder: 'Gewitter in der heutigen Vorhersage — plane lieber drinnen',
+  hl_warmer: 'Morgen wärmer — bis zu {high} (heute {low})',
+  hl_cooler: 'Morgen kühler — Höchstwerte um {high}',
+  hl_swing: 'Große Temperaturspanne heute — {low} bis {high}, kleide dich in Schichten',
+  hl_gusts: 'Böige Bedingungen — Böen bis {n} {unit}',
+  hl_uv: 'Heute sehr hoher UV ({n}) — Sonnencreme zwischen {from} und {to}',
+  hl_frost: 'Wahrscheinlich Frost heute Nacht — Tiefstwerte um {t}',
+  hl_aqi: 'Schlechte Luftqualität (AQI {n}) — Anstrengung im Freien einschränken',
 };

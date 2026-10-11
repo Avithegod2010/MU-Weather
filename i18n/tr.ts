@@ -795,4 +795,18 @@ export const tr: Strings = {
   moon_lore_last_quarter: 'Son çeyrek: eski denizciler gelgitin döndüğünü görürlerdi.',
   moon_lore_old: 'Yaşlı ay: gökyüzü yeni döngüden önce en karanlıktır.',
 
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Şemsiye uyarısı — yağmur yaklaşık {n} dakika içinde başlıyor',
+  hl_rain_incoming: 'Yağmur geliyor — önümüzdeki {n} dakika içinde bekle',
+  hl_rain_easing: 'Şu an yağmur yağıyor ama yakında dinmeli',
+  hl_rain_steady: 'Şu an sürekli yağmur — şemsiyeyi el altında tut',
+  hl_thunder: 'Bugünkü tahminde gök gürültülü fırtına — içeride kalmak en iyisi',
+  hl_warmer: 'Yarın daha sıcak — {high} derecesine kadar (bugün {low})',
+  hl_cooler: 'Yarın daha serin — en yüksek {high} civarında',
+  hl_swing: 'Bugün büyük sıcaklık farkı — {low} ile {high} arası, kat kat giyin',
+  hl_gusts: 'Rüzgarlı hava — rüzgar hamleleri {n} {unit} seviyesine ulaşıyor',
+  hl_uv: 'Bugün çok yüksek UV ({n}) — {from} ile {to} arasında güneş kremi',
+  hl_frost: 'Bu gece don bekleniyor — en düşük {t} civarında',
+  hl_aqi: 'Hava kalitesi kötü (AQI {n}) — dışarıda eforu sınırla',
 };

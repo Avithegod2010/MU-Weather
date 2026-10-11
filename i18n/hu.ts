@@ -464,4 +464,18 @@ export const hu: Strings = {
   moon_lore_last_quarter: 'Utolsó negyed: a régi tengerészek látták a dagályt megfordulni.',
   moon_lore_old: 'Öreg hold: az ég a legsötétebb az új ciklus előtt.',
 
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Esernyőriasztás — az eső körülbelül {n} perc múlva kezdődik',
+  hl_rain_incoming: 'Az eső közeleg — a következő {n} percben várható',
+  hl_rain_easing: 'Most esik, de hamarosan el kell állnia',
+  hl_rain_steady: 'Most tartós eső — tartsd kéznél az esernyőt',
+  hl_thunder: 'Zivatar a mai előrejelzésben — tervezz bent időt',
+  hl_warmer: 'Holnap melegebb — akár {high} (ma {low})',
+  hl_cooler: 'Holnap hűvösebb — maximum {high} körül',
+  hl_swing: 'Nagy hőingás ma — {low} és {high} között, öltözz rétegesen',
+  hl_gusts: 'Szeles idő — széllökések akár {n} {unit}',
+  hl_uv: 'Ma nagyon magas UV ({n}) — naptej {from} és {to} között',
+  hl_frost: 'Valószínű fagy ma éjjel — minimum {t} körül',
+  hl_aqi: 'Rossz levegőminőség (AQI {n}) — mérsékeld a kinti terhelést',
 };

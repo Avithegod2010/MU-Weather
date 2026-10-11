@@ -464,4 +464,18 @@ export const id: Strings = {
   moon_lore_last_quarter: 'Kuartal terakhir: pelaut tua melihat pasang surut berbalik.',
   moon_lore_old: 'Bulan tua: langit lebih gelap sebelum siklus baru.',
 
+
+  // ── highlights i18n (hl_*): full-sentence highlight cards ──
+  hl_rain_soon: 'Peringatan payung — hujan mulai dalam sekitar {n} menit',
+  hl_rain_incoming: 'Hujan dalam perjalanan — perkirakan dalam {n} menit ke depan',
+  hl_rain_easing: 'Sekarang hujan, tapi seharusnya segera reda',
+  hl_rain_steady: 'Hujan deras sekarang — siapkan payung',
+  hl_thunder: 'Badai petir dalam prakiraan hari ini — rencanakan di dalam ruangan',
+  hl_warmer: 'Besok lebih hangat — hingga {high} (hari ini {low})',
+  hl_cooler: 'Besok lebih dingin — maksimum sekitar {high}',
+  hl_swing: 'Ayunan suhu besar hari ini — {low} hingga {high}, berpakaianlah berlapis',
+  hl_gusts: 'Kondisi berangin — hembusan hingga {n} {unit}',
+  hl_uv: 'UV sangat tinggi hari ini ({n}) — tabir surya antara {from} dan {to}',
+  hl_frost: 'Kemungkinan embun beku malam ini — terendah sekitar {t}',
+  hl_aqi: 'Kualitas udara buruk (AQI {n}) — batasi aktivitas luar ruangan',
 };
