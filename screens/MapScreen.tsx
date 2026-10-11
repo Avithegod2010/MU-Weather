@@ -168,6 +168,13 @@ export function MapScreen({ theme, location, visible, onClose, onOpenRadar }: Ma
           javaScriptEnabled
           domStorageEnabled
           originWhitelist={['https://embed.windy.com']}
+          onShouldStartLoadWithRequest={(request) => {
+            // originWhitelist compiles to a prefix match, so
+            // https://embed.windy.com.evil.tld would pass it — require the
+            // exact origin here before anything renders in the WebView.
+            const origin = /^([a-z][a-z0-9+.-]*:\/\/[^/?#]+)/i.exec(request.url)?.[1] ?? '';
+            return origin.toLowerCase() === 'https://embed.windy.com';
+          }}
           setSupportMultipleWindows={false}
           onLoadStart={() => setLoading(true)}
           onLoadEnd={() => setLoading(false)}
