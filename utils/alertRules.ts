@@ -5,6 +5,8 @@ import type { StringKey } from './i18n';
 import type { AlertEvidence } from './alertEvidence';
 import type { Nowcast } from './nowcast';
 import type { AqiInfo, CurrentConditions, DayPoint, HourPoint } from '../api/types';
+import type { NwsAlert } from '../api/nws';
+import { evaluateNwsAlerts } from './nwsAlerts';
 
 export type AlertKey =
   | 'rain'
@@ -27,7 +29,8 @@ export type AlertKey =
   | 'raineasing'
   // ── bot1: saved-city alerts ──
   /** Not a rule of its own: enables running every rule for the saved cities too. */
-  | 'favorites';
+  | 'favorites'
+  | 'nws';
 
 export interface AlertDefinition {
   key: AlertKey;
@@ -56,6 +59,7 @@ export const ALERT_DEFINITIONS: AlertDefinition[] = [
   { key: 'raineasing', title: 'alert_raineasing_title', subtitle: 'alert_raineasing_sub' },
   // ── bot1: saved-city alerts ──
   { key: 'favorites', title: 'alert_favorites_title', subtitle: 'alert_favorites_sub' },
+  { key: 'nws', title: 'alert_nws_title', subtitle: 'alert_nws_sub' },
 ];
 
 export type AlertSeverity = 'info' | 'warning' | 'severe';
@@ -157,6 +161,7 @@ export const DEFAULT_ALERT_SETTINGS: AlertSettings = {
   raineasing: false,
   // ── bot1: saved-city alerts ──
   favorites: false,
+  nws: false,
   // ── notification upgrades: quiet hours ──
   quietHoursEnabled: false,
   quietStartMinutes: DEFAULT_QUIET_START_MINUTES,
@@ -200,6 +205,8 @@ export interface AlertExtras {
   nowcast?: Nowcast;
   /** Max Kp in the SWPC 3-day outlook; undefined when the feed failed or the latitude gate is closed. */
   auroraKpMax?: number;
+  /** Active US NWS warnings & advisories (fetched for US locations only). */
+  nwsAlerts?: NwsAlert[];
 }
 
 function evidence(
@@ -499,6 +506,11 @@ export function evaluateAlerts(
       severity: extras.auroraKpMax >= 7 ? 'severe' : 'warning',
       evidence: evidence('card_aurora', `Kp ${extras.auroraKpMax.toFixed(1)}`, '≥5 Kp', 'NOAA SWPC outlook'),
     });
+  }
+
+  // ── nws: US severe weather warnings ──
+  if (settings.nws && extras.nwsAlerts && extras.nwsAlerts.length > 0) {
+    triggered.push(...evaluateNwsAlerts(extras.nwsAlerts));
   }
 
   return triggered;

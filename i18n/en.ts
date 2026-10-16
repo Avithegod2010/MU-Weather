@@ -1069,6 +1069,11 @@ export const en = {
 
   data_export_no_fields: 'Select temperature and/or precipitation to export.',
 
+
+  // ── nws: US severe weather warnings ──
+  alert_nws_title: 'US severe weather warnings',
+  alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
+  nws_alerts: 'NOAA/NWS alerts',
 };
 
 export type Strings = typeof en;

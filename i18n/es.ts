@@ -617,4 +617,9 @@ export const es: Strings = {
   local_data_load_failed: 'Local data counts could not be loaded.',
   local_data_empty: 'No local calibration or feedback records yet.',
   local_data_loading: 'Counting local records…',
+
+  // ── nws: US severe weather warnings ──
+  alert_nws_title: 'US severe weather warnings',
+  alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
+  nws_alerts: 'NOAA/NWS alerts',
 };

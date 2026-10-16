@@ -65,6 +65,7 @@ const ALERT_ICONS: Record<AlertKey, typeof CloudRain> = {
   pressure: TrendingDown,
   wind: Wind,
   cape: CloudLightning,
+  nws: Bell,
   heat: Thermometer,
   // ── bot2: aurora + alerts + wear ──
   aurora: Sparkles,
