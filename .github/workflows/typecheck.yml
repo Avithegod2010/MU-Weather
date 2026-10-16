@@ -45,6 +45,9 @@ jobs:
       - name: Alert pipeline tests
         run: node scripts/test-alert-pipeline.mjs
 
+      - name: NWS warnings tests
+        run: node scripts/test-nws.mjs
+
       - name: Local data manager tests
         run: node scripts/test-local-data-manager.mjs
 
