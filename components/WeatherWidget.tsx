@@ -3,6 +3,7 @@ import {
   WIDGET_CORNER_RADIUS,
   widgetGradient,
   widgetPaletteFor,
+  widgetPaletteForTheme,
   widgetSky,
   type WidgetSky,
 } from '../utils/widgetPalette';
@@ -26,6 +27,9 @@ interface WeatherWidgetProps {
   stale: boolean;
   /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
   sky?: WidgetSky;
+  /** User-selected color theme key; when set, widgets use theme colours instead of sky colours. */
+  themeKey?: string;
+  isLight?: boolean;
 }
 
 /**
@@ -45,8 +49,10 @@ export function WeatherWidget({
   hasData,
   stale,
   sky,
+  themeKey,
+  isLight,
 }: WeatherWidgetProps) {
-  const C = { dark: widgetPaletteFor(sky) } as const;
+  const C = { dark: themeKey ? widgetPaletteForTheme(themeKey, isLight ?? true) : widgetPaletteFor(sky) } as const;
   return (
     <FlexWidget
       style={{
@@ -115,7 +121,11 @@ export function WeatherWidget({
 }
 
 /** Headless-context convenience: builds the widget from a cached bundle. */
-export function renderWeatherWidgetFromBundle(bundle: WeatherBundle): React.JSX.Element {
+export function renderWeatherWidgetFromBundle(
+  bundle: WeatherBundle,
+  themeKey?: string,
+  isLight?: boolean,
+): React.JSX.Element {
   const today = bundle.daily[0];
   const { label } = describeWmo(bundle.current.weatherCode);
   const { stale } = describeFreshness(bundle.fetchedAt);
@@ -124,6 +134,8 @@ export function renderWeatherWidgetFromBundle(bundle: WeatherBundle): React.JSX.
       sky={widgetSky(bundle.current.weatherCode, bundle.current.isDay)}
       hasData
       stale={stale}
+      themeKey={themeKey}
+      isLight={isLight}
       temperature={`${Math.round(bundle.current.temperature)}°`}
       conditionLabel={label}
       maxTemp={`${Math.round(today ? today.tMax : bundle.current.temperature)}°`}

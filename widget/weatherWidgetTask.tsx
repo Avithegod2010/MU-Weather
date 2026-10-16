@@ -31,6 +31,7 @@ export const WEATHER_WIDGET_NAME_CITY = 'MUWeatherWidgetCity';
 export const WEATHER_WIDGET_NAME_SUN = 'MUWeatherWidgetSun';
 
 const WEATHER_CACHE_KEY = '@mu_weather/last_weather_v1';
+const SETTINGS_CACHE_KEY = '@mu_weather/settings_v1';
 
 const APP_PACKAGE = 'com.avithegod.muweather';
 
@@ -124,12 +125,26 @@ const DASHBOARD_NO_DATA_PROPS = {
   stale: false,
 };
 
+async function loadWidgetSettings(): Promise<{ themeKey?: string; isLight?: boolean }> {
+  try {
+    const raw = await AsyncStorage.getItem(SETTINGS_CACHE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as { colorTheme?: string; themeMode?: 'system' | 'light' | 'dark' };
+    const themeMode = parsed.themeMode ?? 'system';
+    const isLight = themeMode === 'light' || (themeMode === 'system' ? true : false);
+    return { themeKey: parsed.colorTheme, isLight };
+  } catch {
+    return {};
+  }
+}
+
 async function renderFromCache(): Promise<React.JSX.Element> {
   const bundle = await loadCachedBundle();
+  const settings = await loadWidgetSettings();
   if (!bundle) {
-    return <WeatherWidget {...NO_DATA_PROPS} />;
+    return <WeatherWidget {...NO_DATA_PROPS} themeKey={settings.themeKey} isLight={settings.isLight} />;
   }
-  return renderWeatherWidgetFromBundle(bundle);
+  return renderWeatherWidgetFromBundle(bundle, settings.themeKey, settings.isLight);
 }
 
 const SUN_NO_DATA_PROPS = {
@@ -146,26 +161,29 @@ const SUN_NO_DATA_PROPS = {
 
 async function renderFromCacheSun(): Promise<React.JSX.Element> {
   const bundle = await loadCachedBundle();
+  const settings = await loadWidgetSettings();
   if (!bundle) {
-    return <WeatherWidgetSun {...SUN_NO_DATA_PROPS} />;
+    return <WeatherWidgetSun {...SUN_NO_DATA_PROPS} themeKey={settings.themeKey} isLight={settings.isLight} />;
   }
-  return renderWeatherWidgetSunFromBundle(bundle);
+  return renderWeatherWidgetSunFromBundle(bundle, settings.themeKey, settings.isLight);
 }
 
 async function renderFromCacheLarge(): Promise<React.JSX.Element> {
   const bundle = await loadCachedBundle();
+  const settings = await loadWidgetSettings();
   if (!bundle) {
-    return <WeatherWidgetLarge {...NO_DATA_PROPS} hours={[]} />;
+    return <WeatherWidgetLarge {...NO_DATA_PROPS} hours={[]} themeKey={settings.themeKey} isLight={settings.isLight} />;
   }
-  return renderWeatherWidgetLargeFromBundle(bundle);
+  return renderWeatherWidgetLargeFromBundle(bundle, settings.themeKey, settings.isLight);
 }
 
 async function renderFromCacheDashboard(): Promise<React.JSX.Element> {
   const bundle = await loadCachedBundle();
+  const settings = await loadWidgetSettings();
   if (!bundle) {
-    return <WeatherWidgetDashboard {...DASHBOARD_NO_DATA_PROPS} hours={[]} days={[]} />;
+    return <WeatherWidgetDashboard {...DASHBOARD_NO_DATA_PROPS} hours={[]} days={[]} themeKey={settings.themeKey} isLight={settings.isLight} />;
   }
-  return renderWeatherWidgetDashboardFromBundle(bundle);
+  return renderWeatherWidgetDashboardFromBundle(bundle, settings.themeKey, settings.isLight);
 }
 
 /**
@@ -176,10 +194,13 @@ async function renderFromCacheDashboard(): Promise<React.JSX.Element> {
  * instance identically) cannot be used here.
  */
 export async function renderCityWidgetInstance(widgetId: number): Promise<React.JSX.Element> {
+  const settings = await loadWidgetSettings();
   const city = await loadWidgetCity(widgetId);
-  if (!city) return renderCityWidgetUnconfigured();
+  if (!city) return renderCityWidgetUnconfigured(settings.themeKey, settings.isLight);
   const snapshot = await loadCitySnapshot(city.id);
-  return snapshot ? renderCityWidgetFromSnapshot(snapshot) : renderCityWidgetNoData();
+  return snapshot
+    ? renderCityWidgetFromSnapshot(snapshot, settings.themeKey, settings.isLight)
+    : renderCityWidgetNoData(settings.themeKey, settings.isLight);
 }
 
 if (!globalScope.__muWidgetTaskDefined) {

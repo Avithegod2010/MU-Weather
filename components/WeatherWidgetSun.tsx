@@ -3,6 +3,7 @@ import {
   WIDGET_CORNER_RADIUS,
   widgetGradient,
   widgetPaletteFor,
+  widgetPaletteForTheme,
   widgetSky,
   type WidgetSky,
 } from '../utils/widgetPalette';
@@ -30,6 +31,9 @@ interface WeatherWidgetSunProps {
   stale: boolean;
   /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
   sky?: WidgetSky;
+  /** User-selected color theme key; when set, widgets use theme colours instead of sky colours. */
+  themeKey?: string;
+  isLight?: boolean;
 }
 
 /**
@@ -55,8 +59,10 @@ export function WeatherWidgetSun({
   updatedLabel,
   stale,
   sky,
+  themeKey,
+  isLight,
 }: WeatherWidgetSunProps) {
-  const C = { dark: widgetPaletteFor(sky) } as const;
+  const C = { dark: themeKey ? widgetPaletteForTheme(themeKey, isLight ?? true) : widgetPaletteFor(sky) } as const;
   return (
     <FlexWidget
       style={{
@@ -158,7 +164,11 @@ interface SunEvent {
  * the sun never rises or sets at high latitudes) it looks at tomorrow, and when
  * there is no sunrise or sunset at all it says so instead of showing a time.
  */
-export function renderWeatherWidgetSunFromBundle(bundle: WeatherBundle): React.JSX.Element {
+export function renderWeatherWidgetSunFromBundle(
+  bundle: WeatherBundle,
+  themeKey?: string,
+  isLight?: boolean,
+): React.JSX.Element {
   const now = new Date();
   const { latitude, longitude } = bundle.location;
   const today = computeTwilight(now, latitude, longitude);
@@ -201,6 +211,8 @@ export function renderWeatherWidgetSunFromBundle(bundle: WeatherBundle): React.J
       sky={widgetSky(bundle.current.weatherCode, bundle.current.isDay)}
       hasData
       stale={stale}
+      themeKey={themeKey}
+      isLight={isLight}
       cityName={bundle.location.name}
       eventLabel={next ? next.label : ''}
       eventTime={next ? clock(next.date) : '--:--'}

@@ -3,6 +3,7 @@ import {
   WIDGET_CORNER_RADIUS,
   widgetGradient,
   widgetPaletteFor,
+  widgetPaletteForTheme,
   widgetSky,
   type WidgetSky,
 } from '../utils/widgetPalette';
@@ -33,6 +34,9 @@ interface WeatherWidgetCityProps {
   stale: boolean;
   /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
   sky?: WidgetSky;
+  /** User-selected color theme key; when set, widgets use theme colours instead of sky colours. */
+  themeKey?: string;
+  isLight?: boolean;
 }
 
 /** `Band.color` is a plain string; the library needs a `#rrggbb` literal. */
@@ -66,8 +70,10 @@ export function WeatherWidgetCity({
   hasData,
   stale,
   sky,
+  themeKey,
+  isLight,
 }: WeatherWidgetCityProps) {
-  const C = widgetPaletteFor(sky);
+  const C = themeKey ? widgetPaletteForTheme(themeKey, isLight ?? true) : widgetPaletteFor(sky);
   const emptyMessage =
     emptyReason === 'not_configured'
       ? 'Tap and hold this widget, then choose a city'
@@ -182,13 +188,13 @@ const EMPTY_PROPS = {
 } as const;
 
 /** Placeholder for a widget the user has not pointed at a city yet. */
-export function renderCityWidgetUnconfigured(): React.JSX.Element {
-  return <WeatherWidgetCity {...EMPTY_PROPS} hours={[]} emptyReason="not_configured" />;
+export function renderCityWidgetUnconfigured(themeKey?: string, isLight?: boolean): React.JSX.Element {
+  return <WeatherWidgetCity {...EMPTY_PROPS} hours={[]} emptyReason="not_configured" themeKey={themeKey} isLight={isLight} />;
 }
 
 /** Placeholder for a configured city that has no snapshot yet. */
-export function renderCityWidgetNoData(): React.JSX.Element {
-  return <WeatherWidgetCity {...EMPTY_PROPS} hours={[]} emptyReason="no_data" />;
+export function renderCityWidgetNoData(themeKey?: string, isLight?: boolean): React.JSX.Element {
+  return <WeatherWidgetCity {...EMPTY_PROPS} hours={[]} emptyReason="no_data" themeKey={themeKey} isLight={isLight} />;
 }
 
 /** Builds the city widget from a stored per-city snapshot. */
@@ -201,7 +207,11 @@ function citySky(snapshot: CitySnapshot): WidgetSky {
   return widgetSky(snapshot.weatherCode, isDay);
 }
 
-export function renderCityWidgetFromSnapshot(snapshot: CitySnapshot): React.JSX.Element {
+export function renderCityWidgetFromSnapshot(
+  snapshot: CitySnapshot,
+  themeKey?: string,
+  isLight?: boolean,
+): React.JSX.Element {
   const { label } = describeWmo(snapshot.weatherCode);
   const { stale } = describeFreshness(snapshot.fetchedAt);
   const band = snapshot.usAqi === null ? null : usAqiBand(snapshot.usAqi);
@@ -217,6 +227,8 @@ export function renderCityWidgetFromSnapshot(snapshot: CitySnapshot): React.JSX.
       hasData
       stale={stale}
       emptyReason=""
+      themeKey={themeKey}
+      isLight={isLight}
       cityName={snapshot.cityName}
       temperature={`${Math.round(snapshot.temperature)}°`}
       conditionLabel={label}

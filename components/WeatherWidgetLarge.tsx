@@ -3,6 +3,7 @@ import {
   WIDGET_CORNER_RADIUS,
   widgetGradient,
   widgetPaletteFor,
+  widgetPaletteForTheme,
   widgetSky,
   type WidgetSky,
 } from '../utils/widgetPalette';
@@ -27,6 +28,9 @@ interface WeatherWidgetLargeProps {
   stale: boolean;
   /** Sky for the gradient and text tone. Placeholders omit it and use the night palette. */
   sky?: WidgetSky;
+  /** User-selected color theme key; when set, widgets use theme colours instead of sky colours. */
+  themeKey?: string;
+  isLight?: boolean;
 }
 
 /**
@@ -51,8 +55,10 @@ export function WeatherWidgetLarge({
   hasData,
   stale,
   sky,
+  themeKey,
+  isLight,
 }: WeatherWidgetLargeProps) {
-  const C = { dark: widgetPaletteFor(sky) } as const;
+  const C = { dark: themeKey ? widgetPaletteForTheme(themeKey, isLight ?? true) : widgetPaletteFor(sky) } as const;
   return (
     <FlexWidget
       style={{
@@ -152,7 +158,11 @@ export function WeatherWidgetLarge({
 }
 
 /** Headless-context convenience: builds the large widget from a cached bundle. */
-export function renderWeatherWidgetLargeFromBundle(bundle: WeatherBundle): React.JSX.Element {
+export function renderWeatherWidgetLargeFromBundle(
+  bundle: WeatherBundle,
+  themeKey?: string,
+  isLight?: boolean,
+): React.JSX.Element {
   const today = bundle.daily[0];
   const { label } = describeWmo(bundle.current.weatherCode);
   const hours = bundle.hourly.slice(0, 5).map((hour) => ({
@@ -168,6 +178,8 @@ export function renderWeatherWidgetLargeFromBundle(bundle: WeatherBundle): React
       sky={widgetSky(bundle.current.weatherCode, bundle.current.isDay)}
       hasData
       stale={stale}
+      themeKey={themeKey}
+      isLight={isLight}
       temperature={`${Math.round(bundle.current.temperature)}°`}
       conditionLabel={label}
       maxTemp={`${Math.round(today ? today.tMax : bundle.current.temperature)}°`}

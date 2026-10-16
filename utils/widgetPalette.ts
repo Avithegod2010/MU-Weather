@@ -10,6 +10,7 @@
  * Pure functions only: no React, no widget-library import, no I/O.
  */
 import { getPalette, type WeatherCondition } from '../theme/palettes';
+import { COLOR_THEMES, type ColorThemeKey } from '../config/colorThemes';
 import { describeWmo } from './wmo';
 
 /** Hex colour in the form react-native-android-widget accepts (`ColorProp`). */
@@ -128,6 +129,25 @@ function legibleSubtle(start: WidgetColor, text: WidgetColor, backgrounds: reado
 
 function worstContrast(text: WidgetColor, backgrounds: readonly WidgetColor[]): number {
   return Math.min(...backgrounds.map((background) => contrast(text, background)));
+}
+
+/** Palette for a color theme (user-selected theme, independent of sky). Pure. */
+export function widgetPaletteForTheme(themeKey: string, isLight: boolean): WidgetPalette {
+  const theme = COLOR_THEMES.find((t) => t.key === themeKey);
+  const [fromRaw, , toRaw] = theme?.gradient ?? COLOR_THEMES[0].gradient;
+  const bgFrom = asHex(fromRaw);
+  const bgTo = asHex(toRaw);
+  const text = isLight ? INK : WHITE;
+  return {
+    bgFrom,
+    bgTo,
+    text,
+    subtle: legibleSubtle(mix(text, bgTo, 0.2), text, [bgFrom, bgTo]),
+    chip: mix(bgTo, WHITE, isLight ? 0.16 : 0.55),
+    strip: mix(bgTo, BLACK, isLight ? 0.2 : 0.06),
+    stale: isLight ? '#F5B82E' : '#9A5B00',
+    gold: isLight ? '#F2C65E' : '#8A5A00',
+  };
 }
 
 function channel(value: number): number {
