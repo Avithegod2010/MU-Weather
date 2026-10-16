@@ -1074,6 +1074,8 @@ export const en = {
   alert_nws_title: 'US severe weather warnings',
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
+
+  health_note_not_medical: 'Heuristic estimates only — not medical advice.',
 };
 
 export type Strings = typeof en;

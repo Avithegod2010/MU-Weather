@@ -86,6 +86,9 @@ export function HealthCard({ theme, current, usAqi, style, revealDelay }: Health
             </View>
           );
         })}
+        <Text style={[styles.disclaimer, { color: theme.textTertiary }]}>
+          {t('health_note_not_medical')}
+        </Text>
       </View>
     </Card>
   );
@@ -133,5 +136,11 @@ const styles = StyleSheet.create({
   advice: {
     fontSize: 12,
     lineHeight: 16,
+  },
+  disclaimer: {
+    fontSize: 10.5,
+    lineHeight: 14,
+    fontStyle: 'italic',
+    marginTop: 8,
   },
 });
