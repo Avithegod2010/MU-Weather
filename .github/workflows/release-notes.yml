@@ -1,0 +1,42 @@
+name: Release notes
+
+on:
+  push:
+    tags: ['v*']
+
+# Least privilege: this workflow only reads the repo and creates the release
+# from the tag's commit range — it never pushes code.
+permissions:
+  contents: write
+
+jobs:
+  notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate release notes from commits
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            git log --pretty=format:"- %s" "${{ github.ref_name }}" > /tmp/notes.txt
+          else
+            git log --pretty=format:"- %s" "$PREV_TAG..${{ github.ref_name }}" > /tmp/notes.txt
+          fi
+          {
+            echo "## Changes in ${{ github.ref_name }}"
+            echo ""
+            cat /tmp/notes.txt
+            echo ""
+            echo "Built from \`${{ github.sha }}\`."
+          } > /tmp/release-body.md
+
+      - name: Create or update the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          body_path: /tmp/release-body.md
+          draft: false
+          prerelease: false
