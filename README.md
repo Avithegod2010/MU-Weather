@@ -228,6 +228,39 @@ Everything the app stores — settings, caches, the forecast log, alert history,
 - **Data flow convention:** `api/` wire types → cache (`utils/*Cache.ts`, AsyncStorage, TTL/LRU) → hook (`hooks/*`) → component. New data must never break a screen: it is best-effort, cached, and the UI renders normally without it.
 - **i18n:** add a key to `i18n/en.ts` first, then to every other catalog, each in its own commented block.
 - **Dependencies:** please discuss in an issue before adding one. The project deliberately keeps its dependency surface small — it once carried a native map SDK, which was removed in favour of a self-contained tile renderer.
+## ❓ FAQ
+
+**Is MU Weather free? Are there any accounts or API keys?**
+Yes — free, open-source, no accounts, no tracking, no API keys. All data comes from free public weather services and stays on your device.
+
+**How is the data sourced?**
+Forecasts from Open-Meteo and MET Norway, radar from RainViewer, air quality and pollen from CAMS, European warnings from MeteoAlarm, US warnings from NOAA NWS, and geomagnetic data from NOAA SWPC.
+
+**Does the app work offline?**
+Yes — the last weather bundle, forecasts, radar frames and saved cities are cached locally with explicit TTLs. Stale data is labelled honestly instead of being silently served.
+
+**Why do I see a stale chip on a widget?**
+Widgets refresh on the system's schedule (roughly every 30 min) plus whenever the app fetches. If the cached bundle is older than the freshness threshold, an amber chip appears instead of pretending the data is current.
+
+**How do alerts work?**
+Every rule is opt-in. Delivery records explicit outcomes (scheduled, quiet-hours, permission-denied, expired, failed) in alert history, so a missed alert can be diagnosed.
+
+**Why didn't an alert fire?**
+Check Settings → Alerts → history for the row's outcome. Common causes: quiet hours (alert still fires, notification suppressed), notification permission denied, or the 6-hour per-rule cooldown.
+
+**What is the digest?**
+An optional spoken/text summary of today's weather: city, condition, highs/lows, rain chances, UV, and a confidence line, fired once a day at your chosen hour.
+
+**Does the app send my location anywhere?**
+Only to the weather providers over HTTPS, with the coordinates you are viewing — never to analytics, ads, or trackers. Backup, settings and caches are local-only.
+
+**Which platforms are supported?**
+Android only (Expo SDK 57, React Native 0.86). No iOS, web, or desktop build.
+
+**What happened to Google Maps / the native map SDK?**
+Removed in favour of a built-in keyless tile renderer (CARTO + RainViewer tiles), so radar needs no billing account or API key.
+
+
 
 ## 🗺️ Roadmap
 
