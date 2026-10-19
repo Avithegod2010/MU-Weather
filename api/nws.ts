@@ -67,6 +67,30 @@ export function pointInNwsPolygon(
   return inside;
 }
 
+/** ISO-3166 codes whose locations the NWS point feed serves. */
+const NWS_ISO2 = new Set(['US', 'PR', 'VI', 'GU', 'AS', 'MP']);
+
+/**
+ * Is this location plausibly inside an NWS coverage area? Used as a politeness
+ * gate so non-US users never pay a wasted request (mirrors the MeteoAlarm
+ * country gate). The search path sets `countryCode`; the GPS path does not, so
+ * a coarse bounding-box fallback covers the 50 states, DC, Alaska, Hawaii and
+ * the Caribbean territories. Guam / Northern Mariana / American Samoa GPS
+ * coordinates fall outside the boxes and are treated as not covered - same
+ * class of limitation as MeteoAlarm's country list.
+ */
+export function inNwsArea(location: { latitude: number; longitude: number; countryCode?: string }): boolean {
+  const code = location.countryCode?.toUpperCase();
+  if (code) return NWS_ISO2.has(code);
+  const lat = location.latitude;
+  const lon = location.longitude;
+  const continental = lat >= 24 && lat <= 50 && lon >= -125 && lon <= -66;
+  const alaska = lat >= 51 && lat <= 72 && lon >= -180 && lon <= -129;
+  const hawaii = lat >= 18.5 && lat <= 22.5 && lon >= -161 && lon <= -154;
+  const caribbean = lat >= 17 && lat <= 19.5 && lon >= -68 && lon <= -64;
+  return continental || alaska || hawaii || caribbean;
+}
+
 export function fetchNwsAlerts(
   lat: number,
   lon: number,

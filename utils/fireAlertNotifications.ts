@@ -18,7 +18,7 @@ import type { AlertFireStamp } from './alertEscalation';
 import { assessWeatherCacheFreshness, weatherLocationKey } from './freshnessPolicy';
 import { getLanguage, t } from './i18n';
 import type { WeatherBundle } from '../api/types';
-import { fetchNwsAlerts } from '../api/nws';
+import { fetchNwsAlerts, inNwsArea } from '../api/nws';
 
 export const ALERTS_STORAGE_KEY = '@mu_weather/alerts_v1';
 const FIRED_KEY = '@mu_weather/alert_fired_v1';
@@ -155,7 +155,7 @@ export async function buildAlertExtras(
     const kpMax = await fetchAuroraMaxKp();
     if (kpMax !== null) extras.auroraKpMax = kpMax;
   }
-  if (settings.nws) {
+  if (settings.nws && inNwsArea(data.location)) {
     const nwsAlerts = await fetchNwsAlerts(data.location.latitude, data.location.longitude);
     if (nwsAlerts.length > 0) extras.nwsAlerts = nwsAlerts;
   }

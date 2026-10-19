@@ -122,9 +122,11 @@ import { usePastDays } from '../hooks/usePastDays';
 import { useClimateNormals } from '../hooks/useClimateNormals';
 import { useOnThisDay } from '../hooks/useOnThisDay';
 import { useMeteoAlarm } from '../hooks/useMeteoAlarm';
+import { useNwsWarnings } from '../hooks/useNwsWarnings';
 import { ClimateCard } from '../components/ClimateCard';
 import { OnThisDayCard } from '../components/OnThisDayCard';
 import { WarningsCard } from '../components/WarningsCard';
+import { USWarningsCard } from '../components/USWarningsCard';
 import { ProviderStatusCard } from '../components/ProviderStatusCard';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
@@ -175,6 +177,7 @@ export function HomeScreen() {
   const climateNormals = useClimateNormals(active);
   const onThisDay = useOnThisDay(active);
   const meteoAlarm = useMeteoAlarm(active);
+  const nwsWarnings = useNwsWarnings(active);
   const ensemble = useEnsemble(FEATURES.ensemble ? active : null);
   const forecastCalibration = useForecastCalibration(
     active,
@@ -871,6 +874,17 @@ export function HomeScreen() {
                     warnings={meteoAlarm.warnings}
                     status={meteoAlarm.status}
                     updatedAt={meteoAlarm.updatedAt}
+                    now={planningNow}
+                  />
+                </Reveal>
+              ) : null}
+              {FEATURES.nws && showSection('warnings') ? (
+                <Reveal delay={157}>
+                  <USWarningsCard
+                    theme={theme}
+                    alerts={nwsWarnings.alerts}
+                    status={nwsWarnings.status}
+                    updatedAt={nwsWarnings.updatedAt}
                     now={planningNow}
                   />
                 </Reveal>

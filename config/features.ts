@@ -47,7 +47,7 @@ export const FEATURES = {
   /** "Best time outdoors" card - best 2-hour daylight window today */
   bestWindow: true,
   /** US severe-warnings alert - NOAA NWS CAP feeds (US locations only) */
-  nws: false,
+  nws: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;
