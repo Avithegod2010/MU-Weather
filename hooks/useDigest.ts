@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from '../utils/notifications';
-import { t, setLanguage } from '../utils/i18n';
+import { t, setLanguage, getLanguage } from '../utils/i18n';
 import { describeWmo } from '../utils/wmo';
 import { uvBand } from '../utils/aqi';
 import { formatTemp, getUnits, setUnits } from '../utils/format';
 import { DIGEST_CATEGORY } from '../utils/spokenDigest';
 import { loadLastWeather } from '../utils/storage';
+import { aiDigestAvailable, summarizeDigest } from '../api/aiDigest';
 import type { DayPoint, EnsembleSpread, WeatherBundle } from '../api/types';
 
 const DIGEST_IDENTIFIER = 'daily-digest';
@@ -42,6 +43,29 @@ export function buildDigestBody(data: WeatherBundle, ensemble?: EnsembleSpread |
   const confidence = ensembleConfidenceLine(tomorrow, ensemble);
   if (confidence) parts.push(confidence);
   return parts.join(' · ');
+}
+
+/**
+ * Best-effort AI upgrade of the digest body. When no key is present or the
+ * generation fails for any reason, the template body is returned unchanged so
+ * the digest stays fully functional offline.
+ */
+export async function buildDigestBodyAsync(
+  data: WeatherBundle,
+  ensemble?: EnsembleSpread | null,
+): Promise<string | null> {
+  const template = buildDigestBody(data, ensemble);
+  if (!template || !aiDigestAvailable()) return template;
+  try {
+    const summary = await summarizeDigest(
+      template,
+      data.location.name,
+      getLanguage(),
+    );
+    return summary || template;
+  } catch {
+    return template;
+  }
 }
 
 /**
@@ -116,8 +140,10 @@ export function useDigest(
 
   useEffect(() => {
     if (!enabled || !data) return;
-    const body = buildDigestBody(data, ensemble);
-    if (!body) return;
+    // Snapshot synchronously so the async closure below never sees a mutated
+    // bundle, and the guard can run in this (sync) pass.
+    const snapshot = data;
+    const spread = ensemble;
 
     const now = Date.now();
     const target = nextDigestAt(hour, now);
@@ -129,7 +155,8 @@ export function useDigest(
 
     (async () => {
       try {
-        await scheduleDigestAt(body, target);
+        const body = await buildDigestBodyAsync(snapshot, spread);
+        if (body) await scheduleDigestAt(body, target);
       } catch {
         // Scheduling is best-effort.
       }
@@ -168,7 +195,7 @@ export async function rescheduleDigestFromCache(ensemble?: EnsembleSpread | null
       beaufort: stored.windBeaufort === true,
     });
 
-    const body = buildDigestBody(data, ensemble);
+    const body = await buildDigestBodyAsync(data, ensemble);
     if (!body) return;
     await scheduleDigestAt(body, nextDigestAt(hour));
   } catch {
