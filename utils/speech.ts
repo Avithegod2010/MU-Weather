@@ -17,6 +17,8 @@ export const LANGUAGE_TO_SPEECH: Record<LanguageKey, string> = {
   pt: 'pt-PT',
   pl: 'pl-PL',
   tr: 'tr-TR',
+  uk: 'uk-UA',
+  ru: 'ru-RU',
 };
 
 export interface SpokenForecastParts {

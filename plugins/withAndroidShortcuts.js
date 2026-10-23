@@ -210,6 +210,32 @@ const LOCALE_STRINGS = [
       shortcut_compare_long: 'Şehirleri karşılaştır',
     },
   },
+  {
+    dir: 'values-uk',
+    strings: {
+      shortcut_radar: 'Радар',
+      shortcut_radar_long: 'Відкрити радар',
+      shortcut_search: 'Пошук',
+      shortcut_search_long: 'Пошук міста',
+      shortcut_favorites: 'Обране',
+      shortcut_favorites_long: 'Моє обране',
+      shortcut_compare: 'Порівняти',
+      shortcut_compare_long: 'Порівняти міста',
+    },
+  },
+  {
+    dir: 'values-ru',
+    strings: {
+      shortcut_radar: 'Радар',
+      shortcut_radar_long: 'Открыть радар',
+      shortcut_search: 'Поиск',
+      shortcut_search_long: 'Поиск города',
+      shortcut_favorites: 'Избранное',
+      shortcut_favorites_long: 'Моё избранное',
+      shortcut_compare: 'Сравнить',
+      shortcut_compare_long: 'Сравнить города',
+    },
+  },
 ];
 
 const SHORTCUTS = [
