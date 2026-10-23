@@ -92,3 +92,8 @@ __pycache__/
 .tsc-ai-out.txt
 perfetto-captures/
 *.pftrace
+# Local EAS build logs
+.eas-build.log
+.eas-build.err
+# Local session handoff notes
+zcode-prompt.md
