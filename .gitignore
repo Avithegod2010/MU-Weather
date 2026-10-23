@@ -78,5 +78,17 @@ public/canvaskit.wasm
 __pycache__/
 
 # Device-only Perfetto traces and generated capture reports
+# ── batch scratch: local i18n generator/tsc/audit tooling, not part of the catalogs ──
+.tmp-uk-gen.cjs
+.tmp-ru-gen.cjs
+.tmp-build-catalog.cjs
+.tmp-audit-langs.cjs
+.tmp-dump-en.cjs
+.tmp-en-dump.txt
+.tmp-tsc.cjs
+.tsc-code.txt
+.tsc-out.txt
+.tsc-ai-code.txt
+.tsc-ai-out.txt
 perfetto-captures/
 *.pftrace
