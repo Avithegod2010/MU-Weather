@@ -669,6 +669,7 @@ export const uk: Strings = {
   gx_a11y_range: 'Період: {n}',
   d_aqi5: 'ІНДЕКС ЯКОСТІ · НАСТУПНІ 5 ДНІВ',
   d_aqi_day_curve: 'ПОГОДИННО · {day}',
+  d_aqi_hist: 'ОСТАННІ 30 ДНІВ', f_aqi_hist_mean: 'Типовий добовий пік {n}', f_aqi_hist_worst: 'Найгірший {n} {day}', a11y_aqi_hist: 'Історія якості повітря, {n} днів',
   aurora_wind: 'Сонячний вітер {n} км/с',
   aurora_bz: 'Bz {n} нТ',
   aurora_bz_south: 'південний напрямок — сяйво ймовірне',

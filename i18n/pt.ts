@@ -641,6 +641,7 @@ export const pt: Strings = {
   gx_a11y_range: 'Intervalo: {n}',
   d_aqi5: 'IQA · PRÓXIMOS 5 DIAS',
   d_aqi_day_curve: 'POR HORA · {day}',
+  d_aqi_hist: 'ÚLTIMOS 30 DIAS', f_aqi_hist_mean: 'Pico diário típico {n}', f_aqi_hist_worst: 'Pior {n} em {day}', a11y_aqi_hist: 'Histórico da qualidade do ar, {n} dias',
   aurora_wind: 'Vento solar {n} km/s',
   aurora_bz: 'Bz {n} nT',
   aurora_bz_south: 'fortemente para sul — favorável à aurora',

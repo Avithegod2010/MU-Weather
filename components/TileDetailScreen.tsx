@@ -66,7 +66,7 @@ import {
   type DetailAnimStyle,
 } from '../utils/detailAnimations';
 import type { TopicKey } from '../config/tiles';
-import type { WeatherBundle, HourPoint, PollenInfo, EnsembleSpreadPoint, PastDayActual } from '../api/types';
+import type { WeatherBundle, HourPoint, PollenInfo, EnsembleSpreadPoint, PastDayActual, AqiDayPeak } from '../api/types';
 import { buildAqiDayPeaks } from '../api/openMeteo';
 
 export type { TopicKey } from '../config/tiles';
@@ -82,6 +82,8 @@ interface TileDetailScreenProps {
   onAqiScaleChange?: (scale: AqiScale) => void;
   /** Archive actuals feeding the graphs topic's 30-day range. */
   pastDays?: PastDayActual[];
+  /** Past ~31 days of daily peak AQI for the aqi topic's history strip. */
+  aqiHistory?: { days: AqiDayPeak[] | null; stale: boolean } | null;
   onClose: () => void;
 }
 
@@ -382,6 +384,7 @@ export function TileDetailScreen({
   aqiScale,
   onAqiScaleChange,
   pastDays,
+  aqiHistory,
   onClose,
 }: TileDetailScreenProps) {
   const insets = useSafeAreaInsets();
@@ -432,6 +435,7 @@ export function TileDetailScreen({
   let chartTitle = t('d_next24');
   let pollutantChart: React.ReactNode = null;
   let aqiForecast: React.ReactNode = null;
+  let aqiHistStrip: React.ReactNode = null;
   let scaleToggle: React.ReactNode = null;
   let dewChart: React.ReactNode = null;
 let windRose: React.ReactNode = null;
@@ -901,6 +905,58 @@ let windRose: React.ReactNode = null;
         </SlidingGroup>
       );
     }
+    // Past ~31 days of daily peaks from the separate history fetch, rendered
+    // as a slim band-colored strip. Fails closed below 14 usable days so a
+    // half-empty window (new city, API gap) never renders a misleading row.
+    const histRows = (aqiHistory?.days ?? []).map((day) => {
+      const value = scale === 'european' ? day.euPeak ?? day.usPeak : day.usPeak;
+      return {
+        date: day.date,
+        value,
+        color: value === null ? theme.trackColor : aqiBandForScale(scale, value)?.color ?? theme.trackColor,
+      };
+    });
+    const histUsable = histRows.filter((row) => row.value !== null);
+    if (histUsable.length >= 14) {
+      const mean = Math.round(histUsable.reduce((sum, row) => sum + (row.value ?? 0), 0) / histUsable.length);
+      const worst = histUsable.reduce((best, row) => ((row.value ?? 0) > (best.value ?? 0) ? row : best), histUsable[0]);
+      aqiHistStrip = (
+        <View>
+          <View
+            style={styles.aqiHistRow}
+            accessibilityLabel={t('a11y_aqi_hist').replace('{n}', String(histRows.length))}
+          >
+            {histRows.map((row, index) => (
+              <View
+                key={`${row.date}-${index}`}
+                style={[
+                  styles.aqiHistBar,
+                  {
+                    backgroundColor: row.color,
+                    height:
+                      8 +
+                      Math.round(
+                        (row.value === null
+                          ? 0
+                          : scale === 'european'
+                            ? europeanAqiFraction(row.value)
+                            : usAqiFraction(row.value)) * 44,
+                      ),
+                  },
+                ]}
+              />
+            ))}
+          </View>
+          <Text style={[styles.aqiHistCaption, { color: theme.textTertiary }]}>
+            {t('f_aqi_hist_mean').replace('{n}', String(mean))}
+            {' · '}
+            {t('f_aqi_hist_worst')
+              .replace('{n}', String(Math.round(worst.value ?? 0)))
+              .replace('{day}', formatDayFull(worst.date))}
+          </Text>
+        </View>
+      );
+    }
   } else if (view.topic === 'moon') {
     const moon = moonPhase();
     const times = moonTimes(new Date(), view.data.location.latitude, view.data.location.longitude);
@@ -981,6 +1037,7 @@ let windRose: React.ReactNode = null;
   const chartOrder = chart ? order++ : -1;
   const pollutantOrder = pollutantChart ? order++ : -1;
   const aqiForecastOrder = aqiForecast ? order++ : -1;
+  const aqiHistOrder = aqiHistStrip ? order++ : -1;
   const dewOrder = dewChart ? order++ : -1;
   const windRoseOrder = windRose ? order++ : -1;
   const barsOrder = bars ? order++ : -1;
@@ -1061,6 +1118,12 @@ let windRose: React.ReactNode = null;
         {aqiForecast ? (
           <SectionCard theme={theme} animStyle={animStyle} title={t('d_aqi5')} order={aqiForecastOrder}>
             {aqiForecast}
+          </SectionCard>
+        ) : null}
+
+        {aqiHistStrip ? (
+          <SectionCard theme={theme} animStyle={animStyle} title={t('d_aqi_hist')} order={aqiHistOrder}>
+            {aqiHistStrip}
           </SectionCard>
         ) : null}
 
@@ -1358,6 +1421,23 @@ const styles = StyleSheet.create({
   },
   aqiDaysWrap: {
     gap: 8,
+  },
+  aqiHistRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 2,
+    height: 56,
+    marginTop: 4,
+  },
+  aqiHistBar: {
+    flex: 1,
+    borderRadius: 2,
+    minHeight: 4,
+  },
+  aqiHistCaption: {
+    fontSize: 11.5,
+    fontFamily: F.medium,
+    marginTop: 8,
   },
   aqiDayRow: {
     flexDirection: 'row',

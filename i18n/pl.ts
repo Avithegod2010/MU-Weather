@@ -641,6 +641,7 @@ export const pl: Strings = {
   gx_a11y_range: 'Zakres: {n}',
   d_aqi5: 'AQI · NAJBLIŻSZE 5 DNI',
   d_aqi_day_curve: 'GODZINOWO · {day}',
+  d_aqi_hist: 'OSTATNIE 30 DNI', f_aqi_hist_mean: 'Typowy dzienny szczyt {n}', f_aqi_hist_worst: 'Najgorszy {n} dnia {day}', a11y_aqi_hist: 'Historia jakości powietrza, {n} dni',
   aurora_wind: 'Wiatr słoneczny {n} km/s',
   aurora_bz: 'Bz {n} nT',
   aurora_bz_south: 'silnie na południe — zorza prawdopodobna',

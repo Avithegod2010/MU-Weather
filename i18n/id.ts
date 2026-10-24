@@ -264,6 +264,7 @@ export const id: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · 5 HARI KE DEPAN',
   d_aqi_day_curve: 'PER JAM · {day}',
+  d_aqi_hist: '30 HARI TERAKHIR', f_aqi_hist_mean: 'Puncak harian tipikal {n}', f_aqi_hist_worst: 'Terburuk {n} pada {day}', a11y_aqi_hist: 'Riwayat kualitas udara, {n} hari',
 
   // ── aurora solar wind ──
   aurora_wind: 'Angin surya {n} km/s',

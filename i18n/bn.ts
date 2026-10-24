@@ -264,6 +264,7 @@ export const bn: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · পরের ৫ দিন',
   d_aqi_day_curve: 'ঘণ্টাপ্রতি · {day}',
+  d_aqi_hist: 'গত ৩০ দিন', f_aqi_hist_mean: 'সাধারণ দৈনিক সর্বোচ্চ {n}', f_aqi_hist_worst: 'সবচেয়ে খারাপ {n}, {day}', a11y_aqi_hist: 'বায়ুর গুণমানের ইতিহাস, {n} দিন',
 
   // ── aurora solar wind ──
   aurora_wind: 'সৌর বায়ু {n} km/s',

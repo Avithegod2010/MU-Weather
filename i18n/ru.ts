@@ -669,6 +669,7 @@ export const ru: Strings = {
   gx_a11y_range: 'Период: {n}',
   d_aqi5: 'Индекс качества · БЛИЖАЙШИЕ 5 ДНЕЙ',
   d_aqi_day_curve: 'ПОЧАСОВО · {day}',
+  d_aqi_hist: 'ПОСЛЕДНИЕ 30 ДНЕЙ', f_aqi_hist_mean: 'Обычный дневной пик {n}', f_aqi_hist_worst: 'Худший {n}, {day}', a11y_aqi_hist: 'История качества воздуха, {n} дней',
   aurora_wind: 'Солнечный ветер {n} км/с',
   aurora_bz: 'Bz {n} нТл',
   aurora_bz_south: 'южный разворот — сияние вероятно',

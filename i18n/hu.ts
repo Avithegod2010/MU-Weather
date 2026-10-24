@@ -264,6 +264,7 @@ export const hu: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · KÖVETKEZŐ 5 NAP',
   d_aqi_day_curve: 'ÓRÁNKÉNT · {day}',
+  d_aqi_hist: 'ELMÚLT 30 NAP', f_aqi_hist_mean: 'Jellemző napi csúcs {n}', f_aqi_hist_worst: 'Legrosszabb {n} ekkor: {day}', a11y_aqi_hist: 'Légszennyezettség előzmények, {n} nap',
 
   // ── aurora solar wind ──
   aurora_wind: 'Szoláris szél {n} km/s',

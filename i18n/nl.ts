@@ -264,6 +264,7 @@ export const nl: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · KOMENDE 5 DAGEN',
   d_aqi_day_curve: 'PER UUR · {day}',
+  d_aqi_hist: 'AFGELOPEN 30 DAGEN', f_aqi_hist_mean: 'Gebruikelijke dagelijkse piek {n}', f_aqi_hist_worst: 'Slechtste {n} op {day}', a11y_aqi_hist: 'Luchtkwaliteitshistorie, {n} dagen',
 
   // ── aurora solar wind ──
   aurora_wind: 'Zonnewind {n} km/s',

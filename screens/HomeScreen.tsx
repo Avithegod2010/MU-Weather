@@ -52,6 +52,7 @@ import { TripPlannerCard } from '../components/TripPlannerCard';
 import { CalendarCard } from '../components/CalendarCard';
 import { useCalendarWeather } from '../hooks/useCalendarWeather';
 import { useMarine } from '../hooks/useMarine';
+import { useAqiHistory } from '../hooks/useAqiHistory';
 import { MarineCard } from '../components/MarineCard';
 // ── bot2: aurora + alerts + wear ──
 import { useAurora } from '../hooks/useAurora';
@@ -404,6 +405,7 @@ export function HomeScreen() {
     weather.data?.daily ?? [],
   );
   const marine = useMarine(FEATURES.marineForecast ? active : null);
+  const aqiHistory = useAqiHistory(active);
   // ── bot2: aurora + alerts + wear ──
   const aurora = useAurora(FEATURES.aurora ? active : null);
   const comparison = useCityComparison(
@@ -1279,6 +1281,7 @@ export function HomeScreen() {
         aqiScale={settings.aqiScale}
         onAqiScaleChange={(scale) => updateSettings({ aqiScale: scale })}
         pastDays={pastDays.days}
+        aqiHistory={aqiHistory.days !== null ? { days: aqiHistory.days, stale: aqiHistory.stale } : null}
         onClose={() => setDetailTopic(null)}
       />
 

@@ -203,6 +203,24 @@ export function buildAqiDayPeaks(points: AqiHourPoint[]): AqiDayPeak[] {
   return peaks;
 }
 
+/**
+ * Past-31-days hourly AQI for the history strip, from the SAME keyless
+ * air-quality endpoint via `past_days=31` (rolling window ending today).
+ * Deliberately separate from the main weather fetch so the primary call's
+ * contracts (slice(0,24) = next 24 h, forecast_hours=120) stay untouched.
+ */
+export async function fetchAqiHistory(latitude: number, longitude: number): Promise<AqiHourPoint[]> {
+  const params = new URLSearchParams({
+    latitude: latitude.toFixed(4),
+    longitude: longitude.toFixed(4),
+    hourly: 'us_aqi,european_aqi',
+    past_days: '31',
+    timezone: 'auto',
+  }).toString();
+  const response = await fetchJson<AirQualityResponse>(`${AIR_QUALITY_URL}?${params}`, 15000);
+  return buildAqiHourly(response, Number.MAX_SAFE_INTEGER);
+}
+
 type BaseCurrentConditions = Omit<
   CurrentConditions,
   'dewPoint' | 'visibility' | 'pressureTrend'

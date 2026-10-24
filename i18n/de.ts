@@ -264,6 +264,7 @@ export const de: Strings = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · NÄCHSTE 5 TAGE',
   d_aqi_day_curve: 'STÜNDLICH · {day}',
+  d_aqi_hist: 'LETZTE 30 TAGE', f_aqi_hist_mean: 'Üblicher Tageshöchstwert {n}', f_aqi_hist_worst: 'Schlechtester {n} am {day}', a11y_aqi_hist: 'Luftqualitätsverlauf, {n} Tage',
 
   // ── aurora solar wind ──
   aurora_wind: 'Sonnenwind {n} km/s',

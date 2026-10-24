@@ -750,6 +750,7 @@ export const en = {
   // ── aqi 5-day forecast ──
   d_aqi5: 'AQI · NEXT 5 DAYS',
   d_aqi_day_curve: 'HOURLY · {day}',
+  d_aqi_hist: 'PAST 30 DAYS', f_aqi_hist_mean: 'Typical daily peak {n}', f_aqi_hist_worst: 'Worst {n} on {day}', a11y_aqi_hist: 'Air quality history, {n} days',
 
   // ── aurora solar wind ──
   aurora_wind: 'Solar wind {n} km/s',

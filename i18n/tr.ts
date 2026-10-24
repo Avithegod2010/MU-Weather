@@ -641,6 +641,7 @@ export const tr: Strings = {
   gx_a11y_range: 'Aralık: {n}',
   d_aqi5: 'AQI · SONRAKİ 5 GÜN',
   d_aqi_day_curve: 'SAATLİK · {day}',
+  d_aqi_hist: 'SON 30 GÜN', f_aqi_hist_mean: 'Tipik günlük zirve {n}', f_aqi_hist_worst: 'En kötü {n}, {day}', a11y_aqi_hist: 'Hava kalitesi geçmişi, {n} gün',
   aurora_wind: 'Güneş rüzgârı {n} km/s',
   aurora_bz: 'Bz {n} nT',
   aurora_bz_south: 'güneye doğru kuvvetli — kutup ışıkları olası',
