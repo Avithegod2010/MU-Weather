@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MU Weather — a beautiful, keyless weather app for Android</title>
+<meta name="description" content="MU Weather (Material You Weather): 16-day forecasts, animated rain radar, official warnings, 5 widgets, 16 languages. No accounts, no tracking, no API keys. Free & open source.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230D1631'/><circle cx='38' cy='40' r='16' fill='%23F5C86A'/><path d='M30 66h44a12 12 0 0 0 0-24 18 18 0 0 0-34-6 14 14 0 0 0-10 30z' fill='%23E8EEF7'/></svg>">
+<style>
+:root{
+  --bg:#0D1631;--bg2:#111C3F;--card:#16224A;--card2:#1B2A5C;
+  --text:#E8EEF7;--muted:#9AA8C7;--line:rgba(232,238,247,.09);
+  --accent:#7FB5F0;--sun:#F5C86A;--green:#5BC98C;--rain:#6FA8DC;
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;overflow-x:hidden}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+a{color:var(--accent);text-decoration:none}
+h1,h2,h3{line-height:1.2;font-weight:700}
+/* ── nav ── */
+nav{position:sticky;top:0;z-index:50;background:rgba(13,22,49,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:20px;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:var(--text)}
+.logo svg{flex:none}
+.nav .sp{flex:1}
+.nav a.link{color:var(--muted);font-size:14.5px;font-weight:500}
+.nav a.link:hover{color:var(--text)}
+/* ── buttons ── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:999px;font-weight:600;font-size:15px;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,#5D9CEC,#7FB5F0);color:#0A122B;box-shadow:0 6px 22px rgba(95,156,236,.35)}
+.btn.ghost{border:1px solid var(--line);color:var(--text)}
+.btn.ghost:hover{background:var(--card)}
+/* ── hero ── */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding:72px 0 60px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--accent);border-radius:2px}
+.hero h1{font-size:clamp(34px,5vw,52px);letter-spacing:-.02em}
+.hero h1 .you{background:linear-gradient(120deg,var(--sun),#F0964E);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{color:var(--muted);font-size:17.5px;max-width:34em;margin:18px 0 26px}
+.cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.stats{display:flex;gap:26px;margin-top:30px;flex-wrap:wrap}
+.stat b{font-size:22px;display:block;letter-spacing:-.02em}
+.stat span{color:var(--muted);font-size:13px}
+/* ── phone mock ── */
+.phone{justify-self:center;width:270px;border-radius:38px;border:1px solid rgba(232,238,247,.14);background:linear-gradient(180deg,#0A122B,#0D1631);padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 6px rgba(232,238,247,.03)}
+.screen{border-radius:28px;overflow:hidden;background:linear-gradient(175deg,#20315F 0%,#16224A 55%,#101A3C 100%);padding:20px 16px 14px;min-height:430px;position:relative}
+.screen::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 80% -10%,rgba(245,200,106,.22),transparent 60%),radial-gradient(90% 50% at 10% 110%,rgba(111,168,220,.25),transparent 60%);pointer-events:none}
+.scr-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;position:relative}
+.scr-city{color:var(--text);font-weight:600;font-size:14px}
+.scr-warn{margin-top:12px;background:rgba(232,93,93,.16);border:1px solid rgba(232,93,93,.35);color:#F0A5A5;font-size:11.5px;padding:7px 10px;border-radius:10px;position:relative}
+.scr-hero{text-align:center;margin-top:26px;position:relative}
+.scr-temp{font-size:64px;font-weight:700;letter-spacing:-.04em}
+.scr-cond{color:var(--muted);font-size:13.5px}
+.scr-feels{color:var(--muted);font-size:11.5px;margin-top:4px}
+.scr-hilo{display:flex;justify-content:center;gap:14px;margin-top:10px;font-size:12.5px}
+.scr-hilo b{font-weight:600}
+.scr-strip{display:flex;justify-content:space-between;margin-top:26px;background:rgba(232,238,247,.05);border-radius:14px;padding:10px 8px;position:relative}
+.scr-hour{text-align:center;font-size:10.5px;color:var(--muted)}
+.scr-hour b{display:block;color:var(--text);font-size:13px;font-weight:600}
+.scr-hours{position:absolute;bottom:16px;left:16px;right:16px;display:flex;gap:8px;justify-content:space-between;color:var(--muted);font-size:10.5px;background:rgba(232,238,247,.05);border-radius:14px;padding:9px 10px}
+.scr-hours b{color:var(--text)}
+.scr-radar{position:absolute;bottom:64px;left:16px;right:16px;height:74px;border-radius:14px;background:linear-gradient(120deg,#0F2E20,#12351F 55%,#0F2E20);border:1px solid rgba(91,201,140,.25);display:flex;align-items:center;justify-content:center;color:#8FD8AF;font-size:11px;letter-spacing:.08em}
+.scr-radar i{animation:pulse 2.2s infinite;font-style:normal}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+/* ── sections ── */
+section{padding:64px 0}
+.sec-head{margin-bottom:36px}
+.sec-head h2{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.02em}
+.sec-head p{color:var(--muted);margin-top:8px;max-width:44em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:transform .18s ease,border-color .18s ease}
+.card:hover{transform:translateY(-3px);border-color:rgba(127,181,240,.35)}
+.card .ic{font-size:24px;margin-bottom:10px;display:block}
+.card h3{font-size:16px;margin-bottom:6px}
+.card p{color:var(--muted);font-size:14px}
+/* privacy */
+.privacy{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:24px;padding:38px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px}
+.privacy .p b{display:block;font-size:16px;margin-bottom:6px}
+.privacy .p span{color:var(--muted);font-size:14px}
+/* langs */
+.langs{display:flex;flex-wrap:wrap;gap:10px}
+.lang{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:14px}
+/* downloads */
+.dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.dl .card b{font-size:15px}
+.dl .card .size{color:var(--muted);font-size:12.5px;display:block;margin:2px 0 12px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+td:first-child{font-weight:600;white-space:nowrap}
+td:last-child{color:var(--muted)}
+.src-table{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+/* footer */
+footer{border-top:1px solid var(--line);padding:34px 0 44px;color:var(--muted);font-size:13.5px}
+footer .f{display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+@media(max-width:860px){
+  .hero{grid-template-columns:1fr;padding:48px 0 40px;text-align:center}
+  .hero p.sub{margin-inline:auto}
+  .cta,.stats{justify-content:center}
+  .nav a.link:not(.keep){display:none}
+  section{padding:48px 0}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav">
+    <a class="logo" href="#top" aria-label="MU Weather home">
+      <svg width="26" height="26" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#16224A"/><circle cx="38" cy="40" r="16" fill="#F5C86A"/><path d="M30 66h44a12 12 0 0 0 0-24 18 18 0 0 0-34-6 14 14 0 0 0-10 30z" fill="#E8EEF7"/></svg>
+      MU Weather
+    </a>
+    <span class="sp"></span>
+    <a class="link" href="#features">Features</a>
+    <a class="link" href="#privacy">Privacy</a>
+    <a class="link" href="#languages">Languages</a>
+    <a class="link" href="#download">Download</a>
+    <a class="link keep" href="https://github.com/Avithegod2010/MU-Weather">GitHub ↗</a>
+  </div>
+</nav>
+
+<header class="wrap hero" id="top">
+  <div>
+    <span class="kicker">Material You · Android · Open Source</span>
+    <h1>Weather that looks like <span class="you">your phone</span>, and answers to no cloud.</h1>
+    <p class="sub">MU Weather is a free, offline-friendly Android weather app: 16-day forecasts, an animated rain radar, official government warnings, five home-screen widgets and 16 languages — with <b style="color:var(--text)">no accounts, no tracking and no API keys</b>.</p>
+    <div class="cta">
+      <a class="btn primary" href="#download">Download v1.4.0</a>
+      <a class="btn ghost" href="https://github.com/Avithegod2010/MU-Weather">View on GitHub</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>16</b><span>languages</span></div>
+      <div class="stat"><b>5</b><span>widgets</span></div>
+      <div class="stat"><b>0</b><span>API keys needed</span></div>
+      <div class="stat"><b>MIT</b><span>license</span></div>
+    </div>
+  </div>
+  <div class="phone" aria-hidden="true">
+    <div class="screen">
+      <div class="scr-head"><span class="scr-city">London</span><span>9:41</span></div>
+      <div class="scr-warn">⚠ Heavy rainfall expected</div>
+      <div class="scr-hero">
+        <div class="scr-temp">9°</div>
+        <div class="scr-cond">Overcast</div>
+        <div class="scr-feels">Feels like 7° — the humidity talking</div>
+        <div class="scr-hilo"><span>H <b>16°</b></span><span>L <b>8°</b></span></div>
+      </div>
+      <div class="scr-strip">
+        <span class="scr-hour">12PM<b>10°</b></span>
+        <span class="scr-hour">1PM<b>12°</b></span>
+        <span class="scr-hour">2PM<b>13°</b></span>
+        <span class="scr-hour">3PM<b>12°</b></span>
+        <span class="scr-hour">4PM<b>11°</b></span>
+      </div>
+      <div class="scr-radar"><i>● LIVE RADAR</i></div>
+      <div class="scr-hours">MU Weather <b>· Material You</b></div>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Everything a weather app should do</h2>
+      <p>Built across 14 releases by one hobbyist developer and the open-source community — every feature works without an account or a key.</p>
+    </div>
+    <div class="grid">
+      <div class="card"><span class="ic">📅</span><h3>16-day forecast</h3><p>Hourly scroller, trend chart with an ensemble P10–P90 confidence band, and tap-to-expand day detail.</p></div>
+      <div class="card"><span class="ic">🌧️</span><h3>Animated rain radar</h3><p>Playback, scrubbing and pinch zoom on a pure-JS tile renderer — no Google Maps, no billing.</p></div>
+      <div class="card"><span class="ic">🚨</span><h3>Official warnings</h3><p>Government alerts from MeteoAlarm in Europe and the US National Weather Service, with opt-in rules for fog, black ice, storms and more.</p></div>
+      <div class="card"><span class="ic">🧩</span><h3>Five widgets</h3><p>2×2, sunrise countdown, 4×2, a 4×3 dashboard and a multi-city widget with its own config screen — all sky-themed.</p></div>
+      <div class="card"><span class="ic">🎨</span><h3>Material You</h3><p>The palette follows your wallpaper on Android 12+, with 10 extra themes, density and icon-style options.</p></div>
+      <div class="card"><span class="ic">🗣️</span><h3>Spoken digest</h3><p>A daily readout of your day — optionally upgraded to a natural-language summary by the AI digest (bring your own key; everything works without one).</p></div>
+      <div class="card"><span class="ic">🫁</span><h3>Air quality &amp; pollen</h3><p>US/EU AQI scales, 24 h pollutant curves, a 5-day outlook and a 30-day history strip.</p></div>
+      <div class="card"><span class="ic">🎯</span><h3>Accuracy tracking</h3><p>MU Weather scores its own forecasts against reality and ranks weather models on a leaderboard.</p></div>
+      <div class="card"><span class="ic">📔</span><h3>Weather journal</h3><p>Rate your days and the app learns what to wear — plus record breakers, year in review and climate normals.</p></div>
+      <div class="card"><span class="ic">🔔</span><h3>Alerts that respect you</h3><p>Quiet hours, snooze/dismiss buttons, per-city cooldowns and a custom alert builder with notes.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Private by architecture, not by policy</h2>
+      <p>Privacy claims are cheap. MU Weather's are structural — there is no server to trust.</p>
+    </div>
+    <div class="privacy">
+      <div class="p"><b>No accounts</b><span>Install and use. Nothing to sign up for, nothing to delete later.</span></div>
+      <div class="p"><b>No tracking</b><span>Zero analytics, zero ads, zero crash reporters. Your location never leaves the device except as a coordinate in a weather API call.</span></div>
+      <div class="p"><b>No API keys</b><span>Every data source is a free public API — Open-Meteo, RainViewer, NOAA, MeteoAlarm. Nothing can be revoked, rate-limited by a vendor, or billed.</span></div>
+      <div class="p"><b>Open source</b><span>MIT-licensed, every line reviewable. Verify the claims yourself.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="languages">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>16 languages, fully translated</h2>
+      <p>Every catalog is a complete 935-key translation pass — including launcher shortcuts and the spoken voice — not a partial overlay.</p>
+    </div>
+    <div class="langs">
+      <span class="lang">🇬🇧 English</span><span class="lang">🇮🇳 हिन्दी</span><span class="lang">🇧🇩 বাংলা</span><span class="lang">🇪🇸 Español</span><span class="lang">🇫🇷 Français</span><span class="lang">🇩🇪 Deutsch</span><span class="lang">🇳🇱 Nederlands</span><span class="lang">🇬🇷 Ελληνικά</span><span class="lang">🇭🇺 Magyar</span><span class="lang">🇮🇩 Bahasa Indonesia</span><span class="lang">🇮🇹 Italiano</span><span class="lang">🇵🇹 Português</span><span class="lang">🇵🇱 Polski</span><span class="lang">🇹🇷 Türkçe</span><span class="lang">🇺🇦 Українська</span><span class="lang">🇷🇺 Русский</span>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Download v1.4.0</h2>
+      <p>APKs are built reproducibly on Expo EAS and published on GitHub Releases with SHA-256 checksums. Pick your architecture — when in doubt, arm64.</p>
+    </div>
+    <div class="dl">
+      <a class="card" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.4.0/app-arm64-v8a-release.apk"><b>📱 arm64-v8a</b><span class="size">46 MB · most phones after 2016</span><span class="btn primary" style="font-size:13.5px;padding:9px 16px">Download</span></a>
+      <a class="card" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.4.0/app-armeabi-v7a-release.apk"><b>📲 armeabi-v7a</b><span class="size">37 MB · older 32-bit devices</span><span class="btn ghost" style="font-size:13.5px;padding:9px 16px">Download</span></a>
+      <a class="card" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.4.0/app-x86_64-release.apk"><b>🖥️ x86_64</b><span class="size">47 MB · emulators &amp; Chromebooks</span><span class="btn ghost" style="font-size:13.5px;padding:9px 16px">Download</span></a>
+      <a class="card" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.4.0/app-universal-release.apk"><b>📦 Universal</b><span class="size">127 MB · works everywhere</span><span class="btn ghost" style="font-size:13.5px;padding:9px 16px">Download</span></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Data sources</h2>
+      <p>Keyless public services, credited where due. No source requires registration.</p>
+    </div>
+    <div class="src-table">
+      <table>
+        <tr><td>Open-Meteo</td><td>Forecast, ensemble, archive, air quality and marine data. Free for non-commercial use.</td></tr>
+        <tr><td>RainViewer</td><td>Global precipitation radar tiles for the animated map.</td></tr>
+        <tr><td>NOAA SWPC</td><td>Space weather: Kp index, solar wind and aurora conditions.</td></tr>
+        <tr><td>MeteoAlarm</td><td>Official severe-weather warnings across Europe (EUMETNET).</td></tr>
+        <tr><td>US National Weather Service</td><td>Official warnings and advisories for US locations (api.weather.gov).</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f">
+    <span>MU Weather — Material You Weather · MIT License · Not affiliated with Google or Android.</span>
+    <span><a href="https://github.com/Avithegod2010/MU-Weather">Source</a> · <a href="https://github.com/Avithegod2010/MU-Weather/releases">Releases</a> · <a href="https://github.com/Avithegod2010/MU-Weather/blob/master/README.md">Docs</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
