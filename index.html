@@ -3,28 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MU Weather — a beautiful, keyless weather app for Android</title>
-<meta name="description" content="16-day forecasts, an animated rain radar, official government warnings, five home-screen widgets and 16 languages. No accounts, no tracking, no API keys. Free & open source.">
+<title>MU Weather — feel the weather, own your data</title>
+<meta name="description" content="A free, keyless, offline-friendly Android weather app. 16-day forecast with confidence bands, animated radar, official warnings, 5 widgets, 16 languages. Try the live weather on this page.">
 <meta property="og:title" content="MU Weather — Material You weather for Android">
-<meta property="og:description" content="A free, keyless, offline-friendly weather app. 16-day forecast, animated radar, official warnings, 5 widgets, 16 languages. MIT licensed.">
+<meta property="og:description" content="A free, keyless, offline-friendly weather app. Try the live weather simulation on the page — then take it to your phone.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Avithegod2010/MU-Weather/master/assets/icon.png">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0D1631">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230D1631'/><circle cx='36' cy='38' r='15' fill='%23F5C86A'/><path d='M28 66h46a12 12 0 0 0 0-24 19 19 0 0 0-36-6 14 14 0 0 0-10 30z' fill='%23E8EEF7'/></svg>">
+<meta name="theme-color" content="#0A122B">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230A122B'/><circle cx='36' cy='38' r='15' fill='%23F5C86A'/><path d='M28 66h46a12 12 0 0 0 0-24 19 19 0 0 0-36-6 14 14 0 0 0-10 30z' fill='%23E8EEF7'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"MU Weather","operatingSystem":"Android","applicationCategory":"WeatherApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free, open-source, keyless Android weather app with 16-day forecasts, animated radar, official warnings, widgets and 16 languages.","license":"https://opensource.org/licenses/MIT","url":"https://avithegod2010.github.io/MU-Weather/"}
+</script>
 </head>
-<body>
+<body class="wx-clear">
 
 <div class="sky" aria-hidden="true">
-  <div class="stars"></div>
+  <canvas id="sky-canvas"></canvas>
   <div class="blob blob-a"></div>
   <div class="blob blob-b"></div>
   <div class="blob blob-c"></div>
-  <div class="meteor"></div>
 </div>
+<div id="cursor-glow" aria-hidden="true"></div>
+<div id="flash-overlay" aria-hidden="true"></div>
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<a class="skip" href="#main">Skip to content</a>
 
 <nav>
   <div class="wrap nav">
@@ -47,8 +54,8 @@
 <header class="wrap hero" id="top">
   <div class="hero-copy">
     <span class="kicker reveal">Material You · Android · Open Source</span>
-    <h1 class="reveal">Weather that looks like <span class="grad">your phone</span>,<br>and answers to no cloud.</h1>
-    <p class="sub reveal">MU Weather is a free, offline-friendly Android weather app — a 16-day forecast with confidence bands, an animated rain radar, official government warnings, five widgets and 16 languages. <b>No accounts, no tracking, no API keys.</b></p>
+    <h1 class="reveal">Feel the weather.<br><span class="grad">Own your data.</span></h1>
+    <p class="sub reveal">MU Weather is a free, offline-friendly Android app — a 16-day forecast with honesty bands, an animated rain radar, official government warnings, five widgets and 16 languages. <b>No accounts, no tracking, no API keys.</b></p>
     <div class="cta reveal">
       <a class="btn primary" href="#download">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
@@ -56,6 +63,15 @@
       </a>
       <a class="btn ghost" href="https://github.com/Avithegod2010/MU-Weather">View source</a>
     </div>
+
+    <div class="wx-switch reveal" role="group" aria-label="Try the live weather on this page">
+      <span class="wx-switch-label">Try it live —</span>
+      <button class="wx-chip" data-mode="clear" aria-pressed="true"><i class="wc wc-clear"></i>Clear night</button>
+      <button class="wx-chip" data-mode="rain" aria-pressed="false"><i class="wc wc-rain"></i>Rain</button>
+      <button class="wx-chip" data-mode="snow" aria-pressed="false"><i class="wc wc-snow"></i>Snow</button>
+      <button class="wx-chip" data-mode="storm" aria-pressed="false"><i class="wc wc-storm"></i>Storm</button>
+    </div>
+
     <div class="stats reveal" aria-label="Key numbers">
       <div class="stat"><b data-count="16">0</b><span>languages</span></div>
       <div class="stat"><b data-count="5">0</b><span>widgets</span></div>
@@ -65,42 +81,45 @@
   </div>
 
   <div class="phone-col reveal" aria-hidden="true">
-    <div class="phone">
-      <div class="screen">
-        <div class="scr-status"><span>9:41</span><span class="scr-status-r"><i class="dot"></i><i class="dot"></i><i class="bat"></i></span></div>
-        <div class="scr-cityrow">
-          <span class="scr-city">London</span>
-          <span class="scr-badge">My location</span>
-        </div>
-        <div class="scr-warn">
-          <span class="pulse-dot"></span> Heavy rainfall expected · until 3 PM
-        </div>
-        <div class="scr-hero">
-          <div class="scr-icon">
-            <span class="mini-sun"></span>
-            <span class="mini-cloud"></span>
+    <div class="phone-glow"></div>
+    <div class="tilt">
+      <div class="phone ph-clear">
+        <div class="screen">
+          <div class="scr-status"><span>9:41</span><span class="scr-status-r"><i class="dot"></i><i class="dot"></i><i class="bat"></i></span></div>
+          <div class="scr-cityrow">
+            <span class="scr-city">London</span>
+            <span class="scr-badge">My location</span>
           </div>
-          <div class="scr-temp"><span id="heroTemp">9</span>°</div>
-          <div class="scr-cond">Overcast</div>
-          <div class="scr-feels">Feels like 7° — the humidity talking</div>
-          <div class="scr-hilo"><span>H <b>16°</b></span><span class="hilo-sep"></span><span>L <b>8°</b></span></div>
-        </div>
-        <div class="scr-strip">
-          <div class="scr-hour now"><span>Now</span><b>9°</b><i style="--p:.9"></i></div>
-          <div class="scr-hour"><span>12PM</span><b>10°</b><i style="--p:.6"></i></div>
-          <div class="scr-hour"><span>1PM</span><b>12°</b><i style="--p:.35"></i></div>
-          <div class="scr-hour"><span>2PM</span><b>13°</b><i style="--p:.2"></i></div>
-          <div class="scr-hour"><span>3PM</span><b>12°</b><i style="--p:.45"></i></div>
-          <div class="scr-hour"><span>4PM</span><b>11°</b><i style="--p:.7"></i></div>
-        </div>
-        <div class="scr-radar">
-          <span class="sweep"></span>
-          <span class="blip b1"></span><span class="blip b2"></span><span class="blip b3"></span>
-          <span class="scr-radar-label"><i>●</i> LIVE RADAR</span>
+          <div class="scr-warn" id="phWarn"><span class="pulse-dot"></span><span id="phWarnText">Severe thunderstorm warning · until 9 PM</span></div>
+          <div class="scr-hero">
+            <div class="scr-icon">
+              <span class="ic ic-sun"><i class="ray-spin"></i></span>
+              <span class="ic ic-cloud"></span>
+              <span class="ic ic-rain"><b></b><b></b><b></b></span>
+              <span class="ic ic-snow"><b></b><b></b><b></b></span>
+              <span class="ic ic-bolt"></span>
+            </div>
+            <div class="scr-temp"><span id="phTemp">21</span>°</div>
+            <div class="scr-cond" id="phCond">Clear night</div>
+            <div class="scr-feels" id="phFeels">Feels like 20° — a perfect evening</div>
+            <div class="scr-hilo"><span>H <b id="phHi">23°</b></span><span class="hilo-sep"></span><span>L <b id="phLo">14°</b></span></div>
+          </div>
+          <div class="scr-strip" id="phStrip">
+            <div class="scr-hour now"><span>Now</span><b>21°</b><i style="--p:.05"></i></div>
+            <div class="scr-hour"><span>10PM</span><b>20°</b><i style="--p:.1"></i></div>
+            <div class="scr-hour"><span>11PM</span><b>18°</b><i style="--p:.15"></i></div>
+            <div class="scr-hour"><span>12AM</span><b>17°</b><i style="--p:.05"></i></div>
+            <div class="scr-hour"><span>1AM</span><b>16°</b><i style="--p:0"></i></div>
+            <div class="scr-hour"><span>2AM</span><b>15°</b><i style="--p:0"></i></div>
+          </div>
+          <div class="scr-radar">
+            <span class="sweep"></span>
+            <span class="blip b1"></span><span class="blip b2"></span><span class="blip b3"></span>
+            <span class="scr-radar-label"><i>●</i> LIVE RADAR</span>
+          </div>
         </div>
       </div>
     </div>
-    <div class="phone-glow" aria-hidden="true"></div>
   </div>
 </header>
 
@@ -110,20 +129,20 @@
   </div>
 </div>
 
+<main id="main">
 <section id="features">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="kicker">Features</span>
       <h2>Everything a weather app should do.<br>Nothing it shouldn't.</h2>
-      <p>Fourteen releases of craft by one hobbyist developer and the open-source community — and every single feature works without an account or a key.</p>
+      <p>Fourteen releases of craft by one hobbyist developer and the open-source community — every feature works without an account or a key. <em>(Psst — move your cursor over the radar tile.)</em></p>
     </div>
 
     <div class="bento">
       <div class="tile t-radar reveal">
-        <div class="tile-map" aria-hidden="true">
+        <div class="tile-map" id="tileMap" aria-hidden="true">
           <span class="sweep big"></span>
           <span class="rain r1"></span><span class="rain r2"></span><span class="rain r3"></span>
-          <span class="tilegrid"></span>
         </div>
         <div class="tile-body">
           <h3>Animated rain radar</h3>
@@ -135,12 +154,12 @@
         <svg class="band-chart" viewBox="0 0 320 110" aria-hidden="true">
           <defs>
             <linearGradient id="bandFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#7FB5F0" stop-opacity=".38"/>
-              <stop offset="1" stop-color="#7FB5F0" stop-opacity=".06"/>
+              <stop offset="0" stop-color="var(--accent)" stop-opacity=".38"/>
+              <stop offset="1" stop-color="var(--accent)" stop-opacity=".06"/>
             </linearGradient>
             <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stop-color="#F5C86A"/>
-              <stop offset="1" stop-color="#7FB5F0"/>
+              <stop offset="1" stop-color="var(--accent)"/>
             </linearGradient>
           </defs>
           <path class="band-area" fill="url(#bandFill)" d="M8,62 C40,50 60,70 92,58 C124,46 150,30 186,34 C222,38 250,58 312,44 L312,86 C250,98 222,80 186,76 C150,72 124,86 92,96 C60,104 40,84 8,92 Z"/>
@@ -171,7 +190,7 @@
         </div>
         <div class="tile-body">
           <h3>Material You, plus ten themes</h3>
-          <p>On Android 12+ the whole palette — cards, charts, widgets — follows your wallpaper.</p>
+          <p>On Android 12+ the whole palette — cards, charts, widgets — follows your wallpaper. Watch this page's own palette shift when you switch the weather above.</p>
         </div>
       </div>
 
@@ -328,6 +347,9 @@
     </div>
   </div>
 </section>
+</main>
+
+<button id="toTop" aria-label="Back to top">↑</button>
 
 <footer>
   <div class="wrap f">
