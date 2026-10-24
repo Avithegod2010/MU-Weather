@@ -10,11 +10,14 @@ built with React Native & Expo.
 [![Expo SDK](https://img.shields.io/badge/Expo_SDK-57-000020.svg?logo=expo&logoColor=white)](https://docs.expo.dev/versions/v57.0.0/)
 [![React Native](https://img.shields.io/badge/React_Native-0.86-61DAFB.svg?logo=react&logoColor=white)](https://reactnative.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Languages](https://img.shields.io/badge/languages-14-8A2BE2.svg)](#-languages)
+[![Languages](https://img.shields.io/badge/languages-16-8A2BE2.svg)](#-languages)
 [![API keys](https://img.shields.io/badge/API_keys-none-success.svg)](#-data-sources--attribution)
-[![Release](https://img.shields.io/badge/release-v1.0-brightgreen.svg)](https://github.com/Avithegod2010/MU-Weather/releases/tag/v1.0)
+[![Release](https://img.shields.io/badge/release-v1.4.0-brightgreen.svg)](https://github.com/Avithegod2010/MU-Weather/releases/latest)
+[![Website](https://img.shields.io/badge/website-avithegod2010.github.io%2FMU--Weather-0D1631.svg?logo=github)](https://avithegod2010.github.io/MU-Weather/)
 
 <sub>No accounts · No analytics · No tracking · No API keys · All your data stays on your device</sub>
+
+**[🌐 Project website](https://avithegod2010.github.io/MU-Weather/)** · [Download the latest release](https://github.com/Avithegod2010/MU-Weather/releases/latest)
 
 </div>
 
