@@ -291,6 +291,10 @@ ${entries.join('\n')}
 function writeShortcutResources(projectRoot) {
   const resDir = path.join(projectRoot, 'android', 'app', 'src', 'main', 'res');
   for (const locale of LOCALE_STRINGS) {
+    // locale.dir is a static table, but only allowlist-shaped dirs may reach path.join
+    if (!/^values(-[a-z]{2,4})?$/.test(locale.dir)) {
+      throw new Error(`withAndroidShortcuts: unexpected locale dir '${locale.dir}'`);
+    }
     const dir = path.join(resDir, locale.dir);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, 'shortcuts_strings.xml'), stringsXml(locale.strings), 'utf8');
