@@ -1,0 +1,38 @@
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Weather policy engines
+        run: npm run test:weather-policies
+      - name: Rain calibration
+        run: npm run test:rain-calibration
+      - name: Ensemble calibration
+        run: npm run test:ensemble-calibration
+      - name: Alert pipeline
+        run: npm run test:alert-pipeline
+      - name: Local data manager
+        run: npm run test:local-data-manager
+      - name: Model accuracy
+        run: npm run test:model-accuracy
+      - name: Provider failures
+        run: npm run test:provider-failures
+      - name: Perfetto compare
+        run: npm run test:perfetto-compare
+      - name: Unit tests (jest)
+        run: npm test -- --ci

@@ -1,6 +1,7 @@
 import { describeWmo } from './wmo';
 import { formatHourLabel, convertWind, windUnitLabel } from './format';
 import { peakCape } from './storm';
+import { t } from './i18n';
 import type { StringKey } from './i18n';
 import type { AlertEvidence } from './alertEvidence';
 import type { Nowcast } from './nowcast';
@@ -236,13 +237,27 @@ export function evaluateAlerts(
     );
     if (peak.precipProbability >= 60) {
       const severe = peak.precipProbability >= 85 || peak.precipitation >= 4;
-      triggered.push({
-        key: 'rain',
-        title: severe ? 'Heavy rainfall expected' : 'Rain expected',
-        message: `${severe ? 'Heavy rainfall' : 'Rain'} is likely around ${formatHourLabel(peak.time, false)} — ${Math.round(peak.precipProbability)}% chance.`,
-        severity: severe ? 'severe' : 'warning',
-        evidence: evidence('cmp_rain', `${Math.round(peak.precipProbability)}%`, '≥60%', 'Open-Meteo hourly forecast', peak.time),
-      });
+      // Minute-level nowcast: when the 15-minute buckets show rain starting
+      // within the hour, exact minutes beat the hourly "around {time}" hint.
+      // Severe rain keeps the hourly wording so the severity stays visible.
+      const startIn = extras.nowcast?.kind === 'starting' ? extras.nowcast.minutesUntilChange : null;
+      if (!severe && startIn !== null && startIn !== undefined && startIn <= 60) {
+        triggered.push({
+          key: 'rain',
+          title: t('notif_rain_title'),
+          message: t('notif_rain_body').replace('{n}', String(startIn)),
+          severity: 'warning',
+          evidence: evidence('cmp_rain', `${startIn} min`, '≤60 min', 'Open-Meteo 15-minute nowcast', extras.nowcast?.changeTime ?? undefined),
+        });
+      } else {
+        triggered.push({
+          key: 'rain',
+          title: severe ? 'Heavy rainfall expected' : 'Rain expected',
+          message: `${severe ? 'Heavy rainfall' : 'Rain'} is likely around ${formatHourLabel(peak.time, false)} — ${Math.round(peak.precipProbability)}% chance.`,
+          severity: severe ? 'severe' : 'warning',
+          evidence: evidence('cmp_rain', `${Math.round(peak.precipProbability)}%`, '≥60%', 'Open-Meteo hourly forecast', peak.time),
+        });
+      }
     }
   }
 
