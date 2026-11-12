@@ -435,6 +435,7 @@ export const hu: Strings = {
   notif_sunrise_title: 'Hamarosan napkel',
   notif_sunrise_body: 'A nap kb. {n} perc mülva kel',
   notif_sunrise_body_now: 'A nap most kel',
+  s_sunrise_sound: 'Ébresztő hang', s_sunrise_sound_default: 'Alapértelmezett', sound_dawn: 'Hajnal', sound_pulse: 'Pulzus', sound_bloom: 'Virágzás', sound_beacon: 'Jel', s_sunrise_preview: 'Hang meghallgatása', s_sunrise_preview_sub: 'Lejátssza a kiválasztott ébresztő hangot',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Esőállapot',

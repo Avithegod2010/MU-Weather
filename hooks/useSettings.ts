@@ -6,6 +6,7 @@ import type { TempUnit, WindUnit, TimeFormat, PrecipUnit, PressureUnit } from '.
 import { setAqiScale } from '../utils/aqi';
 import type { AqiScale } from '../utils/aqi';
 import { setIconStyle } from '../utils/icons';
+import { normalizeAlarmSound } from '../utils/alarmSounds';
 import type { IconStyle } from '../utils/icons';
 import type { DetailAnimStyle } from '../utils/detailAnimations';
 import type { LayoutDensity , StyleMode, ThemeMode } from '../theme/palettes';
@@ -79,6 +80,8 @@ export interface AppSettings {
   sunriseAlarmEnabled: boolean;
   /** Minutes before sunrise; one of 0, 15, 30, 60, 90 (the picker in Settings). */
   sunriseAlarmOffsetMin: number;
+  /** Which bundled tone the alarm rings (utils/alarmSounds); 'default' = OS sound. */
+  sunriseSound: string;
   /**
    * Keep one live notification while rain is falling or on the way, updated in
    * place and cancelled automatically when the rain is over.
@@ -118,6 +121,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   weatherAccentEnabled: false,
   sunriseAlarmEnabled: false,
   sunriseAlarmOffsetMin: 30,
+  sunriseSound: 'default',
   rainOngoingEnabled: false,
   /** Default comparison model shown first in the model-comparison screen — can be
    *  changed in Settings → "Model comparison". Does not affect the home forecast
@@ -158,6 +162,7 @@ export function useSettings() {
               ...DEFAULT_SETTINGS,
               ...saved,
               outdoorPreferences: normalizeOutdoorPreferences(saved.outdoorPreferences),
+              sunriseSound: normalizeAlarmSound(saved.sunriseSound),
             });
           }
         }

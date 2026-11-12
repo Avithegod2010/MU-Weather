@@ -435,6 +435,7 @@ export const hi: Strings = {
   notif_sunrise_title: 'सूर्योदय जल्द ही',
   notif_sunrise_body: 'सूर्योदय लगभग {n} मिनिट में',
   notif_sunrise_body_now: 'सूर्योदय हो रहा है',
+  s_sunrise_sound: 'अलार्म ध्वनि', s_sunrise_sound_default: 'डिफ़ॉल्ट', sound_dawn: 'भोर', sound_pulse: 'स्पंदन', sound_bloom: 'खिलना', sound_beacon: 'दीप्ति', s_sunrise_preview: 'ध्वनि सुनें', s_sunrise_preview_sub: 'चयनित जागने की ध्वनि चलाता है',
 
   // ── rain status notification ──
   s_rain_ongoing: 'बारिश स्टेटस',

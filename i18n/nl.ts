@@ -435,6 +435,7 @@ export const nl: Strings = {
   notif_sunrise_title: 'Zonsopgang nadert',
   notif_sunrise_body: 'De zon komt over ongeveer {n} minuten op',
   notif_sunrise_body_now: 'De zon komt op',
+  s_sunrise_sound: 'Weckgeluid', s_sunrise_sound_default: 'Standaard', sound_dawn: 'Dageraad', sound_pulse: 'Puls', sound_bloom: 'Bloei', sound_beacon: 'Baken', s_sunrise_preview: 'Geluid beluisteren', s_sunrise_preview_sub: 'Speelt het gekozen wekgeluid af',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Regenstatus',

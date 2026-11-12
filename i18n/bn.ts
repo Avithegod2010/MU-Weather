@@ -435,6 +435,7 @@ export const bn: Strings = {
   notif_sunrise_title: 'সূর্যোদয় শীঘ্রই',
   notif_sunrise_body: 'সূর্যোদয প্রায {n} মিনিটে',
   notif_sunrise_body_now: 'সূর্যোদয় হচ্ছে',
+  s_sunrise_sound: 'অ্যালার্ম শব্দ', s_sunrise_sound_default: 'ডিফল্ট', sound_dawn: 'ভোর', sound_pulse: 'স্পন্দন', sound_bloom: 'প্রস্ফুটন', sound_beacon: 'দীপ', s_sunrise_preview: 'শব্দ শুনুন', s_sunrise_preview_sub: 'নির্বাচিত জাগরণ শব্দটি বাজায়',
 
   // ── rain status notification ──
   s_rain_ongoing: 'বৃষ্টি স্ট্যাটাস',

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import * as Notifications from '../utils/notifications';
 import { t } from '../utils/i18n';
 import { computeTwilight } from '../utils/twilight';
+import { alarmSoundFile } from '../utils/alarmSounds';
 import type { GeoLocation } from '../api/types';
 
 /** Identifiers of the alarm notifications this hook owns. */
@@ -11,7 +12,7 @@ const ALARM_IDS_KEY = '@mu_weather/sunrise_alarm_v1';
  * How many upcoming sunrises are queued per reschedule. Android fires a DATE
  * trigger once and forgets it, so queueing a week means the alarm still rings
  * when the app has not been opened for several days; every app start (or
- * location / offset change) cancels the old ones and queues a fresh set.
+ * location / offset / sound change) cancels the old ones and queues a fresh set.
  */
 const HORIZON_DAYS = 7;
 
@@ -49,6 +50,7 @@ export function useSunriseAlarm(
   enabled: boolean,
   offsetMin: number,
   location: GeoLocation | null,
+  soundKey: string = 'default',
 ): void {
   const lat = location?.latitude ?? null;
   const lon = location?.longitude ?? null;
@@ -56,12 +58,32 @@ export function useSunriseAlarm(
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      // Always start from a clean slate: the offset, the city or the toggle may
-      // have changed, and stale alarms would fire at the wrong time.
+      // Always start from a clean slate: the offset, the city, the sound or the
+      // toggle may have changed, and stale alarms would fire at the wrong time.
       await clearScheduledAlarms();
       if (cancelled || !enabled || lat === null || lon === null) return;
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== 'granted') return;
+
+      // A chosen tone needs its own Android channel: channel sounds must be
+      // res/raw files (plugins/withAlarmSounds copies them at prebuild). The
+      // channel is idempotent - re-creating it with the same id is a no-op.
+      const file = alarmSoundFile(soundKey);
+      let channelId: string | null = null;
+      if (file) {
+        channelId = `sunrise-alarm-${file}`;
+        try {
+          await Notifications.setNotificationChannelAsync(channelId, {
+            name: t('s_sunrise_alarm'),
+            importance: Notifications.AndroidImportance.HIGH,
+            sound: `${file}.wav`,
+            vibrationPattern: [400, 250, 400, 250],
+            lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+          });
+        } catch {
+          channelId = null; // channel failed - fall back to the OS default sound
+        }
+      }
 
       const now = Date.now();
       const ids: string[] = [];
@@ -86,6 +108,7 @@ export function useSunriseAlarm(
             trigger: {
               type: Notifications.SchedulableTriggerInputTypes.DATE,
               date: new Date(fireAt),
+              ...(channelId ? { channelId } : {}),
             },
           });
           ids.push(id);
@@ -104,5 +127,5 @@ export function useSunriseAlarm(
     return () => {
       cancelled = true;
     };
-  }, [enabled, offsetMin, lat, lon]);
+  }, [enabled, offsetMin, lat, lon, soundKey]);
 }

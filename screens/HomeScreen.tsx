@@ -379,7 +379,7 @@ export function HomeScreen() {
   useRainAlert(settings.rainAlertEnabled, weather.data);
   // Sunrise alarm: OS date triggers, re-queued whenever the city or lead time
   // changes (and once per app start, so a few days stay covered).
-  useSunriseAlarm(settings.sunriseAlarmEnabled, settings.sunriseAlarmOffsetMin, active);
+  useSunriseAlarm(settings.sunriseAlarmEnabled, settings.sunriseAlarmOffsetMin, active, settings.sunriseSound);
   // Rain status notification: one updating entry while rain is here or coming.
   useRainOngoing(settings.rainOngoingEnabled, weather.data);
   // Digest notification's "Read my forecast" action: register the category in

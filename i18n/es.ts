@@ -435,6 +435,7 @@ export const es: Strings = {
   notif_sunrise_title: 'Amanece pronto',
   notif_sunrise_body: 'El sol sale en unos {n} minutos',
   notif_sunrise_body_now: 'El sol está saliendo',
+  s_sunrise_sound: 'Sonido de alarma', s_sunrise_sound_default: 'Predeterminado', sound_dawn: 'Amanecer', sound_pulse: 'Pulso', sound_bloom: 'Florecer', sound_beacon: 'Faro', s_sunrise_preview: 'Escuchar tono', s_sunrise_preview_sub: 'Reproduce el tono elegido',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Estado de lluvia',

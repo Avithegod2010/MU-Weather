@@ -776,6 +776,7 @@ export const pl: Strings = {
   notif_sunrise_title: 'Wschód za chwilę',
   notif_sunrise_body: 'Słońce wzejdzie za około {n} minut',
   notif_sunrise_body_now: 'Słońce właśnie wschodzi',
+  s_sunrise_sound: 'Dźwięk budzika', s_sunrise_sound_default: 'Domyślny', sound_dawn: 'Świt', sound_pulse: 'Puls', sound_bloom: 'Kwitnienie', sound_beacon: 'Sygnał', s_sunrise_preview: 'Posłuchaj dźwięku', s_sunrise_preview_sub: 'Odtwarza wybrany dźwięk budzenia',
   s_rain_ongoing: 'Status deszczu',
   s_rain_ongoing_sub: 'Jedno powiadomienie, gdy deszcz jest tutaj albo w drodze',
   notif_rain_ongoing_title: 'Deszcz w drodze',

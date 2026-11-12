@@ -24,6 +24,7 @@ export { setNotificationChannelAsync } from 'expo-notifications/build/setNotific
 export { scheduleNotificationAsync } from 'expo-notifications/build/scheduleNotificationAsync';
 export { cancelScheduledNotificationAsync } from 'expo-notifications/build/cancelScheduledNotificationAsync';
 export { AndroidImportance } from 'expo-notifications/build/NotificationChannelManager.types';
+export { AndroidNotificationVisibility } from 'expo-notifications/build/NotificationChannelManager.types';
 export { SchedulableTriggerInputTypes } from 'expo-notifications/build/Notifications.types';
 export { setNotificationCategoryAsync } from 'expo-notifications/build/setNotificationCategoryAsync';
 export {

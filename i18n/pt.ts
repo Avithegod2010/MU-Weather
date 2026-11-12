@@ -776,6 +776,7 @@ export const pt: Strings = {
   notif_sunrise_title: 'Nascer do sol próximo',
   notif_sunrise_body: 'O sol nasce dentro de cerca de {n} minutos',
   notif_sunrise_body_now: 'O sol está a nascer',
+  s_sunrise_sound: 'Som do alarme', s_sunrise_sound_default: 'Predefinido', sound_dawn: 'Amanhecer', sound_pulse: 'Pulso', sound_bloom: 'Florescer', sound_beacon: 'Farol', s_sunrise_preview: 'Ouvir o tom', s_sunrise_preview_sub: 'Reproduz o tom escolhido',
   s_rain_ongoing: 'Estado da chuva',
   s_rain_ongoing_sub: 'Mantém uma notificação enquanto houver chuva ou chuva a caminho',
   notif_rain_ongoing_title: 'Chuva a caminho',

@@ -804,6 +804,7 @@ export const ru: Strings = {
   notif_sunrise_title: 'Скоро восход',
   notif_sunrise_body: 'Солнце восходит примерно через {n} минут',
   notif_sunrise_body_now: 'Солнце восходит',
+  s_sunrise_sound: 'Звук будильника', s_sunrise_sound_default: 'Стандартный', sound_dawn: 'Рассвет', sound_pulse: 'Пульс', sound_bloom: 'Цветение', sound_beacon: 'Маяк', s_sunrise_preview: 'Прослушать', s_sunrise_preview_sub: 'Проигрывает выбранный звук пробуждения',
   s_rain_ongoing: 'Статус дождя',
   s_rain_ongoing_sub: 'Держать одно уведомление, пока дождь здесь или в пути',
   notif_rain_ongoing_title: 'Дождь в пути',

@@ -804,6 +804,7 @@ export const uk: Strings = {
   notif_sunrise_title: 'Схід сонця незабаром',
   notif_sunrise_body: 'Сонце сходить приблизно через {n} хвилин',
   notif_sunrise_body_now: 'Сонце сходить',
+  s_sunrise_sound: 'Звук будильника', s_sunrise_sound_default: 'Стандартний', sound_dawn: 'Світанок', sound_pulse: 'Пульс', sound_bloom: 'Цвітіння', sound_beacon: 'Маяк', s_sunrise_preview: 'Прослухати', s_sunrise_preview_sub: 'Відтворює обраний звук пробудження',
   s_rain_ongoing: 'Статус дощу',
   s_rain_ongoing_sub: 'Утримувати одне сповіщення, поки дощ тут або в дорозі',
   notif_rain_ongoing_title: 'Дощ у дорозі',

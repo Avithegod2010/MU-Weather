@@ -435,6 +435,7 @@ export const fr: Strings = {
   notif_sunrise_title: 'Lever du soleil imminent',
   notif_sunrise_body: 'Le soleil se lève dans environ {n} minutes',
   notif_sunrise_body_now: 'Le soleil se lève',
+  s_sunrise_sound: 'Sonnerie du réveil', s_sunrise_sound_default: 'Par défaut', sound_dawn: 'Aube', sound_pulse: 'Pulsation', sound_bloom: 'Éclosion', sound_beacon: 'Signal', s_sunrise_preview: 'Écouter', s_sunrise_preview_sub: 'Joue la sonnerie choisie',
 
   // ── rain status notification ──
   s_rain_ongoing: 'État de la pluie',

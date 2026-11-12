@@ -1,13 +1,15 @@
 import { SlidingGroup, SlidingItem, SlidingTarget } from './Sliding';
 import { SlidingSwitch } from './SlidingSwitch';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { F } from '../theme/typography';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Sharing from 'expo-sharing';
+import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
 import { Canvas } from '@shopify/react-native-skia';
 import { SvgPath } from './SkiaShapes';
 import * as Notifications from '../utils/notifications';
+import { ALARM_SOUNDS, normalizeAlarmSound } from '../utils/alarmSounds';
 import {
   Sun,
   Sparkles,
@@ -53,6 +55,7 @@ import {
   Braces,
   Sunrise,
   Star,
+  Play,
 } from '../utils/uiIcons';
 import type { LucideIcon } from 'lucide-react-native';
 import appJson from '../app.json';
@@ -125,6 +128,14 @@ const UNIT_PRESETS: Record<string, Partial<AppSettings>> = {
 
 /** Lead times offered by the sunrise alarm picker (minutes before sunrise). */
 const SUNRISE_ALARM_OFFSETS = [0, 15, 30, 60, 90];
+
+/** Bundled preview sources for the alarm tones (kept out of the render loop). */
+const ALARM_PREVIEW_SOURCES: Record<string, number> = {
+  dawn: require('../../assets/sounds/alarm-dawn.wav'),
+  pulse: require('../../assets/sounds/alarm-pulse.wav'),
+  bloom: require('../../assets/sounds/alarm-bloom.wav'),
+  beacon: require('../../assets/sounds/alarm-beacon.wav'),
+};
 
 interface SettingsSheetProps {
   theme: AppTheme;
@@ -274,6 +285,22 @@ export function SettingsSheet({
   const [backupMsg, setBackupMsg] = useState<string | null>(null);
   const [exportTemperature, setExportTemperature] = useState(true);
   const [exportPrecipitation, setExportPrecipitation] = useState(true);
+  /** One preview player at a time; released when the next tone plays. */
+  const previewRef = useRef<AudioPlayer | null>(null);
+  const previewAlarmSound = (key: string) => {
+    haptics.select();
+    const source = ALARM_PREVIEW_SOURCES[key];
+    if (!source) return;
+    try {
+      previewRef.current?.release();
+      previewRef.current = null;
+      const player = createAudioPlayer(source);
+      previewRef.current = player;
+      player.play();
+    } catch {
+      // Preview is best-effort; the alarm itself does not depend on it.
+    }
+  };
 
   const showBackupMsg = (message: string) => {
     setBackupMsg(message);
@@ -998,6 +1025,42 @@ export function SettingsSheet({
                 onChange={(value) => onUpdate({ sunriseAlarmOffsetMin: Number(value) })}
               />
             </View>
+          ) : null}
+          {ready && settings.sunriseAlarmEnabled ? (
+            <>
+              <View style={styles.segmentRow}>
+                <Segmented
+                  theme={theme}
+                  options={ALARM_SOUNDS.map((sound) => ({
+                    value: sound.key,
+                    label: sound.key === 'default' ? t('s_sunrise_sound_default') : t(`sound_${sound.key}`),
+                  }))}
+                  value={normalizeAlarmSound(settings.sunriseSound)}
+                  onChange={(value) => onUpdate({ sunriseSound: value })}
+                />
+              </View>
+              {settings.sunriseSound !== 'default' ? (
+                <Pressable
+                  onPress={() => previewAlarmSound(settings.sunriseSound)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('s_sunrise_preview')}
+                  style={({ pressed }) => [
+                    styles.row,
+                    { backgroundColor: theme.cardBg, borderColor: theme.cardBorder, opacity: pressed ? 0.75 : 1 },
+                  ]}
+                >
+                  <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+                    <Play size={18} color={theme.textPrimary} strokeWidth={2.2} />
+                  </View>
+                  <View style={styles.rowTexts}>
+                    <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_sunrise_preview')}</Text>
+                    <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                      {t('s_sunrise_preview_sub')}
+                    </Text>
+                  </View>
+                </Pressable>
+              ) : null}
+            </>
           ) : null}
 
           <Text style={[styles.sectionLabel, { color: theme.textTertiary }]}>{t('s_sec_general')}</Text>

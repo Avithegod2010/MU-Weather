@@ -776,6 +776,7 @@ export const tr: Strings = {
   notif_sunrise_title: 'Gün doğmak üzere',
   notif_sunrise_body: 'Güneş yaklaşık {n} dakika içinde doğacak',
   notif_sunrise_body_now: 'Güneş şu anda doğuyor',
+  s_sunrise_sound: 'Alarm sesi', s_sunrise_sound_default: 'Varsayılan', sound_dawn: 'Şafak', sound_pulse: 'Nabız', sound_bloom: 'Çiçeklenme', sound_beacon: 'İşaret', s_sunrise_preview: 'Sesi dinle', s_sunrise_preview_sub: 'Seçilen uyandırma sesini çalar',
   s_rain_ongoing: 'Yağmur durumu',
   s_rain_ongoing_sub: 'Yağmur buradayken veya yoldayken tek bir bildirim açık tut',
   notif_rain_ongoing_title: 'Yağmur yolda',

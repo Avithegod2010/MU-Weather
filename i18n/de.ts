@@ -435,6 +435,7 @@ export const de: Strings = {
   notif_sunrise_title: 'Sonnenaufgang bald',
   notif_sunrise_body: 'Die Sonne geht in etwa {n} Minuten auf',
   notif_sunrise_body_now: 'Die Sonne geht auf',
+  s_sunrise_sound: 'Weckton', s_sunrise_sound_default: 'Standard', sound_dawn: 'Morgenrot', sound_pulse: 'Puls', sound_bloom: 'Aufblühen', sound_beacon: 'Signal', s_sunrise_preview: 'Ton anhören', s_sunrise_preview_sub: 'Spielt den gewählten Weckton ab',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Regenstatus',

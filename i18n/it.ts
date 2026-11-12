@@ -435,6 +435,7 @@ export const it: Strings = {
   notif_sunrise_title: 'L’alba è vicina',
   notif_sunrise_body: 'Il sole sorge tra circa {n} minuti',
   notif_sunrise_body_now: 'Il sole sta sorgendo',
+  s_sunrise_sound: 'Suono sveglia', s_sunrise_sound_default: 'Predefinito', sound_dawn: 'Alba', sound_pulse: 'Impulso', sound_bloom: 'Fiorire', sound_beacon: 'Faro', s_sunrise_preview: 'Ascolta il suono', s_sunrise_preview_sub: 'Riproduce il suono scelto',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Stato della pioggia',

@@ -435,6 +435,7 @@ export const el: Strings = {
   notif_sunrise_title: 'Ώρα ήλιου',
   notif_sunrise_body: 'ο ήλιος ανατέλλει σε περίπου {n} λεπτά',
   notif_sunrise_body_now: 'Ο ήλιος ανατέλλει',
+  s_sunrise_sound: 'Ήχος ξυπνητηριού', s_sunrise_sound_default: 'Προεπιλογή', sound_dawn: 'Χαράζει', sound_pulse: 'Σφυγμός', sound_bloom: 'Άνθιση', sound_beacon: 'Φάρος', s_sunrise_preview: 'Ακρόαση ήχου', s_sunrise_preview_sub: 'Παίζει τον επιλεγμένο ήχο αφύπνισης',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Κατάσταση βροχής',

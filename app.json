@@ -124,7 +124,8 @@
           }
         }
       ],
-      "./plugins/withAndroidShortcuts"
+      "./plugins/withAndroidShortcuts",
+      "./plugins/withAlarmSounds"
     ],
     "extra": {
       "eas": {
