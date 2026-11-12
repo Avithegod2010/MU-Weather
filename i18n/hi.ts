@@ -624,6 +624,7 @@ export const hi: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Environment Canada चेतावनियाँ',
+  d_heatmap_title: 'पिछला वर्ष', f_heatmap_hot: 'सबसे गर्म {n}, {day}', f_heatmap_cold: 'सबसे ठंडा {n}, {day}', f_heatmap_rain: 'पिछले वर्ष {n} मिमी', a11y_heatmap: 'वर्ष मैप, {n} दिन', about_heatmap: 'पिछले 365 दिनों का आर्काइव — हर खाना एक दिन है, अधिकतम तापमान के अनुसार रंगीन।',
 
   health_note_not_medical: 'अनुमानित अंदाज़ा ही — चिकित्सा सलाह नहीं।',
 };

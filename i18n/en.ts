@@ -1076,6 +1076,7 @@ export const en = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Environment Canada alerts',
+  d_heatmap_title: 'PAST YEAR', f_heatmap_hot: 'Hottest {n} on {day}', f_heatmap_cold: 'Coldest {n} on {day}', f_heatmap_rain: '{n} mm in the past year', a11y_heatmap: 'Year heatmap, {n} days', about_heatmap: 'Archive actuals for the past 365 days — each cell is a day, coloured by its high.',
 
   health_note_not_medical: 'Heuristic estimates only — not medical advice.',
 };

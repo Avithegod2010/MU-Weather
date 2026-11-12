@@ -624,6 +624,7 @@ export const hu: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Environment Canada riasztások',
+  d_heatmap_title: 'ELMÚLT ÉV', f_heatmap_hot: 'Legmelegebb {n} ekkor: {day}', f_heatmap_cold: 'Leghidegebb {n} ekkor: {day}', f_heatmap_rain: 'Az elmúlt évben {n} mm', a11y_heatmap: 'Évtérkép, {n} nap', about_heatmap: 'Az elmúlt 365 nap archívumai — minden négyzet egy nap, a maximum szerint színezve.',
 
   health_note_not_medical: 'Csak heurisztikus becslések — nem orvosi tanács.',
 };

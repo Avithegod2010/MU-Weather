@@ -624,6 +624,7 @@ export const nl: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Waarschuwingen van Environment Canada',
+  d_heatmap_title: 'AFGELOPEN JAAR', f_heatmap_hot: 'Warmste {n} op {day}', f_heatmap_cold: 'Koudste {n} op {day}', f_heatmap_rain: '{n} mm in het afgelopen jaar', a11y_heatmap: 'Jaarkaart, {n} dagen', about_heatmap: 'Archiefgegevens van de afgelopen 365 dagen — elke cel is een dag, gekleurd naar het maximum.',
 
   health_note_not_medical: 'Alleen heuristische schattingen — geen medisch advies.',
 };

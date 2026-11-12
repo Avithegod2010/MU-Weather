@@ -955,6 +955,7 @@ export const tr: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Environment Canada uyarıları',
+  d_heatmap_title: 'GEÇEN YIL', f_heatmap_hot: 'En sıcak {n}, {day}', f_heatmap_cold: 'En soğuk {n}, {day}', f_heatmap_rain: 'Geçen yıl {n} mm', a11y_heatmap: 'Yıl haritası, {n} gün', about_heatmap: 'Son 365 günün arşiv verileri — her kutu bir gün, en yükseğe göre renkli.',
 
   health_note_not_medical: 'Yalnızca sezgisel tahminler — tıbbi tavsiye değildir.',
 };

@@ -624,6 +624,7 @@ export const id: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Peringatan Environment Canada',
+  d_heatmap_title: 'TAHUN TERAKHIR', f_heatmap_hot: 'Terpanas {n} pada {day}', f_heatmap_cold: 'Terdingin {n} pada {day}', f_heatmap_rain: '{n} mm dalam setahun', a11y_heatmap: 'Peta tahunan, {n} hari', about_heatmap: 'Data arsip 365 hari terakhir — setiap kotak adalah satu hari, diwarnai menurut suhu tertingginya.',
 
   health_note_not_medical: 'Hanya perkiraan heuristik — bukan saran medis.',
 };

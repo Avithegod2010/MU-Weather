@@ -125,6 +125,7 @@ import { useOnThisDay } from '../hooks/useOnThisDay';
 import { useMeteoAlarm } from '../hooks/useMeteoAlarm';
 import { useNwsWarnings } from '../hooks/useNwsWarnings';
 import { useCanadaAlerts } from '../hooks/useCanadaAlerts';
+import { useYearDays } from '../hooks/useYearDays';
 import { ClimateCard } from '../components/ClimateCard';
 import { OnThisDayCard } from '../components/OnThisDayCard';
 import { WarningsCard } from '../components/WarningsCard';
@@ -182,6 +183,7 @@ export function HomeScreen() {
   const meteoAlarm = useMeteoAlarm(active);
   const nwsWarnings = useNwsWarnings(active);
   const canadaAlerts = useCanadaAlerts(active);
+  const yearDaysState = useYearDays(active);
   const ensemble = useEnsemble(FEATURES.ensemble ? active : null);
   const forecastCalibration = useForecastCalibration(
     active,
@@ -1297,6 +1299,7 @@ export function HomeScreen() {
         onAqiScaleChange={(scale) => updateSettings({ aqiScale: scale })}
         pastDays={pastDays.days}
         aqiHistory={aqiHistory.days !== null ? { days: aqiHistory.days, stale: aqiHistory.stale } : null}
+        yearDays={yearDaysState.days}
         onClose={() => setDetailTopic(null)}
       />
 

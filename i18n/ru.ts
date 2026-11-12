@@ -935,5 +935,6 @@ export const ru: Strings = {
   alert_nws_sub: 'Активные предупреждения и рекомендации от NOAA/NWS',
   nws_alerts: 'Предупреждения NOAA/NWS',
   ec_alerts: 'Предупреждения Environment Canada',
+  d_heatmap_title: 'ЗА ГОД', f_heatmap_hot: 'Самый жаркий {n}, {day}', f_heatmap_cold: 'Самый холодный {n}, {day}', f_heatmap_rain: '{n} мм за год', a11y_heatmap: 'Карта года, {n} дней', about_heatmap: 'Архивные данные за 365 дней — каждая клетка это день, цвет по максимуму.',
   health_note_not_medical: 'Только эвристические оценки — не медицинская рекомендация.',
 };

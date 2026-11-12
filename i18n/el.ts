@@ -624,6 +624,7 @@ export const el: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Προειδοποιήσεις Environment Canada',
+  d_heatmap_title: 'ΤΕΛΕΥΤΑΙΟΣ ΧΡΟΝΟΣ', f_heatmap_hot: 'Ζεστότερη {n} στις {day}', f_heatmap_cold: 'Κρυότερη {n} στις {day}', f_heatmap_rain: '{n} mm σε έναν χρόνο', a11y_heatmap: 'Χάρτης έτους, {n} ημέρες', about_heatmap: 'Αρχεία των τελευταίων 365 ημερών — κάθε κελί είναι μία ημέρα, χρωματισμένη ανάλογα με τη μέγιστη.',
 
   health_note_not_medical: 'Μόνο ευρετικές εκτιμήσεις — όχι ιατρική συμβουλή.',
 };

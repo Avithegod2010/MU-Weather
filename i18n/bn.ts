@@ -624,6 +624,7 @@ export const bn: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Environment Canada সতর্কতা',
+  d_heatmap_title: 'গত বছর', f_heatmap_hot: 'সবচেয়ে উষ্ণ {n}, {day}', f_heatmap_cold: 'সবচেয়ে শীতল {n}, {day}', f_heatmap_rain: 'গত বছর {n} মিমি', a11y_heatmap: 'বার্ষিক ম্যাপ, {n} দিন', about_heatmap: 'গত ৩৬৫ দিনের আর্কাইভ — প্রতিটি ঘর একটি দিন, সর্বোচ্চ তাপমাত্রা অনুযায়ী রঙিন।',
 
   health_note_not_medical: 'শুধুমাত্র আনুমানিক হিসাব — চিকিৎসা পরামর্শ নয়।',
 };

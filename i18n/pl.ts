@@ -955,6 +955,7 @@ export const pl: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Ostrzeżenia Environment Canada',
+  d_heatmap_title: 'OSTATNI ROK', f_heatmap_hot: 'Najcieplejszy {n} dnia {day}', f_heatmap_cold: 'Najzimniejszy {n} dnia {day}', f_heatmap_rain: '{n} mm w ostatnim roku', a11y_heatmap: 'Mapa roczna, {n} dni', about_heatmap: 'Dane archiwalne z ostatnich 365 dni — każda komórka to dzień, kolor według maksimum.',
 
   health_note_not_medical: 'Tylko szacunki heurystyczne — nie porada medyczna.',
 };

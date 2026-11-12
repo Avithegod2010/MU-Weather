@@ -624,6 +624,7 @@ export const it: Strings = {
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
   ec_alerts: 'Avvisi di Environment Canada',
+  d_heatmap_title: 'ULTIMO ANNO', f_heatmap_hot: 'Il più caldo {n} il {day}', f_heatmap_cold: 'Il più freddo {n} il {day}', f_heatmap_rain: '{n} mm nell’ultimo anno', a11y_heatmap: 'Mappa annuale, {n} giorni', about_heatmap: 'Dati d’archivio degli ultimi 365 giorni — ogni cella è un giorno, colorata secondo la massima.',
 
   health_note_not_medical: 'Solo stime euristiche — non è un consiglio medico.',
 };

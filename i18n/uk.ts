@@ -935,5 +935,6 @@ export const uk: Strings = {
   alert_nws_sub: 'Активні попередження та рекомендації від NOAA/NWS',
   nws_alerts: 'Попередження NOAA/NWS',
   ec_alerts: 'Попередження Environment Canada',
+  d_heatmap_title: 'ЗА РІК', f_heatmap_hot: 'Найспекотніший {n}, {day}', f_heatmap_cold: 'Найхолодніший {n}, {day}', f_heatmap_rain: '{n} мм за рік', a11y_heatmap: 'Карта року, {n} днів', about_heatmap: 'Архівні дані за 365 днів — кожна клітинка це день, колір за максимумом.',
   health_note_not_medical: 'Лише евристичні оцінки — не медична порада.',
 };

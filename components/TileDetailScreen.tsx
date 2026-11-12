@@ -19,6 +19,7 @@ import {
 import type { LucideIcon } from 'lucide-react-native';
 import { AnimatedBackground } from './AnimatedBackground';
 import { GraphExplorer } from './GraphExplorer';
+import { YearHeatmapStrip } from './YearHeatmapStrip';
 import { haptics } from '../utils/haptics';
 import { smoothPath, scaleY, type CurvePoint } from '../utils/curve';
 import { SkiaSeriesChart, type ChartColumn, type ChartSeries } from './SkiaSeriesChart';
@@ -84,6 +85,8 @@ interface TileDetailScreenProps {
   pastDays?: PastDayActual[];
   /** Past ~31 days of daily peak AQI for the aqi topic's history strip. */
   aqiHistory?: { days: AqiDayPeak[] | null; stale: boolean } | null;
+  /** Past 365 days of archive actuals for the graphs topic's year heatmap. */
+  yearDays?: PastDayActual[];
   onClose: () => void;
 }
 
@@ -385,6 +388,7 @@ export function TileDetailScreen({
   onAqiScaleChange,
   pastDays,
   aqiHistory,
+  yearDays,
   onClose,
 }: TileDetailScreenProps) {
   const insets = useSafeAreaInsets();
@@ -436,6 +440,7 @@ export function TileDetailScreen({
   let pollutantChart: React.ReactNode = null;
   let aqiForecast: React.ReactNode = null;
   let aqiHistStrip: React.ReactNode = null;
+  let yearHeatmap: React.ReactNode = null;
   let scaleToggle: React.ReactNode = null;
   let dewChart: React.ReactNode = null;
 let windRose: React.ReactNode = null;
@@ -1029,10 +1034,16 @@ let windRose: React.ReactNode = null;
     // The About section always renders; reuse the range caption so the graphs
     // topic doesn't show an empty card (no about_graphs key is in the spec).
     about = t('gx_card_caption');
+    // Year heatmap of archive daily highs; the strip itself fails closed
+    // below ~180 usable days, and the section guard keeps an empty card away.
+    if ((yearDays ?? []).length >= 180) {
+      yearHeatmap = <YearHeatmapStrip theme={theme} days={yearDays ?? []} />;
+    }
   }
 
   let order = 0;
   const explorerOrder = explorer ? order++ : -1;
+  const yearHeatmapOrder = yearHeatmap ? order++ : -1;
   const toggleOrder = scaleToggle ? order++ : -1;
   const chartOrder = chart ? order++ : -1;
   const pollutantOrder = pollutantChart ? order++ : -1;
@@ -1094,6 +1105,12 @@ let windRose: React.ReactNode = null;
         {explorer ? (
           <SectionCard theme={theme} animStyle={animStyle} order={explorerOrder}>
             {explorer}
+          </SectionCard>
+        ) : null}
+
+        {yearHeatmap ? (
+          <SectionCard theme={theme} animStyle={animStyle} title={t('d_heatmap_title')} order={yearHeatmapOrder}>
+            {yearHeatmap}
           </SectionCard>
         ) : null}
 
