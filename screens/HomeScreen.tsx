@@ -849,6 +849,7 @@ export function HomeScreen() {
                     theme={theme}
                     today={comfort.today}
                     total={comfort.total}
+                    entries={comfort.entries}
                     onRate={(rating) => {
                       const data = weather.data;
                       comfort.rate(rating, {

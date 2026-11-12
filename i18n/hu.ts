@@ -382,6 +382,7 @@ export const hu: Strings = {
   journal_change: 'Változtatáshoz válasszon másikat',
   journal_progress: '{n} nap értékelve · csak ezen az eszközön',
   journal_progress_one: '{n} nap értékelve · csak ezen az eszközön',
+  journal_days_total: '{n} nap rögzítve', journal_streak: '{n} napos sorozat', journal_cold_below: '{n} alatt fázol', journal_hot_above: '{n} felett meleged van',
   journal_rating_cold: 'Hideg',
   journal_rating_ok: 'Pont jó',
   journal_rating_hot: 'Meleg',

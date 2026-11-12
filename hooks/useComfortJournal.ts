@@ -9,6 +9,8 @@ export interface UseComfortJournal {
   calibration: ComfortOffset | null;
   /** Total rating days stored - the journal's own progress. */
   total: number;
+  /** All stored entries (journal insights render from these). */
+  entries: ComfortJournalEntry[];
   ready: boolean;
   /** Record (or change) today's rating. Never throws. */
   rate: (rating: ComfortRating, reading: { tApparent: number | null; humidity: number | null; wind: number | null; tMax: number; tMin: number }) => void;
@@ -70,5 +72,5 @@ export function useComfortJournal(): UseComfortJournal {
     [],
   );
 
-  return { today, calibration, total: entries.length, ready, rate };
+  return { today, calibration, total: entries.length, entries, ready, rate };
 }

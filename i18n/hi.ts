@@ -382,6 +382,7 @@ export const hi: Strings = {
   journal_change: 'बदलने के लिए दूसरा चुनें',
   journal_progress: '{n} दिन रेट किए · केवल इस डिवाइस पर',
   journal_progress_one: '{n} दिन रेट किए · केवल इस डिवाइस पर',
+  journal_days_total: '{n} दिन दर्ज', journal_streak: '{n}-दिन की लय', journal_cold_below: '{n} से नीचे ठंड लगती है', journal_hot_above: '{n} से ऊपर गर्मी लगती है',
   journal_rating_cold: 'ठंडा',
   journal_rating_ok: 'ठीक ठीक',
   journal_rating_hot: 'गर्म',

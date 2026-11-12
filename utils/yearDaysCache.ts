@@ -86,13 +86,17 @@ export async function fetchYearDays(lat: number, lon: number): Promise<PastDayAc
     for (let i = 0; i < time.length; i++) {
       const date = time[i];
       if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
-      if (!finite(tMax?.[i]) || !finite(tMin?.[i])) continue; // no usable temperature row
+      const maxRow = tMax?.[i];
+      const minRow = tMin?.[i];
+      if (!finite(maxRow) || !finite(minRow)) continue; // no usable temperature row
+      const precipRow = precip?.[i];
+      const codeRow = code?.[i];
       days.push({
         date,
-        tMax: tMax[i],
-        tMin: tMin[i],
-        precipSum: finite(precip?.[i]) && (precip[i] as number) >= 0 ? (precip[i] as number) : 0,
-        weatherCode: finite(code?.[i]) ? (code[i] as number) : 0,
+        tMax: maxRow,
+        tMin: minRow,
+        precipSum: finite(precipRow) && precipRow >= 0 ? precipRow : 0,
+        weatherCode: finite(codeRow) ? codeRow : 0,
       });
     }
     return days;

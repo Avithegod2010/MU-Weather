@@ -382,6 +382,7 @@ export const bn: Strings = {
   journal_change: 'বদলাতে অন্যটি চাপুন',
   journal_progress: '{n} দিন রেট করা · শুধু এই ডিভাইসে',
   journal_progress_one: '{n} দিন রেট করা · শুধু এই ডিভাইসে',
+  journal_days_total: '{n} দিন লেখা হয়েছে', journal_streak: '{n} দিনের ধারা', journal_cold_below: '{n}-এর নিচে ঠান্ডা লাগে', journal_hot_above: '{n}-এর উপরে গরম লাগে',
   journal_rating_cold: 'ঠান্ডা',
   journal_rating_ok: 'ঠিক ঠিক',
   journal_rating_hot: 'গরম',

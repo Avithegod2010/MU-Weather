@@ -737,6 +737,7 @@ export const pt: Strings = {
   journal_change: 'Toque noutro para mudar',
   journal_progress: '{n} dias avaliados · apenas neste dispositivo',
   journal_progress_one: '{n} dia avaliado · apenas neste dispositivo',
+  journal_days_total: '{n} dias registados', journal_streak: 'Sequência de {n} dias', journal_cold_below: 'Sente frio abaixo de {n}', journal_hot_above: 'Sente calor acima de {n}',
   journal_rating_cold: 'Frio',
   journal_rating_ok: 'Ideal',
   journal_rating_hot: 'Quente',

@@ -107,6 +107,72 @@ export function localDateStamp(): string {
   const day = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}-${month}-${day}`;
 }
+
+/** Local calendar date `n` days before today, as `YYYY-MM-DD`. */
+function localDaysAgoStamp(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Journal insights                                                    */
+/* ------------------------------------------------------------------ */
+
+export interface JournalInsights {
+  /** Total rated days stored. */
+  total: number;
+  /** Consecutive rated local days ending today (or yesterday if today is unrated). */
+  streak: number;
+  /**
+   * Mean apparent °C the user rated 'cold' — "you feel cold below this" —
+   * null until MIN_SIDE_SAMPLES cold ratings with an apparent temperature.
+   */
+  coldBoundaryC: number | null;
+  /** Mean apparent °C the user rated 'hot' — "you feel hot above this". */
+  hotBoundaryC: number | null;
+  coldSamples: number;
+  hotSamples: number;
+}
+
+/**
+ * Local-only stats for the journal card. Pure and defensive: invalid rows are
+ * ignored, and each boundary needs MIN_SIDE_SAMPLES apparent-temperature
+ * ratings on its side before it is shown (mirrors the comfort model gates).
+ */
+export function computeJournalInsights(entries: ComfortJournalEntry[]): JournalInsights {
+  const usable = (Array.isArray(entries) ? entries : []).filter(isValidEntry);
+  const byDate = new Set(usable.map((entry) => entry.date));
+  let streak = 0;
+  for (let back = 0; back < MAX_JOURNAL_ENTRIES; back++) {
+    if (!byDate.has(localDaysAgoStamp(back))) {
+      if (back === 0) continue; // today not answered yet - judge from yesterday
+      break;
+    }
+    streak += 1;
+  }
+  const mean = (rating: ComfortRating): { value: number | null; samples: number } => {
+    const rows = usable.filter(
+      (entry) => entry.rating === rating && typeof entry.tApparent === 'number',
+    );
+    if (rows.length < MIN_SIDE_SAMPLES) return { value: null, samples: rows.length };
+    const sum = rows.reduce((total, entry) => total + (entry.tApparent as number), 0);
+    return { value: Math.round(((sum / rows.length) * 10) / 10), samples: rows.length };
+  };
+  const cold = mean('cold');
+  const hot = mean('hot');
+  return {
+    total: usable.length,
+    streak,
+    coldBoundaryC: cold.value,
+    hotBoundaryC: hot.value,
+    coldSamples: cold.samples,
+    hotSamples: hot.samples,
+  };
+}
+
 /* ------------------------------------------------------------------ */
 /* The comfort model                                                   */
 /* ------------------------------------------------------------------ */

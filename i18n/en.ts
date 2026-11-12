@@ -867,6 +867,7 @@ export const en = {
   journal_change: 'Tap another to change it',
   journal_progress: '{n} days rated · on this device only',
   journal_progress_one: '{n} day rated · on this device only',
+  journal_days_total: '{n} days journaled', journal_streak: '{n}-day streak', journal_cold_below: 'You feel cold below {n}', journal_hot_above: 'You feel hot above {n}',
   journal_rating_cold: 'Cold',
   journal_rating_ok: 'Just right',
   journal_rating_hot: 'Hot',

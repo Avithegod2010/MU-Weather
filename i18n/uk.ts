@@ -765,6 +765,7 @@ export const uk: Strings = {
   journal_change: 'Торкніться іншого, щоб змінити',
   journal_progress: '{n} днів оцінено · лише на цьому пристрої',
   journal_progress_one: '{n} день оцінено · лише на цьому пристрої',
+  journal_days_total: '{n} дн. у щоденнику', journal_streak: 'Серія: {n} дн.', journal_cold_below: 'Вам холодно нижче {n}', journal_hot_above: 'Вам спекотно вище {n}',
   journal_rating_cold: 'Холодно',
   journal_rating_ok: 'Саме як треба',
   journal_rating_hot: 'Спекотно',

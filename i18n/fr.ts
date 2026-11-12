@@ -382,6 +382,7 @@ export const fr: Strings = {
   journal_change: 'Touchez une autre option pour changer',
   journal_progress: '{n} jours notés · uniquement sur cet appareil',
   journal_progress_one: '{n} jour noté · uniquement sur cet appareil',
+  journal_days_total: '{n} jours consignés', journal_streak: 'Série de {n} jours', journal_cold_below: 'Vous avez froid en dessous de {n}', journal_hot_above: 'Vous avez chaud au-dessus de {n}',
   journal_rating_cold: 'Froid',
   journal_rating_ok: 'Juste',
   journal_rating_hot: 'Chaud',

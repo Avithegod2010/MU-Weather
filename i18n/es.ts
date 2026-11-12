@@ -382,6 +382,7 @@ export const es: Strings = {
   journal_change: 'Toca otra opción para cambiarla',
   journal_progress: '{n} días valorados · solo en este dispositivo',
   journal_progress_one: '{n} día valorado · solo en este dispositivo',
+  journal_days_total: '{n} días registrados', journal_streak: 'Racha de {n} días', journal_cold_below: 'Sientes frío por debajo de {n}', journal_hot_above: 'Sientes calor por encima de {n}',
   journal_rating_cold: 'Frío',
   journal_rating_ok: 'Justo',
   journal_rating_hot: 'Calor',

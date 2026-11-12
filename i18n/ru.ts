@@ -765,6 +765,7 @@ export const ru: Strings = {
   journal_change: 'Коснитесь другого, чтобы изменить',
   journal_progress: '{n} дней оценено · только на этом устройстве',
   journal_progress_one: '{n} день оценён · только на этом устройстве',
+  journal_days_total: '{n} дн. в дневнике', journal_streak: 'Серия: {n} дн.', journal_cold_below: 'Вам холодно ниже {n}', journal_hot_above: 'Вам жарко выше {n}',
   journal_rating_cold: 'Холодно',
   journal_rating_ok: 'Как раз',
   journal_rating_hot: 'Жарко',

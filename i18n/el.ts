@@ -382,6 +382,7 @@ export const el: Strings = {
   journal_change: 'Πατήστε άλλη επιλογή για αλλαγή',
   journal_progress: '{n} ημέρες αξιολογημένες · μόνο σε αυτή τη συσκευή',
   journal_progress_one: '{n} ημέρα αξιολογημένη · μόνο σε αυτή τη συσκευή',
+  journal_days_total: '{n} ημέρες καταγεγραμμένες', journal_streak: 'Σειρά {n} ημερών', journal_cold_below: 'Κρυώνεις κάτω από {n}', journal_hot_above: 'Ζεσταίνεσαι πάνω από {n}',
   journal_rating_cold: 'Κρύος',
   journal_rating_ok: 'Ακριβώς',
   journal_rating_hot: 'Ζέστη',

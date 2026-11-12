@@ -1,14 +1,15 @@
 import { SlidingGroup, SlidingItem } from './Sliding';
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { t } from '../utils/i18n';
+import { formatTemp } from '../utils/format';
 import { F } from '../theme/typography';
 import { Card } from './Card';
 import { Snowflake, Sun, Thermometer, Shirt } from '../utils/uiIcons';
 import { haptics } from '../utils/haptics';
 import type { LucideIcon } from 'lucide-react-native';
 import type { AppTheme } from '../theme/palettes';
-import type { ComfortJournalEntry, ComfortRating } from '../utils/comfortJournal';
+import { computeJournalInsights, type ComfortJournalEntry, type ComfortRating } from '../utils/comfortJournal';
 
 interface ComfortJournalCardProps {
   theme: AppTheme;
@@ -16,6 +17,8 @@ interface ComfortJournalCardProps {
   today: ComfortJournalEntry | null;
   /** Total rating days stored - shown once calibration is collecting. */
   total: number;
+  /** All stored entries - the local-only insights strip renders from these. */
+  entries?: ComfortJournalEntry[];
   /** Record (or change) today's rating. */
   onRate: (rating: ComfortRating) => void;
   revealDelay?: number;
@@ -42,10 +45,28 @@ export function ComfortJournalCard({
   theme,
   today,
   total,
+  entries,
   onRate,
   revealDelay,
 }: ComfortJournalCardProps) {
   const savedLabel = today ? t(`journal_rating_${today.rating}`) : null;
+  const insights = computeJournalInsights(entries ?? []);
+  const insightsLine1 = insights.total >= 3
+    ? [
+        t('journal_days_total').replace('{n}', String(insights.total)),
+        insights.streak >= 2 ? t('journal_streak').replace('{n}', String(insights.streak)) : null,
+      ].filter(Boolean).join(' · ')
+    : null;
+  const insightsLine2 = insights.total >= 3
+    ? [
+        insights.coldBoundaryC !== null
+          ? t('journal_cold_below').replace('{n}', formatTemp(insights.coldBoundaryC))
+          : null,
+        insights.hotBoundaryC !== null
+          ? t('journal_hot_above').replace('{n}', formatTemp(insights.hotBoundaryC))
+          : null,
+      ].filter(Boolean).join(' · ') || null
+    : null;
 
   return (
     <Card theme={theme} title={t('journal_title')} icon={Thermometer} revealDelay={revealDelay}>
@@ -97,6 +118,14 @@ export function ComfortJournalCard({
           );
         })}
       </SlidingGroup>
+      {insightsLine1 ? (
+        <View accessible accessibilityRole="text" accessibilityLabel={[insightsLine1, insightsLine2].filter(Boolean).join(', ')}>
+          <Text style={[styles.insights, { color: theme.textSecondary }]}>{insightsLine1}</Text>
+          {insightsLine2 ? (
+            <Text style={[styles.insights, { color: theme.textTertiary }]}>{insightsLine2}</Text>
+          ) : null}
+        </View>
+      ) : null}
       {total > 0 ? (
         <Text style={[styles.progress, { color: theme.textTertiary }]}>
           {(total === 1 ? t('journal_progress_one') : t('journal_progress')).split('{n}').join(String(total))}
@@ -107,6 +136,12 @@ export function ComfortJournalCard({
 }
 
 const styles = StyleSheet.create({
+  insights: {
+    fontSize: 12,
+    fontFamily: F.medium,
+    lineHeight: 17,
+    marginTop: 6,
+  },
   saved: {
     fontSize: 15,
     fontFamily: F.semibold,

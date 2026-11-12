@@ -382,6 +382,7 @@ export const nl: Strings = {
   journal_change: 'Tik op een ander om te wijzigen',
   journal_progress: '{n} dagen beoordeeld · alleen op dit apparaat',
   journal_progress_one: '{n} dag beoordeeld · alleen op dit apparaat',
+  journal_days_total: '{n} dagen genoteerd', journal_streak: 'Reeks van {n} dagen', journal_cold_below: 'Het is jou koud onder {n}', journal_hot_above: 'Het is jou warm boven {n}',
   journal_rating_cold: 'Koud',
   journal_rating_ok: 'Precies goed',
   journal_rating_hot: 'Warm',
