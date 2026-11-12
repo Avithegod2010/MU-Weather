@@ -921,6 +921,15 @@ export const en = {
   notif_sunrise_body: 'The sun rises in about {n} minutes',
   notif_sunrise_body_now: 'The sun is rising',
   s_sunrise_sound: 'Alarm sound', s_sunrise_sound_default: 'Default', sound_dawn: 'Dawn', sound_pulse: 'Pulse', sound_bloom: 'Bloom', sound_beacon: 'Beacon', s_sunrise_preview: 'Preview tone', s_sunrise_preview_sub: 'Plays the selected wake-up tone',
+  ob_welcome_title: 'Welcome to MU Weather',
+  ob_welcome_body: 'A free, private weather app that adapts to your phone — and never asks for an account or a key.',
+  ob_privacy_title: 'Private by design',
+  ob_privacy_body: 'No accounts, no tracking, no ads. Your location and data stay on this device; weather comes from keyless public APIs.',
+  ob_explore_title: 'Make it yours',
+  ob_explore_body: 'Swipe the cards for deep-dives, open the radar, place widgets, and pick from 16 languages in Settings.',
+  ob_next: 'Continue',
+  ob_done: 'Get started',
+  ob_skip: 'Skip',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Rain status',

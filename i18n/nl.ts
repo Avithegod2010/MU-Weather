@@ -436,6 +436,15 @@ export const nl: Strings = {
   notif_sunrise_body: 'De zon komt over ongeveer {n} minuten op',
   notif_sunrise_body_now: 'De zon komt op',
   s_sunrise_sound: 'Weckgeluid', s_sunrise_sound_default: 'Standaard', sound_dawn: 'Dageraad', sound_pulse: 'Puls', sound_bloom: 'Bloei', sound_beacon: 'Baken', s_sunrise_preview: 'Geluid beluisteren', s_sunrise_preview_sub: 'Speelt het gekozen wekgeluid af',
+  ob_welcome_title: 'Welkom bij MU Weather',
+  ob_welcome_body: 'Een gratis, privé weer-app die zich aanpast aan je telefoon — zonder account of sleutel.',
+  ob_privacy_title: 'Privé van ontwerp',
+  ob_privacy_body: 'Geen accounts, tracking of advertenties. Je gegevens blijven op dit apparaat; het weer komt van sleutelloze openbare APIs.',
+  ob_explore_title: 'Maak het jouw app',
+  ob_explore_body: 'Veeg de kaarten voor details, open de radar, plaats widgets en kies uit 16 talen in Instellingen.',
+  ob_next: 'Doorgaan',
+  ob_done: 'Beginnen',
+  ob_skip: 'Overslaan',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Regenstatus',

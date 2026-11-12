@@ -436,6 +436,15 @@ export const el: Strings = {
   notif_sunrise_body: 'ο ήλιος ανατέλλει σε περίπου {n} λεπτά',
   notif_sunrise_body_now: 'Ο ήλιος ανατέλλει',
   s_sunrise_sound: 'Ήχος ξυπνητηριού', s_sunrise_sound_default: 'Προεπιλογή', sound_dawn: 'Χαράζει', sound_pulse: 'Σφυγμός', sound_bloom: 'Άνθιση', sound_beacon: 'Φάρος', s_sunrise_preview: 'Ακρόαση ήχου', s_sunrise_preview_sub: 'Παίζει τον επιλεγμένο ήχο αφύπνισης',
+  ob_welcome_title: 'Καλώς ήρθατε στο MU Weather',
+  ob_welcome_body: 'Μια δωρεάν, ιδιωτική εφαρμογή καιρού που προσαρμόζεται στο τηλέφωνό σας — χωρίς λογαριασμούς ή κλειδιά.',
+  ob_privacy_title: 'Ιδιωτική εξ ορισμού',
+  ob_privacy_body: 'Χωρίς λογαριασμούς, παρακολούθηση ή διαφημίσεις. Τα δεδομένα σας μένουν εδώ· ο καιρός έρχεται από δημόσια API χωρίς κλειδιά.',
+  ob_explore_title: 'Κάντε τη δική σας',
+  ob_explore_body: 'Σαρώστε τις κάρτες για λεπτομέρειες, ανοίξτε το ραντάρ, προσθέστε widget και διαλέξτε από 16 γλώσσες.',
+  ob_next: 'Συνέχεια',
+  ob_done: 'Ξεκινήστε',
+  ob_skip: 'Παράλειψη',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Κατάσταση βροχής',

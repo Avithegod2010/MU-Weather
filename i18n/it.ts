@@ -436,6 +436,15 @@ export const it: Strings = {
   notif_sunrise_body: 'Il sole sorge tra circa {n} minuti',
   notif_sunrise_body_now: 'Il sole sta sorgendo',
   s_sunrise_sound: 'Suono sveglia', s_sunrise_sound_default: 'Predefinito', sound_dawn: 'Alba', sound_pulse: 'Impulso', sound_bloom: 'Fiorire', sound_beacon: 'Faro', s_sunrise_preview: 'Ascolta il suono', s_sunrise_preview_sub: 'Riproduce il suono scelto',
+  ob_welcome_title: 'Benvenuto in MU Weather',
+  ob_welcome_body: 'Un’app meteo gratuita e privata che si adatta al tuo telefono — senza account né chiavi.',
+  ob_privacy_title: 'Privata per progetto',
+  ob_privacy_body: 'Niente account, tracciamento o pubblicità. I tuoi dati restano su questo dispositivo; il meteo arriva da API pubbliche senza chiavi.',
+  ob_explore_title: 'Personalizzala',
+  ob_explore_body: 'Scorri le schede per i dettagli, apri il radar, aggiungi widget e scegli tra 16 lingue nelle impostazioni.',
+  ob_next: 'Continua',
+  ob_done: 'Inizia',
+  ob_skip: 'Salta',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Stato della pioggia',

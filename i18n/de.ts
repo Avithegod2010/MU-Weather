@@ -436,6 +436,15 @@ export const de: Strings = {
   notif_sunrise_body: 'Die Sonne geht in etwa {n} Minuten auf',
   notif_sunrise_body_now: 'Die Sonne geht auf',
   s_sunrise_sound: 'Weckton', s_sunrise_sound_default: 'Standard', sound_dawn: 'Morgenrot', sound_pulse: 'Puls', sound_bloom: 'Aufblühen', sound_beacon: 'Signal', s_sunrise_preview: 'Ton anhören', s_sunrise_preview_sub: 'Spielt den gewählten Weckton ab',
+  ob_welcome_title: 'Willkommen bei MU Weather',
+  ob_welcome_body: 'Eine kostenlose, private Wetter-App, die sich deinem Telefon anpasst — ohne Konto und ohne Schlüssel.',
+  ob_privacy_title: 'Privat von Grund auf',
+  ob_privacy_body: 'Keine Konten, kein Tracking, keine Werbung. Deine Daten bleiben auf diesem Gerät; das Wetter kommt aus schlüssellosen öffentlichen APIs.',
+  ob_explore_title: 'Mach es zu deinem',
+  ob_explore_body: 'Wische die Karten für Details, öffne das Radar, platziere Widgets und wähle in den Einstellungen aus 16 Sprachen.',
+  ob_next: 'Weiter',
+  ob_done: 'Loslegen',
+  ob_skip: 'Überspringen',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Regenstatus',

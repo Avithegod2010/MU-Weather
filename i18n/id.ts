@@ -436,6 +436,15 @@ export const id: Strings = {
   notif_sunrise_body: 'Matahari terbit dalam sekitar {n} menit',
   notif_sunrise_body_now: 'Matahari sedang terbit',
   s_sunrise_sound: 'Suara alarm', s_sunrise_sound_default: 'Bawaan', sound_dawn: 'Fajar', sound_pulse: 'Denyut', sound_bloom: 'Mekar', sound_beacon: 'Suar', s_sunrise_preview: 'Dengarkan suara', s_sunrise_preview_sub: 'Memutar suara bangun yang dipilih',
+  ob_welcome_title: 'Selamat datang di MU Weather',
+  ob_welcome_body: 'Aplikasi cuaca gratis dan pribadi yang menyesuaikan diri dengan ponsel Anda — tanpa akun maupun kunci.',
+  ob_privacy_title: 'Privat sejak desain',
+  ob_privacy_body: 'Tanpa akun, pelacakan, atau iklan. Data Anda tetap di perangkat ini; cuaca datang dari API publik tanpa kunci.',
+  ob_explore_title: 'Jadikan milik Anda',
+  ob_explore_body: 'Geser kartu untuk detail, buka radar, pasang widget, dan pilih salah satu dari 16 bahasa di Pengaturan.',
+  ob_next: 'Lanjut',
+  ob_done: 'Mulai',
+  ob_skip: 'Lewati',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Status hujan',

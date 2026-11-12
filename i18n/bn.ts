@@ -436,6 +436,15 @@ export const bn: Strings = {
   notif_sunrise_body: 'সূর্যোদয প্রায {n} মিনিটে',
   notif_sunrise_body_now: 'সূর্যোদয় হচ্ছে',
   s_sunrise_sound: 'অ্যালার্ম শব্দ', s_sunrise_sound_default: 'ডিফল্ট', sound_dawn: 'ভোর', sound_pulse: 'স্পন্দন', sound_bloom: 'প্রস্ফুটন', sound_beacon: 'দীপ', s_sunrise_preview: 'শব্দ শুনুন', s_sunrise_preview_sub: 'নির্বাচিত জাগরণ শব্দটি বাজায়',
+  ob_welcome_title: 'MU Weather-এ স্বাগতম',
+  ob_welcome_body: 'একটি বিনামূল্যের, ব্যক্তিগত আবহাওয়া অ্যাপ যা আপনার ফোনের সাথে মানিয়ে নেয় — কোনো অ্যাকাউন্ট বা কী নেই।',
+  ob_privacy_title: 'নকশা থেকেই ব্যক্তিগত',
+  ob_privacy_body: 'কোনো অ্যাকাউন্ট, ট্র্যাকিং বা বিজ্ঞাপন নেই। আপনার ডেটা এই ডিভাইসেই থাকে; আবহাওয়া আসে কী-বিহীন পাবলিক API থেকে।',
+  ob_explore_title: 'নিজের মতো সাজান',
+  ob_explore_body: 'বিস্তারিতর জন্য কার্ড সোয়াইপ করুন, রাডার খুলুন, উইজেট বসান আর সেটিংসে ১৬টি ভাষার মধ্যে বেছে নিন।',
+  ob_next: 'চালিয়ে যান',
+  ob_done: 'শুরু করুন',
+  ob_skip: 'এড়িয়ে যান',
 
   // ── rain status notification ──
   s_rain_ongoing: 'বৃষ্টি স্ট্যাটাস',

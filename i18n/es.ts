@@ -436,6 +436,15 @@ export const es: Strings = {
   notif_sunrise_body: 'El sol sale en unos {n} minutos',
   notif_sunrise_body_now: 'El sol está saliendo',
   s_sunrise_sound: 'Sonido de alarma', s_sunrise_sound_default: 'Predeterminado', sound_dawn: 'Amanecer', sound_pulse: 'Pulso', sound_bloom: 'Florecer', sound_beacon: 'Faro', s_sunrise_preview: 'Escuchar tono', s_sunrise_preview_sub: 'Reproduce el tono elegido',
+  ob_welcome_title: 'Bienvenido a MU Weather',
+  ob_welcome_body: 'Una app del tiempo gratuita y privada que se adapta a tu teléfono — sin cuentas ni claves.',
+  ob_privacy_title: 'Privada por diseño',
+  ob_privacy_body: 'Sin cuentas, sin rastreo, sin anuncios. Tus datos se quedan en este dispositivo; el tiempo viene de APIs públicas sin clave.',
+  ob_explore_title: 'Hazla tuya',
+  ob_explore_body: 'Desliza las tarjetas para más detalle, abre el radar, coloca widgets y elige entre 16 idiomas en Ajustes.',
+  ob_next: 'Continuar',
+  ob_done: 'Empezar',
+  ob_skip: 'Omitir',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Estado de lluvia',

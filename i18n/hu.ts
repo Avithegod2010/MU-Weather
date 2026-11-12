@@ -436,6 +436,15 @@ export const hu: Strings = {
   notif_sunrise_body: 'A nap kb. {n} perc mülva kel',
   notif_sunrise_body_now: 'A nap most kel',
   s_sunrise_sound: 'Ébresztő hang', s_sunrise_sound_default: 'Alapértelmezett', sound_dawn: 'Hajnal', sound_pulse: 'Pulzus', sound_bloom: 'Virágzás', sound_beacon: 'Jel', s_sunrise_preview: 'Hang meghallgatása', s_sunrise_preview_sub: 'Lejátssza a kiválasztott ébresztő hangot',
+  ob_welcome_title: 'Üdvözlünk az MU Weatherben',
+  ob_welcome_body: 'Egy ingyenes, privát időjárás-alkalmazás, amely a telefonodhoz igazodik — fiók és kulcs nélkül.',
+  ob_privacy_title: 'Előre megtervezett adatvédelem',
+  ob_privacy_body: 'Nincs fiók, követés vagy reklám. Adataid ezen a készüléken maradnak; az időjárás kulcs nélküli nyilvános API-kból jön.',
+  ob_explore_title: 'Alakítsd a sajátodda',
+  ob_explore_body: 'Húzd el a kártyákat a részletekért, nyisd meg a radart, helyezz el modulokat, és válassz 16 nyelv közül a beállításokban.',
+  ob_next: 'Tovább',
+  ob_done: 'Kezdjük el',
+  ob_skip: 'Kihagyás',
 
   // ── rain status notification ──
   s_rain_ongoing: 'Esőállapot',

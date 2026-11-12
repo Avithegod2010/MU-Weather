@@ -126,6 +126,8 @@ import { useMeteoAlarm } from '../hooks/useMeteoAlarm';
 import { useNwsWarnings } from '../hooks/useNwsWarnings';
 import { useCanadaAlerts } from '../hooks/useCanadaAlerts';
 import { useYearDays } from '../hooks/useYearDays';
+import { useOnboarding } from '../hooks/useOnboarding';
+import { OnboardingSheet } from '../components/OnboardingSheet';
 import { ClimateCard } from '../components/ClimateCard';
 import { OnThisDayCard } from '../components/OnThisDayCard';
 import { WarningsCard } from '../components/WarningsCard';
@@ -184,6 +186,7 @@ export function HomeScreen() {
   const nwsWarnings = useNwsWarnings(active);
   const canadaAlerts = useCanadaAlerts(active);
   const yearDaysState = useYearDays(active);
+  const onboarding = useOnboarding();
   const ensemble = useEnsemble(FEATURES.ensemble ? active : null);
   const forecastCalibration = useForecastCalibration(
     active,
@@ -1208,6 +1211,12 @@ export function HomeScreen() {
         primaryTemp={weather.data?.current.temperature ?? null}
         lastUpdated={weather.data?.fetchedAt ?? null}
         accuracyHistory={providerStatus.history}
+      />
+
+      <OnboardingSheet
+        theme={theme}
+        visible={onboarding.done === false}
+        onComplete={onboarding.complete}
       />
 
       <AlertsScreen
