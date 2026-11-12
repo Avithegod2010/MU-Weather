@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,7 +13,8 @@ import {
   radarTileUrl,
   type RadarFrame,
 } from '../utils/radar';
-import { RadarTileMap } from '../components/RadarTileMap';
+import { RadarTileMap, type RadarOverlay } from '../components/RadarTileMap';
+import type { NwsAlert } from '../api/nws';
 import { haptics } from '../utils/haptics';
 import { t } from '../utils/i18n';
 import { F } from '../theme/typography';
@@ -23,6 +24,14 @@ import type { GeoLocation } from '../api/types';
 /** Milliseconds per frame while the loop plays. */
 const FRAME_INTERVAL_MS = 650;
 
+/** NWS severity → outline colour, matched to the warnings palettes. */
+const SEVERITY_COLORS: Record<NwsAlert['severity'], string> = {
+  Extreme: '#E85F5F',
+  Severe: '#F5A962',
+  Moderate: '#E8D05A',
+  Minor: '#6FA8DC',
+};
+
 interface RadarScreenProps {
   theme: AppTheme;
   location: GeoLocation;
@@ -30,6 +39,8 @@ interface RadarScreenProps {
   onClose: () => void;
   /** Switch to the full multi-layer map (Windy) - also the fallback path. */
   onOpenLayers: () => void;
+  /** Active NWS alerts (HomeScreen) - their outlines paint over the radar. */
+  nwsAlerts?: NwsAlert[] | null;
 }
 
 /** "-45 min ago" / "in 20 min" / "Now", relative to the newest observed frame. */
@@ -48,12 +59,20 @@ function frameLabel(frame: RadarFrame, nowTime: number): string {
  * Web-Mercator math - so no native map SDK, Google Maps API key, or billing
  * account is involved.
  */
-export function RadarScreen({ theme, location, visible, onClose, onOpenLayers }: RadarScreenProps) {
+export function RadarScreen({ theme, location, visible, onClose, onOpenLayers, nwsAlerts }: RadarScreenProps) {
   const insets = useSafeAreaInsets();
   const { status, frameSet, reload } = useRadarFrames(visible);
   const [frameIndex, setFrameIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [trackWidth, setTrackWidth] = useState(0);
+
+  const overlays = useMemo<RadarOverlay[]>(
+    () =>
+      (nwsAlerts ?? [])
+        .filter((alert) => alert.polygon && alert.polygon.length >= 3)
+        .map((alert) => ({ id: alert.id, points: alert.polygon!, color: SEVERITY_COLORS[alert.severity] })),
+    [nwsAlerts],
+  );
 
   const frames = frameSet?.frames ?? [];
   const frameCount = frames.length;
@@ -142,6 +161,7 @@ export function RadarScreen({ theme, location, visible, onClose, onOpenLayers }:
           radarUrlTemplate={frameSet && frame ? radarTileUrl(frameSet.host, frame) : null}
           tileSize={RADAR_TILE_SIZE}
           maxZoom={RADAR_MAX_ZOOM}
+          overlays={overlays}
         />
 
         <Text pointerEvents="none" style={[styles.attribution, { color: theme.textTertiary }]}>

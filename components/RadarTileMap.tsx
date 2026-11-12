@@ -8,6 +8,7 @@ import {
   type LayoutChangeEvent,
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Svg, { Polygon as SvgPolygon } from 'react-native-svg';
 import { LocateFixed, MapPin, Minus, Plus } from '../utils/uiIcons';
 import { haptics } from '../utils/haptics';
 import { t } from '../utils/i18n';
@@ -55,6 +56,19 @@ interface RadarTileMapProps {
   tileSize: number;
   /** Highest usable zoom - RainViewer serves radar tiles up to 7 (RADAR_MAX_ZOOM). */
   maxZoom: number;
+  /**
+   * Alert outlines to paint over the map ([lat, lon] rings + colour), e.g.
+   * NWS warnings. Purely decorative (pointerEvents none), they ride INSIDE the
+   * animated grid container so drags move them pixel-perfectly with the tiles.
+   */
+  overlays?: RadarOverlay[];
+}
+
+/** One drawable alert outline (see api/nws.ts parseAlertPolygon). */
+export interface RadarOverlay {
+  id: string;
+  points: [number, number][];
+  color: string;
 }
 
 interface TileCell {
@@ -135,6 +149,7 @@ export function RadarTileMap({
   radarUrlTemplate,
   tileSize,
   maxZoom,
+  overlays,
 }: RadarTileMapProps) {
   const [zoom, setZoom] = useState(() => Math.min(maxZoom, Math.max(MIN_ZOOM, 5)));
   /** Viewport centre in world pixels at the current zoom; null = follow the location. */
@@ -304,6 +319,57 @@ export function RadarTileMap({
   const pinLeft = grid ? centerX + pinOffsetX - grid.firstX * tileSize : 0;
   const pinTop = grid ? centerY + pinOffsetY - grid.firstY * tileSize : 0;
 
+  /**
+   * Alert outlines projected into the grid container's coordinate space. Each
+   * ring's x-coordinates are unwrapped relative to its own first point (the
+   * shortest wrapped delta), so a shape spanning the antimeridian stays
+   * connected; rings whose bounding box misses the visible grid are culled.
+   */
+  const overlayShapes = useMemo(() => {
+    if (!grid || !overlays?.length) return [];
+    const originX = grid.firstX * tileSize;
+    const originY = grid.firstY * tileSize;
+    const gridW = grid.cols * tileSize;
+    const gridH = grid.rows * tileSize;
+    const shapes: { id: string; color: string; points: string }[] = [];
+    for (const overlay of overlays) {
+      if (!overlay.points || overlay.points.length < 3) continue;
+      let minX = Number.POSITIVE_INFINITY;
+      let maxX = Number.NEGATIVE_INFINITY;
+      let minY = Number.POSITIVE_INFINITY;
+      let maxY = Number.NEGATIVE_INFINITY;
+      const projected: [number, number][] = [];
+      for (const point of overlay.points) {
+        const [lat, lon] = point;
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+        let sx = worldX(lon, zoom) * tileSize - originX;
+        const sy = worldY(lat, zoom) * tileSize - originY;
+        if (!projected.length) {
+          // Anchor the wrap on the first point.
+          while (sx > gridW + worldPx / 2) sx -= worldPx;
+          while (sx < -worldPx / 2) sx += worldPx;
+        } else {
+          const anchor = projected[0][0];
+          while (sx - anchor > worldPx / 2) sx -= worldPx;
+          while (anchor - sx > worldPx / 2) sx += worldPx;
+        }
+        projected.push([sx, sy]);
+        if (sx < minX) minX = sx;
+        if (sx > maxX) maxX = sx;
+        if (sy < minY) minY = sy;
+        if (sy > maxY) maxY = sy;
+      }
+      if (projected.length < 3) continue;
+      if (maxX < 0 || minX > gridW || maxY < 0 || minY > gridH) continue; // off-screen
+      shapes.push({
+        id: overlay.id,
+        color: overlay.color,
+        points: projected.map(([x, y]) => `${Math.round(x)},${Math.round(y)}`).join(' '),
+      });
+    }
+    return shapes;
+  }, [overlays, grid, tileSize, zoom, worldPx]);
+
   return (
     <View style={styles.root} onLayout={onLayout} {...panResponder.panHandlers}>
       {grid ? (
@@ -328,6 +394,26 @@ export function RadarTileMap({
               tileSize={tileSize}
               opacity={0.9}
             />
+          ) : null}
+
+          {overlayShapes.length ? (
+            <Svg
+              pointerEvents="none"
+              style={StyleSheet.absoluteFill}
+              accessible={false}
+              accessibilityElementsHidden
+            >
+              {overlayShapes.map((shape) => (
+                <SvgPolygon
+                  key={shape.id}
+                  points={shape.points}
+                  fill={`${shape.color}29`}
+                  stroke={shape.color}
+                  strokeWidth={2}
+                  strokeLinejoin="round"
+                />
+              ))}
+            </Svg>
           ) : null}
 
           <View

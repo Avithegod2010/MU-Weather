@@ -31,6 +31,12 @@ export interface NwsAlert {
   onset: string;
   expires: string;
   expiresAt: number;
+  /**
+   * Alert outline as [lat, lon] pairs when the feed supplies a shape
+   * (GeoJSON geometry, else the geocode policy polygon), else null/absent.
+   * Display-only: the containment filter below is unchanged.
+   */
+  polygon?: [number, number][] | null;
 }
 
 const USER_AGENT = 'MU-Weather/1.3.0 (https://github.com/Avithegod2010/MU-Weather)';
@@ -43,6 +49,57 @@ function parseNwsIso(value: string | undefined): number | null {
   const t = value.replace(/[+-]\d{2}:\d{2}$/, ''); // strip offset -> naive local time
   const date = new Date(t);
   return Number.isFinite(date.getTime()) ? date.getTime() : null;
+}
+
+/**
+ * Extract the alert outline as [lat, lon] pairs from a NWS feature. GeoJSON
+ * geometry is preferred (largest ring of a Polygon, first ring per polygon of
+ * a MultiPolygon); the geocode policy polygon ("lon,lat lon,lat …") is the
+ * fallback. Feed-supplied shapes are lon-first, so every pair is swapped.
+ */
+export function parseAlertPolygon(feature: unknown): [number, number][] | null {
+  const f = (feature ?? {}) as {
+    geometry?: { type?: unknown; coordinates?: unknown };
+    properties?: { geocode?: { policies?: { polygon?: unknown }[] } };
+  };
+  const toLatLon = (ring: unknown[]): [number, number][] | null => {
+    if (!Array.isArray(ring) || ring.length < 3) return null;
+    const pts: [number, number][] = [];
+    for (const pair of ring) {
+      if (!Array.isArray(pair) || typeof pair[0] !== 'number' || typeof pair[1] !== 'number') return null;
+      pts.push([pair[1], pair[0]]); // GeoJSON is [lon, lat]
+    }
+    return pts;
+  };
+  const geo = f.geometry;
+  if (geo && typeof geo === 'object' && Array.isArray(geo.coordinates)) {
+    if (geo.type === 'Polygon') {
+      let best: [number, number][] | null = null;
+      for (const ring of geo.coordinates) {
+        const pts = toLatLon(ring);
+        if (pts && (!best || pts.length > best.length)) best = pts;
+      }
+      if (best) return best;
+    } else if (geo.type === 'MultiPolygon') {
+      let best: [number, number][] | null = null;
+      for (const poly of geo.coordinates) {
+        if (!Array.isArray(poly) || !Array.isArray(poly[0])) continue;
+        const pts = toLatLon(poly[0]);
+        if (pts && (!best || pts.length > best.length)) best = pts;
+      }
+      if (best) return best;
+    }
+  }
+  const policy = f.properties?.geocode?.policies?.[0]?.polygon;
+  if (typeof policy === 'string') {
+    const raw = policy.split(/[,\s]+/).map(Number);
+    if (raw.length >= 6 && raw.every((n) => Number.isFinite(n))) {
+      const pts: [number, number][] = [];
+      for (let i = 0; i + 1 < raw.length; i += 2) pts.push([raw[i + 1], raw[i]]);
+      if (pts.length >= 3) return pts;
+    }
+  }
+  return null;
 }
 
 export function pointInNwsPolygon(
@@ -135,6 +192,7 @@ export function fetchNwsAlerts(
             onset: p.onset,
             expires: p.expires,
             expiresAt,
+            polygon: parseAlertPolygon(feature),
           });
         }
         resolve(alerts);

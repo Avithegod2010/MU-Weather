@@ -48,6 +48,8 @@ export const FEATURES = {
   bestWindow: true,
   /** US severe-warnings alert - NOAA NWS CAP feeds (US locations only) */
   nws: true,
+  /** Canadian severe-warnings card - Environment Canada app API (CA locations only) */
+  canada: true,
 } as const;
 
 export type FeatureKey = keyof typeof FEATURES;

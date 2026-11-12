@@ -954,6 +954,7 @@ export const pt: Strings = {
   alert_nws_title: 'US severe weather warnings',
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
+  ec_alerts: 'Avisos do Environment Canada',
 
   health_note_not_medical: 'Apenas estimativas heurísticas — não é aconselhamento médico.',
 };

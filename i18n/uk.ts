@@ -934,5 +934,6 @@ export const uk: Strings = {
   alert_nws_title: 'Попередження про небезпечну погоду в США',
   alert_nws_sub: 'Активні попередження та рекомендації від NOAA/NWS',
   nws_alerts: 'Попередження NOAA/NWS',
+  ec_alerts: 'Попередження Environment Canada',
   health_note_not_medical: 'Лише евристичні оцінки — не медична порада.',
 };

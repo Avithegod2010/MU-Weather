@@ -623,6 +623,7 @@ export const hi: Strings = {
   alert_nws_title: 'US severe weather warnings',
   alert_nws_sub: 'Active warnings & advisories from NOAA/NWS',
   nws_alerts: 'NOAA/NWS alerts',
+  ec_alerts: 'Environment Canada चेतावनियाँ',
 
   health_note_not_medical: 'अनुमानित अंदाज़ा ही — चिकित्सा सलाह नहीं।',
 };

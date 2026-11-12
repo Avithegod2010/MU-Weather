@@ -124,10 +124,12 @@ import { useClimateNormals } from '../hooks/useClimateNormals';
 import { useOnThisDay } from '../hooks/useOnThisDay';
 import { useMeteoAlarm } from '../hooks/useMeteoAlarm';
 import { useNwsWarnings } from '../hooks/useNwsWarnings';
+import { useCanadaAlerts } from '../hooks/useCanadaAlerts';
 import { ClimateCard } from '../components/ClimateCard';
 import { OnThisDayCard } from '../components/OnThisDayCard';
 import { WarningsCard } from '../components/WarningsCard';
 import { USWarningsCard } from '../components/USWarningsCard';
+import { CanadaWarningsCard } from '../components/CanadaWarningsCard';
 import { ProviderStatusCard } from '../components/ProviderStatusCard';
 import { SettingsSheet } from '../components/SettingsSheet';
 import { useWeather } from '../hooks/useWeather';
@@ -179,6 +181,7 @@ export function HomeScreen() {
   const onThisDay = useOnThisDay(active);
   const meteoAlarm = useMeteoAlarm(active);
   const nwsWarnings = useNwsWarnings(active);
+  const canadaAlerts = useCanadaAlerts(active);
   const ensemble = useEnsemble(FEATURES.ensemble ? active : null);
   const forecastCalibration = useForecastCalibration(
     active,
@@ -891,6 +894,17 @@ export function HomeScreen() {
                   />
                 </Reveal>
               ) : null}
+              {FEATURES.canada && showSection('warnings') ? (
+                <Reveal delay={158}>
+                  <CanadaWarningsCard
+                    theme={theme}
+                    alerts={canadaAlerts.alerts}
+                    status={canadaAlerts.status}
+                    updatedAt={canadaAlerts.updatedAt}
+                    now={planningNow}
+                  />
+                </Reveal>
+              ) : null}
               {showSection('warnings') && weather.data ? (
                 <Reveal delay={158}>
                   <ProviderStatusCard
@@ -1221,6 +1235,7 @@ export function HomeScreen() {
         theme={theme}
         location={active ?? { id: 'current', name: 'World', latitude: 20, longitude: 0 }}
         visible={radarOpen}
+        nwsAlerts={nwsWarnings.alerts}
         onClose={() => setRadarOpen(false)}
         onOpenLayers={() => {
           setRadarOpen(false);
