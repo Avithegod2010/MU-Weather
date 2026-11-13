@@ -3,6 +3,7 @@
  * res/raw/ so expo-notifications notification channels can reference them by
  * file name (Android channel sounds must live in res/raw). Runs at prebuild.
  */
+const { withDangerousMod } = require('@expo/config-plugins');
 const fs = require('fs');
 const path = require('path');
 
