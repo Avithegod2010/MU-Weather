@@ -14,6 +14,11 @@ import {
   renderCityWidgetNoData,
   renderCityWidgetUnconfigured,
 } from '../components/WeatherWidgetCity';
+import {
+  renderRadarWidgetFromBundle,
+  renderRadarWidgetUnavailable,
+} from '../components/WeatherWidgetRadar';
+import { getWidgetRadarFrameSet } from '../utils/radarWidget';
 import { loadCitySnapshot } from '../utils/citySnapshots';
 import { stampWidgetRendered } from '../utils/widgetPresence';
 import { loadWidgetCity, loadWidgetCities } from '../utils/widgetCityConfig';
@@ -29,6 +34,8 @@ export const WEATHER_WIDGET_NAME_DASHBOARD = 'MUWeatherWidgetDashboard';
 export const WEATHER_WIDGET_NAME_CITY = 'MUWeatherWidgetCity';
 
 export const WEATHER_WIDGET_NAME_SUN = 'MUWeatherWidgetSun';
+
+export const WEATHER_WIDGET_NAME_RADAR = 'MUWeatherWidgetRadar';
 
 const WEATHER_CACHE_KEY = '@mu_weather/last_weather_v1';
 const SETTINGS_CACHE_KEY = '@mu_weather/settings_v1';
@@ -187,6 +194,18 @@ async function renderFromCacheDashboard(): Promise<React.JSX.Element> {
 }
 
 /**
+ * Radar-snapshot widget: fetches the RainViewer frame set (5-min TTL cache,
+ * stale kept) and renders the newest OBSERVED frame's tiles centred on the
+ * cached bundle's location. No bundle = nothing to centre on -> placeholder.
+ */
+async function renderFromCacheRadar(): Promise<React.JSX.Element> {
+  const bundle = await loadCachedBundle();
+  const frame = await getWidgetRadarFrameSet();
+  if (!frame) return renderRadarWidgetUnavailable(false);
+  return renderRadarWidgetFromBundle(bundle, frame.frameSet, frame.stale, frame.frameSet ? Date.now() : null);
+}
+
+/**
  * Redraw ONE multi-city widget instance.
  *
  * The per-instance path is necessary because each placed widget shows a
@@ -211,6 +230,10 @@ if (!globalScope.__muWidgetTaskDefined) {
     // Hour-cell taps: launch the app focused on the tapped hour (see
     // openHourDeepLink). Other click actions fall through unused for now.
     if (widgetAction === 'WIDGET_CLICK') {
+      if (clickAction === 'openRadar') {
+        void launchDeepLink('muweather://radar');
+        return;
+      }
       if (clickAction === 'openHour') {
         void openHourDeepLink(clickActionData?.time);
         return;
@@ -246,6 +269,10 @@ if (!globalScope.__muWidgetTaskDefined) {
       renderWidget(await renderCityWidgetInstance(widgetInfo.widgetId));
       return;
     }
+    if (widgetInfo.widgetName === WEATHER_WIDGET_NAME_RADAR) {
+      renderWidget(await renderFromCacheRadar());
+      return;
+    }
     renderWidget(await renderFromCache());
   });
 }
@@ -263,6 +290,7 @@ export async function refreshWeatherWidgets(): Promise<void> {
     { widgetName: WEATHER_WIDGET_NAME_LARGE, renderWidget: renderFromCacheLarge },
     { widgetName: WEATHER_WIDGET_NAME_DASHBOARD, renderWidget: renderFromCacheDashboard },
     { widgetName: WEATHER_WIDGET_NAME_SUN, renderWidget: renderFromCacheSun },
+    { widgetName: WEATHER_WIDGET_NAME_RADAR, renderWidget: renderFromCacheRadar },
   ].map(async ({ widgetName, renderWidget }) => {
     try {
       await requestWidgetUpdate({ widgetName, renderWidget });
