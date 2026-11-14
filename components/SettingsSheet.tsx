@@ -131,10 +131,10 @@ const SUNRISE_ALARM_OFFSETS = [0, 15, 30, 60, 90];
 
 /** Bundled preview sources for the alarm tones (kept out of the render loop). */
 const ALARM_PREVIEW_SOURCES: Record<string, number> = {
-  dawn: require('../assets/sounds/alarm-dawn.wav'),
-  pulse: require('../assets/sounds/alarm-pulse.wav'),
-  bloom: require('../assets/sounds/alarm-bloom.wav'),
-  beacon: require('../assets/sounds/alarm-beacon.wav'),
+  dawn: require('../assets/sounds/alarm_dawn.wav'),
+  pulse: require('../assets/sounds/alarm_pulse.wav'),
+  bloom: require('../assets/sounds/alarm_bloom.wav'),
+  beacon: require('../assets/sounds/alarm_beacon.wav'),
 };
 
 interface SettingsSheetProps {
