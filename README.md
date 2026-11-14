@@ -198,7 +198,7 @@ eas build -p android --profile preview
 `app.json` ships two config plugins:
 
 - **`plugins/withAbiSplits.js`** — Gradle ABI splits, so the build emits per-architecture APKs (`arm64-v8a`, `armeabi-v7a`, `x86_64`) plus a universal APK. The arm64 APK is roughly half the size of the universal one.
-- **`plugins/withAndroidShortcuts.js`** — Android app shortcuts, with labels translated into all 14 languages.
+- **`plugins/withAndroidShortcuts.js`** — Android app shortcuts, with labels translated into all 16 languages.
 
 ## 🌐 Data sources & attribution
 
@@ -273,7 +273,7 @@ Removed in favour of a built-in keyless tile renderer (CARTO + RainViewer tiles)
 
 - [x] **Marine / wave data upgrade** — wave height, period and direction, swell height/period/direction, sea-surface temperature, sea-state bands and a 6-hour per-location cache (Open-Meteo Marine API)
 - [x] Historical explorer — weather on any past date
-- [x] Further translation polish and additional languages — Polish and Turkish join the catalog (14 languages)
+- [x] Further translation polish and additional languages — Polish and Turkish join the catalog; Ukrainian, Russian and more follow (16 languages)
 
 ## 🤝 Contributing
 
