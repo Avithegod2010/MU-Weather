@@ -95,5 +95,9 @@ perfetto-captures/
 # Local EAS build logs
 .eas-build.log
 .eas-build.err
+# Android signing credentials (keystore + passwords) - NEVER commit
+credentials.json
+*.jks
+*.keystore
 # Local session handoff notes
 zcode-prompt.md
