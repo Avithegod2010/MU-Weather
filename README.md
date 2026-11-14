@@ -76,11 +76,13 @@ built with React Native & Expo.
 - **Saved-city alerts** — the same rules can run for saved cities with rotating sweeps and per-city cooldowns; choose a 20, 30 or 60-minute in-app cadence. When the app is closed, Android may defer background work (the task requests a 30-minute minimum; it is not an exact schedule)
 - **Alert history** — the last 20 notification outcomes with trigger evidence, severity, city and local time; “scheduled” does not prove the operating system displayed the notification
 - **Spoken forecast** — the app reads your forecast aloud in the app language; the daily digest notification carries a **“Read my forecast”** action
+- **Sunrise alarm with your choice of tone** — ring before sunrise in the active city (even with the app closed), offset from 0–90 minutes, with four bundled wake tones, an in-app preview and per-tone Android notification channels
 - **Background checks** — weather, widgets, digest and alerts can refresh while the app is closed when Android grants background execution; timing is best-effort and may be deferred
 
 ### 📊 History, climate & accuracy
 
 - **30-day history** — archive-based actuals vs. the forecasts the app logged itself, with a 7/30-day toggle, a temperature-range sparkline, rain totals and variability stats
+- **Year heatmap** — a GitHub-style grid of the past 365 days of daily highs in the graph explorer, one archive call, cached on-device, with hottest/coldest/wettest captions
 - **Streaks** — the current dry or wet run in the past-days view, compared against the longest spell in the same window
 - **Weather on this day** — what actually happened on today's date over the past 10 years
 - **Climate normals** — “what's normal here” for every month of the year, from the ERA5 archive, with a delta against today's forecast
@@ -88,7 +90,8 @@ built with React Native & Expo.
 - **Rain probabilities** — the Home chart overlays raw ICON-EPS hourly member shares (amber dots) on the primary-provider hourly chances (blue bars), only when member support and local-time alignment are adequate. These shares are checked against later Archive API observations (not station ground truth); direct complete-day event chances count joint members (hourly probabilities are not multiplied), with support-gated Brier/reliability summaries
 - **Ensemble coverage** — temperature and wind P10–P90 forecasts are checked against later archive observations, with sample counts, lead-time breakdowns and approximate coverage uncertainty
 - **Model leaderboard** — compares ECMWF, GFS, ICON, Météo-France, JMA and MET Nordic by metric and city; rankings wait for seven shared dates and show approximate Wilson hit-rate intervals (adjacent weather dates may be correlated)
-- **Official warnings** — MeteoAlarm CAP feeds for supported countries, with stated severity/source, expiry, last-check time and a clear stale/unavailable state
+- **Official warnings** — MeteoAlarm CAP feeds for supported countries, with stated severity/source, expiry, last-check time and a clear stale/unavailable state; **US NWS alerts** with polygon matching; **Canadian ECCC alerts** (Environment Canada, English/French)
+- **Warning outlines on the radar** — active NWS warnings draw their polygons over the animated radar, colour-coded by severity
 
 ### 🗺️ Radar & maps
 
@@ -105,6 +108,7 @@ built with React Native & Expo.
 - **Settings backup & restore** — export and import your settings as JSON
 - **Data export** — CSV and JSON export of the app's own forecast log
 - **Deep dives** — dedicated screens for wind, air quality, UV, humidity, visibility, pressure, precipitation, moon, pollen, day detail and the graph explorer
+- **Weather journal with insights** — rate how the day felt and the app learns: your streak, and the temperatures where you personally feel cold or hot feed back into the "what to wear" line
 
 ### 🎨 Customisation & platform
 

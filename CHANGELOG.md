@@ -2,6 +2,19 @@
 
 All notable changes to MU Weather. The app is keyless and offline-friendly by design — every release keeps that promise.
 
+## [1.5.0] — 2026-11-14
+
+### Added
+- **Canadian official warnings** — Environment Canada alert cards for Canadian locations via the keyless WeatherCAN API, completing the warnings trio (MeteoAlarm for Europe, NWS for the US, ECCC for Canada), bilingual (English/French) with the app language.
+- **Warning outlines on the radar** — active NWS warnings draw their polygons over the animated radar map, colour-coded by severity and tracking every pan and zoom.
+- **Year heatmap** — a GitHub-style grid of the past 365 days of daily highs in the graphs deep-dive, built from one archive call and cached on-device, with hottest/coldest/wettest captions.
+- **Journal insights** — the weather journal now shows your rating streak and your personal cold/hot boundaries: the temperatures where you actually felt cold or hot.
+- **Sunrise-alarm sounds** — four bundled wake tones (Dawn, Pulse, Bloom, Beacon) with an in-app preview, delivered through per-sound Android notification channels so the alarm rings with the app closed.
+- **First-launch onboarding** — a three-slide intro (welcome, privacy, where things live), shown once.
+
+### Changed
+- The i18n catalogs grew from 935 to 963 keys each; every new feature is fully translated in all 16 languages.
+
 ## [1.4.0] — 2026-10-24
 
 ### Added
