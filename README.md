@@ -24,18 +24,12 @@ Material You weather for Android
 ## Screenshots
 
 <p align="center">
-  <a href="scripts/visual/results/halo-shots/clear-day-ocean-A.png"><img src="scripts/visual/results/halo-shots/clear-day-ocean-A.png" width="31%" alt="Today’s weather in London with current conditions and rain outlook" /></a>
-  <a href="scripts/visual/results/detail/home-hourly-forecast.png"><img src="scripts/visual/results/detail/home-hourly-forecast.png" width="31%" alt="Hourly forecast with rain probability, temperatures and trend charts" /></a>
+  <a href="scripts/visual/results/halo-shots/clear-day-ocean-A.png"><img src="scripts/visual/results/halo-shots/clear-day-ocean-A.png" width="26%" alt="Today’s weather in London with current conditions and rain outlook" /></a>
+  <a href="scripts/visual/results/detail/home-hourly-forecast.png"><img src="scripts/visual/results/detail/home-hourly-forecast.png" width="26%" alt="Hourly forecast with rain probability, temperatures and trend charts" /></a>
+  <a href="scripts/visual/results/detail/day-detail-top.png"><img src="scripts/visual/results/detail/day-detail-top.png" width="26%" alt="Tomorrow’s detailed forecast with temperature and rain probability charts" /></a>
 </p>
 
-<p align="center"><sub>Today’s weather · Hourly forecast</sub></p>
-
-<p align="center">
-  <a href="radar-preview.png"><img src="radar-preview.png" width="29%" alt="Rain radar illustration from the MU Weather website" /></a>
-  <a href="widget-preview.png"><img src="widget-preview.png" width="53%" alt="Hourly and current-weather widget illustrations from the MU Weather website" /></a>
-</p>
-
-<p align="center"><sub>Rain radar and home-screen widget previews from the project website</sub></p>
+<p align="center"><sub>Today’s weather · Hourly forecast · Day detail</sub></p>
 
 <a name="-features"></a>
 
