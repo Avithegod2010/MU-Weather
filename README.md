@@ -1,27 +1,25 @@
 <div align="center">
 
-<img src="assets/icon.png" width="76" height="76" alt="" />
-
 <h1>MU Weather</h1>
 
-<strong>See when it will rain and plan around it.</strong>
+<p><strong>See the weather now and when it’s likely to change.</strong></p>
 
-Material You weather for Android
+<p><strong><a href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-universal-release.apk">⬇️ Download APK v1.5.0</a></strong> · <a href="#screenshots">🌤️ See the forecasts</a> · <a href="https://avithegod2010.github.io/MU-Weather/">🌐 Project website ↗</a></p>
 
-<p>
-  <strong><a href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-universal-release.apk">Download APK v1.5.0</a></strong> ·
-  <a href="#install">Install options</a> ·
-  <a href="#screenshots">Screenshots</a> ·
-  <a href="https://avithegod2010.github.io/MU-Weather/">Project website</a>
-</p>
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="readme-hero.png" />
+  <img src="readme-hero.gif" width="820" alt="A sunrise illustration with a gold sun emerging from blue clouds" />
+</picture>
 
-<sub>No account, ads, tracking or API key</sub>
+<p><sub>Material You weather for Android · No account, ads, tracking or API key</sub></p>
 
 </div>
 
 <a name="-screenshots"></a>
 
-## Screenshots
+<a name="screenshots"></a>
+
+## 🌤️ Screenshots
 
 <p align="center">
   <a href="scripts/visual/results/halo-shots/clear-day-ocean-A.png"><img src="scripts/visual/results/halo-shots/clear-day-ocean-A.png" width="26%" alt="Today’s weather in London with current conditions and rain outlook" /></a>
@@ -33,19 +31,25 @@ Material You weather for Android
 
 <a name="-features"></a>
 
-## What you can do
+<a name="what-you-can-do"></a>
 
-- **Plan your week.** Check a 16-day forecast, hourly conditions and the next chance of rain.
-- **See rain move.** Play and scrub the radar timeline. See official warnings in supported regions.
-- **Make it yours.** Pick from five home-screen widgets and use Material You colours on Android 12 and newer.
+## 📅 What you can do
 
-## Install
+| ☀️ See what’s ahead | 🌧️ Track rain | 🎨 Make it yours |
+| --- | --- | --- |
+| Check the 16-day forecast, hourly conditions and the next chance of rain. | Play or scrub the radar timeline. See official warnings in supported regions. | Choose from five widgets and use Material You colours on Android 12 or newer. |
+
+<a name="install"></a>
+
+## ⬇️ Install
 
 Download the [universal APK](https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-universal-release.apk) to your Android phone and open it to install. If you know your phone’s architecture, choose a smaller APK from the [release page](https://github.com/Avithegod2010/MU-Weather/releases/tag/v1.5.0).
 
 <a name="-privacy--permissions"></a>
 
-## Privacy and offline use
+<a name="privacy-and-offline-use"></a>
+
+## 🔒 Privacy and offline use
 
 MU Weather fetches weather directly from public providers and sends them the coordinates you’re viewing. Settings, saved cities and cached forecasts stay on your device.
 
@@ -53,12 +57,15 @@ MU Weather fetches weather directly from public providers and sends them the coo
 - **Cached weather works offline.** A stale label tells you when the last saved forecast is out of date.
 - **Alerts are opt-in.** Check **Settings → Alerts → History** to see what happened when you expected a notification.
 
-<sub>Weather data can be delayed or inaccurate. Use your local weather authority for safety-critical decisions.</sub>
+> [!IMPORTANT]
+> Use your local weather authority for safety-critical decisions. Forecast data can be delayed or inaccurate.
 
 <a name="-getting-started"></a>
 <a name="-building-an-apk"></a>
 
-## Run from source
+<a name="run-from-source"></a>
+
+## 🛠️ Run from source
 
 <details>
 <summary>Local development and tests</summary>
