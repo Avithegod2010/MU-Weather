@@ -1,9 +1,24 @@
-<div align="center">
+# MU Weather
 
-# 🌤️ MU Weather
+<img src="assets/icon.png" width="72" height="72" alt="MU Weather cloud and sun icon" />
 
-**Material You Weather** — a free, open-source, offline-friendly Android weather app
-built with React Native & Expo.
+Get a 16-day forecast, follow rain on animated radar and check conditions from your Android home screen.
+
+**[Download universal APK v1.5.0](https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-universal-release.apk)** · [Visit website](https://avithegod2010.github.io/MU-Weather/) · [Other APKs](https://github.com/Avithegod2010/MU-Weather/releases/tag/v1.5.0)
+
+<table>
+<tr><th>Today</th><th>Rain radar and home-screen widget</th></tr>
+<tr>
+<td align="center" valign="middle"><img src="scripts/visual/results/halo-shots/clear-day-ocean-A.png" width="218" alt="MU Weather forecast showing a clear day in London" /></td>
+<td align="center" valign="middle">
+  <img src="radar-preview.png" width="290" alt="Animated radar illustration from the MU Weather website" /><br />
+  <img src="widget-preview.png" width="290" alt="Two weather widget illustrations from the MU Weather website" /><br />
+  <sub>Radar and widget previews from the project website</sub>
+</td>
+</tr>
+</table>
+
+No account, tracking or API key required. [Explore the radar and home-screen widgets](https://avithegod2010.github.io/MU-Weather/).
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android-3DDC84.svg?logo=android&logoColor=white)](#-getting-started)
@@ -12,16 +27,8 @@ built with React Native & Expo.
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Languages](https://img.shields.io/badge/languages-16-8A2BE2.svg)](#-languages)
 [![API keys](https://img.shields.io/badge/API_keys-none-success.svg)](#-data-sources--attribution)
-[![Release](https://img.shields.io/badge/release-v1.4.0-brightgreen.svg)](https://github.com/Avithegod2010/MU-Weather/releases/latest)
+[![Release](https://img.shields.io/badge/release-v1.5.0-brightgreen.svg)](https://github.com/Avithegod2010/MU-Weather/releases/latest)
 [![Website](https://img.shields.io/badge/website-avithegod2010.github.io%2FMU--Weather-0D1631.svg?logo=github)](https://avithegod2010.github.io/MU-Weather/)
-
-<sub>No accounts · No analytics · No tracking · No API keys · All your data stays on your device</sub>
-
-**[🌐 Project website](https://avithegod2010.github.io/MU-Weather/)** · [Download the latest release](https://github.com/Avithegod2010/MU-Weather/releases/latest)
-
-</div>
-
----
 
 ## 🧠 Why “MU”?
 
