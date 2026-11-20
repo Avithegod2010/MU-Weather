@@ -1,0 +1,262 @@
+# MU Weather reference
+
+[Back to MU Weather](README.md) · [Project website](https://avithegod2010.github.io/MU-Weather/)
+
+[Features](#features) · [Languages](#languages) · [Getting started](#getting-started) · [Building an APK](#building-an-apk) · [Privacy and permissions](#privacy--permissions) · [FAQ](#faq)
+
+## Why Material You
+
+**MU** stands for **Material You** — Android's design language, and the idea the whole app is built around.
+
+| Material You idea | How MU Weather delivers it |
+|
+
+## Features
+
+### Forecast & conditions
+
+- **Live conditions** — temperature, feels-like, condition, wind, humidity and pressure with animated weather icons
+- **Feels-like, explained** — when the “feels like” gap is large, a one-line cause is appended (wind, humidity or a clear-sky sun), localized in every language
+- **Highlights card** — up to four plain-language call-outs: rain starting soon, storms, big temperature swings, gusts, very high UV, poor air quality, and frost tonight (with a windshield-scrape nudge)
+- **Hourly strip** — tap any hour for an inline panel (condition, temp, feels-like, rain chance & amount, wind/gusts/direction, humidity, dew point, pressure, UV, visibility)
+- **16-day forecast** — tap any day for a full breakdown: 24-hour temperature curve, rain-probability curve, sunrise/sunset, UV max & band, precipitation total, rain hours and max wind
+- **Trend charts** — 48-hour trends for temperature, rain probability, pressure and more
+- **Minute-level nowcast** — rain bands arriving, easing or passing, with plain-language headlines
+- **Chaptered home screen** — sections grouped under sticky chapter headers (Now · Today · This week · Plan · Insights), each shown only when its tiles are enabled
+- **Graph explorer** — pick any metric (temperature, feels-like, rain chance, precipitation, wind, gusts, direction, pressure, humidity, UV, visibility, CAPE) × any range (24 h / 7 days / past 30 days) with a **scrubbing crosshair** that reads out values as you drag
+
+### Air, sky & space
+
+- **Air quality** — US EPA **and** European EEA scales with a one-tap toggle, 24-hour AQI curve, **next-5-day peak forecast**, and PM2.5 / PM10 / O₃ / NO₂ / SO₂ breakdown
+- **Pollen** — 6-species pollen levels and a worst-species deep dive (Europe only — CAMS coverage)
+- **Aurora** — Kp now, Kp forecast, visibility chance for your latitude, **live solar wind speed and Bz**, and a **Kp last-24-hours sparkline**. Auto-hides below ~45° latitude
+- **Storm index** — CAPE storm-building row with peak hour, plus a **storm distance meter** that times the gap between lightning and thunder
+- **Sun & moon** — moon phase disc with full/new countdown, illumination and cycle day; golden-hour windows; a folklore line per moon phase (clearly labelled “old lore, not science”)
+- **Best time outdoors** — scored 2-hour windows from rain, wind, UV and apparent temperature, with adjustable local preferences and optional on-device fit feedback; on weekends a **Saturday-vs-Sunday verdict** crowns the better day for outdoor plans
+- **What to wear** — a one-line, unit-aware suggestion under the hero
+- **Health indices** — migraine, respiratory and flu risk estimated from pressure trend, AQI and humidity *(heuristic, not medical advice)*
+
+### Alerts with clear delivery outcomes
+
+- **17 opt-in alert rules** — rain, thunderstorm, frost, heat, high UV, strong wind, CAPE storm building, rapid pressure drop, pollen, air quality, aurora, fog, black ice, cold snap, rapid temperature drop, stargazing and rain easing
+- **Saved-city alerts** — the same rules can run for saved cities with rotating sweeps and per-city cooldowns; choose a 20, 30 or 60-minute in-app cadence. When the app is closed, Android may defer background work (the task requests a 30-minute minimum; it is not an exact schedule)
+- **Alert history** — the last 20 notification outcomes with trigger evidence, severity, city and local time; “scheduled” does not prove the operating system displayed the notification
+- **Spoken forecast** — the app reads your forecast aloud in the app language; the daily digest notification carries a **“Read my forecast”** action
+- **Sunrise alarm with your choice of tone** — ring before sunrise in the active city (even with the app closed), offset from 0–90 minutes, with four bundled wake tones, an in-app preview and per-tone Android notification channels
+- **Background checks** — weather, widgets, digest and alerts can refresh while the app is closed when Android grants background execution; timing is best-effort and may be deferred
+
+### History, climate & accuracy
+
+- **30-day history** — archive-based actuals vs. the forecasts the app logged itself, with a 7/30-day toggle, a temperature-range sparkline, rain totals and variability stats
+- **Year heatmap** — a GitHub-style grid of the past 365 days of daily highs in the graph explorer, one archive call, cached on-device, with hottest/coldest/wettest captions
+- **Streaks** — the current dry or wet run in the past-days view, compared against the longest spell in the same window
+- **Weather on this day** — what actually happened on today's date over the past 10 years
+- **Climate normals** — “what's normal here” for every month of the year, from the ERA5 archive, with a delta against today's forecast
+- **Forecast accuracy** — the app scores its own past predictions and shows the average miss
+- **Rain probabilities** — the Home chart overlays raw ICON-EPS hourly member shares (amber dots) on the primary-provider hourly chances (blue bars), only when member support and local-time alignment are adequate. These shares are checked against later Archive API observations (not station ground truth); direct complete-day event chances count joint members (hourly probabilities are not multiplied), with support-gated Brier/reliability summaries
+- **Ensemble coverage** — temperature and wind P10–P90 forecasts are checked against later archive observations, with sample counts, lead-time breakdowns and approximate coverage uncertainty
+- **Model leaderboard** — compares ECMWF, GFS, ICON, Météo-France, JMA and MET Nordic by metric and city; rankings wait for seven shared dates and show approximate Wilson hit-rate intervals (adjacent weather dates may be correlated)
+- **Official warnings** — MeteoAlarm CAP feeds for supported countries, with stated severity/source, expiry, last-check time and a clear stale/unavailable state; **US NWS alerts** with polygon matching; **Canadian ECCC alerts** (Environment Canada, English/French)
+- **Warning outlines on the radar** — active NWS warnings draw their polygons over the animated radar, colour-coded by severity
+
+### Radar & maps
+
+- **Animated rain radar** — the last two hours of RainViewer frames with play/pause, a scrubbable timeline, pan, zoom and recenter
+- **No map SDK, no API key** — the radar draws its own Web-Mercator raster tiles (RainViewer radar over a CARTO dark base) on plain `Image` components, so there is no Google Maps dependency, no key and no billing account
+- **Layer maps** — precipitation, temperature, wind, cloud and more, plus warning overlays
+
+### Tools & planning
+
+- **Trip planner** — pick a saved city, a start date and a trip length for a day-by-day outlook with a *“2 of 5 days look wet”* verdict
+- **Calendar integration** — upcoming events with their forecast, plus a rain-risk line (“40% rain — bring an umbrella”) on high-risk events
+- **Saved cities** — favourites with live conditions, one tap away
+- **Local quality data** — inspect rain/ensemble calibration and outdoor/storm feedback counts by rounded location, and clear one location or all records on-device
+- **Settings backup & restore** — export and import your settings as JSON
+- **Data export** — CSV and JSON export of the app's own forecast log
+- **Deep dives** — dedicated screens for wind, air quality, UV, humidity, visibility, pressure, precipitation, moon, pollen, day detail and the graph explorer
+- **Weather journal with insights** — rate how the day felt and the app learns: your streak, and the temperatures where you personally feel cold or hot feed back into the "what to wear" line
+
+### Customisation & platform
+
+- **10 colour themes**, including AMOLED black and **Material You** (wallpaper-derived, Android 12+)
+- **Style** — material or glass · **Density** — comfortable or compact
+- **Icon styles** — outline, filled or colourful
+- **Tile animations** — fade, slide, zoom or push, plus per-section visibility under *Adjust tiles*
+- **Home backgrounds** — dynamic weather, aurora, sunset, ocean, midnight, forest
+- **Home-screen widgets** — five widgets (one with an hourly strip), refreshed in the background, coloured from the current sky (weather and day or night), not Material You
+- **App shortcuts** — `muweather://radar` · `muweather://search` · `muweather://favorites`
+- **Accessibility** — TalkBack labels throughout, reduced-motion support, font-fitting for long translated labels
+- **Offline-friendly** — the last snapshot, caches and history live on the device and are served without a connection
+
+## Languages
+
+| Language | Code | Language | Code |
+| --- | --- | --- | --- |
+| English | `en` | Ελληνικά (Greek) | `el` |
+| Deutsch (German) | `de` | हिन्दी (Hindi) | `hi` |
+| Español (Spanish) | `es` | Magyar (Hungarian) | `hu` |
+| Français (French) | `fr` | Bahasa Indonesia | `id` |
+| Italiano (Italian) | `it` | Nederlands (Dutch) | `nl` |
+| Polski (Polish) | `pl` | Português (Portuguese) | `pt` |
+| Türkçe (Turkish) | `tr` | বাংলা (Bengali) | `bn` |
+
+Translations are **strictly typed against the English catalog** (`i18n/en.ts`), so missing keys fail the TypeScript build instead of silently rendering raw key names. Adding a language = one new file + one entry in `utils/i18n.ts`.
+
+## Tech stack
+
+| Layer | Choice |
+| --- | --- |
+| Framework | [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/) · React Native 0.86 (Hermes) · React 19 |
+| Language | TypeScript in **strict** mode — no `any` in app code |
+| UI | Hand-built themed components · design tokens in `theme/tokens.ts` · Skia charts and sky effects · `react-native-reanimated` motion · `expo-linear-gradient` · `lucide-react-native` icons · Outfit font |
+| Radar & maps | Custom Web-Mercator tile renderer — **no map SDK** |
+| Widgets | `react-native-android-widget` · five home-screen widgets rendered as RemoteViews, so they are static (no animation); colours come from the sky palette in `utils/widgetPalette.ts` |
+| Theming | 10 themes, including `react-native-material-you-colors` for the Android 12+ wallpaper palette |
+| Storage | `@react-native-async-storage/async-storage` — settings, snapshot caches, forecast logs, alert history |
+| Platform APIs | `expo-location` · `expo-notifications` · `expo-background-task` · `expo-calendar` · `expo-speech` · `expo-file-system` · `expo-sharing` · `expo-haptics` · `expo-blur` · `expo-sensors` |
+| Web preview | `react-native-web` 0.21 · `react-dom` 19 · `npx expo start --web` serves a browser preview of the UI. Android-only modules are stubbed on web, and some native calls (for example `expo-notifications`) log errors there |
+
+> There is **no `expo-dev-client`** in this project: it runs in plain **Expo Go** during development. Add a dev client only if you introduce custom native modules.
+
+## Project structure
+
+```text
+api/         Open-Meteo, MET Norway, MeteoAlarm, providers, wire types
+components/  cards, charts, deep-dive screens, settings sheet
+config/      feature flags, tile registry, colour themes
+hooks/       data hooks — weather, alerts, caches, settings
+i18n/        16 typed language catalogs (en.ts is canonical)
+plugins/     Expo config plugins (ABI splits, app shortcuts)
+screens/     Home, radar, layer map, compare, alerts, model comparison…
+tasks/       background task — widgets, digest, alerts
+theme/       palettes, typography, density
+utils/       formatting, astronomy, alerts, caches, radar, i18n…
+widget/      home-screen widget task handler
+```
+
+## Getting started
+
+**Requirements:** Node 20+ · npm · the [Expo Go](https://expo.dev/go) app on an Android device (or emulator).
+
+```bash
+git clone https://github.com/Avithegod2010/MU-Weather.git
+cd MU-Weather
+npm install
+npx expo start
+```
+
+Scan the QR code with Expo Go. There is **no `.env`, no API key and no account** to set up — every data source used is free and keyless.
+
+**Type-check and run the unit tests:**
+
+```bash
+npx tsc --noEmit
+npm test -- --ci
+```
+
+## Building an APK
+
+```bash
+npm install -g eas-cli
+eas login
+eas build -p android --profile preview
+```
+
+`app.json` ships two config plugins:
+
+- **`plugins/withAbiSplits.js`** — Gradle ABI splits, so the build emits per-architecture APKs (`arm64-v8a`, `armeabi-v7a`, `x86_64`) plus a universal APK. The arm64 APK is roughly half the size of the universal one.
+- **`plugins/withAndroidShortcuts.js`** — Android app shortcuts, with labels translated into all 16 languages.
+
+## Data sources & attribution
+
+All data comes from free, **keyless** public APIs, fetched directly from your device:
+
+| Provider | Used for |
+| --- | --- |
+| [Open-Meteo](https://open-meteo.com/) | Forecast (16-day, hourly, minutely), historical archive (ERA5), climate normals, air quality & pollen (CAMS), ensemble spread, multi-model comparison, geocoding |
+| [MET Norway](https://www.met.no/en) | Independent cross-check of the local forecast |
+| [MeteoAlarm](https://meteoalarm.org/) | Official European severe-weather warnings (CAP feeds) |
+| [RainViewer](https://www.rainviewer.com/api.html) | Animated rain-radar frames |
+| [NOAA SWPC](https://www.swpc.noaa.gov/) | Geomagnetic Kp index and forecast, solar-wind speed, interplanetary magnetic field Bz |
+| [CARTO](https://carto.com/attributions) · [OpenStreetMap](https://www.openstreetmap.org/copyright) | Raster base-map tiles drawn under the radar |
+| [Windy](https://www.windy.com/) | Layer-map views opened from the app |
+| [National Weather Service](https://www.weather.gov/) | Official warnings for the United States |
+| [Environment and Climate Change Canada](https://weather.gc.ca/) | Official warnings for Canada |
+
+If you fork the project, please keep the in-app attribution footers — several of these providers require attribution, and Open-Meteo asks for a reference back.
+
+## Privacy & permissions
+
+**No accounts, analytics, tracking or advertising.** Weather requests go over HTTPS to the relevant providers and use the coordinates you’re viewing.
+
+Everything the app stores — settings, caches, the forecast log, alert history, saved cities — lives locally on your device and disappears when you uninstall the app or clear its data.
+
+| Permission | Why it is requested |
+| --- | --- |
+| `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION` | Weather for where you are — optional; saved cities work without it |
+| Notifications | The alerts you opt into, and the daily digest |
+| `READ_CALENDAR`, `WRITE_CALENDAR` | Forecast rows for upcoming events — optional, unused until you use the feature |
+
+## Development notes
+
+- **CI** runs the TypeScript check, automated tests, and locale and accessibility audits.
+- **Code style:** strict types, no `any`, no non-null assertions, typed i18n keys, and components that take a `theme: AppTheme` prop.
+- **Data flow convention:** `api/` wire types → cache (`utils/*Cache.ts`, AsyncStorage, TTL/LRU) → hook (`hooks/*`) → component. New data must never break a screen: it is best-effort, cached, and the UI renders normally without it.
+- **i18n:** add a key to `i18n/en.ts` first, then to every other catalog, each in its own commented block.
+- **Dependencies:** please discuss in an issue before adding one. The project deliberately keeps its dependency surface small — it once carried a native map SDK, which was removed in favour of a self-contained tile renderer.
+## FAQ
+
+**Is MU Weather free? Are there any accounts or API keys?**
+Yes — free, open-source, no accounts, no tracking, no API keys. All data comes from free public weather services and stays on your device.
+
+**How is the data sourced?**
+Forecasts from Open-Meteo and MET Norway, radar from RainViewer, air quality and pollen from CAMS, European warnings from MeteoAlarm, US warnings from NOAA NWS, and geomagnetic data from NOAA SWPC.
+
+**Does the app work offline?**
+Yes — the last weather bundle, forecasts, radar frames and saved cities are cached locally with explicit TTLs. Stale data is labelled honestly instead of being silently served.
+
+**Why do I see a stale chip on a widget?**
+Widgets refresh on the system's schedule (roughly every 30 min) plus whenever the app fetches. If the cached bundle is older than the freshness threshold, an amber chip appears instead of pretending the data is current.
+
+**How do alerts work?**
+Every rule is opt-in. Delivery records explicit outcomes (scheduled, quiet-hours, permission-denied, expired, failed) in alert history, so a missed alert can be diagnosed.
+
+**Why didn't an alert fire?**
+Check Settings → Alerts → history for the row's outcome. Common causes: quiet hours (alert still fires, notification suppressed), notification permission denied, or the 6-hour per-rule cooldown.
+
+**What is the digest?**
+An optional spoken/text summary of today's weather: city, condition, highs/lows, rain chances, UV, and a confidence line, fired once a day at your chosen hour.
+
+**Does the app send my location anywhere?**
+Only to the weather providers over HTTPS, with the coordinates you are viewing — never to analytics, ads, or trackers. Backup, settings and caches are local-only.
+
+**Which platforms are supported?**
+Android only (Expo SDK 57, React Native 0.86). No iOS, web, or desktop build.
+
+**What happened to Google Maps / the native map SDK?**
+Removed in favour of a built-in keyless tile renderer (CARTO + RainViewer tiles), so radar needs no billing account or API key.
+
+## Roadmap
+
+- [x] **Marine / wave data upgrade** — wave height, period and direction, swell height/period/direction, sea-surface temperature, sea-state bands and a 6-hour per-location cache (Open-Meteo Marine API)
+- [x] Historical explorer — weather on any past date
+- [x] Further translation polish and additional languages — 16 language catalogs are included, including Polish, Turkish, Ukrainian and Russian
+
+## Contributing
+
+Issues and pull requests are welcome. Before opening a PR:
+
+1. `npx tsc --noEmit` passes.
+2. New user-facing strings exist in **all 14** catalogs.
+3. No new runtime dependency without an issue first.
+4. One feature or fix per pull request, with a clear description.
+
+## Disclaimer
+
+Weather data is supplied by third parties and may be inaccurate, incomplete or delayed. Never rely on this app for safety-critical decisions. Radar and layer imagery is illustrative, not navigational. Health-index estimates are simple heuristics and are **not medical advice**. Aurora visibility is an estimate based on geomagnetic activity and latitude.
+
+## License
+
+[MIT](./LICENSE) © Avithegod2010 — created and maintained by [Avithegod2010](https://github.com/Avithegod2010). 
+
+Thanks to the teams behind Open-Meteo, MET Norway, MeteoAlarm, RainViewer, NOAA SWPC, CARTO, OpenStreetMap, and the Expo & React Native communities.
