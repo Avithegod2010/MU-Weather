@@ -6,11 +6,6 @@
 
 <p><strong><a href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-universal-release.apk">⬇️ Download APK v1.5.0</a></strong> · <a href="#screenshots">🌤️ See the forecasts</a> · <a href="https://avithegod2010.github.io/MU-Weather/">🌐 Project website ↗</a></p>
 
-<picture>
-  <source media="(prefers-reduced-motion: reduce)" srcset="readme-hero.png" />
-  <img src="readme-hero.gif" width="820" alt="A sunrise illustration with a gold sun emerging from blue clouds" />
-</picture>
-
 <p><sub>Material You weather for Android · No account, ads, tracking or API key</sub></p>
 
 </div>
@@ -22,10 +17,20 @@
 ## 🌤️ Screenshots
 
 <p align="center">
-  <a href="scripts/visual/results/halo-shots/clear-day-ocean-A.png"><img src="scripts/visual/results/halo-shots/clear-day-ocean-A.png" width="26%" alt="Today’s weather in London with current conditions and rain outlook" /></a>
-  <a href="scripts/visual/results/detail/home-hourly-forecast.png"><img src="scripts/visual/results/detail/home-hourly-forecast.png" width="26%" alt="Hourly forecast with rain probability, temperatures and trend charts" /></a>
-  <a href="scripts/visual/results/detail/day-detail-top.png"><img src="scripts/visual/results/detail/day-detail-top.png" width="26%" alt="Tomorrow’s detailed forecast with temperature and rain probability charts" /></a>
+  <a href="scripts/visual/results/halo-shots/clear-day-ocean-A.png"><img src="scripts/visual/results/halo-shots/clear-day-ocean-A.png" width="42%" alt="Today’s weather in London with current conditions and rain outlook" /></a>
+  <a href="scripts/visual/results/detail/home-hourly-forecast.png"><img src="scripts/visual/results/detail/home-hourly-forecast.png" width="24%" alt="Hourly forecast with rain probability, temperatures and trend charts" /></a>
+  <a href="scripts/visual/results/detail/day-detail-top.png"><img src="scripts/visual/results/detail/day-detail-top.png" width="24%" alt="Tomorrow’s detailed forecast with temperature and rain probability charts" /></a>
 </p>
+
+<details>
+<summary>Project illustration</summary>
+
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="readme-hero.png" />
+  <img src="readme-hero.gif" width="820" alt="A sunrise illustration with a gold sun emerging from blue clouds" />
+</picture>
+
+</details>
 
 <p align="center"><sub>Today’s weather · Hourly forecast · Day detail</sub></p>
 
