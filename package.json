@@ -83,6 +83,16 @@
   },
   "private": true,
   "overrides": {
+    "@expo/config": { "glob": "^14.0.2" },
+    "@expo/config-plugins": { "glob": "^14.0.2" },
+    "@expo/cli": { "glob": "^14.0.2" },
+    "@expo/fingerprint": { "glob": "^14.0.2", "minimatch": "^11.0.1" },
+    "@expo/metro-config": { "glob": "^14.0.2" },
+    "@jest/reporters": { "glob": "^14.0.2" },
+    "jest-config": { "glob": "^14.0.2" },
+    "jest-runtime": { "glob": "^14.0.2" },
+    "test-exclude": { "glob": "^14.0.2", "minimatch": "^11.0.1" },
+    "@typescript-eslint/typescript-estree": { "minimatch": "^11.0.1" },
     "js-yaml": "^4.3.2",
     "zod": "^4.6.7",
     "xcode": {
