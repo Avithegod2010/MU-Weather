@@ -284,7 +284,7 @@ export const tr: Strings = {
   s_bgalerts: 'Arka plan uyarıları',
   s_bgalerts_sub: 'Uygulama kapalıyken de uyarıları denetle',
   s_digest: 'Günlük özet',
-  s_digest_sub: 'Her sabah yarının tahmini',
+  s_digest_sub: 'Her sabah yarının tahmini', s_ai_key: 'AI özet anahtarı', s_ai_key_sub: 'Kendi Anthropic veya OpenAI anahtarınız, isteğe bağlı', s_ai_key_none: 'Ayarlanmadı — özet yerleşik metni kullanır', s_ai_key_intro: 'Günlük özetin kısa bir metne dönüştürülmesi için kendi Anthropic veya OpenAI API anahtarınızı yapıştırın. Anahtar bu telefonun şifreli depolamasında tutulur, asla uygulamanın içinde olmaz ve yalnızca geldiği sağlayıcıya gönderilir. Cihazdan yalnızca özet bilgileri çıkar. Anahtar yoksa hiçbir şey değişmez.', s_ai_key_placeholder: 'sk-ant-… veya sk-…', s_ai_key_invalid: 'Bu bir Anthropic veya OpenAI anahtarına benzemiyor.', s_ai_key_saved: 'Anahtar bu cihaza kaydedildi.', s_ai_key_removed: 'Anahtar bu cihazdan kaldırıldı.', s_ai_key_unavailable: 'Bu cihaz anahtarları güvenli biçimde saklayamıyor, bu yüzden hiçbir şey kaydedilmedi.', s_ai_key_save: 'Anahtarı kaydet', s_ai_key_remove: 'Anahtarı kaldır',
   s_golden: 'Altın saat uyarısı',
   s_golden_sub: 'Altın saate 60 dakika kaldığında bildir',
   s_sec_general: 'Genel',

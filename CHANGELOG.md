@@ -20,7 +20,7 @@ All notable changes to MU Weather. The app is keyless and offline-friendly by de
 ### Added
 - **US severe-weather warnings** — official NWS alert cards for US locations with a coverage gate (MeteoAlarm continues to serve Europe), plus an opt-in NWS alert rule and polygon/filter tests.
 - **Ukrainian and Russian** — the catalog grows to 16 languages (931 keys each: full translation pass, speech voices, and launcher shortcut labels included).
-- **Optional AI digest summaries** — set `EXPO_PUBLIC_AI_API_KEY` (Anthropic or OpenAI) to upgrade the daily spoken digest to a natural-language summary; without a key the built-in template digest is unchanged.
+- **Optional AI digest summaries** - add your own Anthropic or OpenAI key in Settings -> AI summary key to upgrade the daily digest to a natural-language summary; the key is kept in the phone's encrypted storage and never compiled into the app. Without a key the built-in template digest is unchanged.
 - **Health disclaimer** on the health card ("heuristic estimates only — not medical advice").
 - README FAQ section.
 

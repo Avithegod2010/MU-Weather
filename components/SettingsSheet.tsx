@@ -1,8 +1,8 @@
 import { SlidingGroup, SlidingItem, SlidingTarget } from './Sliding';
 import { SlidingSwitch } from './SlidingSwitch';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { F } from '../theme/typography';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Sharing from 'expo-sharing';
 import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
@@ -61,7 +61,20 @@ import type { LucideIcon } from 'lucide-react-native';
 import appJson from '../app.json';
 import { Overlay } from './Overlay';
 import { haptics } from '../utils/haptics';
-import { cancelDigest, type AccuracyEntry } from '../hooks/useDigest';
+import {
+  cancelDigest,
+  invalidateAiCredential,
+  rescheduleDigestFromCache,
+  type AccuracyEntry,
+} from '../hooks/useDigest';
+import {
+  clearAiCredential,
+  describeCredential,
+  loadAiCredential,
+  parseAiKey,
+  saveAiCredential,
+  type AiCredential,
+} from '../utils/aiKeyStore';
 import type { AppSettings } from '../hooks/useSettings';
 import { DETAIL_ANIM_OPTIONS } from '../utils/detailAnimations';
 import { TILE_GROUPS } from '../config/tiles';
@@ -157,7 +170,7 @@ async function ensureNotificationPermission(): Promise<boolean> {
   return requested === 'granted';
 }
 
-type SheetView = 'main' | 'sources' | 'tiles' | 'language' | 'about';
+type SheetView = 'main' | 'sources' | 'tiles' | 'language' | 'about' | 'ai';
 
 /** App version shown in the About view (kept in sync with app.json). */
 const APP_VERSION: string = appJson.expo.version;
@@ -285,6 +298,10 @@ export function SettingsSheet({
   const [backupMsg, setBackupMsg] = useState<string | null>(null);
   const [exportTemperature, setExportTemperature] = useState(true);
   const [exportPrecipitation, setExportPrecipitation] = useState(true);
+  /** The stored AI credential (shown as a masked label); the input stays in `aiInput` only. */
+  const [aiCredential, setAiCredential] = useState<AiCredential | null>(null);
+  const [aiInput, setAiInput] = useState('');
+  const [aiMsg, setAiMsg] = useState<string | null>(null);
   /** One preview player at a time; released when the next tone plays. */
   const previewRef = useRef<AudioPlayer | null>(null);
   const previewAlarmSound = (key: string) => {
@@ -300,6 +317,54 @@ export function SettingsSheet({
     } catch {
       // Preview is best-effort; the alarm itself does not depend on it.
     }
+  };
+
+  useEffect(() => {
+    if (!visible) return;
+    let alive = true;
+    void loadAiCredential().then((credential) => {
+      if (alive) setAiCredential(credential);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [visible]);
+
+  /**
+   * Save the pasted key into the platform keystore. The digest hook caches the
+   * credential per process, so it is invalidated here and the digest is rebuilt
+   * from the cached weather right away.
+   */
+  const onSaveAiKey = async () => {
+    haptics.select();
+    const parsed = parseAiKey(aiInput);
+    if (!parsed.ok) {
+      haptics.error();
+      setAiMsg(t('s_ai_key_invalid'));
+      return;
+    }
+    const saved = await saveAiCredential(parsed.credential);
+    if (!saved) {
+      haptics.error();
+      setAiMsg(t('s_ai_key_unavailable'));
+      return;
+    }
+    setAiCredential(parsed.credential);
+    setAiInput('');
+    setAiMsg(t('s_ai_key_saved'));
+    invalidateAiCredential();
+    haptics.success();
+    void rescheduleDigestFromCache();
+  };
+
+  const onRemoveAiKey = async () => {
+    haptics.light();
+    await clearAiCredential();
+    setAiCredential(null);
+    setAiInput('');
+    setAiMsg(t('s_ai_key_removed'));
+    invalidateAiCredential();
+    void rescheduleDigestFromCache();
   };
 
   const showBackupMsg = (message: string) => {
@@ -435,11 +500,13 @@ export function SettingsSheet({
           <Text style={[styles.title, { color: inputColor, paddingHorizontal: 0 }]}>
             {view === 'about'
               ? t('about_title')
-              : view === 'sources'
-                ? t('s_sources')
-                : view === 'tiles'
-                  ? t('s_adjust')
-                  : t('s_language')}
+              : view === 'ai'
+                ? t('s_ai_key')
+                : view === 'sources'
+                  ? t('s_sources')
+                  : view === 'tiles'
+                    ? t('s_adjust')
+                    : t('s_language')}
           </Text>
         </View>
       )}
@@ -890,6 +957,28 @@ export function SettingsSheet({
               />
             </View>
           ) : null}
+
+          <Pressable
+            onPress={() => {
+              haptics.select();
+              setAiMsg(null);
+              setView('ai');
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t('s_ai_key')}
+            style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+          >
+            <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
+              <Sparkles size={20} color={theme.textPrimary} strokeWidth={2} />
+            </View>
+            <View style={styles.rowTexts}>
+              <Text style={[styles.rowTitle, { color: inputColor }]}>{t('s_ai_key')}</Text>
+              <Text style={[styles.rowSubtitle, { color: theme.textTertiary }]}>
+                {aiCredential ? describeCredential(aiCredential) : t('s_ai_key_none')}
+              </Text>
+            </View>
+            <ChevronRight size={20} color={theme.textTertiary} strokeWidth={2.2} />
+          </Pressable>
 
           <View style={[styles.row, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}>
             <View style={[styles.iconBox, { backgroundColor: theme.chipBg }]}>
@@ -1636,6 +1725,79 @@ export function SettingsSheet({
                 </Text>
               </View>
             </>
+          ) : view === 'ai' ? (
+            <>
+              <Text style={[styles.intro, { color: theme.textSecondary }]}>
+                {t('s_ai_key_intro')}
+              </Text>
+              <View
+                style={[
+                  styles.aiInputWrap,
+                  { backgroundColor: theme.cardBg, borderColor: theme.cardBorder },
+                ]}
+              >
+                <TextInput
+                  value={aiInput}
+                  onChangeText={(value) => {
+                    setAiInput(value);
+                    if (aiMsg) setAiMsg(null);
+                  }}
+                  placeholder={t('s_ai_key_placeholder')}
+                  placeholderTextColor={theme.textTertiary}
+                  style={[styles.aiInput, { color: inputColor }]}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry
+                  accessibilityLabel={t('s_ai_key_placeholder')}
+                />
+              </View>
+              <View style={styles.aiActions}>
+                <Pressable
+                  onPress={() => {
+                    void onSaveAiKey();
+                  }}
+                  accessibilityRole="button"
+                  style={({ pressed }) => [
+                    styles.aiButton,
+                    { backgroundColor: theme.accent, opacity: pressed ? 0.85 : 1 },
+                  ]}
+                >
+                  <Text
+                    style={[styles.aiButtonText, { color: theme.isLight ? '#FFFFFF' : '#0A122B' }]}
+                  >
+                    {t('s_ai_key_save')}
+                  </Text>
+                </Pressable>
+                {aiCredential ? (
+                  <Pressable
+                    onPress={() => {
+                      void onRemoveAiKey();
+                    }}
+                    accessibilityRole="button"
+                    style={({ pressed }) => [
+                      styles.aiButton,
+                      styles.aiButtonGhost,
+                      { borderColor: theme.cardBorder, opacity: pressed ? 0.7 : 1 },
+                    ]}
+                  >
+                    <Text style={[styles.aiButtonText, { color: theme.textSecondary }]}>
+                      {t('s_ai_key_remove')}
+                    </Text>
+                  </Pressable>
+                ) : null}
+              </View>
+              {aiMsg ? (
+                <Text style={[styles.backupMsg, { color: theme.textTertiary }]}>{aiMsg}</Text>
+              ) : null}
+              <View
+                style={[styles.noteCard, { backgroundColor: theme.cardBg, borderColor: theme.cardBorder }]}
+              >
+                <Info size={16} color={theme.textSecondary} strokeWidth={2.2} />
+                <Text style={[styles.noteText, { color: theme.textSecondary }]}>
+                  {aiCredential ? describeCredential(aiCredential) : t('s_ai_key_none')}
+                </Text>
+              </View>
+            </>
           ) : (
             <>
               <Text style={[styles.intro, { color: theme.textSecondary }]}>
@@ -2032,4 +2194,39 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     lineHeight: 18,
   },
+  aiInputWrap: {
+    borderRadius: 16,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    marginHorizontal: 20,
+    marginTop: 4,
+  },
+  aiInput: {
+    fontSize: 15,
+    fontFamily: F.regular,
+    paddingVertical: 12,
+  },
+  aiActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginHorizontal: 20,
+    marginTop: 12,
+  },
+  aiButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 13,
+    borderRadius: 16,
+  },
+  aiButtonGhost: {
+    borderWidth: StyleSheet.hairlineWidth,
+    backgroundColor: 'transparent',
+  },
+  aiButtonText: {
+    fontSize: 15,
+    fontFamily: F.bold,
+  },
+
 });

@@ -284,7 +284,7 @@ export const pl: Strings = {
   s_bgalerts: 'Alerty w tle',
   s_bgalerts_sub: 'Sprawdzaj alerty także przy zamkniętej aplikacji',
   s_digest: 'Codzienne podsumowanie',
-  s_digest_sub: 'Jutrzejsza prognoza każdego poranka',
+  s_digest_sub: 'Jutrzejsza prognoza każdego poranka', s_ai_key: 'Klucz podsumowania AI', s_ai_key_sub: 'Twój własny klucz Anthropic lub OpenAI, opcjonalny', s_ai_key_none: 'Nie ustawiono — podsumowanie używa wbudowanego tekstu', s_ai_key_intro: 'Wklej własny klucz API Anthropic lub OpenAI, aby codzienne podsumowanie było przepisywane na krótki tekst. Klucz jest przechowywany w zaszyfrowanej pamięci tego telefonu, nigdy w aplikacji, i wysyłany wyłącznie do dostawcy, od którego pochodzi. Urządzenie opuszczają tylko dane podsumowania. Bez klucza nic się nie zmienia.', s_ai_key_placeholder: 'sk-ant-… lub sk-…', s_ai_key_invalid: 'To nie wygląda na klucz Anthropic lub OpenAI.', s_ai_key_saved: 'Klucz zapisany na tym urządzeniu.', s_ai_key_removed: 'Klucz usunięty z tego urządzenia.', s_ai_key_unavailable: 'To urządzenie nie potrafi bezpiecznie przechowywać kluczy, więc nic nie zapisano.', s_ai_key_save: 'Zapisz klucz', s_ai_key_remove: 'Usuń klucz',
   s_golden: 'Alert złotej godziny',
   s_golden_sub: 'Powiadom, gdy do złotej godziny zostanie 60 minut',
   s_sec_general: 'Ogólne',
