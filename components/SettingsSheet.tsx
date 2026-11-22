@@ -1575,14 +1575,17 @@ export function SettingsSheet({
           </View>
         </ScrollView>
       ) : (
-        // Sub-views (language / tiles / about / sources) scroll too: the bottom
-        // sheet caps at 72% of the screen, so without this the bottom rows are
-        // unreachable on shorter displays.
+        // Sub-views (language / tiles / about / sources / AI key) scroll too: the
+        // bottom sheet caps at 72% of the screen, so without this the bottom rows
+        // are unreachable on shorter displays. keyboardShouldPersistTaps keeps the
+        // Save button pressable while the key field has focus - without it the
+        // first tap only dismisses the keyboard.
         <ScrollView
           style={styles.scrollArea}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled
+          keyboardShouldPersistTaps="handled"
         >
           {view === 'language' ? (
             <>
