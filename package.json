@@ -77,6 +77,7 @@
     "test:model-accuracy": "node scripts/test-model-accuracy.mjs",
     "test:provider-failures": "node scripts/test-provider-failures.mjs",
     "test:perfetto-compare": "node tests/perfettoCompare.test.mjs",
+    "test:privacy-manifest": "node scripts/test-privacy-manifest.mjs",
     "audit:locales": "node scripts/audit-locales.mjs",
     "audit:accessibility": "node scripts/audit-accessibility.mjs",
     "lint": "eslint .",

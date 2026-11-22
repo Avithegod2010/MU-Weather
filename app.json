@@ -24,8 +24,7 @@
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.READ_CALENDAR",
-        "android.permission.WRITE_CALENDAR"
+        "android.permission.READ_CALENDAR"
       ]
     },
     "web": {
@@ -44,8 +43,7 @@
       [
         "expo-calendar",
         {
-          "calendarPermission": "MU Weather shows the forecast for your upcoming events.",
-          "calendarWritePermission": "MU Weather shows the forecast for your upcoming events."
+          "calendarPermission": "MU Weather shows the forecast for your upcoming events."
         }
       ],
       "expo-background-task",
@@ -136,7 +134,8 @@
         }
       ],
       "./plugins/withAndroidShortcuts",
-      "./plugins/withAlarmSounds"
+      "./plugins/withAlarmSounds",
+      "./plugins/withPrivacyManifest"
     ],
     "extra": {
       "eas": {

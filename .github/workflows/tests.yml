@@ -34,5 +34,7 @@ jobs:
         run: npm run test:provider-failures
       - name: Perfetto compare
         run: npm run test:perfetto-compare
+      - name: Privacy manifest plugin
+        run: npm run test:privacy-manifest
       - name: Unit tests (jest)
         run: npm test -- --ci

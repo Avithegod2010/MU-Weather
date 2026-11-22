@@ -2,6 +2,12 @@
 
 All notable changes to MU Weather. The app is keyless and offline-friendly by design — every release keeps that promise.
 
+## [Unreleased]
+
+### Security
+- **No cloud backup of app data** — Android Auto Backup was uploading the last location, the comfort journal, favourites, alert rules and widget-city assignments to Google Drive. The app now sets `android:allowBackup="false"`, so the on-device copy is the only copy; the explicit export in Settings still works.
+- **Unused dangerous permissions refused at merge time** — display-over-other-apps, activity recognition, external storage and calendar *write* are removed with a manifest merge rule, so a library update cannot quietly put them back. Calendar access stays read-only, matching what the app actually does.
+
 ## [1.5.0] — 2026-11-14
 
 ### Added
