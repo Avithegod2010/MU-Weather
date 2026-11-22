@@ -36,5 +36,7 @@ jobs:
         run: npm run test:perfetto-compare
       - name: Privacy manifest plugin
         run: npm run test:privacy-manifest
+      - name: Release workflow steps
+        run: npm run test:release-workflow
       - name: Unit tests (jest)
         run: npm test -- --ci

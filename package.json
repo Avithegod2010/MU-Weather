@@ -78,6 +78,7 @@
     "test:provider-failures": "node scripts/test-provider-failures.mjs",
     "test:perfetto-compare": "node tests/perfettoCompare.test.mjs",
     "test:privacy-manifest": "node scripts/test-privacy-manifest.mjs",
+    "test:release-workflow": "node scripts/test-release-workflow.mjs",
     "audit:locales": "node scripts/audit-locales.mjs",
     "audit:accessibility": "node scripts/audit-accessibility.mjs",
     "lint": "eslint .",
