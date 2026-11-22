@@ -1,388 +1,1116 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-scene="clear">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MU Weather — feel the weather, own your data</title>
-<meta name="description" content="A free, keyless, offline-friendly Android weather app. 16-day forecast with confidence bands, animated radar, official warnings, 5 widgets, 16 languages. Try the live weather on this page.">
-<meta property="og:title" content="MU Weather — Material You weather for Android">
-<meta property="og:description" content="A free, keyless, offline-friendly weather app. Try the live weather simulation on the page — then take it to your phone.">
-<meta property="og:image" content="https://raw.githubusercontent.com/Avithegod2010/MU-Weather/master/assets/icon.png">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#0A122B">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230A122B'/><circle cx='36' cy='38' r='15' fill='%23F5C86A'/><path d='M28 66h46a12 12 0 0 0 0-24 19 19 0 0 0-36-6 14 14 0 0 0-10 30z' fill='%23E8EEF7'/></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"MU Weather","operatingSystem":"Android","applicationCategory":"WeatherApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free, open-source, keyless Android weather app with 16-day forecasts, animated radar, official warnings, widgets and 16 languages.","license":"https://opensource.org/licenses/MIT","url":"https://avithegod2010.github.io/MU-Weather/"}
-</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Try four animated weather scenes and explore forecasts, radar, alerts, widgets and planning tools in MU Weather for Android.">
+<meta name="theme-color" content="#eee4fb">
+<title>MU Weather · Material You Playground</title>
+<style>
+:root{--paper:#eee4fb;--ink:#35133d;--muted:#62496b;--card:#faf5ff;--soft:#e9dcf6;--preview:#ddcdf5;--accent:#ddfa88;--blue:#b7d8fa;--wall:#bea6f2;--line:#d9c8e8;font-family:system-ui,sans-serif;color:var(--ink);background:var(--paper);color-scheme:light}
+:root[data-scene=rain]{--paper:#dcecf9;--ink:#143251;--muted:#375472;--card:#f4faff;--soft:#e1eef9;--preview:#c5e1f4;--accent:#a7efcf;--blue:#9bc9eb;--wall:#9fb7ee;--line:#b6d1e6}
+:root[data-scene=snow]{--paper:#e7f2f6;--ink:#1a3c4b;--muted:#395968;--card:#f7fcfe;--soft:#e1eff5;--preview:#d4e9f1;--accent:#c6f3f3;--blue:#a8d4e5;--wall:#b9c4f2;--line:#b7d4df}
+:root[data-scene=storm]{--paper:#e8dff5;--ink:#30204e;--muted:#5d4b75;--card:#f8f2ff;--soft:#e8dff6;--preview:#cfc0ea;--accent:#ffe29b;--blue:#a2a4dc;--wall:#b598dc;--line:#cdbde2}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;overflow-wrap:break-word}a{color:inherit}button{font:inherit;color:inherit}a,button,summary{-webkit-tap-highlight-color:transparent}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--ink);outline-offset:4px}p,h1,h2,h3{margin:0}.shell{width:min(1320px,calc(100% - 8vw));margin-inline:auto}.top{position:relative;isolation:isolate;overflow:hidden;padding-bottom:52px}
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:24px}.brand,.nav a,.button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}.brand{gap:11px;font-size:1.22rem;font-weight:850;letter-spacing:-.045em;white-space:nowrap}.logo{display:grid;place-items:center;background:var(--ink);color:white;width:40px;height:40px;border-radius:13px;font-size:1.32rem}.nav{display:flex;align-items:center;gap:30px;font-weight:720}.nav a:not(.outline):hover{text-decoration:underline;text-underline-offset:4px}.outline{padding:10px 18px;border:1px solid currentColor;border-radius:100px}.hero{text-align:center;padding:43px 0 34px}.hero h1{font-size:clamp(3.1rem,7.2vw,7rem);font-weight:900;letter-spacing:-.083em;line-height:.98}.hero h1 span{display:block}.hero p{margin:23px auto 25px;font-size:clamp(1.05rem,2vw,1.43rem);color:var(--muted);max-width:32rem}.button{min-height:52px;padding:13px 24px;border:1px solid transparent;border-radius:100px;background:var(--ink);color:white;gap:10px;font-weight:760}.button:hover{filter:brightness(1.21)}.download-icon{font-size:1.25em;line-height:1}
+.playground{display:grid;grid-template-columns:.95fr 1fr 1.05fr;gap:clamp(16px,2.5vw,36px);padding:clamp(18px,2.4vw,32px);border-radius:36px;background:var(--card);box-shadow:0 14px 50px #3813480b;border:1px solid #ffffff9c;align-items:stretch}.controls{align-self:center}.controls h2{font-size:clamp(1.55rem,2.5vw,2.35rem);letter-spacing:-.07em;line-height:1.05}.controls p{color:var(--muted);margin-top:9px}.scene-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:19px}.scene-buttons button{min-height:58px;background:var(--soft);border:2px solid transparent;border-radius:22px;cursor:pointer;font-size:1rem;font-weight:760;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 5px}.scene-buttons button:hover{border-color:var(--line)}.scene-buttons button[aria-pressed=true]{background:var(--accent);border-color:var(--ink)}.forecast{display:grid;justify-items:center;align-content:start;min-height:300px;padding:19px 19px 20px;border-radius:29px;background:var(--preview);text-align:center}.forecast-header{display:flex;width:100%;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px 12px;font-weight:850;font-size:1.24rem}.sample{font-size:.78rem;font-weight:700;border-radius:100px;padding:5px 9px;background:var(--card);color:var(--muted);white-space:nowrap}.temperature{font-size:clamp(3.8rem,6.3vw,6.1rem);line-height:.95;font-weight:900;letter-spacing:-.1em;margin-right:.1em}.condition{font-size:1.14rem;font-weight:800;margin-top:8px}.range{margin-top:10px;display:flex;gap:13px;color:var(--muted);font-weight:650;font-size:.96rem}.range span+span{padding-left:13px;border-left:1px solid var(--muted)}
+.widgets{display:grid;gap:11px;padding-left:clamp(0px,1.6vw,23px);border-left:1px solid var(--line);min-width:0}.widgets h3{font-size:.92rem;align-self:end;font-weight:800}.wallpaper{position:relative;overflow:hidden;isolation:isolate;min-height:113px;display:grid;place-items:center;border-radius:23px;padding:15px;background:linear-gradient(138deg,var(--wall),var(--blue))}.wallpaper:before,.wallpaper:after{content:"";position:absolute;z-index:-1;border-radius:50%;transform:rotate(29deg)}.wallpaper:before{width:100%;height:85%;top:-45%;right:-14%;background:var(--preview)}.wallpaper:after{width:86%;height:112%;bottom:-86%;left:-12%;background:var(--accent)}.widget{max-width:100%;background:var(--card);border-radius:19px;box-shadow:0 7px 18px #20204418;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;line-height:1.1}.clock{font-size:clamp(1.14rem,2.5vw,2.05rem);font-weight:840;letter-spacing:-.07em;padding-right:10px;border-right:1px solid var(--line)}.widget strong{font-size:1.48rem;letter-spacing:-.07em;display:block}.widget small{font-size:.83rem;font-weight:700}.widget.square{min-width:72%;flex-direction:row-reverse}.widget.square strong{font-size:2rem}
+.feature-strip{margin:20px auto 0;display:flex;justify-content:center;flex-wrap:wrap;gap:8px 18px;width:fit-content;max-width:100%;border-radius:25px;padding:11px 19px;background:var(--accent);font-size:.92rem;font-weight:730}.feature-strip span+span:before{content:"·";margin-right:18px}
+.content{background:var(--card);padding-block:clamp(48px,7vw,90px)}.section-title{font-size:clamp(2.1rem,5.2vw,4.1rem);letter-spacing:-.075em;line-height:1}.intro{margin-top:13px;color:var(--muted);max-width:39rem;font-size:1.08rem}.shots{margin-top:28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.shot{margin:0;padding:18px 14px 0;background:var(--soft);border-radius:25px;overflow:hidden;text-align:center}.shot figcaption{font-weight:800;margin-bottom:14px}.shot img{display:block;width:min(100%,236px);height:310px;object-fit:cover;object-position:top;margin:auto;border-radius:18px 18px 0 0;background:var(--preview)}
+.info{padding-block:clamp(48px,7vw,90px);display:grid;grid-template-columns:.9fr 1.1fr;gap:32px}.info article{background:var(--card);border-radius:28px;padding:clamp(22px,4vw,44px)}.info .section-title{font-size:clamp(2rem,4vw,3.2rem)}.info .intro{margin-bottom:20px}.info .sub{margin:10px 0 0;color:var(--muted);font-size:.94rem}.release{display:inline-block;margin-top:16px;font-weight:720;text-underline-offset:3px}details{margin-top:18px;border-top:1px solid var(--line);padding-top:13px}summary{cursor:pointer;font-weight:760}details ul{padding-left:21px;line-height:1.75;margin-bottom:0}.footer{border-top:1px solid var(--line);padding:21px 0 27px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:.94rem}.footer a{text-underline-offset:3px}
+:root,.logo,.button,.playground,.forecast,.scene-buttons button,.wallpaper,.wallpaper:before,.wallpaper:after,.widget,.feature-strip{transition:background-color 240ms,color 240ms,border-color 240ms}
+@media(max-width:980px){.playground{grid-template-columns:.88fr 1.05fr 1.05fr;gap:16px}.widgets{padding-left:12px}.widget{gap:7px;padding-inline:9px}.clock{padding-right:7px}.controls p{font-size:.94rem}}
+@media(max-width:760px){.top{padding-bottom:35px}.nav{gap:15px}.hero{padding-top:25px}.playground{grid-template-columns:1fr 1fr;border-radius:27px}.controls{grid-column:1/-1}.scene-buttons{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:12px}.scene-buttons button{border-radius:16px;min-height:48px}.forecast{min-height:275px}.widgets{padding-left:0;border-left:0}.info{grid-template-columns:1fr;gap:16px}.shots{gap:9px}.shot{padding:12px 7px 0}.shot img{height:230px}.shot figcaption{font-size:.94rem}}
+@media(max-width:480px){.shell{width:calc(100% - 28px)}header{padding-block:16px;gap:9px}.brand{font-size:1.05rem;gap:7px}.logo{width:32px;height:32px;border-radius:10px}.nav{font-size:.88rem;gap:10px}.nav .outline{padding:6px 10px}.hero{padding:27px 0 25px}.hero h1{font-size:clamp(2.7rem,10vw,3.5rem)}.hero p{margin:15px auto 18px}.playground{padding:13px;gap:11px;grid-template-columns:1fr}.controls{padding:3px}.controls h2{font-size:1.65rem}.scene-buttons{gap:6px}.scene-buttons button{flex-direction:column;gap:4px;font-size:.9rem;min-height:58px}.forecast{min-height:0;padding:13px 14px 15px}.weather-art{margin-top:3px}.temperature{font-size:4rem}.widgets{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.widgets h3{grid-column:1/-1}.wallpaper{min-height:82px;padding:6px}.widget{gap:5px;padding:7px;min-width:0}.widget small{font-size:.7rem}.widget strong{font-size:1.15rem}.clock{font-size:1.03rem;padding-right:5px}.widget.square{min-width:0}.widget.square strong{font-size:1.35rem}.feature-strip{width:100%;gap:5px 14px;font-size:.84rem;text-align:center}.feature-strip span+span:before{content:none}.shots{grid-template-columns:repeat(2,minmax(0,1fr))}.shot:last-child{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+/* The two headline lines have independent boxes and room for descenders. */
+.hero h1 {
+  display: grid;
+  justify-items: center;
+  row-gap: .035em;
+  line-height: 1.1;
+  letter-spacing: -.06em;
+}
+.hero h1 span { max-width: 100%; }
+.hero h1 .headline-last { position: relative; }
+.hero h1 .headline-last::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 2%;
+  right: 1%;
+  bottom: .03em;
+  height: .14em;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: rotate(-2deg);
+}
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin-top: 15px;
+  min-height: 42px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: .88rem;
+  font-weight: 720;
+}
+.motion-toggle:hover { background: var(--soft); }
+.motion-toggle[aria-pressed="true"] { background: var(--soft); }
+.motion-toggle[hidden] { display: none; }
+.motion-symbol { width: 9px; height: 10px; border-inline: 2px solid currentColor; }
+.motion-toggle[aria-pressed="true"] .motion-symbol {
+  border: 0;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.scene-buttons button, .button, .wallpaper, .forecast {
+  transition: background-color 400ms ease, color 400ms ease, border-color 300ms ease, transform 200ms ease;
+}
+.scene-buttons button:hover, .button:hover { transform: translateY(-2px); }
+.scene-buttons button:active, .button:active { transform: translateY(1px); }
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.motion-paused) .hero h1,
+  html:not(.motion-paused) .hero p,
+  html:not(.motion-paused) .hero .button,
+  html:not(.motion-paused) .playground {
+    animation: arrive 560ms cubic-bezier(.18,.72,.3,1) backwards;
+  }
+  html:not(.motion-paused) .hero p { animation-delay: 90ms; }
+  html:not(.motion-paused) .hero .button { animation-delay: 150ms; }
+  html:not(.motion-paused) .playground { animation-delay: 210ms; }
+  html:not(.motion-paused) .wallpaper::before {
+    animation: wallpaper-drift 12s ease-in-out infinite alternate;
+  }
+  html:not(.motion-paused) .wallpaper:last-child::before {
+    animation-delay: -5s;
+    animation-direction: alternate-reverse;
+  }
+}
+@keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes wallpaper-drift { to { translate: -16px 12px; rotate: -10deg; } }
+html.motion-paused { scroll-behavior: auto; }
+html.motion-paused *, html.motion-paused *::before, html.motion-paused *::after { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .scene-buttons button:hover, .button:hover { transform: none; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: clamp(1.95rem, 9.25vw, 3.5rem); letter-spacing: -.052em; }
+  .motion-toggle { margin-top: 8px; }
+}
+@media (max-width: 360px) {
+  header { flex-wrap: wrap; }
+}
+.shot img { height: auto; max-height: 425px; object-fit: contain; object-position: top; }
+.feature-catalogue {
+  padding-block: clamp(44px, 7vw, 88px);
+  border-bottom: 1px solid var(--line);
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 28px;
+  align-items: start;
+}
+.feature-card {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  background: var(--card);
+  padding: 0;
+  transition: border-color 200ms ease, background-color 400ms ease;
+}
+.feature-card:hover, .feature-card[open] { border-color: var(--muted); }
+.feature-card summary {
+  display: grid;
+  grid-template-columns: 2.65rem minmax(0, 1fr) .85rem;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  padding: 17px;
+  min-height: 86px;
+  border-radius: inherit;
+}
+.feature-card summary::-webkit-details-marker { display: none; }
+.feature-card summary::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 180ms ease;
+}
+.feature-card[open] summary::after { transform: translateY(2px) rotate(225deg); }
+.feature-symbol {
+  display: grid;
+  place-items: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 14px;
+  background: var(--accent);
+  font-size: 1.3rem;
+}
+.feature-label { display: grid; gap: .2rem; line-height: 1.22; }
+.feature-label strong { font-size: 1.02rem; font-weight: 850; letter-spacing: -.026em; }
+.feature-label small { color: var(--muted); font-size: .89rem; font-weight: 600; }
+.feature-copy { padding: 0 17px 18px; }
+.feature-copy ul { margin: 0; padding: 14px 0 0 1.1rem; border-top: 1px solid var(--line); line-height: 1.52; }
+.feature-copy li + li { margin-top: 9px; }
+.feature-catalogue .release { margin-top: 22px; }
+@media (max-width: 980px) { .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 570px) { .feature-grid { grid-template-columns: 1fr; } }
+/* Scene backgrounds sit behind the same readable foreground. */
+.sky, .sky-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sky {
+  z-index: -1;
+  overflow: hidden;
+  mask-image: linear-gradient(#000 77%, transparent);
+}
+.sky-layer {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 650ms ease, visibility 650ms;
+}
+[data-scene="clear"] .sky-clear,
+[data-scene="rain"] .sky-rain,
+[data-scene="snow"] .sky-snow,
+[data-scene="storm"] .sky-storm {
+  opacity: 1;
+  visibility: visible;
+}
+.sky-clear {
+  background: radial-gradient(ellipse at 86% 12%, #fff4ce 0%, #f8e8f5 29%, transparent 63%),
+    radial-gradient(ellipse at 7% 36%, #b5d9ff 0%, #d5d3ff 25%, transparent 57%);
+}
+.sky-rain {
+  background: radial-gradient(ellipse at 16% 13%, #a7c9ee, transparent 56%),
+    radial-gradient(ellipse at 85% 31%, #c1efeb, transparent 62%);
+}
+.sky-snow {
+  background: radial-gradient(ellipse at 8% 12%, #bcd5f6, transparent 55%),
+    radial-gradient(ellipse at 85% 25%, #fafcff, #d3eef6 31%, transparent 63%);
+}
+.sky-storm {
+  background: radial-gradient(ellipse at 92% 5%, #aaa0d8, #c8b7ea 29%, transparent 57%),
+    radial-gradient(ellipse at 9% 33%, #b4c4ed, transparent 58%);
+}
+.sky-orb {
+  position: absolute;
+  top: 11%;
+  right: 5%;
+  width: clamp(90px, 16vw, 230px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 39% 32%, #fff9d9, #ffdf8d 77%);
+  box-shadow: 0 0 55px 16px #ffebad9c, 0 0 0 18px #fff9d066, 0 0 0 43px #fff9d038;
+  opacity: .82;
+}
+.sky-ribbon {
+  position: absolute;
+  width: clamp(250px, 53vw, 780px);
+  height: clamp(90px, 21vw, 290px);
+  left: -16%;
+  top: 27%;
+  border-radius: 47% 53% 37% 63% / 54% 30% 70% 46%;
+  background: linear-gradient(110deg, #9facf28c, #b1def0a6 66%, #f9f6ffbf);
+  rotate: -19deg;
+}
+.sky-ribbon + .sky-ribbon {
+  left: auto;
+  right: -27%;
+  top: 41%;
+  rotate: 25deg;
+  background: linear-gradient(117deg, #fff8d894, #dafaad9c);
+}
+.sky-cloud {
+  position: absolute;
+  width: clamp(190px, 36vw, 550px);
+  height: clamp(75px, 13vw, 180px);
+  left: -11%;
+  top: 12%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #f8fbffb3 12%, #f3f8ff62 52%, transparent 73%);
+}
+.sky-cloud + .sky-cloud {
+  left: auto;
+  right: -9%;
+  top: 26%;
+  scale: 1.2;
+}
+.sky-storm .sky-cloud {
+  background: radial-gradient(ellipse, #7165af52 4%, #8e88c64d 48%, transparent 74%);
+}
+.sky-spark {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fffbe1;
+  box-shadow: 0 0 12px 3px #fff5b9cc;
+}
+.sky-snow .sky-spark {
+  background: white;
+  box-shadow: 0 0 0 1px #c0dced, 0 0 12px #f7fdff;
+}
+.sky-drop {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 2px;
+  height: var(--size);
+  border-radius: 8px;
+  background: linear-gradient(transparent, #266da97d, #effeff);
+  rotate: 20deg;
+}
+.sky-storm .sky-drop { background: linear-gradient(transparent, #6058a4a1, #e5e9ff); }
+.sky-storm-glow {
+  position: absolute;
+  right: -4%;
+  top: -8%;
+  width: 52%;
+  height: 60%;
+  background: radial-gradient(ellipse, #eee6ffaf, #b0a4e552 45%, transparent 69%);
+  opacity: .65;
+}
+@media (max-width: 580px) {
+  .sky-orb { top: 15%; right: -50px; opacity: .65; }
+  .sky-ribbon { left: -37%; top: 18%; }
+  .sky-ribbon + .sky-ribbon { right: -39%; top: 30%; }
+}
+
+/* The same drawn weather icons appear in the controls, preview, and widgets. */
+.wx-icon, .feature-icon {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+}
+.wx-part, .feature-icon::before, .feature-icon::after {
+  position: absolute;
+  display: block;
+}
+.wx-sun {
+  inset: 10% auto auto 12%;
+  width: 48%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 29%, #fff2ad 4%, #ffd44f 51%, #f2a83b);
+  box-shadow: 0 .03em .13em #e6a04455;
+}
+.wx-sun::before {
+  content: "";
+  position: absolute;
+  inset: -19%;
+  border: .045em dashed #e99a3c;
+  border-radius: inherit;
+}
+.wx-cloud {
+  z-index: 1;
+  left: 13%;
+  top: 38%;
+  width: 74%;
+  height: 30%;
+  border-radius: 1em;
+  color: #f3f8ff;
+  background: currentColor;
+  filter: drop-shadow(0 .07em .065em #52437e29);
+}
+.wx-cloud::before, .wx-cloud::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  border-radius: 50%;
+  aspect-ratio: 1;
+}
+.wx-cloud::before { width: 56%; bottom: 28%; left: 13%; }
+.wx-cloud::after { width: 43%; bottom: 24%; right: 8%; }
+[data-wx="clear"] .wx-cloud { top: 49%; left: 28%; width: 66%; }
+[data-wx="rain"] .wx-cloud { color: #a4b7e1; }
+[data-wx="storm"] .wx-cloud { color: #8774b0; }
+.wx-drops { inset: 67% 20% 5% 20%; }
+.wx-drops i {
+  position: absolute;
+  top: 0;
+  width: 9%;
+  height: 51%;
+  border-radius: 1em;
+  background: #2874b9;
+  rotate: 21deg;
+}
+.wx-drops i:nth-child(1) { left: 15%; }
+.wx-drops i:nth-child(2) { left: 46%; top: 20%; --delay: -180ms; }
+.wx-drops i:nth-child(3) { left: 75%; --delay: -380ms; }
+.wx-flake { inset: 65% 20% 0; color: #4386b4; }
+.wx-flake i {
+  position: absolute;
+  left: 48%;
+  top: 9%;
+  width: 7%;
+  height: 83%;
+  border-radius: 1em;
+  background: currentColor;
+}
+.wx-flake i:nth-child(2) { rotate: 60deg; }
+.wx-flake i:nth-child(3) { rotate: 120deg; }
+.wx-bolt {
+  inset: 54% auto auto 39%;
+  width: 30%;
+  height: 41%;
+  z-index: 2;
+  background: linear-gradient(#ffe889, #edaa3b);
+  clip-path: polygon(47% 0, 100% 0, 69% 40%, 96% 40%, 13% 100%, 37% 55%, 5% 55%);
+}
+.wx-icon:not([data-wx="clear"]) .wx-sun,
+.wx-icon:not([data-wx="rain"]) .wx-drops,
+.wx-icon:not([data-wx="snow"]) .wx-flake,
+.wx-icon:not([data-wx="storm"]) .wx-bolt { display: none; }
+.logo .wx-icon { font-size: 1.52rem; }
+.scene-buttons .wx-icon { font-size: 1.9rem; }
+.scene-buttons .wx-cloud { filter: drop-shadow(0 .07em .065em #51467743); }
+.weather-art { width: 106px; height: 94px; display: grid; place-items: center; margin: 9px 0 4px; }
+.weather-art .wx-icon { font-size: 96px; }
+.widget .wx-icon { font-size: 1.92rem; }
+.widget.square .wx-icon { font-size: 2.55rem; }
+@media (max-width: 480px) {
+  .scene-buttons .wx-icon { font-size: 1.65rem; }
+  .widget .wx-icon { font-size: 1.26rem; }
+  .widget.square .wx-icon { font-size: 1.55rem; }
+}
+
+.feature-icon { font-size: 1.52rem; color: #54316e; }
+.feature-symbol { background: color-mix(in srgb, var(--accent) 78%, white); }
+.feature-icon::before, .feature-icon::after { content: ""; }
+.icon-radar::before {
+  inset: 7%;
+  border-radius: 50%;
+  border: .07em solid #39685e;
+  background: radial-gradient(circle, #39685e 8%, transparent 10% 37%, #39685e 39% 46%, transparent 48%);
+}
+.icon-radar::after {
+  inset: 14%;
+  border-radius: 50%;
+  background: conic-gradient(from 25deg, #61978300, #619783b9 67deg, transparent 68deg);
+}
+.icon-bell::before {
+  inset: 11% 20% 23%;
+  border-radius: 50% 50% 23% 23%;
+  background: linear-gradient(#f8c76c, #b47638);
+}
+.icon-bell::after {
+  inset: 77% 41% 10%;
+  border-radius: 50%;
+  background: #7a4a28;
+}
+.icon-leaf::before {
+  inset: 12% 12% 15%;
+  border-radius: 75% 9% 75% 29%;
+  background: linear-gradient(130deg, #9eda91, #4b9b6a 60%, #397051);
+}
+.icon-leaf::after {
+  top: 55%;
+  left: 19%;
+  width: 60%;
+  height: 7%;
+  border-radius: 1em;
+  background: #f3ffd0;
+  rotate: -42deg;
+}
+.icon-moon::before {
+  inset: 12% 18% 11% 10%;
+  border-radius: 50%;
+  box-shadow: inset .22em -.11em #7663a5;
+  rotate: -20deg;
+}
+.icon-moon::after {
+  inset: 15% 8% auto auto;
+  width: 30%;
+  aspect-ratio: 1;
+  background: #ad713b;
+  clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 38%);
+}
+.icon-calendar::before {
+  inset: 18% 9% 12%;
+  border: .07em solid #476181;
+  border-radius: .16em;
+  background: linear-gradient(#7595c1 0 25%, #f6f9ff 25%);
+}
+.icon-calendar::after {
+  inset: 48% 26% 27%;
+  background: #6b79ba;
+  clip-path: polygon(0 44%, 17% 31%, 38% 59%, 82% 0, 100% 15%, 40% 100%);
+}
+.icon-palette::before {
+  inset: 12% 8%;
+  border-radius: 48% 50% 55% 45%;
+  background: radial-gradient(circle at 25% 53%, #5775b8 11%, transparent 14%),
+    radial-gradient(circle at 45% 30%, #a56ba2 11%, transparent 14%),
+    radial-gradient(circle at 71% 42%, #bd6d5f 11%, transparent 14%), #f4cfab;
+  box-shadow: inset 0 0 0 .06em #98624d;
+}
+.icon-palette::after {
+  inset: 64% 11% 9% 56%;
+  border-radius: 55%;
+  background: color-mix(in srgb, var(--accent) 78%, white);
+}
+.icon-history::before { inset: 11%; border-radius: 50%; border: .085em solid #845ca2; border-left-color: transparent; rotate: -31deg; }
+.icon-history::after {
+  inset: 31% 33% 45% 44%;
+  border-left: .08em solid #845ca2;
+  border-bottom: .08em solid #845ca2;
+  border-radius: 0 0 0 .06em;
+}
+.icon-accuracy::before {
+  inset: 14% 11% 14% 14%;
+  background: linear-gradient(#6295bd, #6295bd) bottom left / 22% 40%,
+    linear-gradient(#7464a6, #7464a6) bottom center / 22% 68%,
+    linear-gradient(#39685e, #39685e) bottom right / 22% 100%;
+  background-repeat: no-repeat;
+  transform-origin: center bottom;
+}
+.icon-accuracy::after { inset: auto 5% 9%; height: 5%; border-radius: 1em; background: #555074; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.motion-paused) .sky-orb { animation: sky-rise 9s ease-in-out infinite alternate; }
+  html:not(.motion-paused) .sky-ribbon { animation: ribbon-flow 11s ease-in-out infinite alternate; }
+  html:not(.motion-paused) .sky-ribbon + .sky-ribbon { animation-delay: -5s; animation-direction: alternate-reverse; }
+  html:not(.motion-paused) .sky-cloud { animation: cloud-pass 12s ease-in-out infinite alternate; }
+  html:not(.motion-paused) .sky-cloud + .sky-cloud { animation-delay: -6s; animation-direction: alternate-reverse; }
+  html:not(.motion-paused) .sky-storm-glow { animation: storm-glow 6s ease-in-out infinite alternate; }
+  html:not(.motion-paused) .sky-clear .sky-spark { animation: sky-shimmer var(--speed) ease-in-out var(--delay) infinite alternate; }
+  html:not(.motion-paused) .sky-snow .sky-spark { animation: sky-fall var(--speed) ease-in-out var(--delay) infinite; }
+  html:not(.motion-paused) .sky-drop { animation: sky-rain var(--speed) linear var(--delay) infinite; }
+  html:not(.motion-paused) :is(.weather-art, .widget, .brand, [aria-pressed="true"], .scene-buttons button:hover, .feature-card:hover, .feature-card[open], .feature-card:focus-within) .wx-sun::before {
+    animation: orbit 18s linear infinite;
+  }
+  html:not(.motion-paused) :is(.weather-art, .widget, [aria-pressed="true"], .scene-buttons button:hover) .wx-cloud {
+    animation: icon-cloud 3.2s ease-in-out infinite;
+  }
+  html:not(.motion-paused) :is(.weather-art, .widget, [aria-pressed="true"], .scene-buttons button:hover) .wx-drops i {
+    animation: icon-rain 700ms linear var(--delay, 0ms) infinite;
+  }
+  html:not(.motion-paused) :is(.weather-art, .widget, [aria-pressed="true"], .scene-buttons button:hover) .wx-flake {
+    animation: icon-snow 2.6s ease-in-out infinite;
+  }
+  html:not(.motion-paused) :is(.weather-art, .widget, [aria-pressed="true"], .scene-buttons button:hover) .wx-bolt {
+    animation: icon-bolt 2.8s ease-in-out infinite;
+  }
+  html:not(.motion-paused) .feature-card[open] .feature-copy { animation: arrive 240ms ease-out; }
+  html:not(.motion-paused) :is(.feature-card[open] summary, .feature-card summary:is(:hover, :focus-visible)) .feature-icon { animation: icon-hop 580ms ease both; }
+  html:not(.motion-paused) :is(.feature-card[open] summary, .feature-card summary:is(:hover, :focus-visible)) .icon-radar::after { animation: orbit 1.2s ease both; }
+  html:not(.motion-paused) :is(.feature-card[open] summary, .feature-card summary:is(:hover, :focus-visible)) .icon-accuracy::before { animation: icon-bars 660ms ease both; }
+}
+/* Only the selected sky advances its loops. */
+:is(html:not([data-scene="clear"]) .sky-clear,
+    html:not([data-scene="rain"]) .sky-rain,
+    html:not([data-scene="snow"]) .sky-snow,
+    html:not([data-scene="storm"]) .sky-storm) > span { animation-play-state: paused; }
+
+@keyframes sky-rise { to { translate: -17px 14px; scale: 1.075; } }
+@keyframes ribbon-flow { to { translate: 48px 28px; scale: 1.12; } }
+@keyframes cloud-pass { to { translate: 90px 12px; } }
+@keyframes storm-glow { to { opacity: .95; translate: -40px 27px; } }
+@keyframes sky-shimmer { from { opacity: .35; } to { opacity: 1; translate: 9px -15px; } }
+@keyframes sky-fall { 0% { opacity: 0; translate: -12px -45px; } 20%,70% { opacity: .92; } 100% { opacity: 0; translate: 22px 75px; } }
+@keyframes sky-rain { 0% { opacity: 0; translate: 21px -55px; } 24%,70% { opacity: .92; } 100% { opacity: 0; translate: -26px 86px; } }
+@keyframes orbit { to { rotate: 360deg; } }
+@keyframes icon-cloud { 50% { translate: .035em -.038em; } }
+@keyframes icon-rain { 0% { opacity: 0; translate: .04em -.06em; } 28%,65% { opacity: 1; } 100% { opacity: 0; translate: -.044em .12em; } }
+@keyframes icon-snow { 50% { rotate: 60deg; translate: 0 .065em; } }
+@keyframes icon-bolt { 50% { translate: 0 .04em; rotate: -9deg; scale: 1.1; } }
+@keyframes icon-hop { 36% { translate: 0 -.12em; rotate: -12deg; } 66% { rotate: 6deg; } }
+@keyframes icon-bars { from { scale: 1 .35; } }
+.skip-link {
+  position: absolute;
+  z-index: 5;
+  top: .8rem;
+  left: .8rem;
+  padding: .8rem 1rem;
+  border-radius: .8rem;
+  background: var(--card);
+  transform: translateY(-180%);
+}
+.skip-link:focus { transform: none; }
+.nav { gap: clamp(12px, 2vw, 28px); flex-wrap: wrap; }
+.privacy-note { margin-top: .75rem; font-size: .93rem; font-weight: 730; color: var(--muted); }
+.forecast-feels { margin-top: .45rem; color: var(--muted); font-size: .92rem; }
+.sample-warning {
+  margin-top: .7rem;
+  border-radius: 12px;
+  border: 1px solid #b07b55;
+  padding: .5rem .65rem;
+  background: #fff2d9;
+  color: #5c331d;
+  font-size: .84rem;
+  font-weight: 720;
+}
+.hourly-preview { width: 100%; margin-top: .85rem; }
+.hourly-preview h3 { font-size: .86rem; text-align: left; }
+.sample-hours {
+  list-style: none;
+  margin: .45rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+.sample-hours li {
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+  padding: .42rem 1px;
+  min-width: 0;
+  border-radius: 9px;
+  color: var(--ink);
+  background: var(--card);
+  font-size: .75rem;
+}
+.sample-hours time, .sample-hours strong { white-space: nowrap; }
+.sample-hours small { color: var(--muted); font-size: .73rem; }
+.radar-sample {
+  margin: 1rem 0 0;
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  border-radius: 15px;
+  padding: 10px;
+  background: var(--soft);
+}
+.radar-sample figcaption { font-size: .92rem; }
+.radar-disc {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 37% 34%, #9cde8f 2%, #65b380 9%, transparent 28%),
+    radial-gradient(ellipse at 70% 64%, #55a688, transparent 25%),
+    repeating-radial-gradient(circle, #78a99140 0 1px, transparent 2px 14px), #1f434a;
+}
+.radar-disc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, transparent 74%, #d3f4978c);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.motion-paused) details[open] .radar-disc::after { animation: orbit 5s linear infinite; }
+}
+.facts-section { padding-block: clamp(30px, 5vw, 62px); }
+.facts-section .section-title { font-size: clamp(2rem, 4.1vw, 3.5rem); }
+.flow-list, .language-grid { list-style: none; padding: 0; margin: 1.3rem 0 0; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .7rem; }
+.flow-list li, .language-grid li {
+  padding: .8rem .95rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.flow-list strong, .language-grid [lang] { display: block; font-weight: 820; }
+.flow-list span, .language-grid small { display: block; margin-top: .3rem; color: var(--muted); }
+.language-grid small { font-size: .86rem; }
+.info { padding-bottom: clamp(25px, 5vw, 61px); }
+.faq-list { margin-top: 1.2rem; }
+.faq-list details { border: 1px solid var(--line); border-radius: 15px; background: var(--card); margin-top: .6rem; padding: 0; }
+.faq-list summary { padding: .85rem 1rem; }
+.faq-list details p { padding: 0 1rem .95rem; line-height: 1.55; }
+.providers { width: 100%; margin-top: 1.2rem; border-collapse: collapse; }
+.providers th, .providers td { padding: .8rem .7rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.providers th:first-child { width: 31%; }
+.providers thead { background: var(--card); }
+.checksums { margin-block: .75rem 0; }
+.checksums dt { font-weight: 740; }
+.checksums dd { margin: .15rem 0 .7rem; overflow-wrap: anywhere; }
+.footer nav { display: flex; flex-wrap: wrap; gap: .55rem 1rem; }
+@media (max-width: 760px) {
+  .flow-list, .language-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .sample-hours { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 560px) {
+  header { flex-wrap: wrap; row-gap: .55rem; }
+  .nav { gap: .4rem .85rem; }
+  .sample-hours { grid-template-columns: repeat(6,minmax(0,1fr)); }
+}
+@media (max-width: 345px) {
+  .sample-hours { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .providers th, .providers td { padding-inline: .35rem; }
+}
+</style>
 </head>
-<body class="wx-clear">
-
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<main>
+<div class="top" id="top">
 <div class="sky" aria-hidden="true">
-  <canvas id="sky-canvas"></canvas>
-  <div class="blob blob-a"></div>
-  <div class="blob blob-b"></div>
-  <div class="blob blob-c"></div>
+  <div class="sky-layer sky-clear">
+    <span class="sky-orb"></span>
+    <span class="sky-ribbon"></span><span class="sky-ribbon"></span>
+    <span class="sky-spark" style="--x:6%;--y:14%;--size:3px;--speed:3.00s;--delay:-0.00s"></span>
+    <span class="sky-spark" style="--x:16%;--y:26%;--size:4px;--speed:3.43s;--delay:-1.85s"></span>
+    <span class="sky-spark" style="--x:25%;--y:12%;--size:5px;--speed:3.86s;--delay:-0.30s"></span>
+    <span class="sky-spark" style="--x:35%;--y:45%;--size:6px;--speed:4.29s;--delay:-2.64s"></span>
+    <span class="sky-spark" style="--x:44%;--y:21%;--size:7px;--speed:4.71s;--delay:-0.73s"></span>
+    <span class="sky-spark" style="--x:52%;--y:53%;--size:3px;--speed:3.00s;--delay:-2.08s"></span>
+    <span class="sky-spark" style="--x:61%;--y:15%;--size:4px;--speed:3.43s;--delay:-0.79s"></span>
+    <span class="sky-spark" style="--x:69%;--y:48%;--size:5px;--speed:3.86s;--delay:-2.97s"></span>
+    <span class="sky-spark" style="--x:76%;--y:22%;--size:6px;--speed:4.29s;--delay:-1.32s"></span>
+    <span class="sky-spark" style="--x:84%;--y:32%;--size:7px;--speed:4.71s;--delay:-3.99s"></span>
+    <span class="sky-spark" style="--x:91%;--y:52%;--size:3px;--speed:3.00s;--delay:-1.15s"></span>
+    <span class="sky-spark" style="--x:97%;--y:13%;--size:4px;--speed:3.43s;--delay:-3.16s"></span>
+  </div>
+  <div class="sky-layer sky-rain">
+    <span class="sky-cloud"></span><span class="sky-cloud"></span>
+    <span class="sky-drop" style="--x:6%;--y:14%;--size:18px;--speed:1.40s;--delay:-0.00s"></span>
+    <span class="sky-drop" style="--x:16%;--y:26%;--size:19px;--speed:1.60s;--delay:-0.86s"></span>
+    <span class="sky-drop" style="--x:25%;--y:12%;--size:20px;--speed:1.80s;--delay:-0.14s"></span>
+    <span class="sky-drop" style="--x:35%;--y:45%;--size:21px;--speed:2.00s;--delay:-1.23s"></span>
+    <span class="sky-drop" style="--x:44%;--y:21%;--size:22px;--speed:2.20s;--delay:-0.34s"></span>
+    <span class="sky-drop" style="--x:52%;--y:53%;--size:23px;--speed:1.40s;--delay:-0.97s"></span>
+    <span class="sky-drop" style="--x:61%;--y:15%;--size:24px;--speed:1.60s;--delay:-0.37s"></span>
+    <span class="sky-drop" style="--x:69%;--y:48%;--size:25px;--speed:1.80s;--delay:-1.38s"></span>
+    <span class="sky-drop" style="--x:76%;--y:22%;--size:26px;--speed:2.00s;--delay:-0.62s"></span>
+    <span class="sky-drop" style="--x:84%;--y:32%;--size:27px;--speed:2.20s;--delay:-1.86s"></span>
+    <span class="sky-drop" style="--x:91%;--y:52%;--size:28px;--speed:1.40s;--delay:-0.54s"></span>
+    <span class="sky-drop" style="--x:97%;--y:13%;--size:29px;--speed:1.60s;--delay:-1.48s"></span>
+    <span class="sky-drop" style="--x:4%;--y:55%;--size:30px;--speed:1.80s;--delay:-0.83s"></span>
+    <span class="sky-drop" style="--x:17%;--y:66%;--size:31px;--speed:2.00s;--delay:-0.00s"></span>
+    <span class="sky-drop" style="--x:81%;--y:61%;--size:32px;--speed:2.20s;--delay:-1.18s"></span>
+    <span class="sky-drop" style="--x:92%;--y:73%;--size:18px;--speed:1.40s;--delay:-0.11s"></span>
+  </div>
+  <div class="sky-layer sky-snow">
+    <span class="sky-cloud"></span><span class="sky-cloud"></span>
+    <span class="sky-spark" style="--x:6%;--y:14%;--size:4px;--speed:4.80s;--delay:-0.00s"></span>
+    <span class="sky-spark" style="--x:16%;--y:26%;--size:5px;--speed:5.49s;--delay:-2.95s"></span>
+    <span class="sky-spark" style="--x:25%;--y:12%;--size:6px;--speed:6.17s;--delay:-0.47s"></span>
+    <span class="sky-spark" style="--x:35%;--y:45%;--size:7px;--speed:6.86s;--delay:-4.22s"></span>
+    <span class="sky-spark" style="--x:44%;--y:21%;--size:8px;--speed:7.54s;--delay:-1.16s"></span>
+    <span class="sky-spark" style="--x:52%;--y:53%;--size:9px;--speed:4.80s;--delay:-3.32s"></span>
+    <span class="sky-spark" style="--x:61%;--y:15%;--size:10px;--speed:5.49s;--delay:-1.27s"></span>
+    <span class="sky-spark" style="--x:69%;--y:48%;--size:4px;--speed:6.17s;--delay:-4.75s"></span>
+    <span class="sky-spark" style="--x:76%;--y:22%;--size:5px;--speed:6.86s;--delay:-2.11s"></span>
+    <span class="sky-spark" style="--x:84%;--y:32%;--size:6px;--speed:7.54s;--delay:-6.38s"></span>
+    <span class="sky-spark" style="--x:91%;--y:52%;--size:7px;--speed:4.80s;--delay:-1.85s"></span>
+    <span class="sky-spark" style="--x:97%;--y:13%;--size:8px;--speed:5.49s;--delay:-5.06s"></span>
+    <span class="sky-spark" style="--x:4%;--y:55%;--size:9px;--speed:6.17s;--delay:-2.85s"></span>
+    <span class="sky-spark" style="--x:17%;--y:66%;--size:10px;--speed:6.86s;--delay:-0.00s"></span>
+    <span class="sky-spark" style="--x:81%;--y:61%;--size:4px;--speed:7.54s;--delay:-4.06s"></span>
+    <span class="sky-spark" style="--x:92%;--y:73%;--size:5px;--speed:4.80s;--delay:-0.37s"></span>
+  </div>
+  <div class="sky-layer sky-storm">
+    <span class="sky-cloud"></span><span class="sky-cloud"></span>
+    <span class="sky-storm-glow"></span>
+    <span class="sky-drop" style="--x:6%;--y:14%;--size:23px;--speed:0.95s;--delay:-0.00s"></span>
+    <span class="sky-drop" style="--x:16%;--y:26%;--size:24px;--speed:1.09s;--delay:-0.58s"></span>
+    <span class="sky-drop" style="--x:25%;--y:12%;--size:25px;--speed:1.22s;--delay:-0.09s"></span>
+    <span class="sky-drop" style="--x:35%;--y:45%;--size:26px;--speed:1.36s;--delay:-0.84s"></span>
+    <span class="sky-drop" style="--x:44%;--y:21%;--size:27px;--speed:1.49s;--delay:-0.23s"></span>
+    <span class="sky-drop" style="--x:52%;--y:53%;--size:28px;--speed:0.95s;--delay:-0.66s"></span>
+    <span class="sky-drop" style="--x:61%;--y:15%;--size:29px;--speed:1.09s;--delay:-0.25s"></span>
+    <span class="sky-drop" style="--x:69%;--y:48%;--size:30px;--speed:1.22s;--delay:-0.94s"></span>
+    <span class="sky-drop" style="--x:76%;--y:22%;--size:31px;--speed:1.36s;--delay:-0.42s"></span>
+    <span class="sky-drop" style="--x:84%;--y:32%;--size:32px;--speed:1.49s;--delay:-1.26s"></span>
+    <span class="sky-drop" style="--x:91%;--y:52%;--size:33px;--speed:0.95s;--delay:-0.37s"></span>
+    <span class="sky-drop" style="--x:97%;--y:13%;--size:34px;--speed:1.09s;--delay:-1.00s"></span>
+    <span class="sky-drop" style="--x:4%;--y:55%;--size:35px;--speed:1.22s;--delay:-0.56s"></span>
+    <span class="sky-drop" style="--x:17%;--y:66%;--size:36px;--speed:1.36s;--delay:-0.00s"></span>
+    <span class="sky-drop" style="--x:81%;--y:61%;--size:37px;--speed:1.49s;--delay:-0.80s"></span>
+    <span class="sky-drop" style="--x:92%;--y:73%;--size:38px;--speed:0.95s;--delay:-0.07s"></span>
+  </div>
 </div>
-<div id="cursor-glow" aria-hidden="true"></div>
-<div id="flash-overlay" aria-hidden="true"></div>
-<div id="scroll-progress" aria-hidden="true"></div>
-
-<a class="skip" href="#main">Skip to content</a>
-
-<nav>
-  <div class="wrap nav">
-    <a class="logo" href="#top" aria-label="MU Weather home">
-      <svg width="30" height="30" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#16224A"/><circle cx="36" cy="38" r="15" fill="#F5C86A"/><path d="M28 66h46a12 12 0 0 0 0-24 19 19 0 0 0-36-6 14 14 0 0 0-10 30z" fill="#E8EEF7"/></svg>
-      <span>MU&nbsp;Weather</span>
-    </a>
-    <span class="sp"></span>
-    <a class="link" href="#features">Features</a>
-    <a class="link" href="#keyless">How it works</a>
-    <a class="link" href="#faq">FAQ</a>
-    <a class="link" href="#download">Download</a>
-    <a class="btn ghost small" href="https://github.com/Avithegod2010/MU-Weather">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.55v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.26 5.66.41.36.78 1.05.78 2.13v3.16c0 .3.2.66.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
-      GitHub
-    </a>
-  </div>
-</nav>
-
-<header class="wrap hero" id="top">
-  <div class="hero-copy">
-    <span class="kicker reveal">Material You · Android · Open Source</span>
-    <h1 class="reveal">Feel the weather.<br><span class="grad">Own your data.</span></h1>
-    <p class="sub reveal">MU Weather is a free, offline-friendly Android app — a 16-day forecast with honesty bands, an animated rain radar, official government warnings, five widgets and 16 languages. <b>No accounts, no tracking, no API keys.</b></p>
-    <div class="cta reveal">
-      <a class="btn primary" href="#download">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-        Download v1.5.0
-      </a>
-      <a class="btn ghost" href="https://github.com/Avithegod2010/MU-Weather">View source</a>
-    </div>
-
-    <div class="wx-switch reveal" role="group" aria-label="Try the live weather on this page">
-      <span class="wx-switch-label">Try it live —</span>
-      <button class="wx-chip" data-mode="clear" aria-pressed="true"><i class="wc wc-clear"></i>Clear night</button>
-      <button class="wx-chip" data-mode="rain" aria-pressed="false"><i class="wc wc-rain"></i>Rain</button>
-      <button class="wx-chip" data-mode="snow" aria-pressed="false"><i class="wc wc-snow"></i>Snow</button>
-      <button class="wx-chip" data-mode="storm" aria-pressed="false"><i class="wc wc-storm"></i>Storm</button>
-    </div>
-
-    <div class="stats reveal" aria-label="Key numbers">
-      <div class="stat"><b data-count="16">0</b><span>languages</span></div>
-      <div class="stat"><b data-count="5">0</b><span>widgets</span></div>
-      <div class="stat"><b data-count="935">0</b><span>keys per language</span></div>
-      <div class="stat"><b data-count="0">0</b><span>API keys needed</span></div>
-    </div>
-  </div>
-
-  <div class="phone-col reveal" aria-hidden="true">
-    <div class="phone-glow"></div>
-    <div class="tilt">
-      <div class="phone ph-clear">
-        <div class="screen">
-          <div class="scr-status"><span>9:41</span><span class="scr-status-r"><i class="dot"></i><i class="dot"></i><i class="bat"></i></span></div>
-          <div class="scr-cityrow">
-            <span class="scr-city">London</span>
-            <span class="scr-badge">My location</span>
-          </div>
-          <div class="scr-warn" id="phWarn"><span class="pulse-dot"></span><span id="phWarnText">Severe thunderstorm warning · until 9 PM</span></div>
-          <div class="scr-hero">
-            <div class="scr-icon">
-              <span class="ic ic-sun"><i class="ray-spin"></i></span>
-              <span class="ic ic-cloud"></span>
-              <span class="ic ic-rain"><b></b><b></b><b></b></span>
-              <span class="ic ic-snow"><b></b><b></b><b></b></span>
-              <span class="ic ic-bolt"></span>
-            </div>
-            <div class="scr-temp"><span id="phTemp">21</span>°</div>
-            <div class="scr-cond" id="phCond">Clear night</div>
-            <div class="scr-feels" id="phFeels">Feels like 20° — a perfect evening</div>
-            <div class="scr-hilo"><span>H <b id="phHi">23°</b></span><span class="hilo-sep"></span><span>L <b id="phLo">14°</b></span></div>
-          </div>
-          <div class="scr-strip" id="phStrip">
-            <div class="scr-hour now"><span>Now</span><b>21°</b><i style="--p:.05"></i></div>
-            <div class="scr-hour"><span>10PM</span><b>20°</b><i style="--p:.1"></i></div>
-            <div class="scr-hour"><span>11PM</span><b>18°</b><i style="--p:.15"></i></div>
-            <div class="scr-hour"><span>12AM</span><b>17°</b><i style="--p:.05"></i></div>
-            <div class="scr-hour"><span>1AM</span><b>16°</b><i style="--p:0"></i></div>
-            <div class="scr-hour"><span>2AM</span><b>15°</b><i style="--p:0"></i></div>
-          </div>
-          <div class="scr-radar">
-            <span class="sweep"></span>
-            <span class="blip b1"></span><span class="blip b2"></span><span class="blip b3"></span>
-            <span class="scr-radar-label"><i>●</i> LIVE RADAR</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<header class="shell">
+  <a class="brand" href="#top"><span class="logo" aria-hidden="true"><span class="wx-icon" data-wx="clear" aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-sun"></span></span></span> MU Weather</a>
+  <nav class="nav" aria-label="Main navigation"><a href="#features">Features</a><a href="#keyless">How it works</a><a href="#privacy">Privacy</a><a href="#faq">FAQ</a><a href="#download">Download</a><a class="outline" href="https://github.com/Avithegod2010/MU-Weather">GitHub</a></nav>
 </header>
-
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-track">
-    <span>Open-Meteo</span><span>·</span><span>RainViewer</span><span>·</span><span>NOAA Space Weather</span><span>·</span><span>MeteoAlarm</span><span>·</span><span>US National Weather Service</span><span>·</span><span>Environment Canada</span><span>·</span><span>Open-Meteo</span><span>·</span><span>RainViewer</span><span>·</span><span>NOAA Space Weather</span><span>·</span><span>MeteoAlarm</span><span>·</span><span>US National Weather Service</span><span>·</span><span>Environment Canada</span><span>·</span>
-  </div>
+<section class="hero shell" id="main" tabindex="-1" aria-labelledby="headline">
+    <h1 id="headline"><span>Weather that feels</span> <span class="headline-last">like yours.</span></h1>
+    <p>An Android forecast that fits your home screen.</p>
+    <a class="button" href="#download"><span class="download-icon" aria-hidden="true">↓</span> Download for Android</a>
+    <div class="privacy-note">Free and open source · No account, tracking or API key for weather</div>
+  </section>
+  <section class="playground shell" aria-labelledby="scenes-heading">
+    <div class="controls">
+      <h2 id="scenes-heading">Try a weather scene</h2>
+      <p>Watch the sky, forecast, and widgets change together.</p>
+      <div class="scene-buttons" role="group" aria-label="Weather scene">
+        <button type="button" data-select="clear" aria-pressed="true"><span class="wx-icon" data-wx="clear" aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-sun"></span></span> Clear</button>
+        <button type="button" data-select="rain" aria-pressed="false"><span class="wx-icon" data-wx="rain" aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-drops"><i></i><i></i><i></i></span></span> Rain</button>
+        <button type="button" data-select="snow" aria-pressed="false"><span class="wx-icon" data-wx="snow" aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-flake"><i></i><i></i><i></i></span></span> Snow</button>
+        <button type="button" data-select="storm" aria-pressed="false"><span class="wx-icon" data-wx="storm" aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-bolt"></span></span> Storm</button>
+      </div>
+      <button type="button" class="motion-toggle" aria-pressed="false" hidden>
+        <span class="motion-symbol" aria-hidden="true"></span> Pause animations
+      </button>
+    </div>
+    <div class="forecast" aria-live="polite" aria-atomic="true">
+      <div class="forecast-header"><span>London</span><span class="sample">Sample weather</span></div>
+      <div class="weather-art" aria-hidden="true"><span class="wx-icon" data-wx="clear" data-icon aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-sun"></span><span class="wx-part wx-drops"><i></i><i></i><i></i></span><span class="wx-part wx-flake"><i></i><i></i><i></i></span><span class="wx-part wx-bolt"></span></span></div>
+      <div class="temperature" data-temp>21°</div>
+      <div class="condition" data-condition>Partly cloudy</div>
+      <p class="forecast-feels" id="forecast-feels">Feels like 20°</p>
+      <p class="sample-warning" id="sample-warning" hidden>Sample alert · Severe thunderstorm warning until 9 PM</p>
+      <div class="range"><span>High <b id="high">23°</b></span><span>Low <b id="low">14°</b></span></div>
+      <section class="hourly-preview" aria-labelledby="hours-heading">
+        <h3 id="hours-heading">Hourly sample · Chance of precipitation</h3>
+        <ul class="sample-hours" aria-live="off">
+          <li><time datetime="21:00">Now</time><strong>21°</strong><small>5%</small></li>
+          <li><time datetime="22:00">10 PM</time><strong>20°</strong><small>10%</small></li>
+          <li><time datetime="23:00">11 PM</time><strong>18°</strong><small>15%</small></li>
+          <li><time datetime="00:00">12 AM</time><strong>17°</strong><small>5%</small></li>
+          <li><time datetime="01:00">1 AM</time><strong>16°</strong><small>0%</small></li>
+          <li><time datetime="02:00">2 AM</time><strong>15°</strong><small>0%</small></li>
+        </ul>
+      </section>
+    </div>
+    <div class="widgets">
+      <h3>Home-screen widgets</h3>
+      <div class="wallpaper"><div class="widget"><span class="clock">9:41</span><span class="wx-icon" data-wx="clear" data-icon aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-sun"></span><span class="wx-part wx-drops"><i></i><i></i><i></i></span><span class="wx-part wx-flake"><i></i><i></i><i></i></span><span class="wx-part wx-bolt"></span></span><div><small>London</small><strong data-temp>21°</strong></div></div></div>
+      <div class="wallpaper"><div class="widget square"><span class="wx-icon" data-wx="clear" data-icon aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-sun"></span><span class="wx-part wx-drops"><i></i><i></i><i></i></span><span class="wx-part wx-flake"><i></i><i></i><i></i></span><span class="wx-part wx-bolt"></span></span><div><small>London</small><strong data-temp>21°</strong><small data-condition>Partly cloudy</small></div></div></div>
+    </div>
+  </section>
+  <div class="shell"><p class="feature-strip"><span>16-day forecasts</span><span>Animated rain radar</span><span>Cached forecasts offline</span></p></div>
 </div>
-
-<main id="main">
-<section id="features">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker">Features</span>
-      <h2>Everything a weather app should do.<br>Nothing it shouldn't.</h2>
-      <p>Fourteen releases of craft by one hobbyist developer and the open-source community — every feature works without an account or a key. <em>(Psst — move your cursor over the radar tile.)</em></p>
-    </div>
-
-    <div class="bento">
-      <div class="tile t-radar reveal">
-        <div class="tile-map" id="tileMap" aria-hidden="true">
-          <span class="sweep big"></span>
-          <span class="rain r1"></span><span class="rain r2"></span><span class="rain r3"></span>
-        </div>
-        <div class="tile-body">
-          <h3>Animated rain radar</h3>
-          <p>Playback, scrubbing, pinch-zoom and recenter — rendered by a pure-JS tile engine, so there's no Google Maps and nothing to bill you.</p>
-        </div>
+<section class="feature-catalogue shell" id="features" aria-labelledby="feature-heading">
+  <h2 class="section-title" id="feature-heading">Explore MU Weather</h2>
+  <p class="intro">Open a section to see what you can do in the Android app.</p>
+  <div class="feature-grid">
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="wx-icon" data-wx="clear" aria-hidden="true"><span class="wx-part wx-cloud"></span><span class="wx-part wx-sun"></span></span></span>
+        <span class="feature-label"><strong>Forecasts and charts</strong><small>Hourly details · 16-day outlook</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Right now.</strong> See temperature, wind, humidity and pressure. When it feels much hotter or colder than the reading, the app explains why.</li>
+          <li><strong>Hour by hour.</strong> Tap an hour for rain chance and amount, feels-like temperature, gusts, UV, visibility and more.</li>
+          <li><strong>Plan up to 16 days ahead.</strong> Open a day for temperature and rain curves, sunrise and sunset, and expected UV and wind.</li>
+          <li><strong>Explore the trends.</strong> Scrub interactive charts across 24 hours, seven days, or the past 30 days. Highlights call out changes like frost, gusts and rain arriving soon.</li>
+        </ul>
       </div>
-
-      <div class="tile t-band reveal">
-        <svg class="band-chart" viewBox="0 0 320 110" aria-hidden="true">
-          <defs>
-            <linearGradient id="bandFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="var(--accent)" stop-opacity=".38"/>
-              <stop offset="1" stop-color="var(--accent)" stop-opacity=".06"/>
-            </linearGradient>
-            <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#F5C86A"/>
-              <stop offset="1" stop-color="var(--accent)"/>
-            </linearGradient>
-          </defs>
-          <path class="band-area" fill="url(#bandFill)" d="M8,62 C40,50 60,70 92,58 C124,46 150,30 186,34 C222,38 250,58 312,44 L312,86 C250,98 222,80 186,76 C150,72 124,86 92,96 C60,104 40,84 8,92 Z"/>
-          <path class="band-line" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round" d="M8,76 C40,66 60,86 92,76 C124,66 150,52 186,55 C222,58 250,74 312,62"/>
-          <circle class="band-dot" cx="186" cy="55" r="4.5" fill="#F5C86A"/>
-        </svg>
-        <div class="tile-body">
-          <h3>Forecasts with honesty built in</h3>
-          <p>A P10–P90 ensemble band shows how sure the models are — plus per-model accuracy scoring, a leaderboard, and a year heatmap of archive daily highs.</p>
-        </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-radar"></span></span>
+        <span class="feature-label"><strong>Radar and maps</strong><small>Rain playback · Weather layers</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Replay rain.</strong> Play or scrub the last two hours of RainViewer frames. Pinch to zoom, pan or recenter. The app renders its own tiles without a Google Maps SDK, billing account or key.</li>
+          <li><strong>See what’s moving in.</strong> Minute-level rain outlooks describe when bands are arriving, easing or passing.</li>
+          <li><strong>Switch layers.</strong> Explore precipitation, temperature, wind and cloud. Active US National Weather Service warnings can appear as outlines on the radar.</li>
+        </ul>
+        <figure class="radar-sample">
+          <span class="radar-disc" aria-hidden="true"></span>
+          <figcaption><strong>Radar preview</strong><br>Simulated precipitation. The Android app uses timestamped radar frames.</figcaption>
+        </figure>
       </div>
-
-      <div class="tile t-warn reveal">
-        <div class="warn-stack" aria-hidden="true">
-          <span class="wchip red"><i></i>Severe thunderstorm watch</span>
-          <span class="wchip orange"><i></i>Rainfall warning</span>
-          <span class="wchip yellow"><i></i>Frost advisory</span>
-        </div>
-        <div class="tile-body">
-          <h3>Official warnings, three continents</h3>
-          <p>Government alerts from MeteoAlarm across Europe, the US National Weather Service, and Environment Canada — with outlines drawn right on the radar, plus opt-in rules for fog, black ice, storms and more.</p>
-        </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-bell"></span></span>
+        <span class="feature-label"><strong>Alerts and warnings</strong><small>17 alert rules · Official warnings</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Pick your alerts.</strong> Opt in to rules for rain, storms, fog, black ice, heat, frost, air quality and more, including for saved cities.</li>
+          <li><strong>Check what was triggered.</strong> Alert history shows up to 20 outcomes with the reason, city and local time. Android can defer background checks.</li>
+          <li><strong>See official warnings.</strong> Supported areas in Europe, the US and Canada receive warnings from MeteoAlarm, the US National Weather Service and Environment and Climate Change Canada. The app shows the source and expiry.</li>
+          <li><strong>Listen to the forecast.</strong> Read the forecast aloud, use the daily digest’s spoken forecast action, or set an alarm before sunrise with a choice of four tones.</li>
+        </ul>
       </div>
-
-      <div class="tile t-theme reveal">
-        <div class="swatches" aria-hidden="true">
-          <span style="--c:#7FB5F0"></span><span style="--c:#5BC98C"></span><span style="--c:#F5C86A"></span><span style="--c:#B9A7F5"></span><span style="--c:#E85F5F"></span>
-        </div>
-        <div class="tile-body">
-          <h3>Material You, plus ten themes</h3>
-          <p>On Android 12+ the whole palette — cards, charts, widgets — follows your wallpaper. Watch this page's own palette shift when you switch the weather above.</p>
-        </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-leaf"></span></span>
+        <span class="feature-label"><strong>Air quality and pollen</strong><small>AQI forecast · Six pollen types</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Check the air.</strong> Switch between US and European AQI scales, see the hourly curve and five-day peak outlook, and view pollutant breakdowns such as PM2.5 and ozone.</li>
+          <li><strong>Compare pollen levels.</strong> See six pollen types and which one is highest. Pollen forecasts are available in Europe through CAMS.</li>
+        </ul>
       </div>
-
-      <div class="tile t-widgets reveal">
-        <div class="widget-row" aria-hidden="true">
-          <div class="mini-widget w22">
-            <span class="mw-city">London</span><span class="mw-temp">9°</span><span class="mw-cond">Overcast</span>
-          </div>
-          <div class="mini-widget w42">
-            <span class="mw-top"><span class="mw-city">London</span><span class="mw-temp">9°</span></span>
-            <span class="mw-strip"><i>9°</i><i>10°</i><i>12°</i><i>13°</i><i>12°</i></span>
-          </div>
-        </div>
-        <div class="tile-body">
-          <h3>Five widgets, sky-themed</h3>
-          <p>2×2, sunrise countdown, 4×2, a 4×3 dashboard and a multi-city widget with its own config screen.</p>
-        </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-moon"></span></span>
+        <span class="feature-label"><strong>Sun, moon and sky</strong><small>Golden hour · Aurora · Storm tools</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Time the light.</strong> Check sunrise, sunset, golden hour, moon phase and illumination.</li>
+          <li><strong>Look for auroras.</strong> See the Kp index, visibility outlook and solar wind at supported latitudes.</li>
+          <li><strong>Explore storms.</strong> See when forecast instability peaks and use the storm distance timer to time the gap between lightning and thunder.</li>
+        </ul>
       </div>
-
-      <div class="tile t-privacy reveal">
-        <div class="shield" aria-hidden="true">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5BC98C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4.5"/></svg>
-        </div>
-        <div class="tile-body">
-          <h3>Private by architecture</h3>
-          <p>No accounts. No analytics. No crash reporters. Your data lives on your device — <a href="#keyless">by design, not by policy</a>.</p>
-        </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-calendar"></span></span>
+        <span class="feature-label"><strong>Trips and outdoor plans</strong><small>Trip forecast · Calendar events</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Plan a trip.</strong> Pick a saved city and travel dates for a day-by-day outlook and a summary of how many days look wet.</li>
+          <li><strong>Check your calendar.</strong> See the forecast for upcoming events and a rain-risk note when relevant.</li>
+          <li><strong>Pick a time outdoors.</strong> Compare two-hour windows scored on rain, wind, UV and feels-like temperature, along with a weekend comparison.</li>
+          <li><strong>Dress for the day.</strong> Rate how the day felt in the on-device journal. It tracks your rating streak, learns at what temperatures you tend to feel hot or cold, and uses that to tailor clothing suggestions.</li>
+        </ul>
       </div>
-
-      <div class="tile t-privacy reveal">
-        <div class="warn-stack" aria-hidden="true">
-          <span class="wchip green"><i></i>Streak: 12 days</span>
-          <span class="wchip orange"><i></i>Cold below 11°</span>
-          <span class="wchip yellow"><i></i>Hot above 27°</span>
-        </div>
-        <div class="tile-body">
-          <h3>A journal that learns you</h3>
-          <p>Rate how the day felt; MU Weather learns your personal cold and hot boundaries and tunes the "what to wear" line to match.</p>
-        </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-palette"></span></span>
+        <span class="feature-label"><strong>Themes and widgets</strong><small>10 themes · 6 Android widgets</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Make the app yours.</strong> Choose from 10 colour themes, including AMOLED black and wallpaper-based Material You on Android 12 and newer. App surfaces and charts follow the selected palette.</li>
+          <li><strong>Adjust the layout.</strong> Choose a material or glass style, compact or comfortable spacing, and your icon style. Pick which home tiles appear and how they animate.</li>
+          <li><strong>See the weather on your home screen.</strong> Choose from 2×2 current conditions, a sunrise or sunset countdown, a 4×2 hourly widget, a 4×3 dashboard, a configurable saved-city widget and a radar snapshot. Widget colours follow the current sky and time of day.</li>
+          <li><strong>Use your language.</strong> Choose from 16 languages, including English, Hindi, Bengali and Spanish. See <a href="#languages">all 16 languages</a>. The app supports TalkBack and reduced motion.</li>
+        </ul>
       </div>
-
-      <div class="tile t-langs reveal">
-        <div class="flag-cloud" aria-hidden="true">
-          <span>🇬🇧</span><span>🇮🇳</span><span>🇧🇩</span><span>🇪🇸</span><span>🇫🇷</span><span>🇩🇪</span><span>🇳🇱</span><span>🇬🇷</span><span>🇭🇺</span><span>🇮🇩</span><span>🇮🇹</span><span>🇵🇹</span><span>🇵🇱</span><span>🇹🇷</span><span>🇺🇦</span><span>🇷🇺</span>
-        </div>
-        <div class="tile-body">
-          <h3>16 languages, completely</h3>
-          <p>Every catalog is a full 935-key pass — voices, launcher shortcuts and all. <a href="#languages">See them</a>.</p>
-        </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-history"></span></span>
+        <span class="feature-label"><strong>History and climate</strong><small>30-day history · A year of daily highs</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>Look back.</strong> Compare recent weather with the app’s saved forecasts and see wet or dry streaks.</li>
+          <li><strong>Explore the yearly heatmap.</strong> See a 365-day grid of daily highs plus the hottest, coldest and wettest days.</li>
+          <li><strong>Compare with local averages.</strong> Check monthly climate normals and look up what happened on today’s date over the past decade.</li>
+        </ul>
       </div>
+    </details>
+    <details class="feature-card">
+      <summary>
+        <span class="feature-symbol" aria-hidden="true"><span class="feature-icon icon-accuracy"></span></span>
+        <span class="feature-label"><strong>Forecast accuracy</strong><small>Past forecast scores · Model comparison</small></span>
+      </summary>
+      <div class="feature-copy">
+        <ul>
+          <li><strong>See how the app did.</strong> The app checks logged forecasts against later archive observations and reports how far off its predictions were.</li>
+          <li><strong>Read uncertainty.</strong> The P10–P90 band shows the range between the 10th and 90th percentiles of model runs for temperature and wind. Rain charts can show how many model runs predict rain when enough runs support the comparison.</li>
+          <li><strong>Compare models and export data.</strong> Compare supported models by city and metric when enough shared dates are available, including ECMWF, GFS, ICON, Météo-France and JMA. Export the app’s forecast log as CSV or JSON.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+  <a class="release" href="https://github.com/Avithegod2010/MU-Weather/blob/master/REFERENCE.md#features">Full feature reference on GitHub</a>
+</section>
+<section class="content" id="screenshots">
+  <div class="shell">
+    <h2 class="section-title">See the app in action</h2>
+    <p class="intro">Check current conditions, see when rain is likely, and open a day for a more detailed forecast.</p>
+    <div class="shots">
+      <figure class="shot"><figcaption>Today’s weather</figcaption><img loading="lazy" src="data:image/webp;base64,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" alt="MU Weather home screen with today’s conditions and rain outlook"></figure>
+      <figure class="shot"><figcaption>Hourly forecast</figcaption><img loading="lazy" src="data:image/webp;base64,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" alt="MU Weather hourly temperature and chance of rain"></figure>
+      <figure class="shot"><figcaption>Day detail</figcaption><img loading="lazy" src="data:image/webp;base64,UklGRshGAABXRUJQVlA4ILxGAAAQGQGdASqGAUwDPj0ejUUiIaERWOTIIAPEsrd0D+SJlGeWB8u7OE2u4mw6QBtyBp8V/5H5d+NCCH4P5w/2b9ivn05B8avYOmJ/M8DPiP915z3PX/a/xXs//33/P+0D6JfrT/f+4B+p3/G/v3rofrv7p/3h/KP4Bfz7+6f8H/B/v/8v/+5/6f+492/+A/3/7D/7T5Av6T/mf//+//xO/9n/////4If8l/1v/////gJ/qH+r//P/r9tP/2f7z4Tf7v/w/2j/4vyF/0z+v/+n9sf//8gH/59QD9////7gH/29rfrZ/l/At+q/2b8lv7j6a/iPyb9b/XL/Rf3T4s/vrI/5l/Zfrl6k/yH67/f/7x+5v929k/8l+V3+A9E/l9/keoF+Lfy3+//1j91v7d6qv8p2q+s/7r/M+oF7AfO/9R/fPys9EP+Z/Nr+0fB/6B/cP8n9xH2AfyT+kf6v86/9D83f5vwRfFfYB/mP9d/3P+V/1H6v/Sn/L/9b/SfmD7Yvzr/M/+H/TfAP/Pf61/z/8T+WXz3+yX95f//7uf7m//8bJpipwqTd46Lh73ZFXs7tdWM+qJiw/7L+8Ufsv7xR6Y+k/l4HXiyzjZnmTGQ7gr14JWry7CzQlwkBgmim+aks+asf4j7Fw1oBpC0o4Jcnh8T3LJEGkEmuv9YT5aiaNPSbCulm3SR6mLzlGWG3CEvXwjWgTf2bWMTiKVcV01fDmQ54BZMo+wmulHLB2LspW3YINC0q2di7Sg+xzWFtmyiuscJrtmLgdXkud1aIb0WcTTx3STE2IVi2NSH0Pgrvaerb69zh6ngepi85RlhtYG0+smTl91udCG+0uBKcSWIksRJYiSxEliJJVW2vqD42LxHGjGGx8xHt4WVVihUwzxQqPonWgqXqKmGeKFTDPFCo899upaB/S0VSBUJ4z5111QYwAMOa3/soENLfoIj+HsDE2dsDyBpnbNWIsXTmUa+DOCKyWAMGZ1UFiTYOABI97cB9pPQFBQG0QiSUuQ4VCdLX6MGRt7rk7cmvwDMzdZ4wMZpce4r0v1VYv5fxUwzZ5Rs6VKcUmcuCH/Tfx7hlUsCjqlGJXqgUmUfewritrPVViVXzkMDDPFC16oVMM8UEB1UL/OKi9mS2oj/B+D1Wusg6OzN86Z5geG0vW7RlwssqrEq0Uf5IvIxqsUDM+Ps+F338mmQygF+wg1DYX1X4Zn6JPCypO2tzWhFeg0ZQXCqsUKmGeKFS98tVx5fdudTGEUSn3ktySzJZkslTjp+asRWIrEViKTf/Kit8H8Xe+IVTGnTuzp071KvsK+g8x8O6CqgkBVSPMD5gGlyo+Z5aaU/F8rznJlKDbTl7MxDW0OkAwMhqmoxiTXnnjFw1c59hi90b6HFgOtUqIz8rPvMFfnVtcLVKMcvVnFCphnb/mdkK7huual7cFQpCSUKsyB00B3XDDPFCpfpQEnTd/u9rjaxSD/SyKhSEkkIa22AXRxJk0QEgl1hRTlutp4vTXMVZdVsT+Xt4tJxUg5uxWB1WpQmQ3Jn9J+k9n3a32tiJ9F3zh6JKFR1F+CsKgpuxJ/n1hfVUuE9fPnkFZMdQH1ghXWquAQtgRmswUGfoPMw6IZBOZjgkyou1I+rktqW1LaltS2lwnJI5uGHld/fxrezni602SDlKpnqRTVeF0KthWoX1VLhPVXAJEcdAO1efGT82oFdXnxk/NqEAZDiHI+aNr65WvYlbVbSbv7+TjoItx3HtUjGXSMKVvZalGwTgEilydT4tGffJF9F3foFUN+sgdu7ez36KkrSPdYxzmpGpumRdFzBIA36loq0VaKtFWirRVniAxXwSE3Tuo5m5J6bi15zhK7MIYv4ghMz3oPyO9Be4IAd/u/8dOQTvh9t/6zLxZ8PtViOd4b9V475jOCM4YNMNQnYChgdMrAnBxR6ZCJhWK7wwpSEkoVMM7r2vPvDm8auVrG7GIpvK/Q+9uITnfGLlZ99WDgUD275NhZVWyZ8jxORHX/bvk2FlVYFx9/GqlYz9vK4oVMM8UKmGeKGEOQVWve9av4iMsS9IQuwYRIvbyUGz4Q3W6ztdMN4dMMfPYu6snH0cThAtwvbL/zuKkHkmY9D8jQ5eTvu+SZwhuNv2Agvm19CfMFJg3a5w4nyG31WUb8Ezq/KO+HWD2FlVYqqOWy15z4rSYQ08CpqTgYRpQxg1698uvnubAfnWWq4oVZkGHsRh6CagV1ee9FSuDldX4TStvM8+y9B6sdiABIaRAV6g1u3AvH8R4zM5gFkB+gimQfCHlMBuMIkL6moWkCLfXucPWEeMQGH8F5O6LZo7VwsTQPZ+bUCuXpWkwhr1ww4c0OYYQp84IQjnbhxpgUYlRPgiGHUcLrA9GrNQsz3U3NQ6/J/+TZidQqlWcjwf52o3qkkHAeFlVYoVMM74yScRNZfIAx07RjFYisRWIqLcy2EUtqW1LaltSkFYWiJ/0SvqRd12m2dO9Sr7CyL4XwvhBdAXswTNumy20Nfylw9gfIuuZwVRl2EnKLJz1TOwZigvQuKkHklCphmx24x8WSnIYqpijIFSDyShUwuFQS6niWb3KcC8NZKI+1FtnE2mG6WCKVoj1HgB9u+TYWSbnZvS1qQqYkRQld4+y/VgwNfMC3Cxp6nGPy6hE8koVMM8UCpBOk6XZOsDsFQKla+eaT/U1zDTZTdWHnsTB3n1B5JQqYZ32W/SJDYGIE1kLnRAxwbr6Yq1R+2l1DoUmBM7cyLuc2qxQqYWsIExJXXoCK51QfVQCfn0mkZ7k6FJf4dsqwQsbt7jI9Hsm3Zw26REB4mIybCyqsWjkzvikclde+PL+cCegfnridV48Z/718SGFwv66FnxB1Aa8FjX1suMPiQgACDtk++giuvCyqsUDT01tgcYEyxf088gWogkBysErl+Ldb2e29ZnQS9+X06NI+BAqiPYQ74DwsqrMQLZnijiKpie3/qcwTxkgsbvziLUjUFN4xEliJLESWIksRJWN4sb2bYAAP7jC96g9Z3uK/E/90l8QviF+Jv20aGea7zvZvRQSsqj/mWULAUnpN+dcWI4jT6Pp8FEHS4oi17zZhIIZrfkxVOrTEDYkxzTr2GnEt0c5TACmnS4i47uN0c3SyPXyZVol/m0pQ/l+qbWgOAQId1eiMcOzicqC4PKPWtzQ3KXyYZd9V12U5VZq3bQrJEtbkOQv2BatTwSY8oZeQpmWNaSyI5O2ijMwX6RcE+aW04EDwZWKHnJlsX2g+8EREoGEx27o974pwKgVAqBUCoFQL6ixlMDoPond+6rFpvy+xuwQHtIiZosD19v2jwfWAlAzLTt7r9yh5XVHjN1h1ljG3C1+fLo7OjKgkklzyf7wJeP92W/yFk860e8B4c4F03zQRDVw6FA3Ck8upxhAABU8N2u2STWNpTbdBXZitg8nRSmAGCi6aghz5okBrjHsMA+126YOq0DKBhpC4tYsjzN6mYnwwMJBstxKn633F9neiZueQBUTOUb6lKU4tB4wnBifuqV83z/xGowGTdgXMZwJr/aUy1jcnNSrJX4bxUS+RhSG2YI9eEJR1u5D+d2BmkvhoIUc6XKVfGfm8+SJoy2dkr9SUMWuxqBlT9233GLWsN3S2e1VSKSBX2ujO9sGDvex8TcUl/s13pJJPhR9HaRoL1l7sqj18Mjmvi8CBYLRsFdEU3OfSjR/ko8fqXHvT0frn4wZXHGyGwZDZajTr1wOmDv7rnI+KhLbGo4T835R0W/bu21QX5Nk0Ft2Xv4TBXmU4ZwWTqJGgSLP0KiF6nlu2SbDoVahNZabbsJ3xDRnw4c+jbPSVNs/1QfRM56uMU/iv+IBhl0TNcQWgUcR5vYgdTNdtpMMf8uoSoFFxrBGqJe6hns3k8quJUYrV7wyX+odfP6tUCfsPRRkpcfPUdZDolZ2OM+K+AjJ1SqvxZpc2WrqCAkaFgI6C82jbhpN7wvXXzH2JQZ4e7PVkRfJmEML+3FHR/TyQhx+uq/teTraeHlBk7zbTwqC3MElZtXDQSdKzgL7zSk9ZTE7QZks5GgUe4Jza6bkxEC6WMK2CplBzdBwEsXMyAQSqAaOpb7NsMUOhSZLnO6efKUB+0o1R8ro62taK4CYZ/SI2kG1a0n6P8SQlbTNhWPCp7JIQbSByYxOD1r/dPEoF6n+FydwpLWSIBSs1wNIpiMcRuMWRlp0U+nDeU1aHO4090kKcN2GWVyyV9pfPHbDPYrd1nJkm6OqulalrUy8FF7aJX2KzK61Jbd9ULlTsysC12f1YE5xMEoCwkPr0507jWuazU3op7DtwLlltEdWpfiC+Pgz11FPULce2FauQJQLhPrnGx3LXzJPYypEH0z8+RZeLRSh9l+XwkNEef7FeGdUIvP59h1UEE2XxHpDAC4F9cep17VV4HeDTg/RpL+efH1b+g8vh93JQY5R19uibwQClKz68HLVJOptuffIeMWhLXpWYj1x5IHRZpZkoeZ30M0LvdUoqQ9Ifq+MR4SQDMF8658ejZEi3+uJlw8rxg21QViB0p0rqMQ6dyXT/AKSO4TZfzRLgIT7f9SSSrTAlYRXbCuh14KMJtWmCt0QNanO2w15UL6QD++3NfKbJgwm6pH0KNKAvJ/uzNOiLCM9GrWuNvB2zYzbbyT2P7uSGmIxw5PdwmOt5iAFaXPN/K7hesCl5IqSE2JbBkSdP7p144l+ZZj44CjK7R7+72cHW9xm4+oAhsFtX7VhFAwXhiUG5nx4I1WJFOiBvPoBRL1DxDR88uEcOLxH2a6XOW5qjdx+K9G+3OSg0iMCH/1l7Sy4UrknuoAvw01xrf7qmZ9ezfvStOB6CHOmfCPtERZ9v4S5pDOicr8J1vKF38g1dMQ3098iig/yjoJddFVKXuiG7e5W7IYG7ZKZIRF4O6qVJ42JysiWRPRgWPKjtGigPx4eHBZtBtv5rR2hmxQVQ3q8uWuX5aevyFjcJT91SuztA9KFbRi7y217BWiewNBny2/wFSQCn8TfUiTzHmCieAj/H1Q5pHyr1jtiY35/tvyKtbfCHeGqlsgKApd/sInANYtjY3PV1owme6cZ/Hawhr7DiyvBv0BDZnr+8wGKn8eulY/LPc2CjC6Fm2xrzzmA6uf17V+M1bdY5ya4I3tHoZwtpBmiXqE/s9KocNydQhlHNx/TWLjRcnz/x5aDv+219dfQT9s5N7X3cR8qc/t5G4yeCMGBDI9oJjjwZ/S5idWWhqLZfbrLtdg8WsY7oFudxWIdGklfEU3AKjc39IhBZd9r1rRo9wyD0B4dlCpeKFsI9xS7l6AqD1mN/YlUj4KU92e8ysuybc8GDwdT4aWrS1aWrS1aWrS1amObw+O8X9VlKBVBN9syLlQxZQhmm/NhZV0M6MTEJLmrSTBBJyB/GBPRQDF4dWbwBIDftBuswqpUFpbQ6l5ymOKJe1heYUNJcTrgyGEiDhQAAAAAAALSL2GJOASjR6POdYbleunEgWyaMJ5YnCVlxewSKMt8ZAh7O0x7dHVPfKeq1N4AWO1i5n2UAIQCrJaUasiN73vTe4A8TTBSUZ8qw8c0RFhMJhMJhMJhQv93s+yuw5G1Oj3yhvfM2SByY84LNkjmFQOJwFmd3NB4VvSnEqKhRIJQU8zVBKncPqziuF+35mL3DxRDFsR50kNBi689PgWdP9bpw9WWyrVefRmSAAAAFvEOgJsQFqw2g6Jy5TqapZd6CbKEdMuuymWukzce2FNC9LKJswAAARoLxwki3OMWhOEM0FA55L0SufRUr2lwk5uUXIXpRejjwg6At54z/c5BUg/Vj9Y7n4d14Hr8IJOG7/rXH9pgLnxR7R6eeq4l293NZ2LkGldKwh+kFXcfS6wBlE2exuKLeQDJredMdDAa+yOYmLeuyqxAIxlgrhro/w97I/ol5eKoJiPxVuqVJFkQ1u0Pd+0vNAd4SBcnqFRis6HdOChQ740Mlhh/9jYTwmfSf3f+EGw7Z8PDRjSZ6l1RTmD2vT3j39+cWEp2UGBw3kZJjwZd1ANwujGK1qdy+65mR5KL8WTOZZ2meav+69Om2QP4efWEYnzWT1uTJGsdYf9sd72q7eMAdvIIvYdlXVHqOQXQ8IkqjTEbg/ysGgsaJBaMl3MFJSX7WEaJjX62KXA7EpPcnf4xmFIzx8t8Ud7cQBXBeVy8tudTTx2tEGn0H0mwmwg+2gPIRDrIZRpI4HTk1vDvjIaOCY14IgxaDHloTt2xeiIDsqodQd+e3JxTPjrgI/icQNqa4IKpu/woDa1v66eyqNh9PjKuuFTsJoDNnZYKHHxdTJwynfzyXE5A8aoejTZ3OPMn4o89g2sWoXISO0oZ/QQJGJesjpEcrL1E1ryAkXWWL5KKCS9MHqXnVFbh/TojDHPPZ3YeRPLC8vTrGoRBtgjTEbKztPy6RdvNnjCrkGyoY/01yqNVMYgstiBkhpkO02JnCDoA0YvT4W8pQKXujelR+P+hilh/ToMLwp02sruAIJTPleHrSdr4Rr76uoTWL095dzyjREFrRmblAH4x3CTV7+vJM9OKhpEZZ1raP24FEYZ3QvhbdBIe/OOnNj/tmWJcIZpAZLMpPQQVnYec5dsh05V1OAAjL0gemtxXoObYfAsF7S4Sc3KGBJL/IwgzvLAK3L7YxFG0AapfPWJ9R8d5ZNAkgb3Q2K9m2HEa1QjjhDYiCCLNnsNjEn4+LGV638UnH37MfmWPa3T3nuBZUvNQWGhboWiLXEMTzYg9vBVa7lKM4xYHvGJgEICyoMcWmoCMnidvcbSGYm4vbzI1Y7CWbjHbL9rsccCpccl0fUtmcyt6ltxVm8PbY9jFlpxT9JV9wzpW9+qoM95LuM0QwmQG3xCvrgdsVdwiiw5fXC0QzWMAFkK56R2g/Anl1YjMmH8wdMcUzavt5eMVmAmooZX8SQ7QSlSADuGieTax+VmS7tzA2Cko70Dn46RmkFpv615g5k4FY25CPLaTK9cK7kKPW46al3eY3VDWc9QefqxkMG/37Fdo+Hx4JJ3LZel5O+hWNWA+644DZZqVP47zhQiG8z94RJHLO1iTHrE1l8A6IEN4nV1iI+ZPhCVr7U0imBmY/t3H6noISuaju0KewqvcV/ubekReMVOeRkRr5gl1GGg1WccC+5eoYJy284E6g8KxENpi655AbqB54nt9YAF3bOFuTRVsYFPzjs+Zn3gJGhmudjeaFdG+m/7cdyZZ/rbk8meUciMEK63mFKgRjpAWy2eVt/Aj3RWGuNIp7/EISnBXlAtndn7BlX3d17E4MGvp4Pn4nRb3r1xX+saZpI94wuM1fv46KiIo2Mm4ALShEzzbVoWsDgX1qkSU4PXdYwWimOP03sF+GG6Y/mg41rlAsTQ3KmZU/CE4xBdwlpSOJrHXPXxLYS8pQh6JpGz0bs68aT0L8CX4UpbP3hY95T0QsUb4UqYTm6u6iEz4lcF6lQFfTDuZNfR1bzvDb5pJ/17Iz4FBOzku6ujEV2gBGSnv/CJRhEI1cgWJ/zFbKpIvVhOop5Agd8P9WuOWfAnpTn4qOebnvT7GP/Cp3WeBR97UefIp8XZcIL/uPTq5BLU5hO/aadiGpRUjLE7FeuZPqCmJH5sztMkFuVpJpvGvUOQxCWODnUBdIxCGZVp8mpTVZSmiJmXLBVEADipUl3wFkhbojSWFIu+JQM1eACuLef1uQHmgt9y1jqSQmGpVhZhksLzOyN03NwgYMoXBWmsK5gBL4cXNrhjEc8e3Pa6ZcRaTK4wepU7vgcDGOOcZBSrUhA6+AAAAFeZhJ3I/fe/rg3T1FAAAAAAXm1SgHeXkRCZUmecPS+4F0S6WPuOabDRc/Wbg9hq+Phlz3MukXY//d+75CnxSp7IEzZBJXwvAOgHBo+VjxiSJ8o7NHYUfsFxOTaZ+rr4uq62OmksC+UuNeM1Djfu+Qp8T5gDtxWfMMsSf11hEA8KafG8FJf5tU8aeaiJJpGYR8WVTLLrDUTh7PD1pbNOtTRwZWtKdqCrRmWjdakRZSt2IF5hJJocxVx0rFQFQcilaHi9mDK6f5s/Bz4AQZT/eBYHFQVo8fJPv2I2oIC+tBjlnO4ZjPKODClnum14dp3yMjVKLgs818UQ5/oDr+bUJhg4D+MjvgHQl4B7hGXJLwgJAIy69D+tGXVNllHk+Ujkz0vCCXGXKqPcaD7R2CJk8BO96r2RvxU1ZW0IeSjA/w+q8UsW/mEyAyFImRrR8/B8n66CTWlLrgLaTRV3s4+QZAz7Hv5/SoUFX4XHlRU2k9yJzw+t0zQDzFZLg5DGgIBPgzA7NAhrdr3ad/VIIYD9zmaPo0gPyYlJbUa4Fr3doCMagvdXIPoYNO6HS+PT8KkIPhVf0KAoFN1c2DWHYrK4x35OM2tpHZhFGnwECjmTHXpayrU8KvR9ZWiL9iMqt3VNHt87kC7csT15BuW7CU4CcGCsGGZoaDMZbT3LVWykdyPunkW46xdafdkBf7rkUpYEoRBYgppkH2EobZrr1+aHNLd52byR72/3YMjBHCn9g6hrxDaebktQM+g1ETWCN4Rtfh7lar5RjvyT6+7z8g7wEZdlrEFk0OEok/8yD0PEVrHvTG6HU8CFqPxKPBTFzYBc225jCnNTiMWgYqDIRRB32CVUh9eCcW7y1qRLkBcEqpAGiHp7Y6OQGfLFAAAALCVGoPhocYQwMWR1jMrLpNe1LrBcYKfBipEIUUUT7T7SqrK0vohTTliHVVSfkXPcC/NFPuNGYDESwGQn1tp82u9U5rzA0m/q/myxfrk0TVcBAa06jOVHTeaZYBZ9Oil3iwHQvRbi3JNzqM67PumtL7S1yPjI/eT6ppRBmL7UliCCUwMogLhbj0VDQWsl+D9b32IEzbZi7g/Kyip6tH5xnGpRGfHGAOFIReflX/sOgo9a3XHbeUt65HQxXjLW8BCihyXRb6qQSUgKkYC2UBrq67qQoZgAAAABrnfFWhorQizfRotng4Yk219/7BuNXjoih/7BwjCcZ+o9U0h3soiK6d9SuFLQ8pfST/SGeICc8qGVA0yXKRziWqr+sYazaEhwnVFLb+5r72Y/vtyHL7W1RHLpBOYZbAXfeMV1eja/VD+6TwgxAMlOOuBPfdsnZ6zh56K9yGrb2U/54B1LSD0u5zIy0YYWoqam0E2B9vhXejC8uSkU2Kyh9a2Kt78U0HDvge4uipW0L07e8xsbxMMVu1Bj+fXg8j8irozg32WYKAmG2pfk3tSwzWPgsyyTnfU2Y4+031UueJF67Hs8oZkTGNXQ9k3pDFVl+iGiU6wjDeZLD3b+5M+7slmNKUQyFe4G7x6qd0UeyFme0W2ZlkhymO8aNRr8xK/lpcGHcXSGpKkyYyug7E01RgaK2Ta9PiFGgZEWBKCOYNkM8ZWkmJ+5BqzUZtM7EVLRJVaKmIz+6dK52uHsla/ujuuSu/Y4fIgZ6d69/GVDCfTwL8u3jEJqekibbfI0Ws9o4xVFTXVeMxPkqCtMyd6QQFLAUvEjOJbGhdDMUkZfzRHS3P5R9Fd3WHwqSnPtS1cQBeR6/xY4/73RVYIXAFWcojor7RyRnt/fsjCWJd65a2EClPZ9NoyXmIL16mwoKM+zwLDiRt6YeZ4uYqI7hVwyuVUvIDjpSTYOMhjZ7NLuFe1zJ8SqSU9lIH7Ix7PKFzz9T647/vNzPzmSCfmOekB1uTLQVBYRiQO60UgmeGi3h+QsAFryDv8hhjydZWHqkm7LOB9wboARbQ3+xmA2PbAIs+4kzv9j2oFYdSFFGC5tjPbwZqUMuRr/t7KTc6EYr43ItPXtVWUfO6YnXcrgdd1frm5U4NQ5yk+hTLbwoMhXspPLEKTmlAEHMbCvGhxuaNTeE750tkIbhpJUQ8b46LcBRj8tBidTGg1aAkP8COosPHQCF7830BSoH5PJ2BUM/oOORYoYqtTAlaoGyRZHLLw1UYjt/g+mZQCcI/NnkJtYtB593vJiSBAE92DvF+RjceMgwKhgKSZDgl46tHoIjiY6ZYhAXWVd5I1xsCLwV/Hoo0Gg7jPfG6NkKfCd+qjOKRsBW5OYtxfhLh04jXMlsVfoYX4yb5dAHv5WolV3uZh9ajbPCD8qCwZaPQRyiPoS6MyeI6ppv0k0eR+G2gLUA6Uq94XiN76eg3eCwyzniCZKZNxjdeFvnE0pjuwSHke19Bvi1fzYm3i94FRbedB6emXKLus93eqKcJB3b+tPWEOeiAyd4+ubU/QXD3aY7ckbrUWsy+f4fmWFta+7Jj4K1S59dZlPrD1F9GHJ8iaa4+krVf/R1s7KD7pzoGwAAIqrPhDlIsjFO8AbampyZDywGM9vEH3W6mqcQAAAAAADCPEy+EPJQZfPJISxOgAIxptGqM3VvyggQfYTeGTfp52TkoKngaZcXsHMHAmrkPR4PArvcxq36qlPl2v1JGo3hcaLbWBzsxev942uM4gKEkQ8aXlXFqU+NQNrnfbvUdG2Fihi3rHhsFfxWCpV5T85m/jP5c1R5vT/M0QwX5LnopSEI/optbOCZDfBMI7nBcrTzGb0eC4ObuDYdeb9JG9MPck1GdjpIGXsejmaHlLRivMw0VjoiKqPRwYoQGrQPJ0T0O+S7vb1YBj7R3HKt1M8Otd0bjUVkoIb/Wo3Kf03Us1jRmhwwfYf3hfgstII9StN5vjxui0Gr3FEFfiTM93WTv2/Vi+/QFTP9Dq4iuwYMO6txkpkb2a6bTpss7nr11yOf4umNClGkKupU44oFwnyXQjtCD6xyaMLWawW+KOw+sVIijC5A8+HKiXzH5fFx3Sg3ENai5jXr5qp+AnpreSz7CR/56FZhrMgfHNZdJ+8tpQqlM1UW05noiqo1x9BzHYNRiBxYuhzDBkWhrKlFIfFub73amUAKtoEeOd/mArABCWwTbw+mof3xguBJ1w63Ryx1g6k96DvKBVLhRPRgl9QaYEMKUZDfKIF/YW9ttM3qjhcQjtCD6xJ7GuZL2PiAN87PF56dSwxlDeUGn/Qh8EF9f/0uS7blysbUuaCeqGo+R0Cmn63/++QLTjPclTX3HPUzoF/aJT/ibJnkHXRN0wRsgDGVHbtmqN7WogLSqAA+ZBFl9KPPJEIBShM3wef3f2V4K2q4xcdGydqctkLD+Qaj9I0L+CYU9ZR80X57RQ6+qWoViHNmlbiDdxWslxJd4Uk5BHHwtJV+ATsRhc1GKOvBwPeJSS16NN5T2qZwdrZG3hFJseh/QnaPztVfcGAAl5X6s2lKh9Mwq+6PIGDfercSG/4lvYebmxcIITEk6wdIHjWYcOV9ftrlndX3xefI9xwm8qppm6BZLQ7DhGe02/OZ/Hai3HoFoqub9jVXTSSevHK6zwXqAM/uLYnJ4H3fmRWdQ9JvFQdCXvPICG5az/QEqF9M0cSFXwTnTG0JYdmCL3rIrFdzTCNXypTUhPzGBj18qUHIYyHlo2hbbqJH5v+fYo7UFb7gvM0Bmp8+YnEKngUlp4aonGwNmuMNakx5pOql+K8v1D4FaWmIuOM5hOQAlYNuIDndhHytZQzZBJshk8gijAx7m7uWKZlrVotKHxPq3MzWqGbwahQ1I/hBr4r+Jayz5kmidizr3IajQXZPUYU4uEUcq8SQawY+i5dPS1RQlUy6mLUhoexK7ffNmRm04HYpvOsvwzbocKFCBduesqzAUSYqfY73o3bDenMh1Z/Xs7830gVwIW4+QW50fw73W/QhI676y9yNlItp/3k2yL+Fs6YSBgB4uDIv89KM00Hmo1t6YevubWd3fXbvCQTlgdqEJbn6RMNdLcUpG0nu7DJ8+Obdpgu7JS5+S0j+y3bliThyt77s294e6mwJ8QHn0rNiPEAAKJXKq0J1ASIvDr5xxk5ez4iipU+8UhnvSJhrsT8tfY+UkDkqeTfAQST3w6J37xsumzHh//xm6YaC693c+zuHr+FJLMHIaF7K+teFBAlsOwD3iuSRiwOaiKh00EF2/xLK11y2Ci0R73+nRg5GkWWPXI9qVoNQd+doaHaZ/2wYUqHrzKAB8BV93UOwGF8msIusSSrBwrbMFh2jTuLIJjViC/yUORxBmZHzLa2mpdT7zqN8TcZDN/z7stX8f+lB07l+l1wy97IbxmffyjlK5C91ViTMXp4A92h4ZLR5O1artT/KwGfmb7CYvUrkNV2qIAS32sgHYP29kfdewgEZU8JcZm2sQU4NYda/Cqmgpvc0q1V7uTzCcSmlrYbum49fMvP/rmRb7k+VZLxQf6cH5IMsTZydM1cCTMTmFTnxigcQMdTWXZXuLtCJqYjkNa1rmj7I4lIU/hQ/slrW+11nCqIE/tmF4Xo1Q9wO9xYICzRmwelV3VsFX3jzlnjOZRv/PLI3i+giZjM+RLvZ1NcWdQ2tYYFHZKHkcK6rDgiXohU2dn4u/MpAYS2x3xwd6x4c1Po1m/9HEjd7Y/sjJcrCz4C7551Ru2gtLldnW69+ioUfOBrUahVNMa8RY4eVNbB5NTKVX3GOjden9vTkwPIZCHmx2WTc/h9H5FMysL+/hisjAG9wcGDMWCbR/+qmjJr1/a7QkTEGk1vuePZOa+HP23+xIt1M3mDmlsePbk20mbdT9xqoSIpbkfo/R+j5lqLB/XM8IR0BsubayBHEJr+8cCpAGb10Ymb9Mp526jggy9E+m6TXcJezJqsHv0KrWwU5SlDUHXad55gpJ9TB2TPf1srA2gRDojenXnVx6p/XFf3pCJKdoD/dYaOVYdU/fSbAAR31Ls8n9nJcmSZVsc+ZISIL+GzQcp7A8Qgs1HMJB0R5VqfsKLF8iSQS68066zsb05h81XAh0pqKr2VRhaqy7Pyq2PwfWSYA7uGpa0pBkPIFMgWroaIKvFPjKpTtSbTEC+ml2cQ1ZeqADBJrK9pABrWw0ajzsTNS1nora5ZQQaFFI+twH4aABwb3vjwSZ1Qix9JBPmJ/umo9+jmPAw8JfWAECjzRs4Z08YuhmWuW1dJqYMJ2JKqhtAKtBRIyLli0AbKN6Ia7GiGEA/3vrFAhy0WuKMTAn9QCcHCPj3pYO+cCz0t5VDO1F2Hfe8NvzA3gt/ePgBC3TUimBYBehU81O3g7SoM7FcYsPOQVNLKLw8aHuL+6hZVAGb0VzCHEoMUoGawhGRqMrShM/NyKmPfUSAF5ZD96HGl3dAJyu4cxlcuSXrC9ScfCSplpCiXh7kj/bzkvtGViIEvxr0exvqRXCt0AKkQLtcv7o7phIS+5buL70pjT9BUc1JmO7c5iTP+94y7UVbGTVUX+xHNSSBIAGkdLhmvBK2oDB2914VULbfOvSdDUrjnncXaWNbilWqI8qozJW54As5OXbUuJqjEselLz9xclab/rTA36M3j6VEPAXeuENzei8ABBDbSi+hlFQsCWqOUOcP9dgZX5hTVIYSq5yI8E6HYnLPWpTq+oFeS8IhJQtyDo5gwShyIvyUoI4r138HxEajFbbs5v8ZdARJ9MvpEMpB8d1iqnUn2Sq9UoyyXoJG4RVPCu1RwyeQ8MFt/Duaj4YtaZWnwEZn9ce9EA59RsRu+vu0laibjc1mLj420XR7yu/32UmT4SpBIbgu+Pi3J3dPgwo5J3XK6ltorQvpi7qNG0d4cTpjBGrNjqAA9NB8RGoxW27NwPDvqW1pwnTz9Xiust1a/vn9VowQYF2ETpDBepFhVGZZGQFWLXnh2QE9Qebj11MsTs6y+jbxT+dEW7AMC1bu+I3SNO0xP2Lr6EGLZtRtMVOBKyqh/NhVh1XRDtqNYNfUiGooNO5Tf9WKVSm09zy0LCpUPX3EGREfPnghcsLSs9JqFNSGp22BN2PwsklwFP/RT1H/FMx/hWYhfdYdYqEA0yEm6dt9x9KRMGjInDyayqBJgBxfkp75SYR8+B0F/FFRWlgNhkZX9LfDU6NnzPpbjVTCBVXq7gRdpYF4x71YejJuFEfOw+cBn9WfaEYF70Kfo0b04NTkFwqUe5zYC7ujwfDeAXh0eEorLmEyW285PmkGZAbQGozCfPxTBMDoiI/5ddZ9zh1ZiIVa+LLPJ15GjWRKvPylOWWY9198QeDFXSnW3JLYoQpo4xo1t7M1d0EBGyWmuNUOtuTrShwAjvBPJAqpCGjyPJBHLxsnJOeo/6njirWewGYItxDjR0DwmyEjKWAI49/wXGq3VSDgKHQWVSAt8MN/ISc4PhiBjaab8G3XRDRe3TiL46hp9UJTVH6Ra+anlSEWTLAPOzy6QUTv1LRVw8QtWyF/O0G/jf02vUbFWOvWUO9+Z+aURSekV9mnwiO4bi9Z77uL92isF7TL1jvr4d69kxvWBHljb485Vxkp0jQSXKeYhDfiDCEi27ynvgWIEBW9vqiA2brZH3poqYH4DcsLJMlP0n/N0dEKLtD4bn5pxUpkjOS2zi2yVqoEBO/CVoHQ85Ih/n6zcHmDNCsPXAhm9pJzRv3yMwuY+c+IxYFXfrOQrQbojfGPRnDpx8jS3xcAAM/H/N5uY4YMkiRVxP8Koc4nHTX2QRdmmVuGxYBNWKohUTxWaFUkzhnQvSoAAADETBh0TsETCxXyuEvZKEM6H9Fnofgc9DdYHF9uHMS5uqJymmD6DUFJ/HT6lqBIAxgThrOITmNJHalbaVVB1CkLzZ9oQhlvzQ4YM0JegG01c7mzP2tyQMNLFNPIFSc4E3EdjahKTfDwwq+FCUB1gCAsf1Xe9qjTpi/WQh4//PNZ4PftdX3i9lXNalyK08yPhoXw0caDeuVuOpUQNVEJC6vSAd7NNVv6C6gRhKypQdsYYg30KCqDtfN8NQpsDxRqtORcqBa+jThpx5uUPhWjFMMnr7z5APo1zMSLtS+nnizQNp4v1/eQZcrofNG0dtKzOzD5U9ehDgHXEDylc4I/pA+Kq8BADITbClfhEHokgx0n4wmrKGN8REKd6Q5AAAAA/Gmf34AKXw0P+f3symJZ6z8uAAA79Ew9E0CJXPSIqaYh2paXSefY1RIdp97Sru70ToeGrkNLEIv7k/YzbN8RShabQbt/7bHnPGdeHN6TGXSM//Z2xWSGSbCCrWjBs49ikCPy9Uf/K9x9U52aOjpp+MT8MbLMhIiP6UoenAD8CpauU30uQors/KAVOf9eRZBnZrXr8cyn7jSnuT3P6V/mBl2BpDsDLXOGTR3ZwvRaS/gldCnbW+A3KenrUMKCv8IhS7wkVAGcqSMZJbzqZuRvNSDVK9Ixray204w1Zca1jlTI6y5+oQgq+ZAQ3RjkquiESgKoNnjB0ADQdWflyn/jA5bHSWVvJ5Utg7dTJZVH+gPBSVyLV41crNb7MeejYfUFHX4XB4bgOROno3h+Bda9otm5U/0fsNI5YtNl3UJafwYJdgPK6f/0vScssX0LsaXB2wUX1/kF1I616AXY3gEu0gpUlU9r5iB0ES77ySTfDkTQn0+9CGu4tMNlUXWoRR2e+Y6lmCqBoSDazUbg3o5+ZmxOF/n5LbDZz4CQgkGQucUvISxHh0NntfL7r00HSRgjPHhOaYDWglkxNFo4xN4YxTjgE9l9WKY5rfvwTzGMqSu8Vdm7pcSgsKS8RtvlFhYrUWNhilvWthL7q+8QZKi8P/l0Y/+2sXdaCOAIyQghdWXjbQ3EsZ/TwBAYoeXDNRDljZgoS3mqMz9/WujQWrsbxKV2ckxXQka4o831+93ZgTdc4OiWy+jEVZsO2KN7Vcz2bs31YfdCydDNsM/j+ISAFDVLsh3UQER3tHjbKHFK+8hJIIe84Qrr1VcFbedAw0/uRAmrv2Wnn6e/VF9wEJ9xmIAAsisi5DkwJUb3uAUgBODcw7gIMJ3Mna1sc7CI17STMTru2WR7Fcwwu+r4sEcTzKBORTu+TWMv5aQxqFGs5Nm9jNvywOJGTnuANGCE8xaccQT7LjaSv+VhZgc6NZcFzkAakL2E4Ic67oQyZO4WChCwdU9w0N1BzYRHwnTXNQnW9V5yZ94IwAQRvgdDUw0jRHMsaot8/wRpye8vpQ3Vdmc74oa4Ur7uXCcD3MagUySCAIb5UHC/UOHxQwJkVQdjXxGcdfjcK6P4CyWqoupbE0N8nJ10kiH8OaHiat3fKF964aC+fLBezgwu80gXmKvb75Hyn7nIGdyHk0sRsSmyfs42shri9ku4DfRTc26Jh0oqZxjPqWfcqPqhdz8koVkyUV9lxyxI2M2ZKKEJDkQ6s9elJ5lDyt0HVk7OgNOQS0uA03uxDUWbF1sR9ADJ049j3H43BLsD9YAjN0vO0NzmxQudYCsCztS0ukCt4MQAAJzXCwxnERL4E0uq7kPXc1+hMGWh1k0NoUj/KOKQt/wgOfqhRSzmHjhpHwcISFC+B/w2iiX/milSbof6Va3a2wBCpkMNs0NaEhy8PiMs7gUgHKytB8PkFHFZx84KIpBA/b/iqCpSHoyHQTNb7OtRBCF3KebB4+Glr0YRgx7wJ4bxUSRemHWOuqWXxS8jTSpMXbFbXDt9ZaiPCNchAGacaPxkxSQ7OzMbaS5vlFYA7GIaZj9skcVX+t5U7SlZHOVhHqm3mAAAtBLBOUfbGjw4DuljapL6ldJtMvGweVzhtW2EywCsuAfcbTczNTR97eO4L3qxn0NgtZvs1xGI/M7Ni/Go9vClAi8ldd7WOVN1l1lcM2lEHeyF5n9yYHi5yU4BCz1/R8MHZNwqJP0QCIxNdXdCJKD6eUTXhUAwosFNUcJLrlQfL/f0cF/Xs42Oiv/0H1SPyIUS8STVmg9YoA1YXfNnSDkWW/UZ1cWUyHcwB6pGy1BhjV6AWe2M7KjvDeLdaFRMWHjISQoxk3n56uyrZWff5P03KmNi3GsQw2ue8s7rnmRUezCgielNJH4JmGqkpStK9mPQ9OqcjOkFDR7sGkVdapJpF7VfZtWtLMzdTvOJXNrX/2/qbNvF3kxCL0uovekWRF98TeUk3UBi2QScS/h1/EokMWXjUTbTkvBnPYQxxg/bKplKjHPPJgqZEdbU5a10aXAXr1AmRAT73bmEwmosj9g2Lx7FGU5WHKQkMlAsesV1KMpStNK8lPO5+IZqeBjLFSQg3S5z+Bm/DQ5Q202X0W7XGfM0ZJaLMzdTvOJXNKTqJVq9zxJSN9zS+buVPScJp+YCbOcVhE1ksRUWhgKgRgqArsOLhC9ag3MsUblTL+Z2VHj9qLKhfOEC0fa5DKwfUtIK4QcLFV371CxJN9ThjGHB0VC2P1lgsWafOAtEf1HrdLpJoXIgXy4SU1T2Z3kaanso98AAAQnQbT8oIAkoHmW81FFVyIXRwRHy9DuAjJTWpvVNcsqrNg5N8vf3Gkpyz1atTET23w/P5gkwymJcd+z2ocz+tN5XKAHGtVY/aiYdFGv7o7phIS+5buL70pjU/dMxwJNe1n34bUKRtqXqTTj3xEajFbbs5v8ZdARJ9MvpOScciiJlP+FQTI53hQqOAXb+M0MPW9ooBab6lwg0WlmJT/EKunaTnoaiu+0Q9X5UsfnafHAh/TyaWbocr1of4F/ofoRSS++8hY5ZtPtiCQwYfcjGFySIkOtu6B2Mkh5cNqNZALeuuP0mzlOB7kgZ/jnbIYCs8V77Gxs8+NlEySIGetdytSAW2/ei74YQN37XUCp8hBK5MkJK2uYgJylDa6x/fb3OcdQEcb5swO/xR95nSmnymzni0j2NyBXdbXuF2xgvol50Q7rbwgWDiXRi2yAg4vXO+u9L8P976xQIctFrijEwJ/UAXlFWV6L1R/pifG773gx5MDeC1Jba3WsA3SFu2zMuklhNfGO9UGZoWYWUUKKRqmz++yBs5DhIiGsbj6E5mzPStScyR9vIRcoptVzG84fOoYzKjOp8n0plvf0xikHZCV7XB1YUPAeot+D0yl8nyY1jaysb/MCAtRLw546hgSDpSyH+mdhbi9E087DOSI4FJ+enHUX+oW0TzGSoQ+8agFn6VqNY4Kd1/rKpG29ahg4EGmVf+5e+xayqcw0pjcTkkdgZRULCEyUC0P9LGSsTcPi+znoaeZb8IaaCcbpcwBBhY3EAfV9x3y8JUV86lsxOaEtK87bwzuDhvDdgvPL7FmTHTPoGRUmajvlb4FI/OSuqiGvSp0GoabrOP71fup/9Dm6NwicNPUGrMJAAAAAAFT7QVGOUE7Ol6161/v3arYLWRotND+dQ1j/U8yMq7BMCDTTO9xScOW6RdYSlTbVDZoFlcVLriFDSisV0xtUu6pvPzKwNIto42iQRP3qKN+pcTtKPB4NFEV0I6M2hJc6mWlgvd9oBissYx7vq3XAFY6jOF+8p9zY9yXB1DgCqIEdSVANg8eJgAKt7jx93oymuYm8PQ+8mQlGB0DPQ/6mD2WFStf/Qa13pCwXBsSR3ztDvVhvLnW1wRrljGESk9ARoPlFYcJ17+QR4Ich+HSiXLiNM17zaEMnn43CyGoLBR31AAAAAAc5ACczXvwwmH3AJC4SqAG3nCOfQc1YWzUdcpvVx7WghKwMxyYTiq/uch6YexJE0RBbOC06iRzw8bMxkdOyOFXo2C7n4/lbScZzaSREVcpQ1+OtmwAlZPWYWUr+wyILZAGE2QFO+uia1ve1K/O/e/PInpVxvgkaMTMKm77Yn2vAnVoFWuFehVA30lQV5/TuwQ+77Qp1sn6d7mlIKBsr9/vLIea8ASwdgmew8Rt7MrSXKiqAmOmLs+dJ4G7Qmm8p81HlGnciWXjBrxf7NQqdOdv9HIvlT+53tOdv0zz4kKfGOy1+vee7jeuZbT9DCQ9xstXvKxa0Y8v9odzsUX12wu11TEjXt5anTi4oQ7HyNCf+upx9XKisMqoVoZxNl0132QMJV8DQ29cSUBEGUMjy3DJwHjsHDpVF1mgSeTJ7gphZNqSy0VSKDxV/16qYcy54HHF4cgy+Xx3izHRFGHbGguoD2/gjrmbLvM/+357bZcws+ENcw7srVkzkZVYpXpQ5xmiG9bKQrzjpxHUdNdpvE/WUo8jTFq5tkFjL31fSmhJQmi3noAtNoaMDWeXqU/JWK9WW9GgOkmVwDGiOnTLXZgOSD6L8WPoiUhETyA2UTBLkPq+VtKsqUkDocuxw3YzrtAQm7e/XC7OIaw+F9ddchRMAAPs/QRXMsuoJgv+snuewNAXsgR+1rDOGwpbA0HwueJUgFmMBBiRG17NHLHUA2nrxPmdXDmvfLytVuR0E19utgiPYEQThWg0gtjx1R7xrPCDaPT986U43xJ+Q9asLHn+sXZ/sdHX7jI2Rtjsjm8lwhbfAeMCPleXFbVticrIBiB/7tfsAP+SRkMy6AAQjgiRdywdpvt9LEPrfRBXpAWK/Hu2alu0r6i2Jd6rf3HVrAdtu2F+uQSAG2oN/QlEU7GEnwYulYE2ukss49zhwcXwyOUHzC2c0PUkTj9VeUGcYrW3+bGIYYj8O6VcU8+rkBcoMXZZHdLqTr4uEmCyMG/AaDBxhLyz4rkOCg+nHqO/NR9aVX6w+kJBB3raY3bNxT9M1y2/shIW3aYbUCXVl2ewaLxiPZ3STpbInZjFUTl+Q8vTd8YR6M3YJoRFv1mLWyKSfeciUF+MD+s9mxtupQCUtJqlHFlHOCTuKyIgs9UGBBPKN+p4MLnJNhAqrEWbtbeXdA2pid2TtKR6mPf7SPQpwGK6WjxSoIfbvwZTW05ZqWE5bEMhGO3TwZkTfXjrW80m8HYyDFQP3NIBoaB86HfYO0vU38RvSjFurwk1BxFA6mxjWX/9t9kOw4Q0gisSok3CTxDntB8URbuzrwAl2FDzYHmPchpfySA0AgRR+QxgkcoVwcnHbA23osEowUv0hanXON47khMfChYmSV1YFfAUmYBh/llwjgMPwgAAQjLDzKuSxGxH1q5vv+vJoKYqsJi+6vYxCrPZD9rqnQ15CygopH9UZGqZBxOURVdfK0UcBfAYSvguiSHiuvWtkz3brl/pGnlk96HappP42fKWgZq4UuwmT9qF6ByDr2smCfXbBVFuvx5+W4CBAERdyi6yFOrKHis8zjhlDw3jCfEtlgIJQrwj6kCmHTmA1jkshPeMGVzXUXfUpXzNgrHgWOy4p1v9oNYaakqA5Xj2bcaNNNu/ybVOzB10PnEgM1O10q7gtOayKDkftRvJAsCg/Eb7C1Ch3yBpVxt0q8LPq2adh95Le8lL6VxxfEjfE1DTYpL344FzLFyE3lAPmUklmoDmMvrcXkrZRG15TnIWT2F5tN+UiVDmi7LytVuR0E19uuOJQM73MyjmPaVRZJlsInCMVckApgUBD/0NMO9muoYJJ7zDH2WLEpVwA+O0TDoO1u5fdb7jyr4ksFKQyt0iZfMvLNOOSFdvG6sTLRIDYjF7yc/gmHbkqJ2yskKVP5XqPg4Vchq7DhGrNYAAwxJk/x6zTNijB0R0nU/WdXh1ez9ipUnHCraF1AU09uYDbRU1Lqc1o8p9dCaouSyZKHQWgADR/oJF3LB2m+54e/+t9EFekBYr8ellDNBfpJWf3R7qs3Vwtal/JH7FWjoVZY0DfA3Wp/w527W935X7VgWSZQegg6RTXl14OahyN+J9qYn+nZVRCJ7/5eZeGJRS312O5EzJQ49K4RqZvhUpzDIVNq5QT9brwkht6l/WVFqKtDoN6oXA6OvufzBz8pt9bMDytWYkK9jVILVbiHvPkXEPTCHzKZRgE5cSsiiEERqBbPJfxzivF9HFVc+1PZ7JvrnLTTGTFf1lTZIJsYOl1awgU3ycf/aRL1+YKXKL4CFdQtRTCHzcMB3oaVQzeh7dRdPVSylrwzCg1yZYc6TeekFy27qXUD9Sd8FjA9hTCN4wCAeeG3m3Vsikn3nIlBfjA/rPZsbbqS59MrOOQZTulevmdzX2x4RRHopXTaKEWbYOP5WjlpWIJyaeVHcaksFBc1ZbAXf099XxN7TBvnUfe2zEE/kpDzIIXZyidWfEkbR+4/KbWUOGkQA2lQAOnVRA90N4P2LedhFzakrz9vZjgFFgE5UbAAJm0DbclcN0h+gadjrfPdIRTcR3QFed42xiyNkVp1zbpLwwIkdGo6eHePCzki1lkasc+SF5Ae6v4F2b4lVLinZ3gRyMNrzCPmge7RNMp7bpR6fKAjjvl4eDp3IldMc5gaW7tnPeqopbFDAFJ/UVguPpeW27ik3SdOh/2abRQnygMhVH1qhVaDxMbTtfWHGfDJxsvnMEz+jJTRcXHLSSfiR3NCglh4LobPg8oCkSFwNGw/Wbw99ju+B4TGIw9kAyFUG461c0ahi8OSYH+uEsDSGg+FV4F0lArc1bfxMxSa6NKfzxp4ZfZkMsTL25abLOl/CSFnhyGslWBKQmpWeu4gm4LCyqzp7kLpvNtR1a+jmRYP/O/4KRw86PCN14/Bj3Y7kKBAXpgegKpUV9DS9UiQpT9pGQSth0K1JdAPcJc5RrpiGSwUFdW/iV9ufIbqyOdwvk1T2e9fOIw4BVYPe2QJUe8J1QEn9ahMXprHQZdsywLyu2JqRkzdh2Q2XKo9WeEgfaoeAex+U33NrCDQrgETSAte9jgHHcgSm1Jfmlcd4xNHndNhIIoY+LvWYArCJgMTrwF1OsHVewfZ2dllCXpqfjlzoDkjg+iOEcir+rQIb81DQ7zdsRy5rih9k8XS4nfvwjTETNb4CXgnM8qaIQjXGvNMqQT0ktgklzJulfBnfOH6o9VpjcJKax8Tjhhw++ANr9ln/LXLTRYf+mTCGR23Op16AIWDvD4aVzgXNHYgrsA/ykrutKrcxWSbKJQIHJLLjtp9hBeK3ZRDA/oAHmrSeRWbWmSuquHlL3IYP/wputIv8E6i0YSWVpnGv3LfTCj/LI4HOwZUzJzJ2lsyxCtc15HtuX64eXHNb/2wNPI9S1ZwEuWxnTiNpWvn8VIhlpog7TGlRoQU1NkVb8OqmxPyHU/Vs9THmEar/zbsFfLrXJ5RWHqiMP4zTh05Fnnf/IwT/dQC5LTq4N4AvVMpZRyXfjQXd0rDv1yvKscLoH7CpT5BMwZLkp1/otQHlnc4y45g2eVKwJrPXvT+QPk2blwfuDoEmqBao1l1STMvhezv7A0rm2tFeNyGkeNk3sKqzlaBppEGY9x1ZYv1qsAYXuGLa6YqSUrLyNNw/S3QsQGbNUX7K7Hn/VhhZY6RI9KS+557/hsk8PZR1KzFY8u56IVexZIlL4FkCSpP8W5Sq+lpaznWZR+MeFrQ2oHEtFDyNKwCGLMqFGKNmW4UV+AuaO3U+Gs2xEHxn2LKWZabqyCQBIPD2k6YUVwkFMhKHMBN3LZTdcKg5kRpf9itGeKHNVB0DpcV4WJ3NNwZ2MbWDYvrLgASiVG1BAAABmUI2Gc9I//crMLSgcPwG88uHbOjHuLGnkAAZoGqTcmzKflYQdHIk9zFKCHoFvefKdQL75A4sheI0WgoAT2f+fsfQtJKNvl3oMlxRHe/9mQhzxcPNy0G1DMLZmA5wJ9Mc7GCvDw5eIWRo5z6qC68sA0fqVUYG2JFBQ0kYdzj/8Owio5iBIf9JYqAgoYzefCVYqp/SQzSGHhF3Po0yQrXmzmtWEG1XV6lrCLS5b+A8VAwmKMwave0D/GFbp0Nz2anYqc123RFytBmsk+DaZ9z5hqsmpFBYW33Amlq06fZ4jW34vjTxW/dBuGPMEuIjIaYzvg7CWuNehfSmtXzCefhvHSXMTWH5A+mQ096338Y401ju4cRWhlcL3ntj3RwuUzt+MGe4Df0pvppQQqOUA+EeEGnwQF6kVQlIYnDBYumq+TMQvkLzNK7Ec9+8KQyCwzj8JnDqz8urk6jwAsccstKp9byyt7g+wwxp/w7KjzWa50KQB6bSpZQd+z0LhCy4w27BQd+ffF8oU52OcYuq6vznByIqYwajdn2//aUROKQzDBJ11YW/3jp8xeB20y01G20V3h7xyz4h4kGE0ouh314MzokHFsqRsPIYm4j9j0WV4tQMDPc1MPl7oSsA/NeGDUiN951CTvKep39jKWIL6llzAtBoDmnwe3A7HZlCwRcICWlY2F6F094NHHCgxQA6ZoT7j1c7kPIwm5zeTnm8pFs094NLXAlpQnZk3dfdJDsHbZ9nZ9r60nXIP2bYJ36wyDnRhQBmBmYqOcvRCcI52+4AeJrvuR7lJbm+SlQtTK6xjvg4bvUaesxOxHUd9Wuhhz0itRbllLaCX1a08jOR0sTUIOOXdkVC61mLoiKf8vsavVogACZGA2btz6uQFygv0FYFaf1H/go4EtSphX7HVwrIpehle1mI3/bKF05gIFCzDyyf0TfS6PJcgY/G1awSfGTmHW624jQb0cnIaGdDesV+XPBPtX90r3BaxmAR7qtuVjOdkyp0N6irJzIp0SexH2QEWrPKslgd1Qc20BU6J28TZY+ahZPRW41pnOjTaYzeMTPJn2wQSgv6QvF8+t+/RQPBVujnFFExKwTXmJMu33aATSlYjwwqtUaO++6r2zE6oafMSAEBWmn8KzXEyxOK+4zGEOlFXJGH8Xb8tvJoSoPTl4GOzkRuTPtgglBf6wepYU4KPVKKIrCJbISfgAX/HbOkaMbJOzFC17tPmSfK0+3Y89I3DxS/GR51TQK6dI2QyGkdbiVXilCBObKUrxrkzF0emgyphP2dNMUV42Jk9RDnTeu7eP49/HsIriYdA0bvo7TQsnLgQWnlPJJTyrqptceVJYgbN2Geufk/py5op5E6696pNDDHTefxuFLmVr/Y0dYFCIsYbhfpksK9x8O4/8sAYaP7PHwDVNmdfHWi2YEC+sQ9Sx42FYC36RhUacL1I43BUjr0k1uECSSUdU8gmUBKwrG5Rt9jXIo2QvhJ9OCjW38Xq7fNT92GjWyG1oDHKks1Spcr2jVRaRGOvrzT2WH9SuIkFEtIj248cbOs3A6xj83oHRuOMm63CQIv/XXJwJrg1wjdL8fWlkkpL5PoLcPQw1MTpD4qYEs197RuBxdMbQACzOGSoPJh8BVYkQTn0UGYtDlLU2qdxqbF5nn7QEHd+K/ALlbLdvQlFgG0BEdm3elSPTYgru2714Q3oUi1ORZp3RSQ98dp+dJhIPrp3tcN7fUbivfpazOnkBjoIEnD7P3YbazSWr5bHkuQhvQjdBSX5+GFt8RJGLUh5IweVp0n+yIFR4hYNDVAZ4kXFSTBMixq+RxpkSJEVUwhatbj/l4aJnnsFSqg06RSPqM3BZ32/ugZ9Rm36KdZpT356E69tZIAAAA=" alt="MU Weather daily temperature and precipitation charts"></figure>
     </div>
   </div>
 </section>
+<section class="facts-section shell" id="keyless" aria-labelledby="how-heading">
+  <h2 class="section-title" id="how-heading">How it works</h2>
+  <p class="intro">MU Weather fetches data directly from public services. There’s no MU Weather server in between.</p>
+  <ol class="flow-list">
+    <li><strong>Choose a location</strong><span>Search for a city or allow location access. Weather requests typically use a coordinate rounded to about 1 km and, where needed, your display language.</span></li>
+    <li><strong>Fetch public weather</strong><span>Your phone makes HTTPS requests directly to the relevant providers. Standard forecasts, maps and warnings require no account or API key.</span></li>
+    <li><strong>Save locally</strong><span>Recent data is cached in AsyncStorage, with expiration times and size limits. Saved forecasts are labelled when stale.</span></li>
+    <li><strong>See or hear it</strong><span>Read the forecast on Material You screens, check a home-screen widget, or listen to the daily digest.</span></li>
+  </ol>
+  <a class="release" href="#sources">See the data sources</a>
+</section>
 
-<section id="keyless">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker">How it works</span>
-      <h2>There is no "our cloud" in this diagram.</h2>
-      <p>Most weather apps route your location through their servers. MU Weather talks straight to public APIs and caches everything on-device — you can verify every hop in the source.</p>
-    </div>
-    <div class="flow reveal" role="list">
-      <div class="node" role="listitem"><span class="node-ic">📍</span><b>Your coordinates</b><span>rounded to ~1 km before anything leaves the phone</span></div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="node" role="listitem"><span class="node-ic">🛰️</span><b>Public APIs</b><span>Open-Meteo, RainViewer, NOAA, MeteoAlarm, NWS — no keys</span></div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="node" role="listitem"><span class="node-ic">🗄️</span><b>On-device cache</b><span>AsyncStorage with TTLs and LRU caps, fully offline-friendly</span></div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="node" role="listitem"><span class="node-ic">🎨</span><b>Your screen</b><span>Material You surfaces, widgets, spoken digests</span></div>
-    </div>
+<section class="facts-section shell" id="languages" aria-labelledby="languages-heading">
+  <h2 class="section-title" id="languages-heading">Available in 16 languages</h2>
+  <p class="intro">The app localises its interface, forecast text and launcher shortcuts. The spoken forecast uses your selected app language.</p>
+  <ul class="language-grid">
+    <li><span lang="en">English</span></li>
+    <li><span lang="hi">हिन्दी</span><small>Hindi</small></li>
+    <li><span lang="bn">বাংলা</span><small>Bengali</small></li>
+    <li><span lang="es">Español</span><small>Spanish</small></li>
+    <li><span lang="fr">Français</span><small>French</small></li>
+    <li><span lang="de">Deutsch</span><small>German</small></li>
+    <li><span lang="nl">Nederlands</span><small>Dutch</small></li>
+    <li><span lang="el">Ελληνικά</span><small>Greek</small></li>
+    <li><span lang="hu">Magyar</span><small>Hungarian</small></li>
+    <li><span lang="id">Bahasa Indonesia</span><small>Indonesian</small></li>
+    <li><span lang="it">Italiano</span><small>Italian</small></li>
+    <li><span lang="pt">Português</span><small>Portuguese</small></li>
+    <li><span lang="pl">Polski</span><small>Polish</small></li>
+    <li><span lang="tr">Türkçe</span><small>Turkish</small></li>
+    <li><span lang="uk">Українська</span><small>Ukrainian</small></li>
+    <li><span lang="ru">Русский</span><small>Russian</small></li>
+  </ul>
+</section>
+
+<div class="info shell">
+  <article id="privacy">
+    <h2 class="section-title">Privacy and offline use</h2>
+    <p class="intro">The app has no account, ads, analytics, crash reporting or MU Weather servers. Data for weather requests goes directly to public providers. Settings, journal ratings, saved cities, alert history and caches live on your device.</p>
+    <p class="sub">You can search for a city without granting location permission. Calendar access is used when you choose to see forecasts next to events. Notifications are used for the alerts, digest and sunrise alarm you enable.</p>
+    <a class="release" href="https://github.com/Avithegod2010/MU-Weather/blob/master/store/privacy-policy.md">Read the full privacy policy</a>
+  </article>
+  <article id="download">
+    <h2 class="section-title">Get MU Weather</h2>
+    <p class="intro">Free and open source for Android. Built with Expo EAS.</p>
+    <a class="button" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-arm64-v8a-release.apk"><span class="download-icon" aria-hidden="true">↓</span> Download APK</a>
+    <p class="sub">Recommended for most modern Android phones · arm64-v8a · v1.5.0 · 56 MB</p>
+    <details><summary>Other APKs</summary><ul>
+      <li><a href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-universal-release.apk">Universal · 140 MB</a></li>
+      <li><a href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-armeabi-v7a-release.apk">armeabi-v7a · Older 32-bit ARM devices · 46 MB</a></li>
+      <li><a href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-x86_64-release.apk">x86_64 · Compatible emulators and Chromebooks · 57 MB</a></li>
+    </ul></details>
+    <details id="apk-checksums">
+      <summary>SHA-256 checksums</summary>
+      <dl class="checksums">
+        <dt>app-arm64-v8a-release.apk</dt><dd><code>108da085272a11520743384aa4c690e579087705dd44fff2ec52baacabb6de5a</code></dd>
+        <dt>app-armeabi-v7a-release.apk</dt><dd><code>c954cdd56c540dd248e3729771f683b570d8d8f0fc29ebbeb2f0455a8cc4a050</code></dd>
+        <dt>app-universal-release.apk</dt><dd><code>e5b5bc0113ef79a345ae0cba6cb57912014db489b20053d075fe5022e150c036</code></dd>
+        <dt>app-x86_64-release.apk</dt><dd><code>4312cfef6a1d72849fc7f84a514d31e8722e1d85da9f6a15c5e5600ab9c25272</code></dd>
+      </dl>
+    </details>
+    <a class="release" href="https://github.com/Avithegod2010/MU-Weather/releases/tag/v1.5.0">Release notes and tagged source</a>
+  </article>
+</div>
+<section class="facts-section shell" id="faq" aria-labelledby="faq-heading">
+  <h2 class="section-title" id="faq-heading">Frequently asked questions</h2>
+  <div class="faq-list">
+    <details><summary>Is MU Weather really free?</summary><p>Yes. MU Weather is open source under the MIT license. The Android app has no ads, accounts or paid tier. Its regular weather features use public data sources.</p></details>
+    <details><summary>Does it need an internet connection?</summary><p>Previously fetched forecasts and air-quality data can still be read offline. An internet connection is needed for fresh data, including new radar frames and warnings. The app labels stale data.</p></details>
+    <details><summary>What is the optional AI digest?</summary><p>The standard daily digest can read the forecast aloud without an AI key. The source supports an optional rewrite by Anthropic or OpenAI when an AI key is configured at build time. In that mode the provider receives the digest text, city name and language code. The app falls back to the standard digest when the AI service is unavailable.</p></details>
+    <details><summary>Is there an iOS version?</summary><p>The published downloads are for Android. The app is built with React Native and uses Android features such as Material You, home-screen widgets and launcher shortcuts.</p></details>
+    <details><summary>How accurate is the forecast?</summary><p>The app compares logged predictions with later archive observations and lets you inspect accuracy by metric and model. Its leaderboard includes models such as ECMWF, GFS, ICON, Météo-France and JMA where there are enough observations. Rain calibration uses local observations and feedback when enough samples are available.</p></details>
+    <details><summary>How can I verify an APK?</summary><p>Compare its SHA-256 checksum with the value in the <a href="#apk-checksums">download section</a>. The Android release was built with Expo EAS and is linked to a public GitHub tag so you can inspect the corresponding source.</p></details>
+    <details><summary>What data does MU Weather collect?</summary><p>The Android app has no accounts, analytics, ads, crash reporting services or servers of its own. Public weather providers receive the information needed for each request. Saved cities, journal ratings, settings, caches and alert history are stored on your device. See the <a href="https://github.com/Avithegod2010/MU-Weather/blob/master/store/privacy-policy.md">full privacy policy</a>.</p></details>
   </div>
 </section>
 
-<section id="languages">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker">Languages</span>
-      <h2>Spoken in 16 tongues</h2>
-      <p>Each catalog is a complete translation — every placeholder, every voice, every launcher shortcut.</p>
-    </div>
-    <div class="lang-grid reveal">
-      <span>🇬🇧 English</span><span>🇮🇳 हिन्दी</span><span>🇧🇩 বাংলা</span><span>🇪🇸 Español</span><span>🇫🇷 Français</span><span>🇩🇪 Deutsch</span><span>🇳🇱 Nederlands</span><span>🇬🇷 Ελληνικά</span><span>🇭🇺 Magyar</span><span>🇮🇩 Bahasa Indonesia</span><span>🇮🇹 Italiano</span><span>🇵🇹 Português</span><span>🇵🇱 Polski</span><span>🇹🇷 Türkçe</span><span>🇺🇦 Українська</span><span>🇷🇺 Русский</span>
-    </div>
-  </div>
+<section class="facts-section shell" id="sources" aria-labelledby="sources-heading">
+  <h2 class="section-title" id="sources-heading">Data sources</h2>
+  <p class="intro">Public services that supply weather, radar and official warnings.</p>
+  <table class="providers">
+    <thead><tr><th scope="col">Provider</th><th scope="col">What it supplies</th></tr></thead>
+    <tbody>
+      <tr><th scope="row"><a href="https://open-meteo.com/">Open-Meteo</a></th><td>Forecasts, model ensembles, archive, air quality and marine data. Free for non-commercial use.</td></tr>
+      <tr><th scope="row"><a href="https://www.rainviewer.com/api.html">RainViewer</a></th><td>Precipitation radar tiles and animation frames.</td></tr>
+      <tr><th scope="row"><a href="https://www.swpc.noaa.gov/">NOAA Space Weather Prediction Center</a></th><td>Kp index, solar wind and aurora conditions.</td></tr>
+      <tr><th scope="row"><a href="https://meteoalarm.org/">MeteoAlarm</a></th><td>Official severe-weather warnings in supported European regions through EUMETNET.</td></tr>
+      <tr><th scope="row"><a href="https://www.weather.gov/">US National Weather Service</a></th><td>Official warnings and advisories for US locations.</td></tr>
+      <tr><th scope="row"><a href="https://weather.gc.ca/">Environment and Climate Change Canada</a></th><td>Official Canadian warnings in English and French.</td></tr>
+      <tr><th scope="row"><a href="https://www.met.no/en">MET Norway</a></th><td>An independent forecast cross-check.</td></tr>
+      <tr><th scope="row"><a href="https://carto.com/attributions">CARTO</a> and <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></th><td>The base map underneath the radar.</td></tr>
+    </tbody>
+  </table>
 </section>
 
-<section id="download">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker">Download</span>
-      <h2>Grab v1.5.0</h2>
-      <p>Built reproducibly on Expo EAS, published with SHA-256 checksums. When in doubt, pick <b>arm64</b>.</p>
-    </div>
-    <div class="dl reveal">
-      <a class="dl-card glow" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-arm64-v8a-release.apk">
-        <span class="dl-tag">Recommended</span>
-        <b>arm64-v8a</b>
-        <span class="size">56 MB · most phones after 2016</span>
-        <span class="btn primary sm">Download APK</span>
-      </a>
-      <a class="dl-card" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-armeabi-v7a-release.apk">
-        <b>armeabi-v7a</b>
-        <span class="size">46 MB · older 32-bit devices</span>
-        <span class="btn ghost sm">Download APK</span>
-      </a>
-      <a class="dl-card" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-x86_64-release.apk">
-        <b>x86_64</b>
-        <span class="size">57 MB · emulators &amp; Chromebooks</span>
-        <span class="btn ghost sm">Download APK</span>
-      </a>
-      <a class="dl-card" href="https://github.com/Avithegod2010/MU-Weather/releases/download/v1.5.0/app-universal-release.apk">
-        <b>Universal</b>
-        <span class="size">140 MB · works everywhere</span>
-        <span class="btn ghost sm">Download APK</span>
-      </a>
-    </div>
-
-    <div class="faq" id="faq">
-      <div class="sec-head reveal">
-        <span class="kicker">FAQ</span>
-        <h2>Fair questions</h2>
-      </div>
-      <details class="reveal" open>
-        <summary>Is it really free? What's the catch?</summary>
-        <p>There is no catch. MU Weather is MIT-licensed open source with no ads, no accounts and no paid tier. It runs on free public APIs, so there's nothing to sell you and nothing to rate-limit behind a vendor's paywall.</p>
-      </details>
-      <details class="reveal">
-        <summary>Does it need an internet connection?</summary>
-        <p>It's offline-friendly: forecasts, air quality and more are cached on-device with sensible TTLs, so the app stays useful on the subway or in the mountains — the radar and warnings, being inherently live, need a connection.</p>
-      </details>
-      <details class="reveal">
-        <summary>What about the "optional AI digest"?</summary>
-        <p>If you paste your own Anthropic or OpenAI key in settings, the daily spoken digest is upgraded to a natural-language summary. Without a key — the default — nothing changes: the built-in template digest still reads your day aloud. Only the digest text is ever sent, never your location history.</p>
-      </details>
-      <details class="reveal">
-        <summary>Is there an iOS version?</summary>
-        <p>Not yet. MU Weather is Android-first: Material You theming, widgets and launcher shortcuts are the heart of the experience. The codebase is React Native, so iOS isn't off the table eventually.</p>
-      </details>
-      <details class="reveal">
-        <summary>How accurate is the forecast?</summary>
-        <p>The app measures itself: every forecast is scored against actual observations, you get a per-metric accuracy view and a model leaderboard (ECMWF, GFS, ICON, Météo-France, JMA…), and rain probabilities are locally calibrated from your own reports.</p>
-      </details>
-      <details class="reveal">
-        <summary>Can I trust the APKs?</summary>
-        <p>Every release ships from reproducible Expo EAS builds with SHA-256 checksums published on the release page. The source of every release tag is public, so builds can be audited end-to-end.</p>
-      </details>
-      <details class="reveal">
-        <summary>What data do you collect about me?</summary>
-        <p>None. There are no accounts, no analytics, no ads and no MU Weather servers. The app talks directly to public weather APIs, sending only a ~1 km-rounded coordinate and your display language. Everything else — favourites, journal, settings — stays on your device. The full policy is in the repository (<a href="https://github.com/Avithegod2010/MU-Weather/blob/master/store/privacy-policy.md">store/privacy-policy.md</a>).</p>
-      </details>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="kicker">Credits</span>
-      <h2>Data sources</h2>
-      <p>Keyless public services that make MU Weather possible.</p>
-    </div>
-    <div class="src-table reveal">
-      <table>
-        <tr><td>Open-Meteo</td><td>Forecast, ensemble, archive, air quality and marine data. Free for non-commercial use.</td></tr>
-        <tr><td>RainViewer</td><td>Global precipitation radar tiles for the animated map.</td></tr>
-        <tr><td>NOAA SWPC</td><td>Space weather: Kp index, solar wind and aurora conditions.</td></tr>
-        <tr><td>MeteoAlarm</td><td>Official severe-weather warnings across Europe (EUMETNET).</td></tr>
-        <tr><td>US National Weather Service</td><td>Official warnings and advisories for US locations (api.weather.gov).</td></tr>
-        <tr><td>Environment Canada</td><td>Official Canadian warnings (WeatherCAN, English and French).</td></tr>
-      </table>
-    </div>
-  </div>
-</section>
 </main>
-
-<button id="toTop" aria-label="Back to top">↑</button>
-
-<footer>
-  <div class="wrap f">
-    <span class="f-logo">
-      <svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#16224A"/><circle cx="36" cy="38" r="15" fill="#F5C86A"/><path d="M28 66h46a12 12 0 0 0 0-24 19 19 0 0 0-36-6 14 14 0 0 0-10 30z" fill="#E8EEF7"/></svg>
-      MU Weather · MIT · Not affiliated with Google or Android
-    </span>
-    <span class="f-links">
-      <a href="https://github.com/Avithegod2010/MU-Weather">Source</a>
-      <a href="https://github.com/Avithegod2010/MU-Weather/releases">Releases</a>
-      <a href="https://github.com/Avithegod2010/MU-Weather/blob/master/CHANGELOG.md">Changelog</a>
-      <a href="https://github.com/Avithegod2010/MU-Weather/blob/master/README.md">Docs</a>
-    </span>
-  </div>
+<footer class="footer shell">
+  <span>MU Weather · <a href="https://github.com/Avithegod2010/MU-Weather/blob/master/LICENSE">MIT license</a> · Independent of Google and Android</span>
+  <nav aria-label="Project links">
+    <a href="https://github.com/Avithegod2010/MU-Weather">Source</a>
+    <a href="https://github.com/Avithegod2010/MU-Weather/releases">Releases</a>
+    <a href="https://github.com/Avithegod2010/MU-Weather/blob/master/CHANGELOG.md">Changelog</a>
+    <a href="https://github.com/Avithegod2010/MU-Weather#readme">Docs</a>
+    <a href="#top">Back to top</a>
+  </nav>
 </footer>
+<script>
+const scenes = {
+  clear: { temp: 21, high: 23, low: 14, condition: 'Partly cloudy', feels: 20, hours: [[21, 5], [20, 10], [18, 15], [17, 5], [16, 0], [15, 0]] },
+  rain: { temp: 9, high: 12, low: 8, condition: 'Light rain', feels: 7, hours: [[9, 95], [9, 90], [8, 75], [8, 60], [7, 45], [7, 30]] },
+  snow: { temp: -3, high: -1, low: -6, condition: 'Light snow', feels: -9, hours: [[-3, 90], [-3, 85], [-4, 70], [-4, 60], [-5, 50], [-5, 40]] },
+  storm: { temp: 14, high: 16, low: 12, condition: 'Thunderstorm', feels: 14, hours: [[14, 100], [14, 90], [13, 80], [13, 85], [12, 70], [12, 60]] }
+};
 
-<script src="script.js" defer></script>
+const root = document.documentElement;
+const sceneButtons = document.querySelectorAll('[data-select]');
+const temperatures = document.querySelectorAll('[data-temp]');
+const conditions = document.querySelectorAll('[data-condition]');
+const icons = document.querySelectorAll('[data-icon]');
+const high = document.querySelector('#high');
+const low = document.querySelector('#low');
+const forecastFeels = document.querySelector('#forecast-feels');
+const sampleWarning = document.querySelector('#sample-warning');
+const hourlyTemperatures = document.querySelectorAll('.sample-hours strong');
+const hourlyRainChances = document.querySelectorAll('.sample-hours small');
+const themeColor = document.querySelector('meta[name="theme-color"]');
+const motionToggle = document.querySelector('.motion-toggle');
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+const scenePreviews = document.querySelectorAll('.weather-art, .temperature, .widget');
+let motionPaused = false;
+let sceneAnimations = [];
+
+function updateMotion() {
+  root.classList.toggle('motion-paused', motionPaused || motionPreference.matches);
+  motionToggle.hidden = motionPreference.matches;
+  motionToggle.setAttribute('aria-pressed', String(motionPaused));
+  if (root.classList.contains('motion-paused')) {
+    sceneAnimations.forEach(animation => animation.cancel());
+  }
+}
+
+function animateSceneChange() {
+  if (root.classList.contains('motion-paused') || !Element.prototype.animate) return;
+  sceneAnimations.forEach(animation => animation.cancel());
+  sceneAnimations = Array.from(scenePreviews, element => element.animate(
+    [{ opacity: .58, transform: 'translateY(6px) scale(.97)' }, { opacity: 1, transform: 'none' }],
+    { duration: 360, easing: 'cubic-bezier(.18,.72,.3,1)' }
+  ));
+}
+
+motionToggle.addEventListener('click', () => {
+  motionPaused = !motionPaused;
+  updateMotion();
+});
+motionPreference.addEventListener('change', updateMotion);
+updateMotion();
+
+function degrees(value) {
+  return value.toString().replace('-', '−') + '°';
+}
+
+function selectScene(key) {
+  if (root.dataset.scene === key) return;
+  const scene = scenes[key];
+  root.dataset.scene = key;
+  temperatures.forEach(element => { element.textContent = degrees(scene.temp); });
+  conditions.forEach(element => { element.textContent = scene.condition; });
+  icons.forEach(element => { element.dataset.wx = key; });
+  high.textContent = degrees(scene.high);
+  low.textContent = degrees(scene.low);
+  forecastFeels.textContent = 'Feels like ' + degrees(scene.feels);
+  sampleWarning.hidden = key !== 'storm';
+  scene.hours.forEach(([temperature, chance], index) => {
+    hourlyTemperatures[index].textContent = degrees(temperature);
+    hourlyRainChances[index].textContent = chance + '%';
+  });
+  sceneButtons.forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.select === key));
+  });
+  themeColor.content = getComputedStyle(root).getPropertyValue('--paper').trim();
+  animateSceneChange();
+}
+
+sceneButtons.forEach(button => {
+  button.addEventListener('click', () => selectScene(button.dataset.select));
+});
+</script>
 </body>
 </html>
