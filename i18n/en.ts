@@ -152,10 +152,6 @@ export const en = {
   trend_steady: 'Steady',
 
   // Precipitation intensity
-  pi_dry: 'Dry',
-  pi_light: 'Light',
-  pi_moderate: 'Moderate',
-  pi_heavy: 'Heavy',
 
   // Visibility bands
   vis_crystal: 'Crystal clear',
@@ -336,7 +332,6 @@ export const en = {
   s_digest: 'Daily digest',
   s_digest_sub: "Tomorrow's forecast every morning",
   s_ai_key: 'AI summary key',
-  s_ai_key_sub: 'Your own Anthropic or OpenAI key, optional',
   s_ai_key_none: 'Not set — the digest uses the built-in wording',
   s_ai_key_intro: "Paste your own Anthropic or OpenAI API key to have the daily digest rewritten as a short summary. The key is kept in this phone's encrypted storage, never inside the app, and is sent only to the provider it came from. Only the digest facts leave the device. Without a key nothing changes.",
   s_ai_key_placeholder: 'sk-ant-… or sk-…',
@@ -536,7 +531,6 @@ export const en = {
   ensemble_calibration_temperature: 'Temperature',
   ensemble_calibration_wind: 'Wind',
   ensemble_calibration_metrics: 'Median error {error}; P10–P90 coverage {coverage} (80% target); mean interval width {width}.',
-  ensemble_calibration_lead: '{from}–{to} h lead: median error {error}, P10–P90 coverage {coverage}; {cases} hours across {days} dates.',
   ensemble_calibration_lead_chart_title: 'P10–P90 coverage by lead time (80% target)',
   ensemble_calibration_support: '{cases} hours · {days} dates',
   ensemble_calibration_coverage_interval: '{coverage} covered; 95% estimate {lower}–{upper}',
@@ -655,7 +649,6 @@ export const en = {
   digest_conf_high: 'high confidence',
   digest_conf_medium: 'moderate confidence',
   digest_conf_low: 'low confidence',
-  tile_models: 'Model comparison',
   mc_eyebrow: 'MULTI-MODEL',
   mc_title: 'Model comparison',
   mc_loading: 'Asking every model…',
@@ -931,7 +924,7 @@ export const en = {
   notif_sunrise_title: 'Sunrise soon',
   notif_sunrise_body: 'The sun rises in about {n} minutes',
   notif_sunrise_body_now: 'The sun is rising',
-  s_sunrise_sound: 'Alarm sound', s_sunrise_sound_default: 'Default', sound_dawn: 'Dawn', sound_pulse: 'Pulse', sound_bloom: 'Bloom', sound_beacon: 'Beacon', s_sunrise_preview: 'Preview tone', s_sunrise_preview_sub: 'Plays the selected wake-up tone',
+  s_sunrise_sound_default: 'Default', sound_dawn: 'Dawn', sound_pulse: 'Pulse', sound_bloom: 'Bloom', sound_beacon: 'Beacon', s_sunrise_preview: 'Preview tone', s_sunrise_preview_sub: 'Plays the selected wake-up tone',
   ob_welcome_title: 'Welcome to MU Weather',
   ob_welcome_body: 'A free, private weather app that adapts to your phone — and never asks for an account or a key.',
   ob_privacy_title: 'Private by design',
