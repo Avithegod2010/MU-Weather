@@ -6,10 +6,6 @@ export function setHapticsEnabled(value: boolean): void {
   enabled = value;
 }
 
-export function getHapticsEnabled(): boolean {
-  return enabled;
-}
-
 export const haptics = {
   select(): void {
     if (!enabled) return;

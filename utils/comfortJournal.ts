@@ -74,12 +74,6 @@ export async function loadComfortJournal(): Promise<ComfortJournalEntry[]> {
     return [];
   }
 }
-/** The entry recorded for one date, or null. */
-export async function loadComfortEntry(date: string): Promise<ComfortJournalEntry | null> {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
-  const entries = await loadComfortJournal();
-  return entries.find((entry) => entry.date === date) ?? null;
-}
 
 /**
  * Upsert one rating per calendar date: a changed rating replaces the day's old

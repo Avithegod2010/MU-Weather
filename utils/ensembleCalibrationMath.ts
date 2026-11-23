@@ -20,7 +20,6 @@ export const MIN_CONTINUOUS_CALIBRATION_DAYS = 14;
 export const MIN_CONTINUOUS_LEAD_BUCKET_CASES = 20;
 export const MIN_CONTINUOUS_LEAD_BUCKET_DAYS = 7;
 export const MIN_ENSEMBLE_MEMBERS_PER_HOUR = 10;
-export const NOMINAL_CENTRAL_INTERVAL_COVERAGE = 0.8;
 
 export const CONTINUOUS_LEAD_TIME_BUCKETS = [
   { startLeadHours: 0, endLeadHours: 24 },

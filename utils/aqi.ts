@@ -21,10 +21,6 @@ export function setAqiScale(scale: AqiScale): void {
   aqiScaleState = scale;
 }
 
-export function getAqiScale(): AqiScale {
-  return aqiScaleState;
-}
-
 /** Built per call so a runtime language switch is picked up. */
 function usAqiBands(): BandedEntry[] {
   return [
@@ -79,11 +75,6 @@ export function europeanAqiFraction(aqi: number | null | undefined): number {
 /** Band for the display scale. Pair with the SAME scale's value (see callers). */
 export function aqiBandForScale(scale: AqiScale, aqi: number | null | undefined): Band | null {
   return scale === 'european' ? europeanAqiBand(aqi) : usAqiBand(aqi);
-}
-
-/** Gauge fraction for the display scale. */
-export function aqiFractionForScale(scale: AqiScale, aqi: number | null | undefined): number {
-  return scale === 'european' ? europeanAqiFraction(aqi) : usAqiFraction(aqi);
 }
 
 function uvBands(): BandedEntry[] {

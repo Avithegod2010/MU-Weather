@@ -137,7 +137,3 @@ export function Reveal({ children, delay = 0, distance = 30, style, wipe = false
   );
 }
 
-/** Reveal that wipes content in from the left. Use for charts and bar groups. */
-export function RevealWipe(props: Omit<RevealProps, 'wipe'>) {
-  return <Reveal {...props} wipe />;
-}

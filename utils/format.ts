@@ -179,10 +179,6 @@ export function compassLabel(degrees: number | null | undefined): string {
   return COMPASS_POINTS[index] ?? '--';
 }
 
-export function formatDuration(hours: number, minutes: number): string {
-  return `${hours}h ${String(minutes).padStart(2, '0')}m`;
-}
-
 function hexToRgb(hex: string): [number, number, number] {
   const clean = hex.replace('#', '');
   const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
@@ -228,9 +224,3 @@ export function dewPointComfort(temp: number, dewPoint: number): string {
   return t('dew_comfortable');
 }
 
-export function precipIntensityLabel(prob: number, mm: number): string {
-  if (prob < 15 && mm < 0.2) return t('pi_dry');
-  if (mm >= 7.6 || prob >= 85) return t('pi_heavy');
-  if (mm >= 2.5 || prob >= 45) return t('pi_moderate');
-  return t('pi_light');
-}
