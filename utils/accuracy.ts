@@ -261,24 +261,3 @@ export function computeModelMetricAccuracy(
   return { rows, comparedDays: comparedDates.size, rankingReady, commonDays: commonDates.length };
 }
 
-/** The original temperature leaderboard shape, kept for existing callers. */
-export interface ModelAccuracyRow extends ModelMetricRow {
-  /** Mean |actual.tMax - model.tMax| in raw °C (alias of `mae`). */
-  maeHigh: number;
-}
-
-/**
- * Temperature leaderboard, unchanged in behaviour - the metric-generalised
- * scorer above reduced to its temperature case.
- */
-export function computeModelAccuracy(
-  log: ModelLogEntry[],
-  actuals: PastDayActual[],
-  location: LocationAnchor | null,
-): { rows: ModelAccuracyRow[]; comparedDays: number } {
-  const summary = computeModelMetricAccuracy(log, actuals, location, 'temp');
-  return {
-    rows: summary.rows.map((row) => ({ ...row, maeHigh: row.mae })),
-    comparedDays: summary.comparedDays,
-  };
-}

@@ -51,5 +51,3 @@ export const FEATURES = {
   /** Canadian severe-warnings card - Environment Canada app API (CA locations only) */
   canada: true,
 } as const;
-
-export type FeatureKey = keyof typeof FEATURES;

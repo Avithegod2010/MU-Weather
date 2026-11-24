@@ -204,11 +204,6 @@ export async function loadLocalQualityDataSummary(): Promise<LocalQualityDataSum
   });
 }
 
-/** Pure reducer used by tests and by the local-only manager. */
-export function summarizeLocalQualityData(sources: LocalQualityDataSources): LocalQualityDataSummary {
-  return buildSummary(sources);
-}
-
 /** Clear calibration and feedback rows for one displayed location. */
 export async function clearLocalQualityDataForLocation(
   location: LocalQualityLocationSummary,

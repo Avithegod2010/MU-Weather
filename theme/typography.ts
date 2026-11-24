@@ -12,19 +12,3 @@ export const F = {
   bold: 'Outfit_700Bold',
 } as const;
 
-/** Map a numeric fontWeight to its Outfit family. */
-export function outfitForWeight(weight: '300' | '400' | '500' | '600' | '700' | string): string {
-  switch (String(weight)) {
-    case '300':
-      return F.light;
-    case '500':
-      return F.medium;
-    case '600':
-      return F.semibold;
-    case '700':
-    case 'bold':
-      return F.bold;
-    default:
-      return F.regular;
-  }
-}

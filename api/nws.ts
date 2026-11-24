@@ -42,7 +42,6 @@ export interface NwsAlert {
 const USER_AGENT = 'MU-Weather/1.3.0 (https://github.com/Avithegod2010/MU-Weather)';
 
 const NWS_SEVERITIES = ['Severe', 'Extreme', 'Moderate', 'Minor'] as const;
-export type NwsSeverity = (typeof NWS_SEVERITIES)[number];
 
 function parseNwsIso(value: string | undefined): number | null {
   if (!value) return null;
