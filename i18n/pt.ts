@@ -284,7 +284,7 @@ export const pt: Strings = {
   s_bgalerts: 'Alertas em segundo plano',
   s_bgalerts_sub: 'Verificar alertas mesmo com a aplicação fechada',
   s_digest: 'Resumo diário',
-  s_digest_sub: 'A previsão de amanhã todas as manhãs',
+  s_digest_sub: 'A previsão de amanhã todas as manhãs', s_ai_key: 'Chave de resumo de IA', s_ai_key_sub: 'Sua própria chave Anthropic ou OpenAI, opcional', s_ai_key_none: 'Não definida — o resumo usa o texto interno', s_ai_key_intro: 'Cole sua própria chave de API Anthropic ou OpenAI para que o resumo diário seja reescrito em poucas frases. A chave fica no armazenamento criptografado deste telefone, nunca dentro do app, e só é enviada ao provedor de onde veio. Apenas os dados do resumo saem do dispositivo. Sem chave, nada muda.', s_ai_key_placeholder: 'sk-ant-… ou sk-…', s_ai_key_invalid: 'Isso não parece uma chave Anthropic ou OpenAI.', s_ai_key_saved: 'Chave salva neste dispositivo.', s_ai_key_removed: 'Chave removida deste dispositivo.', s_ai_key_unavailable: 'Este dispositivo não consegue guardar chaves com segurança, então nada foi salvo.', s_ai_key_save: 'Salvar chave', s_ai_key_remove: 'Remover chave',
   s_golden: 'Alerta de hora dourada',
   s_golden_sub: 'Avisar quando a luz dourada estiver a 60 minutos',
   s_sec_general: 'Geral',

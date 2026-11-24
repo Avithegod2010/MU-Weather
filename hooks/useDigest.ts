@@ -7,7 +7,8 @@ import { uvBand } from '../utils/aqi';
 import { formatTemp, getUnits, setUnits } from '../utils/format';
 import { DIGEST_CATEGORY } from '../utils/spokenDigest';
 import { loadLastWeather } from '../utils/storage';
-import { aiDigestAvailable, summarizeDigest } from '../api/aiDigest';
+import { summarizeDigest } from '../api/aiDigest';
+import { loadAiCredential, type AiCredential } from '../utils/aiKeyStore';
 import type { DayPoint, EnsembleSpread, WeatherBundle } from '../api/types';
 
 const DIGEST_IDENTIFIER = 'daily-digest';
@@ -46,18 +47,38 @@ export function buildDigestBody(data: WeatherBundle, ensemble?: EnsembleSpread |
 }
 
 /**
- * Best-effort AI upgrade of the digest body. When no key is present or the
- * generation fails for any reason, the template body is returned unchanged so
- * the digest stays fully functional offline.
+ * The provider key lives in the platform keystore, not in the bundle. One read
+ * per process is enough: `undefined` means "not looked up yet", and saving or
+ * clearing the key in Settings calls `invalidateAiCredential()`.
+ */
+let credentialCache: AiCredential | null | undefined;
+
+async function currentAiCredential(): Promise<AiCredential | null> {
+  if (credentialCache === undefined) credentialCache = await loadAiCredential();
+  return credentialCache;
+}
+
+/** Drop the cached key so the next digest uses what Settings just saved. */
+export function invalidateAiCredential(): void {
+  credentialCache = undefined;
+}
+
+/**
+ * Best-effort AI upgrade of the digest body. When no user key is configured or
+ * the generation fails for any reason, the template body is returned unchanged
+ * so the digest stays fully functional offline.
  */
 export async function buildDigestBodyAsync(
   data: WeatherBundle,
   ensemble?: EnsembleSpread | null,
 ): Promise<string | null> {
   const template = buildDigestBody(data, ensemble);
-  if (!template || !aiDigestAvailable()) return template;
+  if (!template) return template;
   try {
+    const credential = await currentAiCredential();
+    if (!credential) return template;
     const summary = await summarizeDigest(
+      credential,
       template,
       data.location.name,
       getLanguage(),

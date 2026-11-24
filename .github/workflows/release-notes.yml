@@ -13,30 +13,74 @@ jobs:
   notes:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # Pinned to a full commit SHA: a workflow holding `contents: write` must
+      # never run a tag that can be moved under it.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Generate release notes from commits
+        env:
+          # The tag name is chosen by whoever pushes the tag, so it reaches the
+          # script through the environment. `${{ }}` inside `run:` is pasted
+          # into the script body, so a tag name written as shell syntax used to
+          # execute as shell syntax, with the release token in scope.
+          REF_NAME: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
-          if [ -z "$PREV_TAG" ]; then
-            git log --pretty=format:"- %s" "${{ github.ref_name }}" > /tmp/notes.txt
-          else
-            git log --pretty=format:"- %s" "$PREV_TAG..${{ github.ref_name }}" > /tmp/notes.txt
-          fi
+          set -euo pipefail
+
+          # Defence in depth: only plain release tags are ever handed to git.
+          case "$REF_NAME" in
+            *[!A-Za-z0-9._-]*)
+              echo "refusing release notes: tag '$REF_NAME' has unexpected characters" >&2
+              exit 1
+              ;;
+            v[0-9]*)
+              ;;
+            *)
+              echo "refusing release notes: tag '$REF_NAME' is not a v<number> release tag" >&2
+              exit 1
+              ;;
+          esac
+
+          PREV_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' "$REF_NAME^" 2>/dev/null || echo "")
+
           {
-            echo "## Changes in ${{ github.ref_name }}"
+            echo "## Changes in $REF_NAME"
             echo ""
-            cat /tmp/notes.txt
+            if [ -z "$PREV_TAG" ]; then
+              git log --pretty=format:'- %s' "$REF_NAME" --
+            else
+              git log --pretty=format:'- %s' "$PREV_TAG..$REF_NAME" --
+            fi
             echo ""
-            echo "Built from \`${{ github.sha }}\`."
-          } > /tmp/release-body.md
+            echo "Built from \`$COMMIT_SHA\`."
+          } > "$RUNNER_TEMP/release-body.md"
 
       - name: Create or update the release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          body_path: /tmp/release-body.md
-          draft: false
-          prerelease: false
+        env:
+          # The release is created with the runner's built-in `gh` and the
+          # job's own token, so no third-party action runs with `contents:
+          # write` (the previous third-party release action was referenced by a
+          # movable tag and could be retargeted at any commit).
+          GH_TOKEN: ${{ github.token }}
+          REF_NAME: ${{ github.ref_name }}
+          BODY_FILE: ${{ runner.temp }}/release-body.md
+        run: |
+          set -euo pipefail
+
+          command -v gh >/dev/null 2>&1 || {
+            echo "gh CLI not found on the runner; cannot publish the release" >&2
+            exit 1
+          }
+
+          if gh release view "$REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$REF_NAME" --notes-file "$BODY_FILE"
+          else
+            gh release create "$REF_NAME" \
+              --title "$REF_NAME" \
+              --notes-file "$BODY_FILE" \
+              --verify-tag
+          fi
